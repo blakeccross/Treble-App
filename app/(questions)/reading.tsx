@@ -1,25 +1,8 @@
 import { QuizContext } from "@/context/quiz-context";
-import { NavigationContainer } from "@react-navigation/native";
-import { Link, Stack } from "expo-router";
 import React, { useContext } from "react";
-import { SafeAreaView, ScrollView, View, useWindowDimensions } from "react-native";
-import { Button, Card, H1, H3 } from "tamagui";
+import { SafeAreaView, ScrollView } from "react-native";
 import Markdown from "react-native-markdown-display";
 import AnswerDrawer from "@/components/AnswerDrawer";
-
-const markdown = `A paragraph with *emphasis* and **strong importance**.
-
-> A block quote with ~strikethrough~ and a URL: https://reactjs.org.
-
-* Lists
-* [ ] todo
-* [x] done
-
-A table:
-
-| a | b |
-| - | - |
-`;
 
 export default function Index() {
   const { currentQuestionIndex, questions, nextQuestion } = useContext(QuizContext);

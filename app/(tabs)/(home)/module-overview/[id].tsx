@@ -20,17 +20,57 @@ export default function ModuleStartScreen() {
   const { id } = useLocalSearchParams();
   const scrollViewRef = useRef<ScrollView>(null);
   const [visibleModule, setVisibleModule] = useState("Module 1");
+  const [snapIntervals, setSnapIntervals] = useState<number[]>([]);
+  const moduleHeights = useRef<number[]>([]);
 
   function handleSelectModule(value: string) {
     setVisibleModule(value);
-    const scrollPosition = data.findIndex((item) => item.module_name === value) * PAGE_HEIGHT;
+    const selectedModuleIndex = data.findIndex((item) => item.module_name === value);
+
+    const scrollPosition = snapIntervals[selectedModuleIndex - 1];
+
     scrollViewRef.current?.scrollTo({ x: 0, y: scrollPosition, animated: true });
   }
 
-  function handleOnScroll(event: any) {
-    //calculate screenIndex by contentOffset and screen width
-    setVisibleModule(data[Math.round(event.nativeEvent.contentOffset.y / PAGE_HEIGHT)].module_name);
+  function findIndexBinarySearch(arr: number[], num: number): number {
+    let left = 0;
+    let right = arr.length - 1;
+
+    while (left <= right) {
+      const mid = Math.floor((left + right) / 2);
+      if (arr[mid] <= num && num < arr[mid + 1]) {
+        return mid + 1;
+      } else if (num < arr[mid]) {
+        right = mid - 1;
+      } else {
+        left = mid + 1;
+      }
+    }
+    return 0;
   }
+
+  function handleOnScroll(event: any) {
+    const currentVisibleIndex = findIndexBinarySearch(snapIntervals, event.nativeEvent.contentOffset.y);
+    setVisibleModule(data[currentVisibleIndex].module_name);
+  }
+
+  function handleLayout(event: any, index: number) {
+    const { height } = event.nativeEvent.layout;
+    moduleHeights.current[index] = height;
+
+    if (moduleHeights.current.length === data.length) {
+      const offsets = moduleHeights.current.reduce((acc, height) => {
+        acc.push((acc[acc.length - 1] || 0) + height);
+        return acc;
+      }, []);
+      setSnapIntervals(offsets);
+    }
+  }
+
+  useEffect(() => {
+    // Reset moduleHeights when data changes
+    moduleHeights.current = new Array(data.length).fill(0);
+  }, [data]);
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -49,13 +89,15 @@ export default function ModuleStartScreen() {
       <View style={{ flex: 1 }}>
         <ScrollView
           ref={scrollViewRef}
-          snapToInterval={PAGE_HEIGHT}
+          // snapToInterval={PAGE_HEIGHT}
+          snapToOffsets={snapIntervals}
           style={{ paddingHorizontal: 20 }}
           onScroll={handleOnScroll}
           showsVerticalScrollIndicator={false}
+          decelerationRate={"fast"}
         >
-          {data.map((item) => (
-            <YGroup separator={<Separator />} key={item.id} height={PAGE_HEIGHT}>
+          {data.map((item, index) => (
+            <YGroup separator={<Separator />} key={item.id} onLayout={(event) => handleLayout(event, index)} paddingBottom="$6">
               <H3 textAlign="center" marginVertical="$3">
                 {item.module_name}
               </H3>

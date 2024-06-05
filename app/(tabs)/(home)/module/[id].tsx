@@ -35,7 +35,7 @@ export default function ModuleStartScreen() {
       <ScrollView style={{ padding: 20 }}>
         <Paragraph size="$6">{module.description}</Paragraph>
 
-        <Link href={`(tabs)/home/module-overview/${module.id}`} asChild onPress={() => router.dismiss()}>
+        <Link href={`(tabs)/(home)/module-overview/${module.id}`} asChild onPress={() => router.dismiss()}>
           <Button size="$6" fontWeight={600} marginTop="$4">
             Complete
           </Button>

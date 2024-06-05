@@ -15,10 +15,10 @@ import UserProvider from "@/context/user-context";
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
-export const unstable_settings = {
-  // Ensure any route can link back to `/`
-  initialRouteName: "identify-the-chord-sheet",
-};
+// export const unstable_settings = {
+//   // Ensure any route can link back to `/`
+//   initialRouteName: "/",
+// };
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();

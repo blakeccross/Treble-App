@@ -22,14 +22,9 @@ export default function QuizProvider({ children }: { children: JSX.Element[] }) 
     setLives(3);
   }, []);
 
-  useEffect(() => {
-    if (lives === 0) {
-    }
-  }, []);
-
   function nextQuestion() {
     if (lives < 1) {
-      router.navigate(`(tabs)/home/module-overview/1`);
+      router.push(`(questions)/out-of-lives`);
     } else {
       // currentQuestionIndex.current = currentQuestionIndex.current + 1;
       if (currentQuestionIndex.current < sampleModule[currentSection].length - 1) {

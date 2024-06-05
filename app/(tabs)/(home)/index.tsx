@@ -63,7 +63,7 @@ export default function HomeScreen() {
             {data.map((module) => (
               <Link
                 href={{
-                  pathname: `(tabs)/home/module/${module.id}`,
+                  pathname: `(tabs)/(home)/module/${module.id}`,
                 }}
                 asChild
                 key={module.id}

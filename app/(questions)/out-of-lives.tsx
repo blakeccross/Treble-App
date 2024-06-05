@@ -3,7 +3,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { Link, Stack, useRouter } from "expo-router";
 import React, { useContext, useEffect } from "react";
 import { SafeAreaView, ScrollView, View, useWindowDimensions } from "react-native";
-import { Button, Card, H1, H3, Progress, Spinner, YStack } from "tamagui";
+import { Button, Card, H1, H3, Paragraph, Progress, Spinner, YStack } from "tamagui";
 
 export default function Index() {
   const router = useRouter();
@@ -18,7 +18,8 @@ export default function Index() {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <YStack alignItems="center" justifyContent="center" flex={1} padding="$4">
-        <H1>Wow you finished an entire module!</H1>
+        <H1>You've run out of lives</H1>
+        <Paragraph>Try studying a bit more and try again later.</Paragraph>
         <Button onPress={handle}>Continue</Button>
       </YStack>
     </SafeAreaView>
