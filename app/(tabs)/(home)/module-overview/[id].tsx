@@ -1,7 +1,7 @@
 import { Check, ChevronRight, Lock } from "@tamagui/lucide-icons";
 import { Link, router, useLocalSearchParams } from "expo-router";
 import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
-import { View, SafeAreaView, useWindowDimensions, ScrollView } from "react-native";
+import { View, SafeAreaView, useWindowDimensions, ScrollView, LayoutChangeEvent } from "react-native";
 import { useSharedValue } from "react-native-reanimated";
 import Carousel, { ICarouselInstance } from "react-native-reanimated-carousel";
 
@@ -54,7 +54,7 @@ export default function ModuleStartScreen() {
     setVisibleModule(data[currentVisibleIndex].module_name);
   }
 
-  function handleLayout(event: any, index: number) {
+  const handleLayout = (event: LayoutChangeEvent, index: number) => {
     const { height } = event.nativeEvent.layout;
     moduleHeights.current[index] = height;
 
@@ -62,18 +62,19 @@ export default function ModuleStartScreen() {
       const offsets = moduleHeights.current.reduce((acc, height) => {
         acc.push((acc[acc.length - 1] || 0) + height);
         return acc;
-      }, []);
+      }, [] as number[]);
       setSnapIntervals(offsets);
     }
-  }
+  };
 
-  useEffect(() => {
-    // Reset moduleHeights when data changes
-    moduleHeights.current = new Array(data.length).fill(0);
-  }, [data]);
+  // useEffect(() => {
+  //   // Reset moduleHeights when data changes
+  //   moduleHeights.current = new Array(data.length).fill(0);
+  // }, [data]);
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <View style={{ flex: 1 }}>
+      <SafeAreaView />
       <View style={{ paddingHorizontal: 20 }}>
         <Dropdown
           // id="select-demo-1"
@@ -86,7 +87,7 @@ export default function ModuleStartScreen() {
         />
       </View>
 
-      <View style={{ flex: 1 }}>
+      <View>
         <ScrollView
           ref={scrollViewRef}
           // snapToInterval={PAGE_HEIGHT}
@@ -95,6 +96,7 @@ export default function ModuleStartScreen() {
           onScroll={handleOnScroll}
           showsVerticalScrollIndicator={false}
           decelerationRate={"fast"}
+          contentContainerStyle={{ paddingBottom: 300 }}
         >
           {data.map((item, index) => (
             <YGroup separator={<Separator />} key={item.id} onLayout={(event) => handleLayout(event, index)} paddingBottom="$6">
@@ -121,6 +123,6 @@ export default function ModuleStartScreen() {
           ))}
         </ScrollView>
       </View>
-    </SafeAreaView>
+    </View>
   );
 }

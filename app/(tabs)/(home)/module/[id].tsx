@@ -6,7 +6,7 @@ import { Link, router, useGlobalSearchParams, useLocalSearchParams } from "expo-
 import { useContext } from "react";
 import { View, Text, StyleSheet, SafeAreaView } from "react-native";
 import Animated from "react-native-reanimated";
-import { Button, H1, H3, Paragraph, ScrollView, XStack } from "tamagui";
+import { Button, H1, H2, H3, Paragraph, ScrollView, XStack } from "tamagui";
 
 export default function ModuleStartScreen() {
   const { id } = useLocalSearchParams();
@@ -23,9 +23,9 @@ export default function ModuleStartScreen() {
             <View style={{ padding: 20, height: 250, width: "100%", backgroundColor: blue.blue10 }}>
               <XStack gap="$4">
                 <Button icon={<ArrowLeft size="$3" />} circular onPress={() => router.dismiss()} themeInverse />
-                <H1 color={"$background"} fontWeight={600}>
+                <H2 color={"$background"} fontWeight={600}>
                   {module.module_name}
-                </H1>
+                </H2>
               </XStack>
             </View>
           </SafeAreaView>

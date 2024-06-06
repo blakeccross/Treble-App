@@ -4,6 +4,8 @@ import React from "react";
 import { TabBarIcon } from "@/components/navigation/TabBarIcon";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
+import TabBar from "@/components/tab-bar";
+import { Ear, Home, Smile, UserRound } from "@tamagui/lucide-icons";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -14,19 +16,27 @@ export default function TabLayout() {
         tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
         headerShown: false,
       }}
+      tabBar={(props) => <TabBar {...props} />}
     >
       <Tabs.Screen
         name="(home)"
         options={{
           title: "Home",
-          tabBarIcon: ({ color, focused }) => <TabBarIcon name={focused ? "home" : "home-outline"} color={color} />,
+          tabBarIcon: ({ color, focused }) => <Home />,
+        }}
+      />
+      <Tabs.Screen
+        name="ear-training"
+        options={{
+          title: "Home",
+          tabBarIcon: ({ color, focused }) => <Ear />,
         }}
       />
       <Tabs.Screen
         name="explore"
         options={{
           title: "Profile",
-          tabBarIcon: ({ color, focused }) => <TabBarIcon name={focused ? "code-slash" : "code-slash-outline"} color={color} />,
+          tabBarIcon: ({ color, focused }) => <Smile />,
         }}
       />
     </Tabs>

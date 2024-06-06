@@ -52,7 +52,8 @@
     "react-native-web": "~0.19.10",
     "tamagui": "^1.99.1",
     "vexflow": "^4.2.4",
-    "@react-native-async-storage/async-storage": "1.23.1"
+    "@react-native-async-storage/async-storage": "1.23.1",
+    "expo-av": "~14.0.5"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

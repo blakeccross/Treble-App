@@ -58,7 +58,7 @@ export default function HomeScreen() {
           </LinearGradient>
         }
       >
-        <ScrollView backgroundColor={"$blue1"}>
+        <ScrollView backgroundColor={"$blue1"} contentContainerStyle={{ paddingBottom: 100 }}>
           <XStack $sm={{ flexDirection: "column" }} padding="$4" gap="$4">
             {data.map((module) => (
               <Link
@@ -117,22 +117,3 @@ export default function HomeScreen() {
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: "absolute",
-  },
-});
