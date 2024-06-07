@@ -43,7 +43,10 @@ export default function Page() {
               flex={1}
               onPress={() => setSelectedAnswer(item.id)}
               backgroundColor={
-                selectedAnswer === item.id ? (answerIsCorrect ? "$green10" : answerIsCorrect !== undefined ? "$red10" : "$gray6") : "$background"
+                selectedAnswer === item.id ? (answerIsCorrect ? "$green5" : answerIsCorrect !== undefined ? "$red5" : "$gray6") : "$background"
+              }
+              borderColor={
+                selectedAnswer === item.id ? (answerIsCorrect ? "$green8" : answerIsCorrect !== undefined ? "$red10" : "$gray6") : "$background"
               }
             >
               <Card.Header alignItems="center">
