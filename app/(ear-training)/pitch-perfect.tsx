@@ -3,24 +3,47 @@ import { color, red } from "@tamagui/themes";
 import { View, Text, SafeAreaView, StyleSheet, FlatList, Pressable } from "react-native";
 import Animated, { useSharedValue, useAnimatedStyle, withSpring, withDelay, ReduceMotion } from "react-native-reanimated";
 import Svg, { Defs, RadialGradient, Stop } from "react-native-svg";
-import { Avatar, Card, H3, H5, Paragraph, Circle, Separator, Square, XStack, YStack, useEvent, useControllableState, H1, H2 } from "tamagui";
+import { Avatar, Card, H3, H5, Paragraph, Circle, Separator, Square, XStack, YStack, useEvent, useControllableState, H1, H2, Button } from "tamagui";
 import { window } from "@/utils";
 import { TapGestureHandler } from "react-native-gesture-handler";
-import { Audio } from "expo-av";
-import { useEffect, useState } from "react";
+import { AVPlaybackSource, Audio } from "expo-av";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Heart, X } from "@tamagui/lucide-icons";
 import { LinearGradient } from "tamagui/linear-gradient";
+import { useFocusEffect, useNavigation, useRouter } from "expo-router";
 
 const PAGE_WIDTH = window.width;
 const colorOptions = ["blue", "orange", "green", "red", "yellow", "purple", "pink"];
+const notes = ["c3", "d3", "e3", "f3", "g3", "a3", "b3"];
 
-export default function TabTwoScreen() {
+// Static imports for audio files
+const noteToFile = {
+  c3: require("@/assets/audio/piano_c3.mp3"),
+  a3: require("@/assets/audio/piano_a3.mp3"),
+  b3: require("@/assets/audio/piano_b3.mp3"),
+  d3: require("@/assets/audio/piano_d3.mp3"),
+  e3: require("@/assets/audio/piano_e3.mp3"),
+  f3: require("@/assets/audio/piano_f3.mp3"),
+  g3: require("@/assets/audio/piano_g3.mp3"),
+};
+
+export default function Page() {
+  const navigation = useNavigation();
+  const router = useRouter();
   const [sound, setSound] = useState<Audio.Sound>();
   const [currentScore, setCurrentScore] = useState<number>(0);
   const [lives, setLives] = useState(3);
-  const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
+  const [selectedAnswer, setSelectedAnswer] = useState<string>("");
+  // const [correctAnswer, setCorrectAnswer] = useState<string>("");
   const [answerIsCorrect, setAnswerIsCorrect] = useState<boolean>();
   const [colorSceme, setColorSceme] = useState<string>("blue");
+  const [availableAnswers, setAvailableAnswers] = useState([
+    { value: "c4", option_text: "C" },
+    { value: "d4", option_text: "D" },
+    { value: "e4", option_text: "Eb" },
+    { value: "f4", option_text: "F" },
+  ]);
+  const correctAnswer = useRef("");
   // Shared values for scale animations
   const scale1 = useSharedValue(1);
   const scale2 = useSharedValue(1);
@@ -48,28 +71,88 @@ export default function TabTwoScreen() {
     // height: translationY.value,
   }));
 
-  function validateAnswer(selectedId: number) {
+  function validateAnswer(selectedId: string) {
     setSelectedAnswer(selectedId);
     // Replace with real value
-    if (selectedId === 1) {
+    if (selectedId === correctAnswer.current) {
       setAnswerIsCorrect(true);
       setCurrentScore(currentScore + 1);
     } else {
+      if (lives <= 1) {
+        router.push("(ear-training)/game-over");
+      } else {
+        setLives(lives - 1);
+      }
       setAnswerIsCorrect(false);
-      setLives(lives - 1);
     }
+    correctAnswer.current = "";
     springOut();
   }
 
+  useFocusEffect(
+    useCallback(() => {
+      // Reset Game
+      setLives(3);
+      setCurrentScore(0);
+
+      return () => {
+        console.log("This route is now unfocused.");
+      };
+    }, [])
+  );
+
+  function shuffle(array: string[]) {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+  }
+
+  function getRandomNotes(excludeNote: string, notesArray: string[]): string[] {
+    // Filter out the excludeNote from the notesArray
+    const filteredNotes = notesArray.filter((note) => note !== excludeNote);
+    console.log(filteredNotes);
+
+    // Shuffle the array
+    const shuffledOptions = shuffle(filteredNotes).slice(0, 3); // Shuffle and take first 3
+    const quizOptions = shuffledOptions.slice(0, 3).concat(excludeNote);
+    // shuffledNotes.push(excludeNote);
+
+    // Return the first three elements
+    return shuffle(quizOptions);
+  }
+
+  function newQuestion() {
+    const randomNote = notes[Math.floor(Math.random() * notes.length)] as keyof typeof noteToFile;
+    // setCorrectAnswer(randomNote);
+    correctAnswer.current = randomNote;
+    console.log(randomNote);
+    const options = getRandomNotes(randomNote, notes);
+    setAvailableAnswers(options.map((item) => ({ value: item, option_text: item })));
+  }
+
   async function playAudio() {
-    const { sound } = await Audio.Sound.createAsync(require("../../assets/audio/notec.mp3"));
+    const { sound } = await Audio.Sound.createAsync(noteToFile[correctAnswer.current as keyof typeof noteToFile]);
+
+    setSound(sound);
     await sound.playAsync();
+  }
+
+  function handlePressPlay() {
+    console.log(correctAnswer.current);
+    if (correctAnswer.current === "") {
+      bounce();
+      newQuestion();
+      playAudio();
+    } else {
+      playAudio();
+    }
   }
 
   useEffect(() => {
     return sound
       ? () => {
-          console.log("Unloading Sound");
           sound.unloadAsync();
         }
       : undefined;
@@ -114,11 +197,11 @@ export default function TabTwoScreen() {
         scale3.value = withSpring(1);
       })
     );
-    await playAudio();
   }
 
   function springIn() {
-    setSelectedAnswer(null);
+    setSelectedAnswer("");
+    newQuestion();
     translationY.value = withSpring(0, {
       damping: 12,
       stiffness: 50,
@@ -141,7 +224,7 @@ export default function TabTwoScreen() {
 
       <XStack justifyContent="space-between" alignItems="center" paddingHorizontal="$4">
         <Pressable>
-          <X size="$3" />
+          <X size="$3" onPress={() => router.navigate("(tabs)/ear-training")} />
         </Pressable>
         <H1 fontWeight={600}>{currentScore}</H1>
         <XStack gap="$1">
@@ -162,7 +245,7 @@ export default function TabTwoScreen() {
           <Animated.View style={[animatedStyle3, { position: "absolute" }]}>
             <Circle size={PAGE_WIDTH * 0.55} backgroundColor={`$${colorSceme}7Dark`} elevation="$0.25" />
           </Animated.View>
-          <TapGestureHandler onActivated={bounce}>
+          <TapGestureHandler onActivated={handlePressPlay}>
             <Animated.View style={[animatedStyle4, { position: "absolute" }]}>
               <Circle
                 size={PAGE_WIDTH * 0.4}
@@ -190,12 +273,7 @@ export default function TabTwoScreen() {
       </View>
       <Animated.View style={[{ padding: 10 }, animatedStyleFlatList]}>
         <FlatList
-          data={[
-            { id: 1, option_text: "C" },
-            { id: 2, option_text: "D" },
-            { id: 3, option_text: "Eb" },
-            { id: 4, option_text: "F" },
-          ]}
+          data={availableAnswers}
           columnWrapperStyle={{ gap: 10 }}
           contentContainerStyle={{ gap: 10 }}
           style={{ overflow: "visible" }}
@@ -208,12 +286,12 @@ export default function TabTwoScreen() {
               pressStyle={{ scale: 0.95 }}
               animation="bouncy"
               flex={1}
-              onPress={() => validateAnswer(item.id)}
+              onPress={() => validateAnswer(item.value)}
               backgroundColor={
-                selectedAnswer === item.id ? (answerIsCorrect ? "$green5" : answerIsCorrect !== undefined ? "$red5" : "$gray6") : "$background"
+                selectedAnswer === item.value ? (answerIsCorrect ? "$green5" : answerIsCorrect !== undefined ? "$red5" : "$gray6") : "$background"
               }
               borderColor={
-                selectedAnswer === item.id ? (answerIsCorrect ? "$green8" : answerIsCorrect !== undefined ? "$red10" : "$gray6") : "$background"
+                selectedAnswer === item.value ? (answerIsCorrect ? "$green8" : answerIsCorrect !== undefined ? "$red10" : "$gray6") : "$background"
               }
             >
               <Card.Header alignItems="center">

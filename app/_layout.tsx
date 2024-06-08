@@ -46,6 +46,7 @@ export default function RootLayout() {
               <Stack>
                 <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
                 <Stack.Screen name="(questions)" options={{ headerShown: false }} />
+                <Stack.Screen name="(ear-training)" options={{ headerShown: false }} />
                 <Stack.Screen name="+not-found" />
               </Stack>
             </GestureHandlerRootView>
