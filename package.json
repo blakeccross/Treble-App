@@ -56,7 +56,8 @@
     "react-native-web": "~0.19.10",
     "react-soundfont-player": "^1.0.2",
     "tamagui": "^1.99.1",
-    "vexflow": "^4.2.4"
+    "vexflow": "^4.2.4",
+    "expo-haptics": "~13.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

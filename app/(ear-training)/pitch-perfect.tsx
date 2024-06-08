@@ -11,6 +11,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Heart, X } from "@tamagui/lucide-icons";
 import { LinearGradient } from "tamagui/linear-gradient";
 import { useFocusEffect, useNavigation, useRouter } from "expo-router";
+import * as Haptics from "expo-haptics";
 
 const PAGE_WIDTH = window.width;
 const colorOptions = ["blue", "orange", "green", "red", "yellow", "purple", "pink"];
@@ -26,6 +27,9 @@ const noteToFile = {
   f3: require("@/assets/audio/piano_f3.mp3"),
   g3: require("@/assets/audio/piano_g3.mp3"),
 };
+
+const correctSFX = require("@/assets/audio/correct_sfx.mp3");
+const incorrectSFX = require("@/assets/audio/incorrect_sfx.mp3");
 
 export default function Page() {
   const navigation = useNavigation();
@@ -77,6 +81,8 @@ export default function Page() {
     if (selectedId === correctAnswer.current) {
       setAnswerIsCorrect(true);
       setCurrentScore(currentScore + 1);
+      playSFX(correctSFX);
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     } else {
       if (lives <= 1) {
         router.push("(ear-training)/game-over");
@@ -84,6 +90,8 @@ export default function Page() {
         setLives(lives - 1);
       }
       setAnswerIsCorrect(false);
+      playSFX(incorrectSFX, true);
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
     }
     correctAnswer.current = "";
     springOut();
@@ -112,7 +120,6 @@ export default function Page() {
   function getRandomNotes(excludeNote: string, notesArray: string[]): string[] {
     // Filter out the excludeNote from the notesArray
     const filteredNotes = notesArray.filter((note) => note !== excludeNote);
-    console.log(filteredNotes);
 
     // Shuffle the array
     const shuffledOptions = shuffle(filteredNotes).slice(0, 3); // Shuffle and take first 3
@@ -132,20 +139,40 @@ export default function Page() {
     setAvailableAnswers(options.map((item) => ({ value: item, option_text: item })));
   }
 
+  async function playSFX(sfx: AVPlaybackSource, interrupt?: boolean) {
+    const { sound } = await Audio.Sound.createAsync(sfx);
+    await Audio.setAudioModeAsync({
+      playsInSilentModeIOS: true,
+    });
+
+    if (interrupt) {
+      setSound(sound);
+    }
+
+    await sound.playAsync();
+  }
+
   async function playAudio() {
     const { sound } = await Audio.Sound.createAsync(noteToFile[correctAnswer.current as keyof typeof noteToFile]);
+    await Audio.setAudioModeAsync({
+      playsInSilentModeIOS: true,
+    });
 
     setSound(sound);
     await sound.playAsync();
   }
 
   function handlePressPlay() {
-    console.log(correctAnswer.current);
     if (correctAnswer.current === "") {
+      setSelectedAnswer("");
+      newQuestion();
+      changeColor();
       bounce();
       newQuestion();
       playAudio();
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     } else {
+      bounce();
       playAudio();
     }
   }
@@ -158,10 +185,13 @@ export default function Page() {
       : undefined;
   }, [sound]);
 
-  // Function to trigger the bounce effect
-  async function bounce() {
+  function changeColor() {
     const randomColorOption = colorOptions[Math.floor(Math.random() * colorOptions.length)];
     setColorSceme(randomColorOption);
+  }
+
+  // Function to trigger the bounce effect
+  async function bounce() {
     springIn();
     const bounceAnimation = withSpring(
       1.2,
@@ -200,8 +230,8 @@ export default function Page() {
   }
 
   function springIn() {
-    setSelectedAnswer("");
-    newQuestion();
+    // setSelectedAnswer("");
+    // newQuestion();
     translationY.value = withSpring(0, {
       damping: 12,
       stiffness: 50,
@@ -223,8 +253,8 @@ export default function Page() {
       <SafeAreaView style={{ flex: 0 }} />
 
       <XStack justifyContent="space-between" alignItems="center" paddingHorizontal="$4">
-        <Pressable>
-          <X size="$3" onPress={() => router.navigate("(tabs)/ear-training")} />
+        <Pressable onPress={() => router.navigate("(tabs)/ear-training")}>
+          <X size="$3" />
         </Pressable>
         <H1 fontWeight={600}>{currentScore}</H1>
         <XStack gap="$1">
@@ -296,7 +326,7 @@ export default function Page() {
             >
               <Card.Header alignItems="center">
                 <H2 fontWeight={600} paddingVertical={"$3"}>
-                  {item.option_text}
+                  {item.option_text.charAt(0).toUpperCase()}
                 </H2>
               </Card.Header>
             </Card>

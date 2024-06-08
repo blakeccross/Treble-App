@@ -1,7 +1,7 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { color } from "@tamagui/themes";
 import { StyleSheet, Platform, SafeAreaView } from "react-native";
-import { Avatar, Card, Circle, H1, H3, H5, Paragraph, Separator, View, XStack, Button, ScrollView, YStack } from "tamagui";
+import { Avatar, Card, Circle, H1, H3, H5, Paragraph, Separator, View, XStack, Button, ScrollView, YStack, H2 } from "tamagui";
 import { Image } from "expo-image";
 import { BlurView } from "expo-blur";
 import { Play } from "@tamagui/lucide-icons";
@@ -24,7 +24,7 @@ export default function TabTwoScreen() {
     <View flex={1} backgroundColor={"$background"}>
       <SafeAreaView />
       <ScrollView padding="$4" contentContainerStyle={{ paddingBottom: 150 }}>
-        <H1 fontWeight={600}>Ear Training</H1>
+        <H2 fontWeight={600}>Ear Training</H2>
         <YStack gap={"$4"}>
           {games.map((game) => (
             <Card

@@ -21,40 +21,39 @@ export default function HomeScreen() {
         headerBackgroundColor={{ light: blue.blue10, dark: darkColors.blue10 }}
         headerImage={
           <LinearGradient width="100%" height="100%" colors={["$blue10", "$blue8"]} start={[0.5, 1]} end={[0, 0]}>
-            <SafeAreaView>
-              <YStack gap="$3" style={{ padding: 20 }}>
-                <XStack gap="$2" justifyContent="space-between">
-                  <YStack>
-                    <H3 fontWeight={800} color={"white"}>
-                      Welcome Back,
-                    </H3>
-                    <H3 fontWeight={500} color={"white"} opacity={0.8}>
-                      Alice
-                    </H3>
-                  </YStack>
-                  <Avatar circular size="$5">
-                    <Avatar.Image
-                      accessibilityLabel="Nate Wienert"
-                      src="https://images.unsplash.com/photo-1545539513-9ad989ce66b2?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                    />
-                    <Avatar.Fallback delayMs={600} backgroundColor="$blue10" />
-                  </Avatar>
-                </XStack>
+            <SafeAreaView />
+            <YStack gap="$3" style={{ marginHorizontal: 20 }}>
+              <XStack gap="$2" justifyContent="space-between">
+                <YStack>
+                  <H3 fontWeight={800} color={"white"}>
+                    Welcome Back,
+                  </H3>
+                  <H3 fontWeight={500} color={"white"} opacity={0.8}>
+                    Alice
+                  </H3>
+                </YStack>
+                <Avatar circular size="$5">
+                  <Avatar.Image
+                    accessibilityLabel="Nate Wienert"
+                    src="https://images.unsplash.com/photo-1545539513-9ad989ce66b2?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                  />
+                  <Avatar.Fallback delayMs={600} backgroundColor="$blue10" />
+                </Avatar>
+              </XStack>
 
-                <Card borderRadius="$6" overflow="hidden" backgroundColor={"rgba(52, 52, 52, 0.0)"}>
-                  <Card.Header>
-                    <XStack gap="$2" justifyContent="space-evenly" alignItems="center">
-                      <Flame size="$2" color={"$red10"} />
-                      <Gem size="$2" color={"blue7"} />
-                      <Trophy size="$2" color={"$orange7"} />
-                    </XStack>
-                  </Card.Header>
-                  <Card.Background>
-                    <BlurView intensity={50} tint="light" style={{ flex: 1 }}></BlurView>
-                  </Card.Background>
-                </Card>
-              </YStack>
-            </SafeAreaView>
+              <Card borderRadius="$6" overflow="hidden" backgroundColor={"rgba(52, 52, 52, 0.0)"}>
+                <Card.Header>
+                  <XStack gap="$2" justifyContent="space-evenly" alignItems="center">
+                    <Flame size="$2" color={"$red10"} />
+                    <Gem size="$2" color={"blue7"} />
+                    <Trophy size="$2" color={"$orange7"} />
+                  </XStack>
+                </Card.Header>
+                <Card.Background>
+                  <BlurView intensity={50} tint="light" style={{ flex: 1 }}></BlurView>
+                </Card.Background>
+              </Card>
+            </YStack>
           </LinearGradient>
         }
       >

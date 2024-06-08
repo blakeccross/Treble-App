@@ -5,6 +5,7 @@ import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { Paragraph } from "tamagui";
 import { BlurView } from "expo-blur";
 import { blueDark, color, gray } from "@tamagui/themes";
+import * as Haptics from "expo-haptics";
 // import NavigationIcon from './navigationIcon';
 
 const { width } = Dimensions.get("window");
@@ -29,6 +30,7 @@ const TabBar = ({ state, descriptors, navigation }: BottomTabBarProps) => {
 
           if (!isFocused && !event.defaultPrevented) {
             navigation.navigate(route.name, route.params);
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft);
           }
         };
 
@@ -55,7 +57,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 25,
     // backgroundColor: "blue",
-    borderRadius: 25,
+    borderRadius: 50,
     marginHorizontal: width * 0.25,
     overflow: "hidden",
   },
