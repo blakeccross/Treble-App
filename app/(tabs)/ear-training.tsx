@@ -1,5 +1,3 @@
-import Ionicons from "@expo/vector-icons/Ionicons";
-import { color } from "@tamagui/themes";
 import { StyleSheet, Platform, SafeAreaView } from "react-native";
 import { Avatar, Card, Circle, H1, H3, H5, Paragraph, Separator, View, XStack, Button, ScrollView, YStack, H2 } from "tamagui";
 import { Image } from "expo-image";
@@ -53,8 +51,12 @@ export default function TabTwoScreen() {
                 <BlurView style={{ flex: 1, padding: 20 }} tint="light">
                   <XStack justifyContent="space-between">
                     <YStack>
-                      <H5 fontWeight={600}>{game.title}</H5>
-                      <Paragraph lineHeight={17}>Test your ear in a{`\n`}fast pace matching game</Paragraph>
+                      <H5 fontWeight={600} themeInverse>
+                        {game.title}
+                      </H5>
+                      <Paragraph lineHeight={17} themeInverse>
+                        Test your ear in a{`\n`}fast pace matching game
+                      </Paragraph>
                     </YStack>
                     <Button
                       borderRadius={"$10"}

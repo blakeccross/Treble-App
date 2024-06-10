@@ -2,11 +2,9 @@ import React from "react";
 
 import { View, Pressable, Dimensions, StyleSheet, useColorScheme } from "react-native";
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
-import { Paragraph } from "tamagui";
 import { BlurView } from "expo-blur";
 import { blueDark, color, gray } from "@tamagui/themes";
 import * as Haptics from "expo-haptics";
-// import NavigationIcon from './navigationIcon';
 
 const { width } = Dimensions.get("window");
 

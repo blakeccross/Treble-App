@@ -1,9 +1,8 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { color, red } from "@tamagui/themes";
+import { color, colorTokens, red } from "@tamagui/themes";
 import { View, Text, SafeAreaView, StyleSheet, FlatList, Pressable } from "react-native";
-import Animated, { useSharedValue, useAnimatedStyle, withSpring, withDelay, ReduceMotion } from "react-native-reanimated";
-import Svg, { Defs, RadialGradient, Stop } from "react-native-svg";
-import { Avatar, Card, H3, H5, Paragraph, Circle, Separator, Square, XStack, YStack, useEvent, useControllableState, H1, H2, Button } from "tamagui";
+import Animated, { useSharedValue, useAnimatedStyle, withSpring, withDelay } from "react-native-reanimated";
+import { Card, H3, Paragraph, Circle, XStack, H1, H2 } from "tamagui";
 import { window } from "@/utils";
 import { TapGestureHandler } from "react-native-gesture-handler";
 import { AVPlaybackSource, Audio } from "expo-av";
@@ -12,20 +11,27 @@ import { Heart, X } from "@tamagui/lucide-icons";
 import { LinearGradient } from "tamagui/linear-gradient";
 import { useFocusEffect, useNavigation, useRouter } from "expo-router";
 import * as Haptics from "expo-haptics";
+import GradientCircle from "@/components/gradient-circle";
 
 const PAGE_WIDTH = window.width;
 const colorOptions = ["blue", "orange", "green", "red", "yellow", "purple", "pink"];
 const notes = ["c3", "d3", "e3", "f3", "g3", "a3", "b3"];
+const notesHard = ["c3", "cs3", "d3", "ds3", "e3", "f3", "fs3", "g3", "gs3", "a3", "as3", "b3"];
 
 // Static imports for audio files
 const noteToFile = {
   c3: require("@/assets/audio/piano_c3.mp3"),
-  a3: require("@/assets/audio/piano_a3.mp3"),
-  b3: require("@/assets/audio/piano_b3.mp3"),
+  cs3: require("@/assets/audio/piano_c#3.mp3"),
   d3: require("@/assets/audio/piano_d3.mp3"),
+  ds3: require("@/assets/audio/piano_d#3.mp3"),
   e3: require("@/assets/audio/piano_e3.mp3"),
   f3: require("@/assets/audio/piano_f3.mp3"),
+  fs3: require("@/assets/audio/piano_f#3.mp3"),
   g3: require("@/assets/audio/piano_g3.mp3"),
+  gs3: require("@/assets/audio/piano_g#3.mp3"),
+  a3: require("@/assets/audio/piano_a3.mp3"),
+  as3: require("@/assets/audio/piano_a#3.mp3"),
+  b3: require("@/assets/audio/piano_b3.mp3"),
 };
 
 const correctSFX = require("@/assets/audio/correct_sfx.mp3");
@@ -38,8 +44,9 @@ export default function Page() {
   const [currentScore, setCurrentScore] = useState<number>(0);
   const [lives, setLives] = useState(3);
   const [selectedAnswer, setSelectedAnswer] = useState<string>("");
-  // const [correctAnswer, setCorrectAnswer] = useState<string>("");
+  const [isRunning, setIsRunning] = useState(false);
   const [answerIsCorrect, setAnswerIsCorrect] = useState<boolean>();
+  const [totalTime, setTotalTime] = useState<number>(15);
   const [colorSceme, setColorSceme] = useState<string>("blue");
   const [availableAnswers, setAvailableAnswers] = useState([
     { value: "c4", option_text: "C" },
@@ -47,12 +54,15 @@ export default function Page() {
     { value: "e4", option_text: "Eb" },
     { value: "f4", option_text: "F" },
   ]);
+
   const correctAnswer = useRef("");
   // Shared values for scale animations
   const scale1 = useSharedValue(1);
   const scale2 = useSharedValue(1);
   const scale3 = useSharedValue(1);
   const scale4 = useSharedValue(1);
+
+  const theta = useSharedValue(2 * Math.PI);
 
   // Shared value for translationY animation
   const translationY = useSharedValue(window.height);
@@ -84,17 +94,23 @@ export default function Page() {
       playSFX(correctSFX);
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     } else {
-      if (lives <= 1) {
-        router.push("(ear-training)/game-over");
-      } else {
-        setLives(lives - 1);
-      }
-      setAnswerIsCorrect(false);
-      playSFX(incorrectSFX, true);
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      handleIncorrect();
     }
-    correctAnswer.current = "";
+    // correctAnswer.current = "";
+    setIsRunning(false);
+
     springOut();
+  }
+
+  function handleIncorrect() {
+    if (lives <= 1) {
+      router.push(`(ear-training)/game-over/${currentScore}`);
+    } else {
+      setLives(lives - 1);
+    }
+    setAnswerIsCorrect(false);
+    playSFX(incorrectSFX, true);
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
   }
 
   useFocusEffect(
@@ -124,18 +140,25 @@ export default function Page() {
     // Shuffle the array
     const shuffledOptions = shuffle(filteredNotes).slice(0, 3); // Shuffle and take first 3
     const quizOptions = shuffledOptions.slice(0, 3).concat(excludeNote);
-    // shuffledNotes.push(excludeNote);
 
     // Return the first three elements
     return shuffle(quizOptions);
   }
 
   function newQuestion() {
-    const randomNote = notes[Math.floor(Math.random() * notes.length)] as keyof typeof noteToFile;
-    // setCorrectAnswer(randomNote);
+    let answerOptions = notes;
+    if (currentScore >= 10) {
+      setTotalTime(10);
+    } else if (currentScore >= 25) {
+      setTotalTime(5);
+      answerOptions = notesHard;
+    }
+    correctAnswer.current = "";
+    startAnimation();
+    const randomNote = answerOptions[Math.floor(Math.random() * notes.length)] as keyof typeof noteToFile;
     correctAnswer.current = randomNote;
     console.log(randomNote);
-    const options = getRandomNotes(randomNote, notes);
+    const options = getRandomNotes(randomNote, answerOptions);
     setAvailableAnswers(options.map((item) => ({ value: item, option_text: item })));
   }
 
@@ -163,12 +186,11 @@ export default function Page() {
   }
 
   function handlePressPlay() {
-    if (correctAnswer.current === "") {
+    if (!isRunning) {
       setSelectedAnswer("");
       newQuestion();
       changeColor();
       bounce();
-      newQuestion();
       playAudio();
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     } else {
@@ -230,8 +252,6 @@ export default function Page() {
   }
 
   function springIn() {
-    // setSelectedAnswer("");
-    // newQuestion();
     translationY.value = withSpring(0, {
       damping: 12,
       stiffness: 50,
@@ -240,12 +260,35 @@ export default function Page() {
 
   function springOut() {
     translationY.value = withDelay(
-      200,
+      500,
       withSpring(window.height, {
         damping: 12,
         stiffness: 15,
       })
     );
+  }
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (isRunning) {
+        handleTimerFinished();
+      }
+    }, totalTime * 1000);
+
+    // Cleanup function to clear the timeout if the component unmounts
+    return () => clearTimeout(timeoutId);
+  }, [isRunning]); // Empty dependency array ensures the effect runs only once
+
+  const startAnimation = () => {
+    setIsRunning(true);
+    theta.value = 2 * Math.PI;
+  };
+
+  function handleTimerFinished() {
+    setSelectedAnswer("1");
+    setIsRunning(false);
+    handleIncorrect();
+    springOut();
   }
 
   return (
@@ -262,13 +305,29 @@ export default function Page() {
           <Paragraph fontWeight={600}>{lives}</Paragraph>
         </XStack>
       </XStack>
+
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <View style={{ position: "relative", justifyContent: "center", alignItems: "center", height: PAGE_WIDTH * 0.85 }}>
           <Animated.View style={[animatedStyle1, { position: "absolute" }]}>
-            <Circle size={PAGE_WIDTH * 0.85} backgroundColor={`$${colorSceme}10Dark`} elevation="$0.25" overflow="hidden">
-              {/* <LinearGradient width={"100%"} height={"100%"} colors={["$blue10Dark", "$blue1"]} start={[1, 1]} end={[0, 0]} /> */}
-            </Circle>
+            <Circle
+              size={PAGE_WIDTH * 0.85}
+              backgroundColor={`$${colorSceme}10Dark`}
+              elevation="$0.25"
+              overflow="hidden"
+              position="absolute"
+            ></Circle>
+            <GradientCircle
+              size={PAGE_WIDTH * 0.85}
+              strokeWidth={100}
+              time={totalTime}
+              color={"black"}
+              opacity={0.2}
+              theta={theta}
+              isRunning={isRunning}
+              setIsRunning={setIsRunning}
+            />
           </Animated.View>
+
           <Animated.View style={[animatedStyle2, { position: "absolute" }]}>
             <Circle size={PAGE_WIDTH * 0.7} backgroundColor={`$${colorSceme}8Dark`} elevation="$0.25" />
           </Animated.View>
@@ -312,21 +371,40 @@ export default function Page() {
             <Card
               bordered
               elevate
+              disabled={!isRunning}
               borderRadius="$8"
               pressStyle={{ scale: 0.95 }}
               animation="bouncy"
               flex={1}
               onPress={() => validateAnswer(item.value)}
+              borderWidth={"$1"}
               backgroundColor={
-                selectedAnswer === item.value ? (answerIsCorrect ? "$green5" : answerIsCorrect !== undefined ? "$red5" : "$gray6") : "$background"
+                selectedAnswer === item.value
+                  ? answerIsCorrect
+                    ? "$green5"
+                    : answerIsCorrect !== undefined
+                    ? "$red5"
+                    : "$gray6"
+                  : correctAnswer.current === item.value && selectedAnswer !== ""
+                  ? "$green5"
+                  : "$background"
               }
               borderColor={
-                selectedAnswer === item.value ? (answerIsCorrect ? "$green8" : answerIsCorrect !== undefined ? "$red10" : "$gray6") : "$background"
+                selectedAnswer === item.value
+                  ? answerIsCorrect
+                    ? "$green8"
+                    : answerIsCorrect !== undefined
+                    ? "$red10"
+                    : "$gray6"
+                  : correctAnswer.current === item.value && selectedAnswer !== ""
+                  ? "$green8"
+                  : "$background"
               }
             >
               <Card.Header alignItems="center">
                 <H2 fontWeight={600} paddingVertical={"$3"}>
                   {item.option_text.charAt(0).toUpperCase()}
+                  {item.option_text.charAt(1) === "s" && "#"}
                 </H2>
               </Card.Header>
             </Card>

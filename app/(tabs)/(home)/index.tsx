@@ -20,9 +20,9 @@ export default function HomeScreen() {
       <ParallaxScrollView
         headerBackgroundColor={{ light: blue.blue10, dark: darkColors.blue10 }}
         headerImage={
-          <LinearGradient width="100%" height="100%" colors={["$blue10", "$blue8"]} start={[0.5, 1]} end={[0, 0]}>
+          <LinearGradient width="100%" height="100%" colors={["$blue10", "$blue8"]} start={[0.5, 1]} end={[0, 0]} paddingHorizontal={"$4"}>
             <SafeAreaView />
-            <YStack gap="$3" style={{ marginHorizontal: 20 }}>
+            <YStack gap="$3">
               <XStack gap="$2" justifyContent="space-between">
                 <YStack>
                   <H3 fontWeight={800} color={"white"}>
