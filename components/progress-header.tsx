@@ -46,7 +46,7 @@ export default function ProgressHeader() {
         <Sheet.Frame padding="$4" justifyContent="center" alignItems="center" space="$5">
           <H3>Are you sure you want to exit?</H3>
           <Paragraph>All of your progress will be lost.</Paragraph>
-          <Button onPress={() => route.navigate(`(tabs)/home/module-overview/123`)} fontWeight={600}>
+          <Button onPress={() => route.navigate(`(tabs)/(home)/module-overview/123`)} fontWeight={600}>
             Continue
           </Button>
         </Sheet.Frame>

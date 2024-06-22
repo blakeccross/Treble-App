@@ -2,7 +2,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { color, colorTokens, red } from "@tamagui/themes";
 import { View, Text, SafeAreaView, StyleSheet, FlatList, Pressable } from "react-native";
 import Animated, { useSharedValue, useAnimatedStyle, withSpring, withDelay } from "react-native-reanimated";
-import { Card, H3, Paragraph, Circle, XStack, H1, H2 } from "tamagui";
+import { Card, H3, Paragraph, Circle, XStack, H1, H2, Square } from "tamagui";
 import { window } from "@/utils";
 import { TapGestureHandler } from "react-native-gesture-handler";
 import { AVPlaybackSource, Audio } from "expo-av";
@@ -12,11 +12,26 @@ import { LinearGradient } from "tamagui/linear-gradient";
 import { useFocusEffect, useNavigation, useRouter } from "expo-router";
 import * as Haptics from "expo-haptics";
 import GradientCircle from "@/components/gradient-circle";
+import SquareProgress from "@/components/aquare-progress";
 
 const PAGE_WIDTH = window.width;
 const colorOptions = ["blue", "orange", "green", "red", "yellow", "purple", "pink"];
-const notes = ["c3", "d3", "e3", "f3", "g3", "a3", "b3"];
 const notesHard = ["c3", "cs3", "d3", "ds3", "e3", "f3", "fs3", "g3", "gs3", "a3", "as3", "b3"];
+const notes = ["c", "cs", "d", "ds", "e", "f", "fs", "g", "gs", "a", "as", "b"];
+type ChordType = "major" | "minor" | "major7" | "dim";
+const chordTypes: { type: ChordType; intervals: number[] }[] = [
+  { type: "major", intervals: [0, 4, 7] }, // Root, Major Third, Perfect Fifth
+  { type: "minor", intervals: [0, 3, 7] }, // Root, Minor Third, Perfect Fifth
+  { type: "major7", intervals: [0, 4, 7, 11] }, // Root, Major Third, Perfect Fifth, Major Seventh
+  { type: "dim", intervals: [0, 3, 6] }, // Root, Major Third, Perfect Fifth, Major Seventh
+];
+const availableAnswers = [
+  { value: "major", option_text: "maj" },
+  { value: "minor", option_text: "min" },
+  { value: "major7", option_text: "maj7" },
+  { value: "minor7", option_text: "min7" },
+  { value: "dim", option_text: "dim" },
+];
 
 // Static imports for audio files
 const noteToFile = {
@@ -48,14 +63,14 @@ export default function Page() {
   const [answerIsCorrect, setAnswerIsCorrect] = useState<boolean>();
   const [totalTime, setTotalTime] = useState<number>(15);
   const [colorSceme, setColorSceme] = useState<string>("blue");
-  const [availableAnswers, setAvailableAnswers] = useState([
-    { value: "c4", option_text: "C" },
-    { value: "d4", option_text: "D" },
-    { value: "e4", option_text: "Eb" },
-    { value: "f4", option_text: "F" },
-  ]);
+  // const [availableAnswers, setAvailableAnswers] = useState([
+  //   { value: "c4", option_text: "C" },
+  //   { value: "d4", option_text: "D" },
+  //   { value: "e4", option_text: "Eb" },
+  //   { value: "f4", option_text: "F" },
+  // ]);
 
-  const correctAnswer = useRef("");
+  const correctAnswer = useRef({ type: "major", chord: ["c3", "e3", "g3"] });
   // Shared values for scale animations
   const scale1 = useSharedValue(1);
   const scale2 = useSharedValue(1);
@@ -88,7 +103,7 @@ export default function Page() {
   function validateAnswer(selectedId: string) {
     setSelectedAnswer(selectedId);
     // Replace with real value
-    if (selectedId === correctAnswer.current) {
+    if (selectedId === correctAnswer.current.type) {
       setAnswerIsCorrect(true);
       setCurrentScore(currentScore + 1);
       playSFX(correctSFX);
@@ -99,7 +114,7 @@ export default function Page() {
     // correctAnswer.current = "";
     setIsRunning(false);
 
-    springOut();
+    // springOut();
   }
 
   function handleIncorrect() {
@@ -133,36 +148,46 @@ export default function Page() {
     return array;
   }
 
-  function getRandomNotes(excludeNote: string, notesArray: string[]): string[] {
-    // Filter out the excludeNote from the notesArray
-    const filteredNotes = notesArray.filter((note) => note !== excludeNote);
+  function getChordNotes(root: string, type: ChordType): string[] {
+    // Find the index of the root note in the array
+    const rootIndex = notes.indexOf(root.toLowerCase());
 
-    // Shuffle the array
-    const shuffledOptions = shuffle(filteredNotes).slice(0, 3); // Shuffle and take first 3
-    const quizOptions = shuffledOptions.slice(0, 3).concat(excludeNote);
+    if (rootIndex === -1) {
+      throw new Error("Invalid root note");
+    }
 
-    // Return the first three elements
-    return shuffle(quizOptions);
+    // Get the appropriate chord pattern
+    const chordPattern = chordTypes.find((chord) => chord.type === type)?.intervals;
+    if (!chordPattern) {
+      throw new Error("Invalid chord type");
+    }
+
+    // Calculate the notes of the chord
+    const chordNotes = chordPattern.map((interval) => notes[(rootIndex + interval) % notes.length] + "3");
+    return chordNotes;
   }
 
   function newQuestion() {
-    let answerOptions = notes;
-
+    const randomNote = notes[Math.floor(Math.random() * notes.length)] as keyof typeof noteToFile;
+    const randomType = chordTypes[Math.floor(Math.random() * chordTypes.length)].type as ChordType;
+    const randomChord = getChordNotes(randomNote, randomType);
+    console.log(randomChord, randomType);
+    // let answerOptions = notes;
     if (currentScore >= 10) {
       setTotalTime(10);
     } else if (currentScore >= 25) {
       setTotalTime(5);
-      answerOptions = notesHard;
     } else if (currentScore >= 50) {
       setTotalTime(3);
     }
-    correctAnswer.current = "";
+    // correctAnswer.current = "";
     startAnimation();
-    const randomNote = answerOptions[Math.floor(Math.random() * notes.length)] as keyof typeof noteToFile;
-    correctAnswer.current = randomNote;
-    console.log(randomNote);
-    const options = getRandomNotes(randomNote, answerOptions);
-    setAvailableAnswers(options.map((item) => ({ value: item, option_text: item })));
+    // const randomNote = answerOptions[Math.floor(Math.random() * notes.length)] as keyof typeof noteToFile;
+    correctAnswer.current = { type: randomType, chord: randomChord };
+
+    // console.log(randomNote);
+    // const options = getRandomChordT(randomNote, answerOptions);
+    // setAvailableAnswers(options.map((item) => ({ value: item, option_text: item })));
   }
 
   async function playSFX(sfx: AVPlaybackSource, interrupt?: boolean) {
@@ -179,13 +204,19 @@ export default function Page() {
   }
 
   async function playAudio() {
-    const { sound } = await Audio.Sound.createAsync(noteToFile[correctAnswer.current as keyof typeof noteToFile]);
-    await Audio.setAudioModeAsync({
-      playsInSilentModeIOS: true,
-    });
+    for (const note of correctAnswer.current?.chord) {
+      const noteFile = noteToFile[note as keyof typeof noteToFile];
+      if (noteFile) {
+        await playSFX(noteFile);
+      }
+    }
+    // const { sound } = await Audio.Sound.createAsync(noteToFile[correctAnswer.current[0] as keyof typeof noteToFile]);
+    // await Audio.setAudioModeAsync({
+    //   playsInSilentModeIOS: true,
+    // });
 
-    setSound(sound);
-    await sound.playAsync();
+    // setSound(sound);
+    // await sound.playAsync();
   }
 
   function handlePressPlay() {
@@ -284,14 +315,14 @@ export default function Page() {
 
   const startAnimation = () => {
     setIsRunning(true);
-    theta.value = 2 * Math.PI;
+    theta.value = 1;
   };
 
   function handleTimerFinished() {
     setSelectedAnswer("1");
     setIsRunning(false);
     handleIncorrect();
-    springOut();
+    // springOut();
   }
 
   return (
@@ -312,34 +343,33 @@ export default function Page() {
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <View style={{ position: "relative", justifyContent: "center", alignItems: "center", height: PAGE_WIDTH * 0.85 }}>
           <Animated.View style={[animatedStyle1, { position: "absolute" }]}>
-            <Circle
+            <Square
               size={PAGE_WIDTH * 0.85}
               backgroundColor={`$${colorSceme}10Dark`}
               elevation="$0.25"
               overflow="hidden"
               position="absolute"
-            ></Circle>
-            <GradientCircle
+            ></Square>
+            <SquareProgress
               size={PAGE_WIDTH * 0.85}
-              strokeWidth={100}
+              strokeWidth={(PAGE_WIDTH * (0.85 - 0.7)) / 2}
               time={totalTime}
               color={"black"}
               opacity={0.2}
               theta={theta}
               isRunning={isRunning}
-              setIsRunning={setIsRunning}
             />
           </Animated.View>
 
           <Animated.View style={[animatedStyle2, { position: "absolute" }]}>
-            <Circle size={PAGE_WIDTH * 0.7} backgroundColor={`$${colorSceme}8Dark`} elevation="$0.25" />
+            <Square size={PAGE_WIDTH * 0.7} backgroundColor={`$${colorSceme}8Dark`} elevation="$0.25" />
           </Animated.View>
           <Animated.View style={[animatedStyle3, { position: "absolute" }]}>
-            <Circle size={PAGE_WIDTH * 0.55} backgroundColor={`$${colorSceme}7Dark`} elevation="$0.25" />
+            <Square size={PAGE_WIDTH * 0.55} backgroundColor={`$${colorSceme}7Dark`} elevation="$0.25" />
           </Animated.View>
           <TapGestureHandler onActivated={handlePressPlay}>
             <Animated.View style={[animatedStyle4, { position: "absolute" }]}>
-              <Circle
+              <Square
                 size={PAGE_WIDTH * 0.4}
                 // backgroundColor="$blue3Dark"
                 elevation="$0.25"
@@ -358,7 +388,7 @@ export default function Page() {
                 >
                   <H3 color="white">Play</H3>
                 </LinearGradient>
-              </Circle>
+              </Square>
             </Animated.View>
           </TapGestureHandler>
         </View>
@@ -388,7 +418,7 @@ export default function Page() {
                     : answerIsCorrect !== undefined
                     ? "$red5"
                     : "$gray6"
-                  : correctAnswer.current === item.value && selectedAnswer !== ""
+                  : correctAnswer.current.type === item.value && selectedAnswer !== ""
                   ? "$green5"
                   : "$background"
               }
@@ -399,15 +429,14 @@ export default function Page() {
                     : answerIsCorrect !== undefined
                     ? "$red10"
                     : "$gray6"
-                  : correctAnswer.current === item.value && selectedAnswer !== ""
+                  : correctAnswer.current.type === item.value && selectedAnswer !== ""
                   ? "$green8"
                   : "$background"
               }
             >
               <Card.Header alignItems="center">
                 <H2 fontWeight={600} paddingVertical={"$3"}>
-                  {item.option_text.charAt(0).toUpperCase()}
-                  {item.option_text.charAt(1) === "s" && "#"}
+                  {item.option_text}
                 </H2>
               </Card.Header>
             </Card>

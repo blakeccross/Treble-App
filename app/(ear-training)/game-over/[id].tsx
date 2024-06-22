@@ -1,9 +1,9 @@
 import { QuizContext } from "@/context/quiz-context";
 import { NavigationContainer } from "@react-navigation/native";
-import { RefreshCw, Share, Trophy } from "@tamagui/lucide-icons";
+import { RefreshCw, Share, Trophy, X } from "@tamagui/lucide-icons";
 import { Link, Stack, useLocalSearchParams, useRouter } from "expo-router";
 import React, { useContext, useEffect, useState } from "react";
-import { SafeAreaView, ScrollView, View, useWindowDimensions } from "react-native";
+import { Pressable, SafeAreaView, ScrollView, View, useWindowDimensions } from "react-native";
 import { Button, Card, H1, H2, H3, Paragraph, Progress, Spinner, Theme, XStack, YStack } from "tamagui";
 import { LinearGradient } from "tamagui/linear-gradient";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -25,7 +25,7 @@ export default function Index() {
       } else {
         // First time playing game
         storeData(String(id));
-        setHighScore(Number(value));
+        setHighScore(Number(id));
       }
     } catch (e) {
       // error reading value
@@ -47,6 +47,11 @@ export default function Index() {
   return (
     <LinearGradient width="100%" height="100%" colors={["$blue10", "$blue8"]} start={[0.5, 1]} end={[0, 0]} paddingHorizontal={"$4"}>
       <SafeAreaView style={{ flex: 1 }}>
+        <XStack paddingHorizontal="$4">
+          <Pressable onPress={() => router.navigate("(tabs)/ear-training")}>
+            <X size="$3" color={"white"} />
+          </Pressable>
+        </XStack>
         <YStack alignItems="center" justifyContent="center" flex={1} padding="$4">
           <YStack flex={1} gap="$6">
             <YStack alignItems="center" justifyContent="center" flex={1}>

@@ -1,18 +1,24 @@
-import { StyleSheet, Platform, SafeAreaView } from "react-native";
+import { StyleSheet, Platform, SafeAreaView, Pressable } from "react-native";
 import { Avatar, Card, Circle, H1, H3, H5, Paragraph, Separator, View, XStack, Button, ScrollView, YStack, H2 } from "tamagui";
 import { Image } from "expo-image";
 import { BlurView } from "expo-blur";
-import { Play } from "@tamagui/lucide-icons";
+import { AudioWaveform, Play } from "@tamagui/lucide-icons";
 import { Link, useRouter } from "expo-router";
 const blurhash =
   "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
 
 const games = [
-  { title: "Pitch Perfect", description: `Test your ear in a\nfast pace matching game`, backgroundImage: require("@/assets/images/blue_shapes.jpg") },
+  {
+    title: "Pitch Perfect",
+    description: `Test your ear in a\nfast pace matching game`,
+    backgroundImage: require("@/assets/images/blue_shapes.jpg"),
+    route: "/(ear-training)/pitch-perfect",
+  },
   {
     title: "Nashville Roundup",
     description: `Match the Nashville numbers`,
     backgroundImage: require("@/assets/images/hassaan-here-bKfkhVRAJTQ-unsplash.jpg"),
+    route: "/(ear-training)/name-that-chord",
   },
 ];
 
@@ -22,7 +28,12 @@ export default function TabTwoScreen() {
     <View flex={1} backgroundColor={"$background"}>
       <SafeAreaView />
       <ScrollView padding="$4" contentContainerStyle={{ paddingBottom: 150 }}>
-        <H2 fontWeight={600}>Ear Training</H2>
+        <XStack justifyContent="space-between">
+          <H2 fontWeight={600}>Ear Training</H2>
+          <Pressable onPress={() => router.push("/(ear-training)/tuner")}>
+            <AudioWaveform />
+          </Pressable>
+        </XStack>
         <YStack gap={"$4"}>
           {games.map((game) => (
             <Card
@@ -35,7 +46,7 @@ export default function TabTwoScreen() {
               overflow="hidden"
               height={400}
               flex={1}
-              onPress={() => router.push("/(ear-training)/pitch-perfect")}
+              onPress={() => router.push(game.route)}
             >
               <Card.Background>
                 <Image
