@@ -18,6 +18,7 @@
     "@expo/vector-icons": "^14.0.0",
     "@react-native-async-storage/async-storage": "1.23.1",
     "@react-navigation/native": "^6.0.2",
+    "@shopify/react-native-skia": "^1.3.6",
     "@tamagui/babel-plugin": "^1.99.1",
     "@tamagui/config": "^1.99.1",
     "@tamagui/lucide-icons": "^1.99.1",
@@ -28,6 +29,7 @@
     "expo-blur": "~13.0.2",
     "expo-constants": "~16.0.1",
     "expo-font": "~12.0.5",
+    "expo-haptics": "~13.0.1",
     "expo-image": "~1.12.11",
     "expo-linear-gradient": "^13.0.2",
     "expo-linking": "~6.3.1",
@@ -56,8 +58,7 @@
     "react-native-web": "~0.19.10",
     "react-soundfont-player": "^1.0.2",
     "tamagui": "^1.99.1",
-    "vexflow": "^4.2.4",
-    "expo-haptics": "~13.0.1"
+    "vexflow": "^4.2.4"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

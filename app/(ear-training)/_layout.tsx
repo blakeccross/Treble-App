@@ -6,6 +6,7 @@ export default function TabLayout() {
     <Stack>
       <Stack.Screen name="pitch-perfect" options={{ headerShown: false }} />
       <Stack.Screen name="name-that-chord" options={{ headerShown: false }} />
+      <Stack.Screen name="interval-training" options={{ headerShown: false }} />
       <Stack.Screen name="game-over/[id]" options={{ headerShown: false, presentation: "fullScreenModal" }} />
     </Stack>
   );

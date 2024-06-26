@@ -20,6 +20,12 @@ const games = [
     backgroundImage: require("@/assets/images/hassaan-here-bKfkhVRAJTQ-unsplash.jpg"),
     route: "/(ear-training)/name-that-chord",
   },
+  {
+    title: "Interval Training",
+    description: `Test your ear in a\nfast pace matching game`,
+    backgroundImage: require("@/assets/images/blue_shapes.jpg"),
+    route: "/(ear-training)/interval-training",
+  },
 ];
 
 export default function TabTwoScreen() {

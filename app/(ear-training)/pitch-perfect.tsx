@@ -158,7 +158,12 @@ export default function Page() {
     }
     correctAnswer.current = "";
     startAnimation();
-    const randomNote = answerOptions[Math.floor(Math.random() * notes.length)] as keyof typeof noteToFile;
+    let randomNote: keyof typeof noteToFile = "c3";
+
+    if (currentScore > 0) {
+      randomNote = answerOptions[Math.floor(Math.random() * notes.length)] as keyof typeof noteToFile;
+    }
+
     correctAnswer.current = randomNote;
     console.log(randomNote);
     const options = getRandomNotes(randomNote, answerOptions);
