@@ -1,7 +1,7 @@
 import { UserContext } from "@/context/user-context";
 import useAsyncStorage from "@/hooks/useAsyncStorage";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { Settings } from "@tamagui/lucide-icons";
+import { Music, Settings } from "@tamagui/lucide-icons";
 import { color } from "@tamagui/themes";
 import { Link } from "expo-router";
 import { useContext } from "react";
@@ -14,14 +14,15 @@ export default function TabTwoScreen() {
   return (
     <SafeAreaView>
       <XStack justifyContent="flex-end" paddingHorizontal="$4">
-        <Link href={{ pathname: "/profile-settings" }}>
+        <Link href={{ pathname: "/(profile)/profile-settings" }}>
           <Settings size={"$2"} />
         </Link>
       </XStack>
       <YStack alignItems="center" marginVertical="$10">
         <Avatar circular size="$10">
-          <Avatar.Image accessibilityLabel="Cam" src="https://images.unsplash.com/photo-1548142813-c348350df52b?&w=150&h=150&dpr=2&q=80" />
+          <Avatar.Image accessibilityLabel="Cam" src={currentUser?.profileImageURL} />
           <Avatar.Fallback backgroundColor="$blue10" />
+          <Music size={70} />
         </Avatar>
         <H3>{currentUser?.name}</H3>
         <Separator />

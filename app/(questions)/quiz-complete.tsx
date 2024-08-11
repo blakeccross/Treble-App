@@ -7,12 +7,13 @@ import { Button, Card, H1, H3, Progress, Spinner, YStack } from "tamagui";
 
 export default function Index() {
   const router = useRouter();
-  const { currentQuestionIndex, questions } = useContext(QuizContext);
+  const { currentQuestionIndex, questions, section } = useContext(QuizContext);
 
   function handle() {
     // router.dismiss();
-    router.replace({
-      pathname: "/(questions)/" + questions[currentQuestionIndex].type,
+    router.navigate({
+      pathname: "/module-overview/[id]",
+      params: { id: section.id },
     });
   }
   return (

@@ -2,7 +2,7 @@ import { StyleSheet } from "react-native";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Avatar, Button, Card, H1, H2, H3, Paragraph, Progress, ScrollView, XStack, YStack } from "tamagui";
-import { Flame, Gem, Trophy } from "@tamagui/lucide-icons";
+import { Flame, Gem, Music, Trophy } from "@tamagui/lucide-icons";
 import { Link, router } from "expo-router";
 import { ModuleContext } from "@/context/module-context";
 import React, { useContext } from "react";
@@ -33,11 +33,9 @@ export default function HomeScreen() {
                   </H3>
                 </YStack>
                 <Avatar circular size="$5">
-                  <Avatar.Image
-                    accessibilityLabel="Nate Wienert"
-                    src="https://images.unsplash.com/photo-1545539513-9ad989ce66b2?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                  />
-                  <Avatar.Fallback delayMs={600} backgroundColor="$blue10" />
+                  <Avatar.Image accessibilityLabel="Cam" src={currentUser?.profileImageURL} />
+                  <Avatar.Fallback backgroundColor="$blue10" />
+                  <Music size={70} />
                 </Avatar>
               </XStack>
 

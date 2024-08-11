@@ -8,6 +8,7 @@ import { StyleSheet, Image, Platform, SafeAreaView } from "react-native";
 import Toast from "react-native-toast-message";
 import { Avatar, Button, Card, H3, H5, Input, Label, Paragraph, ScrollView, Separator, Stack, View, XStack, YStack } from "tamagui";
 import * as ImagePicker from "expo-image-picker";
+import { Music } from "@tamagui/lucide-icons";
 
 export default function ProfileSettings() {
   const [profile, setProfile] = useState({ name: "", email: "" });
@@ -39,8 +40,8 @@ export default function ProfileSettings() {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
+      allowsMultipleSelection: false,
       aspect: [1, 1],
-      quality: 1,
     });
 
     console.log(result);
@@ -63,6 +64,7 @@ export default function ProfileSettings() {
             <Avatar circular size="$12" onPress={pickImage}>
               <Avatar.Image accessibilityLabel="Cam" src={currentUser?.profileImageURL} />
               <Avatar.Fallback backgroundColor="$blue10" />
+              <Music size={70} />
             </Avatar>
           </YStack>
           <View>

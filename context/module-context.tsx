@@ -1,7 +1,8 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { user_data } from "@/utils/sample-user-data";
 import { supabase } from "@/utils/supabase";
 import { Module } from "@/types";
+import { UserContext } from "./user-context";
 
 type ModuleContextProps = { data: Module[] };
 
@@ -9,10 +10,16 @@ export const ModuleContext = createContext<ModuleContextProps>({} as ModuleConte
 
 export default function ModuleProvider({ children }: { children: JSX.Element }) {
   const [data, setData] = useState<Module[]>([]);
+  const { currentUser, handleUpdateUserInfo } = useContext(UserContext);
 
   useEffect(() => {
     getModuleData();
   }, []);
+
+  useEffect(() => {
+    console.log("SETTING");
+    setData(updateCompletedModules(updateCompletedSections(data)));
+  }, [currentUser?.completedSections]);
 
   async function getModuleData() {
     try {
@@ -27,6 +34,7 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
 
       if (data) {
         setData(updateCompletedModules(updateCompletedSections(data)));
+        console.log("HERE", updateCompletedModules(updateCompletedSections(data)));
       }
     } catch (error) {
       // if (error instanceof Error) {
@@ -38,21 +46,25 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
   }
 
   function updateCompletedModules(data: Module[]) {
-    const completedModuleIDs = new Set(user_data.completed_modules);
+    const completedModuleIDs = new Set(currentUser?.completedModules);
 
     return data.map((module) => {
-      const numOfCompletedSectionsInModule = module.section.filter((section) => user_data.completed_sections.includes(section.id)).length;
+      const numOfCompletedSectionsInModule = module.section.filter(
+        (section) => currentUser?.completedSections && currentUser?.completedSections.includes(section.id)
+      ).length;
+
+      console.log(Math.floor((numOfCompletedSectionsInModule / module.section.length) * 100));
 
       return {
         ...module,
         completed: completedModuleIDs.has(module.id),
-        progress: completedModuleIDs.has(module.id) ? 100 : Math.floor(numOfCompletedSectionsInModule / module.section.length) * 100,
+        progress: completedModuleIDs.has(module.id) ? 100 : Math.floor((numOfCompletedSectionsInModule / module.section.length) * 100),
       };
     });
   }
 
   function updateCompletedSections(data: Module[]) {
-    const completedSectionIds = new Set(user_data.completed_sections);
+    const completedSectionIds = new Set(currentUser?.completedSections);
 
     return data.map((module) => {
       return {
@@ -61,6 +73,8 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
       };
     });
   }
+
+  console.log(data);
 
   return <ModuleContext.Provider value={{ data }}>{children}</ModuleContext.Provider>;
 }

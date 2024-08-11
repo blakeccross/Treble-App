@@ -2,6 +2,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { Dispatch, SetStateAction, createContext, useContext, useEffect, useRef, useState } from "react";
 import { ModuleContext } from "./module-context";
 import { Section, SectionItem } from "@/types";
+import { UserContext } from "./user-context";
 
 type Quiz = {
   currentQuestionIndex: number;
@@ -16,14 +17,16 @@ export const QuizContext = createContext<Quiz>({} as Quiz);
 export default function QuizProvider({ children }: { children: JSX.Element[] }) {
   const router = useRouter();
   const { module_id, section_id } = useLocalSearchParams<{ module_id: string; section_id: string }>();
-
+  const { currentUser, handleUpdateUserInfo } = useContext(UserContext);
   const { data: moduleData } = useContext(ModuleContext);
+
   const sections = moduleData.flatMap((item) => item.section);
 
   const currentModule = moduleData.find((item) => item.id === +module_id);
   const currentSection = sections.find((item) => item.id === +section_id);
 
-  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const sectionIndexInModule = currentModule?.section.map((item) => item.id).indexOf(currentSection?.id || 0) as number;
+
   const [lives, setLives] = useState(0);
   const currentQuestionIndex = useRef<number>(0);
 
@@ -50,22 +53,29 @@ export default function QuizProvider({ children }: { children: JSX.Element[] }) 
           pathname: `/${currentSection.section_item[currentQuestionIndex.current].type}`,
         });
       } else {
-        setLives(3);
-        currentQuestionIndex.current = 0;
-        // setCurrentQuestion(currentQuestion + 1);
-
-        router.push({
-          pathname: "/quiz-complete",
-        });
+        // Finished Section
+        if (currentModule?.section && sectionIndexInModule + 1 < currentModule?.section.length) {
+          finishedSection();
+        } else {
+          // Finished Module
+          currentQuestionIndex.current = 0;
+          router.push({
+            pathname: "/module-complete",
+          });
+        }
       }
-      // else {
-      //   // Finished Module
-      //   currentQuestionIndex.current = 0;
-      //   router.push({
-      //     pathname: "/module-complete",
-      //   });
-      // }
     }
+  }
+
+  function finishedSection() {
+    handleUpdateUserInfo({ completedSections: [...(currentUser?.completedSections || []), currentSection?.id] });
+
+    setLives(3);
+    currentQuestionIndex.current = 0;
+
+    router.push({
+      pathname: "/quiz-complete",
+    });
   }
 
   return (
