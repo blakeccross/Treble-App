@@ -2,14 +2,16 @@ import { UserContext } from "@/context/user-context";
 import useAsyncStorage from "@/hooks/useAsyncStorage";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { color } from "@tamagui/themes";
+import { router, useRouter } from "expo-router";
 import React, { useContext, useEffect, useState } from "react";
 import { StyleSheet, Image, Platform, SafeAreaView } from "react-native";
-import { Toast, ToastViewport, useToastController, useToastState } from "@tamagui/toast";
+import Toast from "react-native-toast-message";
 import { Avatar, Button, Card, H3, H5, Input, Label, Paragraph, ScrollView, Separator, Stack, View, XStack, YStack } from "tamagui";
+import * as ImagePicker from "expo-image-picker";
 
 export default function ProfileSettings() {
   const [profile, setProfile] = useState({ name: "", email: "" });
-  const { currentUser, setCurrentUser } = useContext(UserContext);
+  const { currentUser, handleUpdateUserInfo } = useContext(UserContext);
   const [open, setOpen] = React.useState(false);
   const timerRef = React.useRef(0);
   const [storageItem, updateStorageItem, clearStorageItem] = useAsyncStorage("profile");
@@ -23,19 +25,43 @@ export default function ProfileSettings() {
   }, []);
 
   function handleUpdate() {
-    updateStorageItem(JSON.stringify(profile));
-    setCurrentUser({ ...currentUser, ...profile });
+    // updateStorageItem(JSON.stringify(profile));
+    handleUpdateUserInfo({ ...currentUser, ...profile });
+    Toast.show({
+      type: "success",
+      text1: "Account Updated",
+    });
+    router.back();
   }
 
-  const toast = useToastController();
+  const pickImage = async () => {
+    // No permissions request is necessary for launching the image library
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+    });
+
+    console.log(result);
+
+    if (!result.canceled) {
+      handleUpdateUserInfo({ ...currentUser, profileImageURL: result.assets[0].uri || "" });
+      Toast.show({
+        type: "success",
+        text1: "Profile image updated",
+      });
+    }
+  };
 
   return (
     <SafeAreaView>
+      {/* <ToastViewport /> */}
       <ScrollView height={"100%"}>
         <YStack gap="$2" padding="$4">
           <YStack alignItems="center">
-            <Avatar circular size="$12">
-              <Avatar.Image accessibilityLabel="Cam" src="https://images.unsplash.com/photo-1548142813-c348350df52b?&w=150&h=150&dpr=2&q=80" />
+            <Avatar circular size="$12" onPress={pickImage}>
+              <Avatar.Image accessibilityLabel="Cam" src={currentUser?.profileImageURL} />
               <Avatar.Fallback backgroundColor="$blue10" />
             </Avatar>
           </YStack>
@@ -54,19 +80,6 @@ export default function ProfileSettings() {
           <Button fontWeight={600} fontSize={"$7"} height={"$5"} onPress={handleUpdate}>
             Update
           </Button>
-          <Button
-            onPress={() => {
-              toast.show("Successfully saved!", {
-                message: "Don't worry, we've got your data.",
-                native: false,
-              });
-            }}
-          >
-            Show
-          </Button>
-          {/* <Toast>
-            <Toast.Description> Hello from Tamagui Toast! </Toast.Description>
-          </Toast> */}
           {/* <Toast
             onOpenChange={setOpen}
             open={open}

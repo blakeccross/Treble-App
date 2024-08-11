@@ -11,21 +11,21 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 export default function Index() {
   const router = useRouter();
   const [highScore, setHighScore] = useState(0);
-  const { id } = useLocalSearchParams();
+  const { score, gameName } = useLocalSearchParams();
   const getData = async () => {
     try {
-      const value = await AsyncStorage.getItem("pitch-perfect-score");
+      const value = await AsyncStorage.getItem(String(gameName));
       if (value !== null) {
-        if (Number(value) < Number(id)) {
-          setHighScore(Number(id));
-          storeData(String(id));
+        if (Number(value) < Number(score)) {
+          setHighScore(Number(score));
+          storeData(String(score));
         } else {
           setHighScore(Number(value));
         }
       } else {
         // First time playing game
-        storeData(String(id));
-        setHighScore(Number(id));
+        storeData(String(score));
+        setHighScore(Number(score));
       }
     } catch (e) {
       // error reading value
@@ -34,7 +34,7 @@ export default function Index() {
 
   const storeData = async (value: string) => {
     try {
-      await AsyncStorage.setItem("pitch-perfect-score", value);
+      await AsyncStorage.setItem(String(gameName), value);
     } catch (e) {
       // saving error
     }
@@ -56,7 +56,7 @@ export default function Index() {
           <YStack flex={1} gap="$6">
             <YStack alignItems="center" justifyContent="center" flex={1}>
               <H1 fontSize={"$15"} fontWeight={600} themeInverse lineHeight={"$15"}>
-                {id}
+                {score}
               </H1>
               <H3 themeInverse>Score</H3>
             </YStack>

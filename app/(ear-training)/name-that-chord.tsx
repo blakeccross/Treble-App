@@ -120,7 +120,7 @@ export default function Page() {
 
   function handleIncorrect() {
     if (lives <= 1) {
-      router.push(`(ear-training)/game-over/${currentScore}`);
+      router.push({ pathname: "/game-over", params: { score: currentScore, gameName: "name-that-chord" } });
     } else {
       setLives(lives - 1);
     }

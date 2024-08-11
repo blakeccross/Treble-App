@@ -7,9 +7,10 @@ type User = {
   email: string;
   completedModules?: number[];
   completedSections?: number[];
+  profileImageURL?: string;
 };
 
-type UserContextProps = { currentUser: User | null; setCurrentUser: Dispatch<SetStateAction<User | null>> };
+type UserContextProps = { currentUser: User | null; handleUpdateUserInfo: (info: any) => void };
 
 export const UserContext = createContext<UserContextProps>({} as UserContextProps);
 
@@ -22,5 +23,11 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
     setCurrentUser(userData);
   }, []);
 
-  return <UserContext.Provider value={{ currentUser, setCurrentUser }}>{children}</UserContext.Provider>;
+  function handleUpdateUserInfo(info: any) {
+    updateStorageItem(JSON.stringify({ ...currentUser, ...info }));
+    setCurrentUser({ ...currentUser, ...info });
+    console.log(userData);
+  }
+
+  return <UserContext.Provider value={{ currentUser, handleUpdateUserInfo }}>{children}</UserContext.Provider>;
 }

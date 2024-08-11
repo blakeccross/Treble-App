@@ -9,7 +9,7 @@ import { AVPlaybackSource, Audio } from "expo-av";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Heart, X } from "@tamagui/lucide-icons";
 import { LinearGradient } from "tamagui/linear-gradient";
-import { useFocusEffect, useNavigation, useRouter } from "expo-router";
+import { router, useFocusEffect, useNavigation, useRouter } from "expo-router";
 import * as Haptics from "expo-haptics";
 import GradientCircle from "@/components/gradient-circle";
 
@@ -38,8 +38,6 @@ const correctSFX = require("@/assets/audio/correct_sfx.mp3");
 const incorrectSFX = require("@/assets/audio/incorrect_sfx.mp3");
 
 export default function Page() {
-  const navigation = useNavigation();
-  const router = useRouter();
   const [sound, setSound] = useState<Audio.Sound>();
   const [currentScore, setCurrentScore] = useState<number>(0);
   const [lives, setLives] = useState(3);
@@ -104,7 +102,7 @@ export default function Page() {
 
   function handleIncorrect() {
     if (lives <= 1) {
-      router.push(`(ear-training)/game-over/${currentScore}`);
+      router.push({ pathname: "/game-over", params: { score: currentScore, gameName: "pitch-perfect" } });
     } else {
       setLives(lives - 1);
     }
@@ -304,7 +302,7 @@ export default function Page() {
       <SafeAreaView style={{ flex: 0 }} />
 
       <XStack justifyContent="space-between" alignItems="center" paddingHorizontal="$4">
-        <Pressable onPress={() => router.navigate("(tabs)/ear-training")}>
+        <Pressable onPress={() => router.back()}>
           <X size="$3" />
         </Pressable>
         <H1 fontWeight={600}>{currentScore}</H1>
