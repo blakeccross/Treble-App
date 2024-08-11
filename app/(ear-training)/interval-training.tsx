@@ -1,5 +1,5 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { color, colorTokens, red } from "@tamagui/themes";
+import { blue, blueDark, color, colorTokens, red } from "@tamagui/themes";
 import { View, Text, SafeAreaView, StyleSheet, FlatList, Pressable } from "react-native";
 import Animated, {
   useSharedValue,
@@ -10,6 +10,7 @@ import Animated, {
   withTiming,
   ReduceMotion,
   Easing,
+  useAnimatedProps,
 } from "react-native-reanimated";
 import { Card, H3, Paragraph, XStack, H1, H2, YStack } from "tamagui";
 import { window } from "@/utils";
@@ -23,6 +24,7 @@ import * as Haptics from "expo-haptics";
 import GradientCircle from "@/components/gradient-circle";
 import Gradient from "@/components/conic-gradient";
 import { Canvas, Circle, SweepGradient, vec } from "@shopify/react-native-skia";
+import { transform } from "@babel/core";
 
 const PAGE_WIDTH = window.width;
 const colorOptions = ["blue", "orange", "green", "red", "yellow", "purple", "pink"];
@@ -70,8 +72,10 @@ export default function Page() {
   const correctAnswer = useRef("");
   // Shared values for scale animations
   const rotate1 = useSharedValue(2 * Math.PI);
+  const scale1 = useSharedValue(1);
 
   const rotate2 = useSharedValue(0);
+  const scale2 = useSharedValue(1);
 
   const theta = useSharedValue(2 * Math.PI);
 
@@ -80,11 +84,15 @@ export default function Page() {
 
   // Animated styles
   const animatedStyleRotate1 = useAnimatedStyle(() => ({
-    transform: [{ rotate: `${rotate1.value}rad` }],
+    transform: [{ rotate: `${rotate1.value}rad` }, { scale: scale1.value }],
   }));
 
+  // const animatedStyleRotate2 = useAnimatedProps(() => ({
+  //   transform: [{ rotate: rotate2.value }],
+  // }));
+
   const animatedStyleRotate2 = useAnimatedStyle(() => ({
-    transform: [{ rotate: `${rotate2.value}rad` }],
+    transform: [{ rotate: `${rotate2.value}rad` }, { scale: scale2.value }],
   }));
 
   const animatedStyleFlatList = useAnimatedStyle(() => ({
@@ -230,16 +238,31 @@ export default function Page() {
   // Function to trigger the bounce effect
   async function bounce() {
     springIn();
+    animateRotation();
+
+    scale1.value = withDelay(
+      0,
+      withSpring(1.2, { duration: 300, dampingRatio: 0.5, stiffness: 400 }, () => {
+        scale1.value = withSpring(1);
+      })
+    );
+
+    // scale2.value = withDelay(
+    //   0.5,
+    //   withSpring(1.2, { duration: 300, dampingRatio: 0.5, stiffness: 400 }, () => {
+    //     scale1.value = withSpring(1);
+    //   })
+    // );
   }
 
   function animateRotation() {
-    rotate1.value = withRepeat(withTiming(0, { duration: 10000, easing: Easing.linear, reduceMotion: ReduceMotion.System }), 0);
-    rotate2.value = withRepeat(withTiming(2 * Math.PI, { duration: 10000, easing: Easing.linear, reduceMotion: ReduceMotion.System }), 0);
+    rotate1.value = withRepeat(withTiming(0, { duration: totalTime * 1000, easing: Easing.linear, reduceMotion: ReduceMotion.System }), 0);
+    rotate2.value = withRepeat(withTiming(2 * Math.PI, { duration: totalTime * 1000, easing: Easing.linear, reduceMotion: ReduceMotion.System }), 0);
   }
 
-  useEffect(() => {
-    animateRotation();
-  }, []);
+  // useEffect(() => {
+  //   animateRotation();
+  // }, []);
 
   function springIn() {
     translationY.value = withSpring(0, {
@@ -296,18 +319,20 @@ export default function Page() {
         </XStack>
       </XStack>
       <YStack justifyContent="center" alignItems="center" marginTop="$8">
-        <Animated.View style={[{ width: circleWidth, height: circleWidth }, animatedStyleRotate1]}>
-          <Canvas style={{ flex: 1 }}>
-            <Circle cx={circleWidth / 2} cy={circleWidth / 2} r={circleWidth / 2}>
-              <SweepGradient c={vec(circleWidth / 2, circleWidth / 2)} colors={["cyan", "blue"]} />
-            </Circle>
-          </Canvas>
-        </Animated.View>
+        <TapGestureHandler onActivated={handlePressPlay}>
+          <Animated.View style={[{ width: circleWidth, height: circleWidth }, animatedStyleRotate1]}>
+            <Canvas style={{ flex: 1 }}>
+              <Circle cx={circleWidth / 2} cy={circleWidth / 2} r={circleWidth / 2}>
+                <SweepGradient c={vec(circleWidth / 2, circleWidth / 2)} colors={[blueDark.blue9, blueDark.blue8]} />
+              </Circle>
+            </Canvas>
+          </Animated.View>
+        </TapGestureHandler>
 
         <Animated.View style={[{ width: circleWidth, height: circleWidth }, animatedStyleRotate2]}>
-          <Canvas style={{ flex: 1 }}>
-            <Circle cx={circleWidth / 2} cy={circleWidth / 2} r={circleWidth / 2}>
-              <SweepGradient c={vec(circleWidth / 2, circleWidth / 2)} colors={["blue", "cyan"]} />
+          <Canvas style={[{ flex: 1 }]}>
+            <Circle cx={circleWidth / 2} cy={circleWidth / 2} r={circleWidth / 2} origin={{ x: circleWidth / 2, y: circleWidth / 2 }}>
+              <SweepGradient c={vec(circleWidth / 2, circleWidth / 2)} colors={[blueDark.blue8, blueDark.blue9]} />
             </Circle>
           </Canvas>
         </Animated.View>

@@ -5,13 +5,12 @@ import { blue, blueDark } from "@tamagui/themes";
 import { Link, router, useGlobalSearchParams, useLocalSearchParams } from "expo-router";
 import { useContext } from "react";
 import { View, Text, StyleSheet, SafeAreaView } from "react-native";
-import Animated from "react-native-reanimated";
 import { Button, H1, H2, H3, Paragraph, ScrollView, XStack } from "tamagui";
 
 export default function ModuleStartScreen() {
   const { id } = useLocalSearchParams();
-  const { data } = useContext(ModuleContext);
-  const module = data[Number(id)];
+  const { data: moduleData } = useContext(ModuleContext);
+  const module = moduleData.find((item) => item.id === Number(id));
 
   return (
     <ParallaxScrollView
@@ -24,7 +23,7 @@ export default function ModuleStartScreen() {
               <XStack gap="$4">
                 <Button icon={<ArrowLeft size="$3" />} circular onPress={() => router.dismiss()} themeInverse />
                 <H2 color={"$background"} fontWeight={600}>
-                  {module.module_name}
+                  {module?.title}
                 </H2>
               </XStack>
             </View>
@@ -33,9 +32,9 @@ export default function ModuleStartScreen() {
       }
     >
       <ScrollView style={{ padding: 20 }}>
-        <Paragraph size="$6">{module.description}</Paragraph>
+        <Paragraph size="$6">{module?.description}</Paragraph>
 
-        <Link href={`(tabs)/(home)/module-overview/${module.id}`} asChild onPress={() => router.dismiss()}>
+        <Link href={`/module-overview/${module?.id}`} asChild onPress={() => router.dismiss()}>
           <Button size="$6" fontWeight={600} marginTop="$4">
             Complete
           </Button>

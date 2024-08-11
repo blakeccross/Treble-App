@@ -12,19 +12,19 @@ const games = [
     title: "Pitch Perfect",
     description: `Test your ear in a\nfast pace matching game`,
     backgroundImage: require("@/assets/images/blue_shapes.jpg"),
-    route: "/(ear-training)/pitch-perfect",
+    route: "/pitch-perfect",
   },
   {
     title: "Nashville Roundup",
     description: `Match the Nashville numbers`,
     backgroundImage: require("@/assets/images/hassaan-here-bKfkhVRAJTQ-unsplash.jpg"),
-    route: "/(ear-training)/name-that-chord",
+    route: "/name-that-chord",
   },
   {
     title: "Interval Training",
     description: `Test your ear in a\nfast pace matching game`,
     backgroundImage: require("@/assets/images/blue_shapes.jpg"),
-    route: "/(ear-training)/interval-training",
+    route: "/interval-training",
   },
 ];
 
@@ -36,9 +36,9 @@ export default function TabTwoScreen() {
       <ScrollView padding="$4" contentContainerStyle={{ paddingBottom: 150 }}>
         <XStack justifyContent="space-between">
           <H2 fontWeight={600}>Ear Training</H2>
-          <Pressable onPress={() => router.push("/(ear-training)/tuner")}>
+          {/* <Pressable onPress={() => router.push("/(ear-training)/tuner")}>
             <AudioWaveform />
-          </Pressable>
+          </Pressable> */}
         </XStack>
         <YStack gap={"$4"}>
           {games.map((game) => (

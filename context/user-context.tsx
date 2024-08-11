@@ -1,10 +1,26 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, Dispatch, SetStateAction, useEffect, useState } from "react";
 import { user_data } from "@/utils/sample-user-data";
+import useAsyncStorage from "@/hooks/useAsyncStorage";
 
-export const UserContext = createContext({} as typeof user_data);
+type User = {
+  name: string;
+  email: string;
+  completedModules?: number[];
+  completedSections?: number[];
+};
+
+type UserContextProps = { currentUser: User | null; setCurrentUser: Dispatch<SetStateAction<User | null>> };
+
+export const UserContext = createContext<UserContextProps>({} as UserContextProps);
 
 export default function ModuleProvider({ children }: { children: JSX.Element }) {
-  const [userData, setUserData] = useState(user_data);
+  const [userData, updateStorageItem, clearStorageItem] = useAsyncStorage("profile");
 
-  return <UserContext.Provider value={userData}>{children}</UserContext.Provider>;
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    setCurrentUser(userData);
+  }, []);
+
+  return <UserContext.Provider value={{ currentUser, setCurrentUser }}>{children}</UserContext.Provider>;
 }

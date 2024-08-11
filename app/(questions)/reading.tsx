@@ -1,22 +1,44 @@
 import { QuizContext } from "@/context/quiz-context";
-import React, { useContext } from "react";
-import { SafeAreaView, ScrollView } from "react-native";
+import React, { useContext, useRef } from "react";
+import { SafeAreaView, StyleSheet } from "react-native";
 import Markdown from "react-native-markdown-display";
 import AnswerDrawer from "@/components/AnswerDrawer";
+import { ScrollView } from "tamagui";
 
 export default function Index() {
   const { currentQuestionIndex, questions, nextQuestion } = useContext(QuizContext);
-  const question = questions[currentQuestionIndex];
+  const questionTextRef = useRef(questions[currentQuestionIndex]?.reading_text || "");
+
+  const styles = StyleSheet.create({
+    heading1: {
+      fontSize: 40,
+      fontWeight: 700,
+    },
+    paragraph: {
+      fontSize: 20,
+      lineHeight: 30,
+    },
+    bullet_list: {
+      fontSize: 20,
+    },
+    ordered_list: {
+      fontSize: 20,
+    },
+    body: {
+      marginBottom: 50,
+      padding: 20,
+    },
+  });
 
   return (
     <>
       <SafeAreaView />
-      <ScrollView style={{ padding: 20 }}>
-        {/* <H1>BONJOUR Hi</H1> */}
-        <Markdown mergeStyle>{question?.reading_text.replace(/(\r\n|\r|\n)/g, "\n")}</Markdown>
-        {/* <Button onPress={nextQuestion}>Continue</Button> */}
+      <ScrollView backgroundColor={"$background"}>
+        <Markdown mergeStyle style={styles}>
+          {questionTextRef.current?.replace(/(\r\n|\r|\n)/g, "\n")}
+        </Markdown>
+        <AnswerDrawer enabled />
       </ScrollView>
-      <AnswerDrawer enabled />
     </>
   );
 }

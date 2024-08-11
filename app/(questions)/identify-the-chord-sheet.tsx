@@ -27,38 +27,40 @@ export default function Page() {
       </View>
 
       <View style={{ padding: 10 }}>
-        <FlatList
-          data={question.options}
-          columnWrapperStyle={{ gap: 10 }}
-          contentContainerStyle={{ gap: 10 }}
-          style={{ overflow: "visible" }}
-          numColumns={2}
-          renderItem={({ item }) => (
-            <Card
-              bordered
-              elevate
-              borderRadius="$8"
-              pressStyle={{ scale: 0.95 }}
-              animation="bouncy"
-              flex={1}
-              onPress={() => setSelectedAnswer(item.id)}
-              backgroundColor={
-                selectedAnswer === item.id ? (answerIsCorrect ? "$green5" : answerIsCorrect !== undefined ? "$red5" : "$gray6") : "$background"
-              }
-              borderColor={
-                selectedAnswer === item.id ? (answerIsCorrect ? "$green8" : answerIsCorrect !== undefined ? "$red10" : "$gray6") : "$background"
-              }
-            >
-              <Card.Header alignItems="center">
-                <H2 fontWeight={600} paddingVertical={"$3"}>
-                  {item.option_text}
-                </H2>
-              </Card.Header>
-            </Card>
-          )}
-        />
+        {question.question_options && (
+          <FlatList
+            data={question.question_options}
+            columnWrapperStyle={{ gap: 10 }}
+            contentContainerStyle={{ gap: 10 }}
+            style={{ overflow: "visible" }}
+            numColumns={2}
+            renderItem={({ item }) => (
+              <Card
+                bordered
+                elevate
+                borderRadius="$8"
+                pressStyle={{ scale: 0.95 }}
+                animation="bouncy"
+                flex={1}
+                onPress={() => setSelectedAnswer(item.id)}
+                backgroundColor={
+                  selectedAnswer === item.id ? (answerIsCorrect ? "$green5" : answerIsCorrect !== undefined ? "$red5" : "$gray6") : "$background"
+                }
+                borderColor={
+                  selectedAnswer === item.id ? (answerIsCorrect ? "$green8" : answerIsCorrect !== undefined ? "$red10" : "$gray6") : "$background"
+                }
+              >
+                <Card.Header alignItems="center">
+                  <H2 fontWeight={600} paddingVertical={"$3"}>
+                    {item.option_text}
+                  </H2>
+                </Card.Header>
+              </Card>
+            )}
+          />
+        )}
       </View>
-      <AnswerDrawer validateAnswer={validate} explanation={question.explanation} enabled />
+      <AnswerDrawer validateAnswer={validate} explanation={question.answer_explanation || ""} enabled />
     </>
   );
 }

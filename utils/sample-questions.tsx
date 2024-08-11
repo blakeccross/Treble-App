@@ -1,5 +1,5 @@
 export type SampleQuestionType = {
-  type: string;
+  type: "reading" | "fill-in-the-blank" | "identify-the-chord-sheet";
   question: string;
   explanation: string;
   answer_id: number | null;
@@ -18,72 +18,39 @@ export const sampleQuestions1: SampleQuestionType[] = [
   {
     type: "reading",
     question: "",
-    reading_text: `# Introduction to Music Theory
+    reading_text: `# Introduction
 
-  Music theory is the study of the practices and possibilities of music. It is a complex and vast subject, but understanding the basics can greatly enhance your musical experience, whether you're a performer, composer, or listener. This guide will cover some of the fundamental concepts in music theory.
-    
-  ## 1. The Musical Alphabet
-    
-  The musical alphabet consists of seven letters:
-    - **A**
-    - **B**
-    - **C**
-    - **D**
-    - **E**
-    - **F**
-    - **G**
-    
-  After G, the alphabet repeats back to A. Each of these letters represents a specific pitch.
-    
-  ## 2. Scales
-    
-  A scale is a sequence of notes in ascending or descending order. The most common scale in Western music is the **Major Scale**, which follows a specific pattern of whole steps (W) and half steps (H):
-    
-  ## 3. Intervals
+  Music theory is the study of the practices and possibilities of music. The Oxford Companion to Music describes three interrelated uses of the term:
+1. The rudiments (or foundations) that are needed to understand music notation;
+2. Learning scholars’ views on music from antiquity to the present; and
+3. A sub-topic of musicology that seeks to define processes and general principles in music.
 
-  An interval is the distance between two notes. Intervals are named based on their size and quality:
+Wow. Strong start, huh? Don’t fret, that’s probably the most academic sounding as this will get, and we will primarily focus on 1 and 3 from above - the foundations that are needed to understand music notation and defining the processes and general principles in music. But for our academic friends here, we’ll try to include a formal definition for terms along the way :)
+
+Welcome to the journey!
+
+Learning music theory begins with two key elements: rhythm, which is the horizontal, forward-moving element of music theory; and pitch, which is the vertical, audible element that we hear with our ears and feel with our souls.
+
+A more formal definition of each:
+
+**Rhythm:** The duration of musical sounds and rests in time  
+**Pitch:** A discrete tone with an individual frequency
+
+We will start with rhythm, the horizontal element of music theory.
+    `,
+    explanation: "",
+    answer_id: null,
+    options: null,
+    sheet_music: null,
+  },
+  {
+    type: "reading",
+    question: "",
+    reading_text: `# Rhythm
+
+  Rhythm is “the duration of musical sounds and rests in time.” We naturally perceive music as it is organized in time. Much of pre-modern music was arythmic (lacking a regular, steady pulse) and free-flowing based on the text of what was being sung (think Gregorian chant).
   
-  - **Perfect Unison**: Same note (C to C)
-  - **Major Second**: Whole step (C to D)
-  - **Major Third**: Two whole steps (C to E)
-  - **Perfect Fourth**: Two and a half steps (C to F)
-  - **Perfect Fifth**: Three and a half steps (C to G)
-  - **Major Sixth**: Four and a half steps (C to A)
-  - **Major Seventh**: Five and a half steps (C to B)
-  - **Octave**: Six whole steps (C to C)
-  
-  ## 4. Chords
-  
-  A chord is a group of notes played together. The most basic type of chord is the **Triad**, which consists of three notes:
-  
-  - **Major Triad**: Root, Major Third, Perfect Fifth (C - E - G)
-  - **Minor Triad**: Root, Minor Third, Perfect Fifth (C - Eb - G)
-  - **Diminished Triad**: Root, Minor Third, Diminished Fifth (C - Eb - Gb)
-  - **Augmented Triad**: Root, Major Third, Augmented Fifth (C - E - G#)
-  
-  ## 5. Time Signatures
-  
-  Time signatures indicate how music is divided into measures. They are written as two numbers, one above the other:
-  
-  - **4/4**: Common time, 4 beats per measure, quarter note gets one beat.
-  - **3/4**: Waltz time, 3 beats per measure, quarter note gets one beat.
-  - **6/8**: Compound time, 6 beats per measure, eighth note gets one beat.
-  
-  ## 6. Key Signatures
-  
-  Key signatures indicate the key of the piece by specifying which notes are sharp or flat throughout the piece. For example:
-  
-  - **C Major / A Minor**: No sharps or flats.
-  - **G Major / E Minor**: One sharp (F#).
-  - **F Major / D Minor**: One flat (Bb).
-  
-  ## Conclusion
-  
-  This introduction covers just the basics of music theory. As you delve deeper, you'll discover more intricate concepts such as modes, complex chords, and advanced rhythmic structures. Understanding these fundamentals will provide a strong foundation for any musical endeavor.
-  
-  ---
-  
-  *For further reading, consider exploring books such as "The Complete Musician" by Steven Laitz or "Music Theory for Dummies" by Michael Pilhofer and Holly Day.*
+  Most modern Western music is rhythmic (having a regular steady pulse), and we have notation, symbols, and terminology to explain these concepts. Listen to some examples of Gregorian chant vs. modern music and hear the difference in rhythm.
     `,
     explanation: "",
     answer_id: null,

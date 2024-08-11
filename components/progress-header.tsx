@@ -4,31 +4,40 @@ import { red } from "@tamagui/themes";
 import { Link, usePathname, useRouter } from "expo-router";
 import { useContext, useState } from "react";
 import { Pressable, SafeAreaView, View } from "react-native";
-import { Button, H3, Paragraph, Progress, Sheet, XStack } from "tamagui";
+import { Button, H3, H5, Paragraph, Progress, Sheet, XStack, YStack } from "tamagui";
 
 export default function ProgressHeader() {
   const route = useRouter();
-  const { currentQuestionIndex, questions, lives } = useContext(QuizContext);
+  const { currentQuestionIndex, questions, section, lives } = useContext(QuizContext);
+  const currentRoute = usePathname();
   const [open, setOpen] = useState(false);
   let quizPercentage = (currentQuestionIndex / questions?.length) * 100;
 
   return (
     <>
       <SafeAreaView />
-      <XStack padding="$3" gap="$4" alignItems="center">
-        {/* <Link href="/(tabs)/home/module-overview/${id}" asChild> */}
-        <Pressable onPress={() => setOpen(true)}>
-          <X size="$3" />
-        </Pressable>
-        {/* </Link> */}
-        <Progress value={quizPercentage} flex={1} backgroundColor={"$gray1"}>
-          <Progress.Indicator animation="bouncy" backgroundColor={"$blue10"} />
-        </Progress>
-        <XStack gap="$1">
-          <Heart size="$2" color={"$red10"} fill={red.red10} />
-          <Paragraph fontWeight={600}>{lives}</Paragraph>
+      <YStack gap="$2" padding="$3">
+        <XStack alignItems="center" justifyContent="space-between">
+          <Pressable onPress={() => setOpen(true)}>
+            <X size="$3" />
+          </Pressable>
+          <H5 fontWeight={500}>{section.title}</H5>
+
+          <XStack gap="$1" width={"$3"}>
+            {currentRoute !== "/reading" && (
+              <>
+                <Heart size="$2" color={"$red10"} fill={red.red10} />
+                <Paragraph fontWeight={600}>{lives}</Paragraph>
+              </>
+            )}
+          </XStack>
         </XStack>
-      </XStack>
+        <XStack>
+          <Progress value={quizPercentage} flex={1} backgroundColor={"$gray1"}>
+            <Progress.Indicator animation="bouncy" backgroundColor={"$blue10"} />
+          </Progress>
+        </XStack>
+      </YStack>
 
       <Sheet
         forceRemoveScrollEnabled={open}
@@ -46,7 +55,7 @@ export default function ProgressHeader() {
         <Sheet.Frame padding="$4" justifyContent="center" alignItems="center" space="$5">
           <H3>Are you sure you want to exit?</H3>
           <Paragraph>All of your progress will be lost.</Paragraph>
-          <Button onPress={() => route.navigate(`(tabs)/(home)/module-overview/123`)} fontWeight={600}>
+          <Button onPress={() => route.navigate(`/module-overview/123`)} fontWeight={600}>
             Continue
           </Button>
         </Sheet.Frame>

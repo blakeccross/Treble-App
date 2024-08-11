@@ -5,7 +5,7 @@ import { View, SafeAreaView, useWindowDimensions, ScrollView, LayoutChangeEvent 
 import { useSharedValue } from "react-native-reanimated";
 import Carousel, { ICarouselInstance } from "react-native-reanimated-carousel";
 
-import { H3, ListItem, Separator, YGroup } from "tamagui";
+import { H3, H4, ListItem, Separator, YGroup } from "tamagui";
 import { window } from "@/utils";
 import { Dropdown } from "@/components/dropdown";
 import { ModuleContext } from "@/context/module-context";
@@ -25,7 +25,7 @@ export default function ModuleStartScreen() {
 
   function handleSelectModule(value: string) {
     setVisibleModule(value);
-    const selectedModuleIndex = data.findIndex((item) => item.module_name === value);
+    const selectedModuleIndex = data.findIndex((item) => item.title === value);
 
     const scrollPosition = snapIntervals[selectedModuleIndex - 1];
 
@@ -51,7 +51,7 @@ export default function ModuleStartScreen() {
 
   function handleOnScroll(event: any) {
     const currentVisibleIndex = findIndexBinarySearch(snapIntervals, event.nativeEvent.contentOffset.y);
-    setVisibleModule(data[currentVisibleIndex].module_name);
+    setVisibleModule(data[currentVisibleIndex].title);
   }
 
   const handleLayout = (event: LayoutChangeEvent, index: number) => {
@@ -80,7 +80,7 @@ export default function ModuleStartScreen() {
           // id="select-demo-1"
           size={"$5"}
           title="Select a Module"
-          data={data.map((item) => item.module_name)}
+          data={data.map((item) => item.title)}
           value={visibleModule}
           onValueChange={handleSelectModule}
           defaultValue={visibleModule}
@@ -101,19 +101,23 @@ export default function ModuleStartScreen() {
           {data.map((item, index) => (
             <YGroup separator={<Separator />} key={item.id} onLayout={(event) => handleLayout(event, index)} paddingBottom="$6">
               <H3 textAlign="center" marginVertical="$3">
-                {item.module_name}
+                {item.title}
               </H3>
-              {item.tasks.map((item) => (
-                <YGroup.Item key={item.id}>
-                  <Link asChild href={"/(questions)/loading"} disabled={item.premium && currentUser.premium}>
+              {item.section.map((section) => (
+                <YGroup.Item key={section.id}>
+                  <Link
+                    asChild
+                    href={{ pathname: `/${section.section_item[0]?.type}`, params: { module_id: item.id, section_id: section.id } }}
+                    disabled={(section.premium && currentUser.premium) || !section.section_item[0]?.type}
+                  >
                     <ListItem
-                      title={item.title}
-                      subTitle="Second subtitle"
-                      icon={item.completed ? <Check color={"$green10"} size={"$1"} /> : <></>}
-                      iconAfter={item.premium && currentUser.premium ? <Lock /> : <ChevronRight />}
+                      title={<H4 height={"$10"}>{section.title}</H4>}
+                      // subTitle="Second subtitle"
+                      icon={section.completed ? <Check color={"$green10"} size={"$1"} /> : <></>}
+                      iconAfter={section.premium && currentUser.premium ? <Lock /> : <ChevronRight />}
                       pressStyle={{ scale: 0.98 }}
                       animation="bouncy"
-                      backgroundColor={item.premium && currentUser.premium ? "$gray8" : "$background"}
+                      backgroundColor={section.premium && currentUser.premium ? "$gray8" : "$background"}
                       elevate
                     />
                   </Link>

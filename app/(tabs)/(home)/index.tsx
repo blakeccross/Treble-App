@@ -13,7 +13,7 @@ import { UserContext } from "@/context/user-context";
 
 export default function HomeScreen() {
   const { data } = useContext(ModuleContext);
-  const currentUser = useContext(UserContext);
+  const { currentUser } = useContext(UserContext);
 
   return (
     <>
@@ -29,7 +29,7 @@ export default function HomeScreen() {
                     Welcome Back,
                   </H3>
                   <H3 fontWeight={500} color={"white"} opacity={0.8}>
-                    Alice
+                    {currentUser?.name}
                   </H3>
                 </YStack>
                 <Avatar circular size="$5">
@@ -62,7 +62,8 @@ export default function HomeScreen() {
             {data.map((module) => (
               <Link
                 href={{
-                  pathname: `(tabs)/(home)/module/${module.id}`,
+                  pathname: `/module/[id]`,
+                  params: { id: module.id },
                 }}
                 asChild
                 key={module.id}
@@ -72,11 +73,11 @@ export default function HomeScreen() {
                     <YStack gap="$4" flex={1}>
                       <XStack justifyContent="space-between">
                         <XStack gap="$4" flex={1}>
-                          <H1>{module.icon}</H1>
+                          {/* <H1>{module.icon}</H1> */}
                           <YStack>
                             <H3 fontWeight={600}>{"Module " + module.id}</H3>
 
-                            <Paragraph>{module.module_name}</Paragraph>
+                            <Paragraph>{module.title}</Paragraph>
                           </YStack>
                         </XStack>
 

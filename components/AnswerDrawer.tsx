@@ -62,7 +62,14 @@ export default function AnswerDrawer({
             {answerIsCorrect ? "Correct!" : "Incorrect"}
           </H3>
           <Paragraph color={answerIsCorrect ? "$green7Dark" : "$red5Dark"}>{explanation}</Paragraph>
-          <Button onPress={handleContinue} width={"100%"} backgroundColor={answerIsCorrect ? "$green7Dark" : "$red5Dark"} fontWeight={600}>
+          <Button
+            onPress={handleContinue}
+            width={"100%"}
+            backgroundColor={answerIsCorrect ? "$green7Dark" : "$red5Dark"}
+            fontWeight={600}
+            fontSize={"$7"}
+            height={"$5"}
+          >
             Continue
           </Button>
         </Sheet.Frame>
@@ -81,11 +88,11 @@ export default function AnswerDrawer({
           }}
         >
           {validateAnswer && answerIsCorrect === undefined ? (
-            <Button onPress={handleValidateAnswer} width={"100%"} fontWeight={600} disabled={!enabled}>
+            <Button onPress={handleValidateAnswer} width={"100%"} fontWeight={600} disabled={!enabled} fontSize={"$7"} height={"$5"}>
               Check
             </Button>
           ) : (
-            <Button onPress={nextQuestion} width={"100%"} fontWeight={600}>
+            <Button onPress={nextQuestion} width={"100%"} fontWeight={600} fontSize={"$7"} height={"$5"}>
               Continue
             </Button>
           )}
