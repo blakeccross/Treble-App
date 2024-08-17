@@ -6,4 +6,4 @@ export type SectionItem = Database["public"]["Tables"]["section_item"]["Row"] & 
   sheet_music: SheetMusic;
 };
 export type Section = Database["public"]["Tables"]["section"]["Row"] & { section_item: SectionItem[]; completed?: boolean };
-export type Module = Database["public"]["Tables"]["module"]["Row"] & { completed: boolean; progress: number, section: Section[] };
+export type Module = Database["public"]["Tables"]["module"]["Row"] & { completed: boolean; progress: number, section: Section[], local_poster_uri: string };

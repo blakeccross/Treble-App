@@ -30,14 +30,11 @@ export default function QuizProvider({ children }: { children: JSX.Element[] }) 
   const [lives, setLives] = useState(0);
   const currentQuestionIndex = useRef<number>(0);
 
-  if (!currentSection) {
-    router.push("");
+  if (!currentSection || !currentModule) {
+    router.push("/");
     return null;
   }
-  if (!currentModule) {
-    router.push("");
-    return null;
-  }
+
   useEffect(() => {
     setLives(3);
   }, []);

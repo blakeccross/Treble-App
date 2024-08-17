@@ -14,18 +14,21 @@ export type Database = {
           created_at: string
           description: string
           id: number
+          poster_url: string
           title: string
         }
         Insert: {
           created_at?: string
           description: string
           id?: number
+          poster_url?: string
           title?: string
         }
         Update: {
           created_at?: string
           description?: string
           id?: number
+          poster_url?: string
           title?: string
         }
         Relationships: []

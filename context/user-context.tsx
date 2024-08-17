@@ -1,6 +1,5 @@
-import { createContext, Dispatch, SetStateAction, useEffect, useState } from "react";
-import { user_data } from "@/utils/sample-user-data";
-import useAsyncStorage from "@/hooks/useAsyncStorage";
+import { createContext } from "react";
+import { useMMKVObject } from "react-native-mmkv";
 
 type User = {
   name: string;
@@ -10,23 +9,16 @@ type User = {
   profileImageURL?: string;
 };
 
-type UserContextProps = { currentUser: User | null; handleUpdateUserInfo: (info: any) => void };
+type UserContextProps = { currentUser: User | undefined; handleUpdateUserInfo: (info: any) => void };
 
 export const UserContext = createContext<UserContextProps>({} as UserContextProps);
 
 export default function ModuleProvider({ children }: { children: JSX.Element }) {
-  const [userData, updateStorageItem, clearStorageItem] = useAsyncStorage("profile");
-
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
-
-  useEffect(() => {
-    setCurrentUser(userData);
-  }, []);
+  const [currentUser, setCurrentUser] = useMMKVObject<User>("user");
 
   function handleUpdateUserInfo(info: any) {
-    updateStorageItem(JSON.stringify({ ...currentUser, ...info }));
-    setCurrentUser({ ...currentUser, ...info });
-    console.log(userData);
+    const updatedUser = { ...(currentUser || {}), ...info };
+    setCurrentUser(updatedUser);
   }
 
   return <UserContext.Provider value={{ currentUser, handleUpdateUserInfo }}>{children}</UserContext.Provider>;

@@ -1,5 +1,4 @@
 import { UserContext } from "@/context/user-context";
-import useAsyncStorage from "@/hooks/useAsyncStorage";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { color } from "@tamagui/themes";
 import { router, useRouter } from "expo-router";
@@ -15,7 +14,6 @@ export default function ProfileSettings() {
   const { currentUser, handleUpdateUserInfo } = useContext(UserContext);
   const [open, setOpen] = React.useState(false);
   const timerRef = React.useRef(0);
-  const [storageItem, updateStorageItem, clearStorageItem] = useAsyncStorage("profile");
 
   useEffect(() => {
     setProfile({ name: currentUser?.name || "", email: currentUser?.email || "" });
@@ -26,8 +24,7 @@ export default function ProfileSettings() {
   }, []);
 
   function handleUpdate() {
-    // updateStorageItem(JSON.stringify(profile));
-    handleUpdateUserInfo({ ...currentUser, ...profile });
+    handleUpdateUserInfo({ ...profile });
     Toast.show({
       type: "success",
       text1: "Account Updated",
@@ -47,7 +44,7 @@ export default function ProfileSettings() {
     console.log(result);
 
     if (!result.canceled) {
-      handleUpdateUserInfo({ ...currentUser, profileImageURL: result.assets[0].uri || "" });
+      handleUpdateUserInfo({ profileImageURL: result.assets[0].uri || "" });
       Toast.show({
         type: "success",
         text1: "Profile image updated",

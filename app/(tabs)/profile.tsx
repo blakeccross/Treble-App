@@ -1,11 +1,8 @@
 import { UserContext } from "@/context/user-context";
-import useAsyncStorage from "@/hooks/useAsyncStorage";
-import Ionicons from "@expo/vector-icons/Ionicons";
 import { Music, Settings } from "@tamagui/lucide-icons";
-import { color } from "@tamagui/themes";
 import { Link } from "expo-router";
 import { useContext } from "react";
-import { StyleSheet, Image, Platform, SafeAreaView } from "react-native";
+import { SafeAreaView } from "react-native";
 import { Avatar, Card, H3, H5, Paragraph, Separator, XStack, YStack } from "tamagui";
 
 export default function TabTwoScreen() {

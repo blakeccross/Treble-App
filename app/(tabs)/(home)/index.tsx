@@ -10,10 +10,13 @@ import { blue, darkColors } from "@tamagui/themes";
 import { LinearGradient } from "tamagui/linear-gradient";
 import { BlurView } from "expo-blur";
 import { UserContext } from "@/context/user-context";
+import { Image } from "expo-image";
 
 export default function HomeScreen() {
   const { data } = useContext(ModuleContext);
   const { currentUser } = useContext(UserContext);
+  const blurhash =
+    "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
 
   return (
     <>
@@ -68,44 +71,36 @@ export default function HomeScreen() {
               >
                 <Card bordered elevate borderRadius="$8" pressStyle={{ scale: 0.95 }} animation="bouncy" backgroundColor={"$blue1"}>
                   <Card.Header padded>
-                    <YStack gap="$4" flex={1}>
-                      <XStack justifyContent="space-between">
-                        <XStack gap="$4" flex={1}>
-                          {/* <H1>{module.icon}</H1> */}
-                          <YStack>
-                            <H3 fontWeight={600}>{"Module " + module.id}</H3>
+                    <XStack gap="$4" flex={1}>
+                      <Image
+                        style={{ width: 90, height: 90, borderRadius: 10 }}
+                        source={module.local_poster_uri}
+                        placeholder={{ blurhash }}
+                        contentFit="cover"
+                        transition={1000}
+                      />
+                      <YStack gap="$4" flex={1}>
+                        <XStack justifyContent="space-between">
+                          <XStack gap="$4" flex={1}>
+                            {/* <H1>{module.icon}</H1> */}
 
-                            <Paragraph>{module.title}</Paragraph>
-                          </YStack>
+                            <YStack>
+                              <Paragraph size={"$2"}>{module.section.length + " Chapters"}</Paragraph>
+                              <H3 fontWeight={600}>{module.id + " - " + module.title}</H3>
+                            </YStack>
+                          </XStack>
+
+                          <Button fontWeight={600} borderRadius={"$8"} disabled>
+                            {module.progress !== 0 ? "Continue" : "Start"}
+                          </Button>
                         </XStack>
-
-                        <Button fontWeight={600} borderRadius={"$8"} disabled>
-                          {module.progress !== 0 ? "Continue" : "Start"}
-                        </Button>
-                      </XStack>
-                      {module.progress !== 0 && (
+                        {/* {module.progress !== 0 && ( */}
                         <Progress value={module.progress} backgroundColor={"$gray3"}>
                           <Progress.Indicator animation="lazy" backgroundColor={"$blue10"} />
                         </Progress>
-                      )}
-                    </YStack>
+                      </YStack>
+                    </XStack>
                   </Card.Header>
-
-                  <Card.Footer padded>
-                    <XStack flex={1} />
-                    {/* <Link
-                      href={{
-                        pathname: `(tabs)/home/module/${module.module_name}`,
-                      }}
-                      asChild
-                    >
-                      <Button borderRadius="$10">Continue</Button>
-                    </Link> */}
-
-                    {/* <Link href={`/(questions)`} asChild>
-                      <Button borderRadius="$10">Continue</Button>
-                    </Link> */}
-                  </Card.Footer>
                 </Card>
               </Link>
             ))}

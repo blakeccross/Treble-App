@@ -4,44 +4,19 @@ import { RefreshCw, Share, Trophy, X } from "@tamagui/lucide-icons";
 import { Link, Stack, useLocalSearchParams, useRouter } from "expo-router";
 import React, { useContext, useEffect, useState } from "react";
 import { Pressable, SafeAreaView, ScrollView, View, useWindowDimensions } from "react-native";
-import { Button, Card, H1, H2, H3, Paragraph, Progress, Spinner, Theme, XStack, YStack } from "tamagui";
+import { Button, Card, H1, H2, H3, Theme, XStack, YStack } from "tamagui";
 import { LinearGradient } from "tamagui/linear-gradient";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useMMKVNumber } from "react-native-mmkv";
 
 export default function Index() {
   const router = useRouter();
-  const [highScore, setHighScore] = useState(0);
   const { score, gameName } = useLocalSearchParams();
-  const getData = async () => {
-    try {
-      const value = await AsyncStorage.getItem(String(gameName));
-      if (value !== null) {
-        if (Number(value) < Number(score)) {
-          setHighScore(Number(score));
-          storeData(String(score));
-        } else {
-          setHighScore(Number(value));
-        }
-      } else {
-        // First time playing game
-        storeData(String(score));
-        setHighScore(Number(score));
-      }
-    } catch (e) {
-      // error reading value
-    }
-  };
-
-  const storeData = async (value: string) => {
-    try {
-      await AsyncStorage.setItem(String(gameName), value);
-    } catch (e) {
-      // saving error
-    }
-  };
+  const [highScore, setHighScore] = useMMKVNumber(String(gameName));
 
   useEffect(() => {
-    getData();
+    if (!highScore || +score > highScore) {
+      setHighScore(+score);
+    }
   }, []);
 
   return (

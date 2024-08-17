@@ -6,6 +6,7 @@ import { Link, router, useGlobalSearchParams, useLocalSearchParams } from "expo-
 import { useContext } from "react";
 import { View, Text, StyleSheet, SafeAreaView } from "react-native";
 import { Button, H1, H2, H3, Paragraph, ScrollView, XStack } from "tamagui";
+import { Image } from "expo-image";
 
 export default function ModuleStartScreen() {
   const { id } = useLocalSearchParams();
@@ -17,9 +18,14 @@ export default function ModuleStartScreen() {
       headerBackgroundColor={{ light: blue.blue10, dark: blueDark.blue10 }}
       headerImage={
         <>
-          <SafeAreaView style={{ flex: 0, backgroundColor: blue.blue10 }} />
-          <SafeAreaView>
-            <View style={{ padding: 20, height: 250, width: "100%", backgroundColor: blue.blue10 }}>
+          <View style={{ position: "relative", width: "100%", height: 250 }}>
+            <Image
+              source={module?.local_poster_uri} // Replace with your image URL
+              style={{ position: "absolute", width: "100%", height: "100%" }}
+              contentFit="cover"
+            />
+            <View style={{ padding: 20, height: 250, width: "100%", backgroundColor: "rgba(0, 0, 0, 0.1)" }}>
+              <SafeAreaView />
               <XStack gap="$4">
                 <Button icon={<ArrowLeft size="$3" />} circular onPress={() => router.dismiss()} themeInverse />
                 <H2 color={"$background"} fontWeight={600}>
@@ -27,7 +33,7 @@ export default function ModuleStartScreen() {
                 </H2>
               </XStack>
             </View>
-          </SafeAreaView>
+          </View>
         </>
       }
     >
