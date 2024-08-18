@@ -7,9 +7,9 @@ import { window } from "@/utils";
 import { TapGestureHandler } from "react-native-gesture-handler";
 import { AVPlaybackSource, Audio } from "expo-av";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Heart, X } from "@tamagui/lucide-icons";
+import { Heart, X, FileLineChart, BarChart, BarChart2 } from "@tamagui/lucide-icons";
 import { LinearGradient } from "tamagui/linear-gradient";
-import { router, useFocusEffect, useNavigation, useRouter } from "expo-router";
+import { Link, router, useFocusEffect, useNavigation, useRouter } from "expo-router";
 import * as Haptics from "expo-haptics";
 import GradientCircle from "@/components/gradient-circle";
 
@@ -21,16 +21,16 @@ const notesHard = ["c3", "cs3", "d3", "ds3", "e3", "f3", "fs3", "g3", "gs3", "a3
 // Static imports for audio files
 const noteToFile = {
   c3: require("@/assets/audio/piano_c3.mp3"),
-  cs3: require("@/assets/audio/piano_c#3.mp3"),
+  cs3: require("@/assets/audio/piano_cs3.mp3"),
   d3: require("@/assets/audio/piano_d3.mp3"),
-  ds3: require("@/assets/audio/piano_d#3.mp3"),
+  ds3: require("@/assets/audio/piano_ds3.mp3"),
   e3: require("@/assets/audio/piano_e3.mp3"),
   f3: require("@/assets/audio/piano_f3.mp3"),
-  fs3: require("@/assets/audio/piano_f#3.mp3"),
+  fs3: require("@/assets/audio/piano_fs3.mp3"),
   g3: require("@/assets/audio/piano_g3.mp3"),
-  gs3: require("@/assets/audio/piano_g#3.mp3"),
+  gs3: require("@/assets/audio/piano_gs3.mp3"),
   a3: require("@/assets/audio/piano_a3.mp3"),
-  as3: require("@/assets/audio/piano_a#3.mp3"),
+  as3: require("@/assets/audio/piano_as3.mp3"),
   b3: require("@/assets/audio/piano_b3.mp3"),
 };
 
@@ -38,6 +38,7 @@ const correctSFX = require("@/assets/audio/correct_sfx.mp3");
 const incorrectSFX = require("@/assets/audio/incorrect_sfx.mp3");
 
 export default function Page() {
+  const [gameHasStarted, setGameHasStarted] = useState(false);
   const [sound, setSound] = useState<Audio.Sound>();
   const [currentScore, setCurrentScore] = useState<number>(0);
   const [lives, setLives] = useState(3);
@@ -102,7 +103,7 @@ export default function Page() {
 
   function handleIncorrect() {
     if (lives <= 1) {
-      router.push({ pathname: "/game-over", params: { score: currentScore, gameName: "pitch-perfect" } });
+      router.push({ pathname: "/game-over", params: { score: currentScore, gameName: "pitch_perfect" } });
     } else {
       setLives(lives - 1);
     }
@@ -146,12 +147,12 @@ export default function Page() {
   function newQuestion() {
     let answerOptions = notes;
 
-    if (currentScore >= 10) {
+    if (currentScore <= 10) {
       setTotalTime(10);
-    } else if (currentScore >= 25) {
+    } else if (currentScore <= 25) {
       setTotalTime(5);
       answerOptions = notesHard;
-    } else if (currentScore >= 50) {
+    } else if (currentScore <= 50) {
       setTotalTime(3);
     }
     correctAnswer.current = "";
@@ -193,6 +194,7 @@ export default function Page() {
 
   function handlePressPlay() {
     if (!isRunning) {
+      if (!gameHasStarted) setGameHasStarted(true);
       setSelectedAnswer("");
       newQuestion();
       changeColor();
@@ -306,10 +308,16 @@ export default function Page() {
           <X size="$3" />
         </Pressable>
         <H1 fontWeight={600}>{currentScore}</H1>
-        <XStack gap="$1">
-          <Heart size="$2" color={"$red10"} fill={red.red10} />
-          <Paragraph fontWeight={600}>{lives}</Paragraph>
-        </XStack>
+        {gameHasStarted ? (
+          <XStack gap="$1">
+            <Heart size="$2" color={"$red10"} fill={red.red10} />
+            <Paragraph fontWeight={600}>{lives}</Paragraph>
+          </XStack>
+        ) : (
+          <Link asChild href={{ pathname: "/leaderboard", params: { gameName: "pitch_perfect" } }}>
+            <BarChart2 size="$2" />
+          </Link>
+        )}
       </XStack>
 
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>

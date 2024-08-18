@@ -5,9 +5,17 @@ import { router, useRouter } from "expo-router";
 import React, { useContext, useEffect, useState } from "react";
 import { StyleSheet, Image, Platform, SafeAreaView } from "react-native";
 import Toast from "react-native-toast-message";
-import { Avatar, Button, Card, H3, H5, Input, Label, Paragraph, ScrollView, Separator, Stack, View, XStack, YStack } from "tamagui";
+import { Avatar, Button, Card, H3, H5, Input, Label, Paragraph, ScrollView, Separator, Stack, Theme, View, XStack, YStack } from "tamagui";
 import * as ImagePicker from "expo-image-picker";
 import { Music } from "@tamagui/lucide-icons";
+import { useForm, Controller } from "react-hook-form";
+import { supabase } from "@/utils/supabase";
+
+type FormInput = {
+  fullName: string;
+  email: string;
+  password: string;
+};
 
 export default function ProfileSettings() {
   const [profile, setProfile] = useState({ name: "", email: "" });
@@ -23,6 +31,46 @@ export default function ProfileSettings() {
     return () => clearTimeout(timerRef.current);
   }, []);
 
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      fullName: currentUser?.name || "",
+      email: currentUser?.email || "",
+      password: "Hello123",
+    },
+  });
+
+  async function onSubmit(formInputs: FormInput) {
+    const { data: auth, error } = await supabase.auth.signUp({
+      email: formInputs.email,
+      password: formInputs.password,
+      options: {
+        data: {
+          full_name: formInputs.fullName,
+        },
+      },
+    });
+    if (error) {
+      console.error(error);
+      Toast.show({
+        type: "error",
+        text1: "Account could not be created at this time",
+      });
+    }
+
+    if (auth.user) {
+      console.log("SUCCESS", auth);
+      Toast.show({
+        type: "success",
+        text1: "Account Created",
+      });
+      router.back();
+    }
+  }
+
   function handleUpdate() {
     handleUpdateUserInfo({ ...profile });
     Toast.show({
@@ -30,6 +78,19 @@ export default function ProfileSettings() {
       text1: "Account Updated",
     });
     router.back();
+  }
+
+  async function handleSignOut() {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      console.error(error);
+      Toast.show({
+        type: "error",
+        text1: "Error trying to sign user out",
+      });
+    } else {
+      router.replace("/(auth)");
+    }
   }
 
   const pickImage = async () => {
@@ -64,71 +125,97 @@ export default function ProfileSettings() {
               <Music size={70} />
             </Avatar>
           </YStack>
-          <View>
-            <Label>Name</Label>
-            <Input placeholder="Full Name" size={"$6"} value={profile.name} onChangeText={(text) => setProfile({ ...profile, name: text })} />
-          </View>
-          <View>
-            <Label>Email</Label>
-            <Input placeholder="Email" size={"$6"} value={profile.email} onChangeText={(text) => setProfile({ ...profile, email: text })} />
-          </View>
-          <View>
-            <Label>Password</Label>
-            <Input placeholder="Password" size={"$6"} secureTextEntry />
-          </View>
-          <Button fontWeight={600} fontSize={"$7"} height={"$5"} onPress={handleUpdate}>
+
+          <Controller
+            control={control}
+            rules={{
+              required: true,
+            }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <View>
+                <Theme name={errors.fullName ? "red" : null}>
+                  <Label>Name</Label>
+                  <Input
+                    placeholder="Full Name"
+                    size={"$6"}
+                    onBlur={onBlur}
+                    onChangeText={onChange}
+                    value={value}
+                    // value={profile.name}
+                    // onChangeText={(text) => setProfile({ ...profile, name: text })}
+                  />
+                  {errors.email && <Label color={"red"}>Please enter your full name.</Label>}
+                </Theme>
+              </View>
+            )}
+            name="fullName"
+          />
+
+          <Controller
+            control={control}
+            rules={{
+              required: true,
+              pattern: {
+                value: /\S+@\S+\.\S+/,
+                message: "Entered value does not match email format",
+              },
+            }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <View>
+                <Theme name={errors.email ? "red" : null}>
+                  <Label>Email</Label>
+                  <Input placeholder="Email" size={"$6"} onBlur={onBlur} onChangeText={onChange} value={value} />
+                  {errors.email && <Label color={"red"}>Please enter a valid email address.</Label>}
+                </Theme>
+              </View>
+            )}
+            name="email"
+          />
+
+          <Controller
+            control={control}
+            rules={{
+              required: true,
+              minLength: 6,
+            }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <View>
+                <Theme name={errors.password ? "red" : null}>
+                  <Label>Password</Label>
+
+                  <Input placeholder="Password" size={"$6"} secureTextEntry onBlur={onBlur} onChangeText={onChange} value={value} />
+                  {errors.password && <Label color={"red"}>Password needs to be at least 6 characters long.</Label>}
+                </Theme>
+              </View>
+            )}
+            name="password"
+          />
+
+          {/* include validation with required or other standard HTML validation rules */}
+          {/* <input {...register("exampleRequired", { required: true })} /> */}
+          {/* errors will return when field validation fails  */}
+          {/* {errors.exampleRequired && <span>This field is required</span>} */}
+
+          <Button
+            fontWeight={600}
+            fontSize={"$7"}
+            height={"$5"}
+            // onPress={handleUpdate}
+            onPress={handleSubmit(onSubmit)}
+          >
             Update
           </Button>
-          {/* <Toast
-            onOpenChange={setOpen}
-            open={open}
-            animation="100ms"
-            enterStyle={{ x: -20, opacity: 0 }}
-            exitStyle={{ x: -20, opacity: 0 }}
-            opacity={1}
-            x={0}
-          >
-            <Toast.Title>TOAST!!!</Toast.Title>
-            <Toast.Description>Updated Boi</Toast.Description>
-          </Toast> */}
-          {/* <H5>Overview</H5>
-        <YStack alignItems="flex-start" gap="$4" marginHorizontal="$4">
-          <XStack gap="$4">
-            <Card flex={1}>
-              <Card.Header>
-                <Paragraph fontWeight="800">3</Paragraph>
-                <Paragraph>Modules Completed</Paragraph>
-              </Card.Header>
-            </Card>
-            <Card flex={1}>
-              <Card.Header>
-                <Paragraph fontWeight="800">73</Paragraph>
-                <Paragraph>Total XP</Paragraph>
-              </Card.Header>
-            </Card>
-          </XStack>
-          <XStack gap="$4">
-            <Card flex={1}>
-              <Card.Header>
-                <Paragraph fontWeight="800">157</Paragraph>
-                <Paragraph>Ranking</Paragraph>
-              </Card.Header>
-            </Card>
-            <Card flex={1}>
-              <Card.Header>
-                <Paragraph fontWeight="800">3</Paragraph>
-                <Paragraph>Current League</Paragraph>
-              </Card.Header>
-            </Card>
-          </XStack> */}
-          {/* {stats.map((item) => (
-            <Card>
-              <Card.Header>
-                <Paragraph>{item.title}</Paragraph>
-                <Paragraph>{item.value}</Paragraph>
-              </Card.Header>
-            </Card>
-          ))} */}
+          <Theme name={"red"}>
+            <Button
+              fontWeight={600}
+              fontSize={"$7"}
+              height={"$5"}
+              // variant="outlined"
+              onPress={handleSignOut}
+            >
+              Sign out
+            </Button>
+          </Theme>
         </YStack>
       </ScrollView>
     </SafeAreaView>

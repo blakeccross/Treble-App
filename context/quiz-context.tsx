@@ -1,13 +1,15 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Dispatch, SetStateAction, createContext, useContext, useEffect, useRef, useState } from "react";
 import { ModuleContext } from "./module-context";
-import { Section, SectionItem } from "@/types";
+import { Module, Section, SectionItem } from "@/types";
 import { UserContext } from "./user-context";
+import { useMMKVNumber } from "react-native-mmkv";
 
 type Quiz = {
   currentQuestionIndex: number;
   questions: SectionItem[];
   section: Section;
+  currentModule: Module;
   nextQuestion: () => void;
   lives: number;
   setLives: Dispatch<SetStateAction<number>>;
@@ -19,6 +21,7 @@ export default function QuizProvider({ children }: { children: JSX.Element[] }) 
   const { module_id, section_id } = useLocalSearchParams<{ module_id: string; section_id: string }>();
   const { currentUser, handleUpdateUserInfo } = useContext(UserContext);
   const { data: moduleData } = useContext(ModuleContext);
+  const [totalXP, setTotalXP] = useMMKVNumber("totalXP");
 
   const sections = moduleData.flatMap((item) => item.section);
 
@@ -67,11 +70,15 @@ export default function QuizProvider({ children }: { children: JSX.Element[] }) 
   function finishedSection() {
     handleUpdateUserInfo({ completedSections: [...(currentUser?.completedSections || []), currentSection?.id] });
 
+    const XPGained = currentSection?.section_item.length || 0 - (3 - lives);
+    const newXPValue = Number(totalXP) + XPGained;
     setLives(3);
     currentQuestionIndex.current = 0;
 
+    setTotalXP(newXPValue);
     router.push({
       pathname: "/quiz-complete",
+      params: { numOfCorrectAnswers: XPGained },
     });
   }
 
@@ -82,6 +89,7 @@ export default function QuizProvider({ children }: { children: JSX.Element[] }) 
         nextQuestion,
         questions: currentSection?.section_item,
         section: currentSection,
+        currentModule,
         lives,
         setLives,
       }}

@@ -9,6 +9,38 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      leaderboard: {
+        Row: {
+          created_at: string
+          id: number
+          interval_training: number | null
+          pitch_perfect: number | null
+          profile: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          interval_training?: number | null
+          pitch_perfect?: number | null
+          profile?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          interval_training?: number | null
+          pitch_perfect?: number | null
+          profile?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "leaderboard_profile_fkey"
+            columns: ["profile"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       module: {
         Row: {
           created_at: string
@@ -32,6 +64,35 @@ export type Database = {
           title?: string
         }
         Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          full_name: string | null
+          id: string
+          updated_at: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          full_name?: string | null
+          id: string
+          updated_at?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          full_name?: string | null
+          id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profiles_id_fkey"
+            columns: ["id"]
+            isOneToOne: true
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       section: {
         Row: {

@@ -8,7 +8,7 @@ import { Button, H3, H5, Paragraph, Progress, Sheet, XStack, YStack } from "tama
 
 export default function ProgressHeader() {
   const route = useRouter();
-  const { currentQuestionIndex, questions, section, lives } = useContext(QuizContext);
+  const { currentQuestionIndex, questions, section, currentModule, lives } = useContext(QuizContext);
   const currentRoute = usePathname();
   const [open, setOpen] = useState(false);
   let quizPercentage = (currentQuestionIndex / questions?.length) * 100;
@@ -52,11 +52,24 @@ export default function ProgressHeader() {
       >
         <Sheet.Overlay animation="lazy" enterStyle={{ opacity: 0 }} exitStyle={{ opacity: 0 }} />
         <Sheet.Handle />
-        <Sheet.Frame padding="$4" justifyContent="center" alignItems="center" space="$5">
-          <H3>Are you sure you want to exit?</H3>
-          <Paragraph>All of your progress will be lost.</Paragraph>
-          <Button onPress={() => route.navigate(`/module-overview/123`)} fontWeight={600}>
-            Continue
+        <Sheet.Frame padding="$4" backgroundColor={"$blue10"}>
+          <YStack flex={1} justifyContent="center" alignItems="center" space="$5">
+            <H3 fontWeight={600} color={"$background"}>
+              Are you sure you want to exit?
+            </H3>
+            <Paragraph fontWeight={600} color={"$background"}>
+              All of your progress will be lost.
+            </Paragraph>
+          </YStack>
+          <Button
+            onPress={() => route.navigate(`/module-overview/${currentModule.id}`)}
+            fontWeight={600}
+            themeInverse
+            marginBottom="$4"
+            fontSize={"$7"}
+            height={"$5"}
+          >
+            Exit
           </Button>
         </Sheet.Frame>
       </Sheet>

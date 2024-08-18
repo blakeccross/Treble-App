@@ -51390,6 +51390,12 @@
         "borderColorPress": "hsl(50, 100%, 48.5%)",
         "placeholderColor": "hsl(54, 100%, 86.6%)",
         "id": "light_yellow_alt2_SwitchThumb"
+      },
+      "white_button": {
+        "background": "#fff",
+        "fontWeight": 600,
+        "backgroundPress": "hsl(206, 100%, 50.0%)",
+        "id": "white_button"
       }
     },
     "tokens": {

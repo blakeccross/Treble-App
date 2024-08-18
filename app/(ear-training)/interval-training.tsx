@@ -34,16 +34,16 @@ const notesHard = ["c3", "cs3", "d3", "ds3", "e3", "f3", "fs3", "g3", "gs3", "a3
 // Static imports for audio files
 const noteToFile = {
   c3: require("@/assets/audio/piano_c3.mp3"),
-  cs3: require("@/assets/audio/piano_c#3.mp3"),
+  cs3: require("@/assets/audio/piano_cs3.mp3"),
   d3: require("@/assets/audio/piano_d3.mp3"),
-  ds3: require("@/assets/audio/piano_d#3.mp3"),
+  ds3: require("@/assets/audio/piano_ds3.mp3"),
   e3: require("@/assets/audio/piano_e3.mp3"),
   f3: require("@/assets/audio/piano_f3.mp3"),
-  fs3: require("@/assets/audio/piano_f#3.mp3"),
+  fs3: require("@/assets/audio/piano_fs3.mp3"),
   g3: require("@/assets/audio/piano_g3.mp3"),
-  gs3: require("@/assets/audio/piano_g#3.mp3"),
+  gs3: require("@/assets/audio/piano_gs3.mp3"),
   a3: require("@/assets/audio/piano_a3.mp3"),
-  as3: require("@/assets/audio/piano_a#3.mp3"),
+  as3: require("@/assets/audio/piano_as3.mp3"),
   b3: require("@/assets/audio/piano_b3.mp3"),
 };
 
@@ -119,7 +119,7 @@ export default function Page() {
 
   function handleIncorrect() {
     if (lives <= 1) {
-      router.push(`(ear-training)/game-over/${currentScore}`);
+      router.push({ pathname: "/game-over", params: { score: currentScore, gameName: "interval-training" } });
     } else {
       setLives(lives - 1);
     }
@@ -163,12 +163,12 @@ export default function Page() {
   function newQuestion() {
     let answerOptions = notes;
 
-    if (currentScore >= 10) {
+    if (currentScore <= 10) {
       setTotalTime(10);
-    } else if (currentScore >= 25) {
+    } else if (currentScore <= 25) {
       setTotalTime(5);
       answerOptions = notesHard;
-    } else if (currentScore >= 50) {
+    } else if (currentScore <= 50) {
       setTotalTime(3);
     }
     correctAnswer.current = "";
@@ -309,7 +309,7 @@ export default function Page() {
       <SafeAreaView style={{ flex: 0 }} />
 
       <XStack justifyContent="space-between" alignItems="center" paddingHorizontal="$4">
-        <Pressable onPress={() => router.navigate("(tabs)/ear-training")}>
+        <Pressable onPress={() => router.navigate("/ear-training")}>
           <X size="$3" />
         </Pressable>
         <H1 fontWeight={600}>{currentScore}</H1>

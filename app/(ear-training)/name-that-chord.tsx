@@ -37,16 +37,16 @@ const availableAnswers = [
 // Static imports for audio files
 const noteToFile = {
   c3: require("@/assets/audio/piano_c3.mp3"),
-  cs3: require("@/assets/audio/piano_c#3.mp3"),
+  cs3: require("@/assets/audio/piano_cs3.mp3"),
   d3: require("@/assets/audio/piano_d3.mp3"),
-  ds3: require("@/assets/audio/piano_d#3.mp3"),
+  ds3: require("@/assets/audio/piano_ds3.mp3"),
   e3: require("@/assets/audio/piano_e3.mp3"),
   f3: require("@/assets/audio/piano_f3.mp3"),
-  fs3: require("@/assets/audio/piano_f#3.mp3"),
+  fs3: require("@/assets/audio/piano_fs3.mp3"),
   g3: require("@/assets/audio/piano_g3.mp3"),
-  gs3: require("@/assets/audio/piano_g#3.mp3"),
+  gs3: require("@/assets/audio/piano_gs3.mp3"),
   a3: require("@/assets/audio/piano_a3.mp3"),
-  as3: require("@/assets/audio/piano_a#3.mp3"),
+  as3: require("@/assets/audio/piano_as3.mp3"),
   b3: require("@/assets/audio/piano_b3.mp3"),
 };
 
@@ -331,7 +331,7 @@ export default function Page() {
       <SafeAreaView style={{ flex: 0 }} />
 
       <XStack justifyContent="space-between" alignItems="center" paddingHorizontal="$4">
-        <Pressable onPress={() => router.navigate("(tabs)/ear-training")}>
+        <Pressable onPress={() => router.navigate("/(ear-training)")}>
           <X size="$3" />
         </Pressable>
         <H1 fontWeight={600}>{currentScore}</H1>

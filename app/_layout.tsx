@@ -52,6 +52,7 @@ export default function RootLayout() {
                   headerBackTitleVisible: false,
                 }}
               >
+                <Stack.Screen name="(auth)" options={{ headerShown: false }} />
                 <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
                 <Stack.Screen name="(questions)" options={{ headerShown: false }} />
                 <Stack.Screen name="(ear-training)" options={{ headerShown: false }} />

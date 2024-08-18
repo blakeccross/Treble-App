@@ -2,7 +2,7 @@ import { createAnimations } from "@tamagui/animations-react-native";
 import { createInterFont } from "@tamagui/font-inter";
 import { createMedia } from "@tamagui/react-native-media-driver";
 import { shorthands } from "@tamagui/shorthands";
-import { blue, blueDark, themes } from "@tamagui/themes";
+import { blue, blueDark, themes, whiteA } from "@tamagui/themes";
 import { createTamagui } from "tamagui";
 import { tokens } from "./theme";
 import { FontWeight } from "vexflow/src/font";
@@ -55,6 +55,25 @@ const config = createTamagui({
       // borderColorHover: "transparent",
       // borderColorPress: "red",
       color: "#fff",
+      // colorFocus: "#a5a5a5",
+      // colorHover: "#a5a5a5",
+      // colorPress: "#fff",
+      // colorTransparent: "#a5a5a5",
+      // placeholderColor: "#424242",
+    },
+    white_button: {
+      background: '#fff',
+      fontWeight: 600,
+      // backgroundFocus: "#424242",
+      // backgroundHover: "#282828",
+      backgroundPress: blueDark.blue9,
+      // backgroundStrong: "#191919",
+      // backgroundTransparent: "#151515",
+      // borderColor: "red",
+      // borderColorFocus: "red",
+      // borderColorHover: "transparent",
+      // borderColorPress: "red",
+      // color: "#fff",
       // colorFocus: "#a5a5a5",
       // colorHover: "#a5a5a5",
       // colorPress: "#fff",

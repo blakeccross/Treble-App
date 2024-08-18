@@ -7,17 +7,39 @@ import { Pressable, SafeAreaView, ScrollView, View, useWindowDimensions } from "
 import { Button, Card, H1, H2, H3, Theme, XStack, YStack } from "tamagui";
 import { LinearGradient } from "tamagui/linear-gradient";
 import { useMMKVNumber } from "react-native-mmkv";
+import { supabase } from "@/utils/supabase";
+import { UserContext } from "@/context/user-context";
 
 export default function Index() {
   const router = useRouter();
   const { score, gameName } = useLocalSearchParams();
+  const { currentUser, handleUpdateUserInfo } = useContext(UserContext);
   const [highScore, setHighScore] = useMMKVNumber(String(gameName));
 
   useEffect(() => {
     if (!highScore || +score > highScore) {
       setHighScore(+score);
+      updateLeaderboard();
     }
   }, []);
+
+  async function updateLeaderboard() {
+    let update;
+    if (gameName === "pitch_perfect") {
+      update = { pitch_perfect: Number(score) };
+    }
+    const { data, error } = await supabase
+      .from("leaderboard")
+      .upsert({ ...update, profile: currentUser?.id })
+      .eq("profile", currentUser?.id)
+      .select();
+    if (data) {
+      console.log("UPDATED HIGH SCORE", data);
+    }
+    if (error) {
+      console.error(error);
+    }
+  }
 
   return (
     <LinearGradient width="100%" height="100%" colors={["$blue10", "$blue8"]} start={[0.5, 1]} end={[0, 0]} paddingHorizontal={"$4"}>
@@ -44,12 +66,12 @@ export default function Index() {
           </YStack>
           <YStack gap="$4" width={"100%"}>
             <XStack gap="$4">
-              <Button fontWeight={600} size={"$6"} flex={1} themeInverse elevate icon={<Share />}>
-                Share
-              </Button>
-              <Button fontWeight={600} size={"$6"} flex={1} themeInverse elevate icon={<Trophy />}>
-                Leaderboard
-              </Button>
+              <Button fontWeight={600} size={"$6"} themeInverse elevate icon={<Share />}></Button>
+              <Link asChild href={{ pathname: "/(ear-training)/leaderboard", params: { gameName: gameName } }}>
+                <Button fontWeight={600} size={"$6"} themeInverse flex={1} elevate icon={<Trophy />}>
+                  Leaderboard
+                </Button>
+              </Link>
             </XStack>
             <Theme name={"alt1_Button"}>
               <Link asChild href={"/pitch-perfect"}>

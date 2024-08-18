@@ -3,10 +3,13 @@ import { Music, Settings } from "@tamagui/lucide-icons";
 import { Link } from "expo-router";
 import { useContext } from "react";
 import { SafeAreaView } from "react-native";
+import { useMMKVNumber } from "react-native-mmkv";
 import { Avatar, Card, H3, H5, Paragraph, Separator, XStack, YStack } from "tamagui";
 
 export default function TabTwoScreen() {
   const { currentUser } = useContext(UserContext);
+  const [totalXP, setTotalXP] = useMMKVNumber("totalXP");
+  console.log("TOTAL XP", totalXP);
 
   return (
     <SafeAreaView>
@@ -35,7 +38,7 @@ export default function TabTwoScreen() {
             </Card>
             <Card flex={1}>
               <Card.Header>
-                <Paragraph fontWeight="800">73</Paragraph>
+                <Paragraph fontWeight="800">{totalXP}</Paragraph>
                 <Paragraph>Total XP</Paragraph>
               </Card.Header>
             </Card>

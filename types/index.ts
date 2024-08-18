@@ -7,3 +7,4 @@ export type SectionItem = Database["public"]["Tables"]["section_item"]["Row"] & 
 };
 export type Section = Database["public"]["Tables"]["section"]["Row"] & { section_item: SectionItem[]; completed?: boolean };
 export type Module = Database["public"]["Tables"]["module"]["Row"] & { completed: boolean; progress: number, section: Section[], local_poster_uri: string };
+export type Leaderboard = Database["public"]["Tables"]["leaderboard"]["Row"] & {profile: {full_name: string, avatar_url: string}}

@@ -1,7 +1,7 @@
 import { StyleSheet } from "react-native";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Avatar, Button, Card, H1, H2, H3, Paragraph, Progress, ScrollView, XStack, YStack } from "tamagui";
+import { Avatar, Card, Button, H1, H2, H3, Paragraph, Progress, ScrollView, XStack, YStack, View } from "tamagui";
 import { Flame, Gem, Music, Trophy } from "@tamagui/lucide-icons";
 import { Link, router } from "expo-router";
 import { ModuleContext } from "@/context/module-context";
@@ -19,7 +19,7 @@ export default function HomeScreen() {
     "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
 
   return (
-    <>
+    <View backgroundColor={"$blue1"}>
       <ParallaxScrollView
         headerBackgroundColor={{ light: blue.blue10, dark: darkColors.blue10 }}
         headerImage={
@@ -58,14 +58,15 @@ export default function HomeScreen() {
           </LinearGradient>
         }
       >
-        <ScrollView backgroundColor={"$blue1"} contentContainerStyle={{ paddingBottom: 100 }}>
+        <ScrollView backgroundColor={"$blue1"}>
           <XStack $sm={{ flexDirection: "column" }} padding="$4" gap="$4">
             {data.map((module) => (
               <Link
-                href={{
-                  pathname: `/module/[id]`,
-                  params: { id: module.id },
-                }}
+                // href={{
+                //   pathname: `/module/[id]`,
+                //   params: { id: module.id },
+                // }}
+                href={`/module-overview/${module?.id}`}
                 asChild
                 key={module.id}
               >
@@ -89,7 +90,7 @@ export default function HomeScreen() {
                               <H3 fontWeight={600}>{module.id + " - " + module.title}</H3>
                             </YStack>
                           </XStack>
-
+                          {/* <Button white>Testing</Button> */}
                           <Button fontWeight={600} borderRadius={"$8"} disabled>
                             {module.progress !== 0 ? "Continue" : "Start"}
                           </Button>
@@ -107,6 +108,6 @@ export default function HomeScreen() {
           </XStack>
         </ScrollView>
       </ParallaxScrollView>
-    </>
+    </View>
   );
 }
