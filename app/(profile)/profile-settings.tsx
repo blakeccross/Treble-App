@@ -24,7 +24,7 @@ export default function ProfileSettings() {
   const timerRef = React.useRef(0);
 
   useEffect(() => {
-    setProfile({ name: currentUser?.name || "", email: currentUser?.email || "" });
+    setProfile({ name: currentUser?.full_name || "", email: currentUser?.email || "" });
   }, []);
 
   React.useEffect(() => {
@@ -37,7 +37,7 @@ export default function ProfileSettings() {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      fullName: currentUser?.name || "",
+      fullName: currentUser?.full_name || "",
       email: currentUser?.email || "",
       password: "Hello123",
     },
@@ -120,7 +120,7 @@ export default function ProfileSettings() {
         <YStack gap="$2" padding="$4">
           <YStack alignItems="center">
             <Avatar circular size="$12" onPress={pickImage}>
-              <Avatar.Image accessibilityLabel="Cam" src={currentUser?.profileImageURL} />
+              <Avatar.Image accessibilityLabel="Cam" src={currentUser?.avatar_url} />
               <Avatar.Fallback backgroundColor="$blue10" />
               <Music size={70} />
             </Avatar>

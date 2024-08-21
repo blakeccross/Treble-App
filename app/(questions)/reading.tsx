@@ -4,8 +4,10 @@ import { SafeAreaView, StyleSheet } from "react-native";
 import Markdown from "react-native-markdown-display";
 import AnswerDrawer from "@/components/AnswerDrawer";
 import { ScrollView } from "tamagui";
+import { Appearance, useColorScheme } from "react-native";
 
 export default function Index() {
+  let colorScheme = useColorScheme();
   const { currentQuestionIndex, questions, nextQuestion } = useContext(QuizContext);
   const questionTextRef = useRef(questions[currentQuestionIndex]?.reading_text || "");
 
@@ -27,6 +29,9 @@ export default function Index() {
     body: {
       marginBottom: 50,
       padding: 20,
+    },
+    text: {
+      color: colorScheme === "light" ? "black" : "white",
     },
   });
 

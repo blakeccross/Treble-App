@@ -4,6 +4,7 @@ import { ModuleContext } from "./module-context";
 import { Module, Section, SectionItem } from "@/types";
 import { UserContext } from "./user-context";
 import { useMMKVNumber } from "react-native-mmkv";
+import moment from "moment";
 
 type Quiz = {
   currentQuestionIndex: number;
@@ -70,6 +71,9 @@ export default function QuizProvider({ children }: { children: JSX.Element[] }) 
   function finishedSection() {
     handleUpdateUserInfo({ completedSections: [...(currentUser?.completedSections || []), currentSection?.id] });
 
+    if (!currentUser?.activeDays || (currentUser?.activeDays && !currentUser?.activeDays.some((date) => moment(date).isSame(moment(), "day")))) {
+      handleUpdateUserInfo({ activeDays: [...(currentUser?.activeDays || []), new Date()] });
+    }
     const XPGained = currentSection?.section_item.length || 0 - (3 - lives);
     const newXPValue = Number(totalXP) + XPGained;
     setLives(3);

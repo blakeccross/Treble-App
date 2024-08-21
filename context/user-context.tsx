@@ -5,12 +5,13 @@ import { useMMKVObject } from "react-native-mmkv";
 
 type User = {
   id: string;
-  name: string;
+  full_name: string;
   email: string;
   completedModules?: number[];
   completedSections?: number[];
-  profileImageURL?: string;
+  avatar_url?: string;
   premium?: boolean;
+  activeDays?: string[];
 };
 
 type UserContextProps = { currentUser: User | undefined; handleUpdateUserInfo: (info: any) => void };
@@ -24,9 +25,8 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
     async function getUser() {
       const { data, error } = await supabase.auth.getSession();
       if (data.session) {
-        console.log("USER IS SIGNED IN", data.session.user.id);
         router.replace("/(home)");
-        handleUpdateUserInfo({ email: data.session.user.email, id: data.session.user.id });
+        //handleUpdateUserInfo({ email: data.session.user.email, id: data.session.user.id });
         handleGetUserData(data.session.user.id);
       }
     }
@@ -53,13 +53,20 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
   async function handleGetUserData(id: string) {
     let { data: profile, error } = await supabase.from("profiles").select("*").eq("id", id).single();
     if (profile) {
-      handleUpdateUserInfo({ name: profile.full_name, profileImageURL: profile.avatar_url, id: profile.id });
+      handleUpdateUserInfo({ full_name: profile.full_name, avatar_url: profile.avatar_url });
+      const updatedUser = { ...(currentUser || {}), ...profile };
+      setCurrentUser(updatedUser);
     }
   }
 
-  function handleUpdateUserInfo(info: any) {
+  async function handleUpdateUserInfo(info: any) {
     const updatedUser = { ...(currentUser || {}), ...info };
-    setCurrentUser(updatedUser);
+
+    const { data, error } = await supabase.from("profiles").update(info).eq("id", currentUser?.id).select();
+    if (data) {
+      setCurrentUser(updatedUser);
+    }
+    if (error) console.error(error);
   }
 
   return <UserContext.Provider value={{ currentUser, handleUpdateUserInfo }}>{children}</UserContext.Provider>;

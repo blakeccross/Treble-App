@@ -1,11 +1,11 @@
 import { ArrowLeft, Check, ChevronRight, Lock, Play, RefreshCw } from "@tamagui/lucide-icons";
 import { Link, router, useLocalSearchParams } from "expo-router";
 import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
-import { View, SafeAreaView, useWindowDimensions, ScrollView, LayoutChangeEvent, FlatList } from "react-native";
+import { SafeAreaView, useWindowDimensions, LayoutChangeEvent, FlatList } from "react-native";
 import { useSharedValue } from "react-native-reanimated";
 import { Image } from "expo-image";
 
-import { H2, H3, H4, ListItem, Paragraph, Separator, XStack, YGroup, YStack } from "tamagui";
+import { H2, H3, H4, ListItem, Paragraph, ScrollView, Separator, View, XStack, YGroup, YStack } from "tamagui";
 import { window } from "@/utils";
 import { Dropdown } from "@/components/dropdown";
 import { ModuleContext } from "@/context/module-context";
@@ -60,12 +60,13 @@ export default function ModuleStartScreen() {
         </>
       }
     >
-      <View style={{ marginBottom: 200 }}>
+      <ScrollView backgroundColor={"$blue1"} contentContainerStyle={{ paddingBottom: 200 }}>
         {currentModule?.section.map((section) => (
           <Link
             asChild
             href={{ pathname: `/${section.section_item[0]?.type}`, params: { module_id: currentModule.id, section_id: section.id } }}
             disabled={(section.premium && currentUser?.premium) || !section.section_item[0]?.type}
+            key={section.id}
           >
             <XStack padding="$4" justifyContent="space-between" pressStyle={{ scale: 0.99, backgroundColor: "$backgroundPress" }}>
               <YStack>
@@ -83,7 +84,7 @@ export default function ModuleStartScreen() {
             </XStack>
           </Link>
         ))}
-      </View>
+      </ScrollView>
     </ParallaxScrollView>
   );
 }
