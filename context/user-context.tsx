@@ -8,10 +8,10 @@ type User = {
   full_name: string;
   email: string;
   completedModules?: number[];
-  completedSections?: number[];
+  completed_sections?: number[];
   avatar_url?: string;
   premium?: boolean;
-  activeDays?: string[];
+  active_days?: string[];
 };
 
 type UserContextProps = { currentUser: User | undefined; handleUpdateUserInfo: (info: any) => void };

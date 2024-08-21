@@ -21,7 +21,7 @@ import { Image as ImageComp } from "react-native-compressor";
 export default function TabTwoScreen() {
   const { currentUser, handleUpdateUserInfo } = useContext(UserContext);
   const [totalXP, setTotalXP] = useMMKVNumber("totalXP");
-  const userActiveDates = currentUser?.activeDays ? currentUser?.activeDays.map((item) => new Date(item)) : [];
+  const userActiveDates = currentUser?.active_days ? currentUser?.active_days.map((item) => new Date(item)) : [];
 
   const [selectedDates, onDatesChange] = useState<Date[]>(userActiveDates);
   // console.log("ACTIVE DAYS", currentUser);
@@ -178,10 +178,24 @@ export default function TabTwoScreen() {
           <XStack alignItems="center" justifyContent="space-between" width={"100%"} marginBottom="$2">
             <H2 fontWeight={600}>{month}</H2>
             <XStack gap="$3">
-              <View onPress={() => subtractOffset({ months: 1 }).onClick()}>
+              <View
+                onPress={(evt) => {
+                  const result = subtractOffset({ months: 1 });
+                  if (result && result.onClick) {
+                    result.onClick(evt as any);
+                  }
+                }}
+              >
                 <ChevronLeft size={"2"} />
               </View>
-              <View onPress={() => addOffset({ months: 1 }).onClick()}>
+              <View
+                onPress={(evt) => {
+                  const result = addOffset({ months: 1 });
+                  if (result && result.onClick) {
+                    result.onClick(evt as any);
+                  }
+                }}
+              >
                 <ChevronRight size={"2"} />
               </View>
             </XStack>

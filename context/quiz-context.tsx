@@ -69,15 +69,16 @@ export default function QuizProvider({ children }: { children: JSX.Element[] }) 
   }
 
   function finishedSection() {
-    handleUpdateUserInfo({ completedSections: [...(currentUser?.completedSections || []), currentSection?.id] });
+    handleUpdateUserInfo({ completed_sections: [...(currentUser?.completed_sections || []), currentSection?.id] });
 
-    if (!currentUser?.activeDays || (currentUser?.activeDays && !currentUser?.activeDays.some((date) => moment(date).isSame(moment(), "day")))) {
-      handleUpdateUserInfo({ activeDays: [...(currentUser?.activeDays || []), new Date()] });
+    if (!currentUser?.active_days || (currentUser?.active_days && !currentUser?.active_days.some((date) => moment(date).isSame(moment(), "day")))) {
+      handleUpdateUserInfo({ active_days: [...(currentUser?.active_days || []), new Date()] });
     }
     const XPGained = currentSection?.section_item.length || 0 - (3 - lives);
-    const newXPValue = Number(totalXP) + XPGained;
+    const newXPValue = (totalXP ? Number(totalXP) : 0) + XPGained;
     setLives(3);
     currentQuestionIndex.current = 0;
+    console.log(newXPValue, totalXP);
 
     setTotalXP(newXPValue);
     router.push({

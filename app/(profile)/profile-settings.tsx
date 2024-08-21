@@ -102,8 +102,6 @@ export default function ProfileSettings() {
       aspect: [1, 1],
     });
 
-    console.log(result);
-
     if (!result.canceled) {
       handleUpdateUserInfo({ profileImageURL: result.assets[0].uri || "" });
       Toast.show({
