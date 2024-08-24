@@ -72,13 +72,12 @@ export default function QuizProvider({ children }: { children: JSX.Element[] }) 
     handleUpdateUserInfo({ completed_sections: [...(currentUser?.completed_sections || []), currentSection?.id] });
 
     if (!currentUser?.active_days || (currentUser?.active_days && !currentUser?.active_days.some((date) => moment(date).isSame(moment(), "day")))) {
-      handleUpdateUserInfo({ active_days: [...(currentUser?.active_days || []), new Date()] });
+      handleUpdateUserInfo({ active_days: [...(currentUser?.active_days || []), new Date().toString()] });
     }
     const XPGained = currentSection?.section_item.length || 0 - (3 - lives);
     const newXPValue = (totalXP ? Number(totalXP) : 0) + XPGained;
     setLives(3);
     currentQuestionIndex.current = 0;
-    console.log(newXPValue, totalXP);
 
     setTotalXP(newXPValue);
     router.push({

@@ -1,5 +1,6 @@
 import { Database } from "./supabase";
 
+export type Profile = Database["public"]["Tables"]["profiles"]["Row"]
 export type SheetMusic = { clef: string; keys: string[]; duration: string }[];
 export type SectionItem = Database["public"]["Tables"]["section_item"]["Row"] & {
   question_options: { id: number; option_text: string }[];

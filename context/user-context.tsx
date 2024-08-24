@@ -1,3 +1,4 @@
+import { Profile } from "@/types";
 import { supabase } from "@/utils/supabase";
 import { router } from "expo-router";
 import { createContext, useEffect } from "react";
@@ -53,7 +54,7 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
   async function handleGetUserData(id: string) {
     let { data: profile, error } = await supabase.from("profiles").select("*").eq("id", id).single();
     if (profile) {
-      handleUpdateUserInfo({ full_name: profile.full_name, avatar_url: profile.avatar_url });
+      handleUpdateUserInfo({ full_name: profile.full_name, avatar_url: profile.avatar_url, active_days: profile?.active_days });
       const updatedUser = { ...(currentUser || {}), ...profile };
       setCurrentUser(updatedUser);
     }

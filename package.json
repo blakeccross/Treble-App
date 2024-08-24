@@ -67,6 +67,7 @@
     "react-native-toast-message": "^2.2.0",
     "react-native-url-polyfill": "^2.0.0",
     "react-native-web": "~0.19.10",
+    "react-native-webview": "^13.11.1",
     "react-soundfont-player": "^1.0.2",
     "supabase": "^1.187.10",
     "tamagui": "^1.99.1",

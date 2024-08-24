@@ -1,89 +1,67 @@
-import React, { useContext, useRef } from "react";
-import { SafeAreaView, StyleSheet } from "react-native";
+import React, { useRef, useState, useContext, useEffect } from "react";
+import { FlatList, SafeAreaView, useWindowDimensions } from "react-native";
+import SheetMusic from "@/components/sheet-music";
+import { Card, H1, H2, H3, Paragraph, View } from "tamagui";
+import { Stack } from "expo-router";
+import AnswerDrawer from "@/components/AnswerDrawer";
+import { QuizContext } from "@/context/quiz-context";
 
-export default function Index() {
-  const styles = StyleSheet.create({
-    heading1: {
-      fontSize: 40,
-      fontWeight: 700,
-    },
-    paragraph: {
-      fontSize: 20,
-      lineHeight: 30,
-    },
-    bullet_list: {
-      fontSize: 20,
-    },
-    ordered_list: {
-      fontSize: 20,
-    },
-    body: {
-      marginBottom: 50,
-      padding: 20,
-    },
-  });
+export default function MultipleCHoice() {
+  const { currentQuestionIndex, questions } = useContext(QuizContext);
+  const { height, width } = useWindowDimensions();
+  const [selectedAnswer, setSelectedAnswer] = useState<number>();
+  const [answerIsCorrect, setAnswerIsCorrect] = useState<boolean>();
+  const question = useRef(questions[currentQuestionIndex]);
+
+  function validate() {
+    setAnswerIsCorrect(selectedAnswer === question.current.answer_id);
+    if (selectedAnswer === question.current.answer_id) return true;
+    else return false;
+  }
 
   return (
     <>
-      {/* <SafeAreaView /> */}
-      {/* <ScrollView backgroundColor={"$background"}>
-        <Markdown mergeStyle style={styles}>
-          {questionTextRef.current?.replace(/(\r\n|\r|\n)/g, "\n")}
-        </Markdown>
-        <AnswerDrawer enabled />
-      </ScrollView> */}
-      {/* <Animated.View style={[{ padding: 10 }, animatedStyleFlatList]}>
-        <FlatList
-          data={availableAnswers}
-          columnWrapperStyle={{ gap: 10 }}
-          contentContainerStyle={{ gap: 10 }}
-          style={{ overflow: "visible" }}
-          numColumns={2}
-          renderItem={({ item }) => (
-            <Card
-              bordered
-              elevate
-              disabled={!isRunning}
-              borderRadius="$8"
-              pressStyle={{ scale: 0.95 }}
-              animation="bouncy"
-              flex={1}
-              onPress={() => validateAnswer(item.value)}
-              borderWidth={"$1"}
-              backgroundColor={
-                selectedAnswer === item.value
-                  ? answerIsCorrect
-                    ? "$green5"
-                    : answerIsCorrect !== undefined
-                    ? "$red5"
-                    : "$gray6"
-                  : correctAnswer.current === item.value && selectedAnswer !== ""
-                  ? "$green5"
-                  : "$background"
-              }
-              borderColor={
-                selectedAnswer === item.value
-                  ? answerIsCorrect
-                    ? "$green8"
-                    : answerIsCorrect !== undefined
-                    ? "$red10"
-                    : "$gray6"
-                  : correctAnswer.current === item.value && selectedAnswer !== ""
-                  ? "$green8"
-                  : "$background"
-              }
-            >
-              <Card.Header alignItems="center">
-                <H2 fontWeight={600} paddingVertical={"$3"}>
-                  {item.option_text.charAt(0).toUpperCase()}
-                  {item.option_text.charAt(1) === "s" && "#"}
-                </H2>
-              </Card.Header>
-            </Card>
+      <SafeAreaView />
+      <View padding="$4" flex={1}>
+        <View flex={1} style={{ width: "100%", justifyContent: "center" }}>
+          <H3 fontWeight={600}>Question:</H3>
+          <Paragraph marginBottom="$8">{question.current.question}</Paragraph>
+        </View>
+
+        <View>
+          {question.current.question_options && (
+            <FlatList
+              data={question.current.question_options}
+              // columnWrapperStyle={{ gap: 10 }}
+              contentContainerStyle={{ gap: 10 }}
+              style={{ overflow: "visible" }}
+              // numColumns={2}
+              renderItem={({ item }) => (
+                <Card
+                  bordered
+                  elevate
+                  borderRadius="$8"
+                  pressStyle={{ scale: 0.95 }}
+                  animation="bouncy"
+                  flex={1}
+                  onPress={() => setSelectedAnswer(item.id)}
+                  backgroundColor={
+                    selectedAnswer === item.id ? (answerIsCorrect ? "$green5" : answerIsCorrect !== undefined ? "$red5" : "$gray6") : "$background"
+                  }
+                  borderColor={
+                    selectedAnswer === item.id ? (answerIsCorrect ? "$green8" : answerIsCorrect !== undefined ? "$red10" : "$gray6") : undefined
+                  }
+                >
+                  <Card.Header>
+                    <Paragraph fontWeight={600}>{item.option_text}</Paragraph>
+                  </Card.Header>
+                </Card>
+              )}
+            />
           )}
-        />
-      </Animated.View> */}
-      <SafeAreaView style={{ flex: 0 }} />
+        </View>
+      </View>
+      <AnswerDrawer validateAnswer={validate} explanation={question.current.answer_explanation || ""} enabled />
     </>
   );
 }

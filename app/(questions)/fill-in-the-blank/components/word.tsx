@@ -30,14 +30,14 @@ const styles = StyleSheet.create({
 
 interface WordProps {
   id: number;
-  word: string;
+  option_text: string;
 }
 
-const Word = ({ word }: WordProps) => (
+const Word = ({ id, option_text }: WordProps) => (
   <View style={styles.root}>
     <View>
       <View style={styles.container}>
-        <Text style={styles.text}>{word}</Text>
+        <Text style={styles.text}>{option_text}</Text>
       </View>
       <View style={styles.shadow} />
     </View>

@@ -133,7 +133,7 @@ export default function TabTwoScreen() {
                     <Award color={"$purple10"} fill={purpleA.purpleA10} marginTop={4} />
                     <YStack>
                       <Paragraph fontWeight="800">1</Paragraph>
-                      <Paragraph>Modules Completed</Paragraph>
+                      <Paragraph fontSize={"$1"}>Modules Completed</Paragraph>
                     </YStack>
                   </XStack>
                 </Card.Header>
@@ -144,7 +144,7 @@ export default function TabTwoScreen() {
                     <AntDesign name="star" size={24} color={yellow.yellow10} marginTop={4} />
                     <YStack>
                       <Paragraph fontWeight="800">{totalXP}</Paragraph>
-                      <Paragraph>Total XP</Paragraph>
+                      <Paragraph fontSize={"$1"}>Total XP</Paragraph>
                     </YStack>
                   </XStack>
                 </Card.Header>
@@ -157,7 +157,7 @@ export default function TabTwoScreen() {
                     <Ionicons name="flame-sharp" size={24} color={redA.redA10} marginTop={4} />
                     <YStack>
                       <Paragraph fontWeight="800">3</Paragraph>
-                      <Paragraph>Day Streak</Paragraph>
+                      <Paragraph fontSize={"$1"}>Day Streak</Paragraph>
                     </YStack>
                   </XStack>
                 </Card.Header>
@@ -167,7 +167,7 @@ export default function TabTwoScreen() {
                   <XStack gap="$2">
                     <YStack>
                       <Paragraph fontWeight="800">3</Paragraph>
-                      <Paragraph>Current League</Paragraph>
+                      <Paragraph fontSize={"$1"}>Current League</Paragraph>
                     </YStack>
                   </XStack>
                 </Card.Header>

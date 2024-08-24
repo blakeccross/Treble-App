@@ -1,4 +1,4 @@
-import React, { useRef, useState, useContext } from "react";
+import React, { useRef, useState, useContext, useEffect } from "react";
 import { FlatList, SafeAreaView, View, useWindowDimensions } from "react-native";
 import SheetMusic from "@/components/sheet-music";
 import { Card, H1, H2, H3 } from "tamagui";

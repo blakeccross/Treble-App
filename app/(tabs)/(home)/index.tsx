@@ -15,6 +15,7 @@ import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { useMMKVNumber } from "react-native-mmkv";
+import TrebleLogo from "@/assets/trebleLogo";
 
 export default function HomeScreen() {
   const [totalXP, setTotalXP] = useMMKVNumber("totalXP");
@@ -31,16 +32,23 @@ export default function HomeScreen() {
 
         <XStack gap="$2" justifyContent="space-between" alignItems="center">
           <View width={"$10"} alignItems="flex-start">
-            <Avatar circular size="$3.5">
-              <Avatar.Image accessibilityLabel="Cam" src={currentUser?.avatar_url} />
-              <Avatar.Fallback backgroundColor="$blue2" />
-              {/* <Music size={70} /> */}
-              <FontAwesome6 name="user-large" size={20} color={blue.blue7} />
-            </Avatar>
+            <Link asChild href={"/profile"}>
+              <Avatar circular size="$3.5" pressStyle={{ scale: 0.95 }}>
+                <Avatar.Image accessibilityLabel="Cam" src={currentUser?.avatar_url} />
+                <Avatar.Fallback backgroundColor="$blue2" />
+                {/* <Music size={70} /> */}
+                <FontAwesome6 name="user-large" size={20} color={blue.blue7} />
+              </Avatar>
+            </Link>
           </View>
-          <H4 color={"white"} fontWeight={600}>
+
+          <View width={100} height={50}>
+            <TrebleLogo />
+          </View>
+
+          {/* <H4 color={"white"} fontWeight={600}>
             Treble
-          </H4>
+          </H4> */}
 
           <XStack alignItems="center" justifyContent="flex-end" gap="$2" width={"$10"}>
             <AntDesign name="star" size={24} color={yellow.yellow10} />
@@ -57,44 +65,7 @@ export default function HomeScreen() {
             </XStack> */}
         </XStack>
       </LinearGradient>
-      {/* <ParallaxScrollView
-        headerBackgroundColor={{ light: blue.blue10, dark: darkColors.blue10 }}
-        headerImage={
-          <LinearGradient width="100%" height="100%" colors={["$blue10", "$blue8"]} start={[0.5, 1]} end={[0, 0]} paddingHorizontal={"$4"}>
-            <SafeAreaView />
-            <YStack gap="$3">
-              <XStack gap="$2" justifyContent="space-between">
-                <YStack>
-                  <H3 fontWeight={800} color={"white"}>
-                    Welcome Back,
-                  </H3>
-                  <H3 fontWeight={500} color={"white"} opacity={0.8}>
-                    {currentUser?.name}
-                  </H3>
-                </YStack>
-                <Avatar circular size="$5">
-                  <Avatar.Image accessibilityLabel="Cam" src={currentUser?.profileImageURL} />
-                  <Avatar.Fallback backgroundColor="$blue10" />
-                  <Music size={70} />
-                </Avatar>
-              </XStack>
 
-              <Card borderRadius="$6" overflow="hidden" backgroundColor={"rgba(52, 52, 52, 0.0)"}>
-                <Card.Header>
-                  <XStack gap="$2" justifyContent="space-evenly" alignItems="center">
-                    <Flame size="$2" color={"$red10"} />
-                    <Gem size="$2" color={"blue7"} />
-                    <Trophy size="$2" color={"$orange7"} />
-                  </XStack>
-                </Card.Header>
-                <Card.Background>
-                  <BlurView intensity={50} tint="light" style={{ flex: 1 }}></BlurView>
-                </Card.Background>
-              </Card>
-            </YStack>
-          </LinearGradient>
-        }
-      ></ParallaxScrollView> */}
       <ScrollView height={"100%"}>
         <XStack $sm={{ flexDirection: "column" }} padding="$4" gap="$4">
           {data.map((module) => (
