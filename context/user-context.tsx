@@ -57,6 +57,7 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
     if (profile) {
       handleUpdateUserInfo(profile);
       const updatedUser = { ...(currentUser || {}), ...profile };
+      
       setCurrentUser(updatedUser);
     }
   }

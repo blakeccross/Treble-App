@@ -60,7 +60,9 @@ export default function TabTwoScreen() {
 
       const compressedImage = await ImageComp.compress(image.uri, {
         compressionMethod: "manual",
+        output: "jpg",
         maxWidth: 1000,
+        maxHeight: 1000,
         quality: 0.8,
       });
 
@@ -68,7 +70,7 @@ export default function TabTwoScreen() {
 
       const { data, error } = await supabase.storage.from("avatars").upload(path, arraybuffer, {
         cacheControl: "3600",
-        contentType: image.mimeType ?? "image/jpeg",
+        contentType: "image/jpeg",
         upsert: false,
       });
 
