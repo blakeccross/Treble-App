@@ -5,6 +5,7 @@ import { Card, H1, H2, H3, Paragraph, View } from "tamagui";
 import { Stack } from "expo-router";
 import AnswerDrawer from "@/components/AnswerDrawer";
 import { QuizContext } from "@/context/quiz-context";
+import { Image } from "expo-image";
 
 export default function MultipleCHoice() {
   const { currentQuestionIndex, questions } = useContext(QuizContext);
@@ -23,9 +24,10 @@ export default function MultipleCHoice() {
     <>
       <SafeAreaView />
       <View padding="$4" flex={1}>
-        <View flex={1} style={{ width: "100%", justifyContent: "center" }}>
+        <View flex={1} style={{ width: "100%", justifyContent: "center" }} paddingBottom="$4">
           <H3 fontWeight={600}>Question:</H3>
-          <Paragraph marginBottom="$8">{question.current.question}</Paragraph>
+          <Paragraph marginBottom="$2">{question.current.question}</Paragraph>
+          {question.current.image && <Image source={question.current.image} style={{ flex: 1, borderRadius: 20 }} />}
         </View>
 
         <View>
@@ -39,7 +41,7 @@ export default function MultipleCHoice() {
               renderItem={({ item }) => (
                 <Card
                   bordered
-                  elevate
+                  // elevate
                   borderRadius="$8"
                   pressStyle={{ scale: 0.95 }}
                   animation="bouncy"

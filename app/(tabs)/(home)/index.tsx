@@ -18,7 +18,6 @@ import { useMMKVNumber } from "react-native-mmkv";
 import TrebleLogo from "@/assets/trebleLogo";
 
 export default function HomeScreen() {
-  const [totalXP, setTotalXP] = useMMKVNumber("totalXP");
   const { data } = useContext(ModuleContext);
   const { currentUser } = useContext(UserContext);
   const blurhash =
@@ -34,7 +33,7 @@ export default function HomeScreen() {
           <View width={"$10"} alignItems="flex-start">
             <Link asChild href={"/profile"}>
               <Avatar circular size="$3.5" pressStyle={{ scale: 0.95 }}>
-                <Avatar.Image accessibilityLabel="Cam" src={currentUser?.avatar_url} />
+                {currentUser?.avatar_url && <Avatar.Image accessibilityLabel="Cam" src={currentUser?.avatar_url} />}
                 <Avatar.Fallback backgroundColor="$blue2" />
                 {/* <Music size={70} /> */}
                 <FontAwesome6 name="user-large" size={20} color={blue.blue7} />
@@ -53,7 +52,7 @@ export default function HomeScreen() {
           <XStack alignItems="center" justifyContent="flex-end" gap="$2" width={"$10"}>
             <AntDesign name="star" size={24} color={yellow.yellow10} />
             <H5 color={"$background"} fontWeight={600}>
-              {totalXP}
+              {currentUser?.total_xp}
             </H5>
           </XStack>
 

@@ -4,23 +4,24 @@ import { router } from "expo-router";
 import { createContext, useEffect } from "react";
 import { useMMKVObject } from "react-native-mmkv";
 
-type User = {
-  id: string;
-  full_name: string;
-  email: string;
-  completedModules?: number[];
-  completed_sections?: number[];
-  avatar_url?: string;
-  premium?: boolean;
-  active_days?: string[];
-};
+// type User = {
+//   id: string;
+//   full_name: string;
+//   email: string;
+//   completedModules?: number[];
+//   completed_sections?: number[];
+//   avatar_url?: string;
+//   premium?: boolean;
+//   active_days?: string[];
+//   total_xp?: number;
+// };
 
-type UserContextProps = { currentUser: User | undefined; handleUpdateUserInfo: (info: any) => void };
+type UserContextProps = { currentUser: Profile | undefined; handleUpdateUserInfo: (info: any) => void };
 
 export const UserContext = createContext<UserContextProps>({} as UserContextProps);
 
 export default function ModuleProvider({ children }: { children: JSX.Element }) {
-  const [currentUser, setCurrentUser] = useMMKVObject<User>("user");
+  const [currentUser, setCurrentUser] = useMMKVObject<Profile>("user");
 
   useEffect(() => {
     async function getUser() {
@@ -54,7 +55,7 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
   async function handleGetUserData(id: string) {
     let { data: profile, error } = await supabase.from("profiles").select("*").eq("id", id).single();
     if (profile) {
-      handleUpdateUserInfo({ full_name: profile.full_name, avatar_url: profile.avatar_url, active_days: profile?.active_days });
+      handleUpdateUserInfo(profile);
       const updatedUser = { ...(currentUser || {}), ...profile };
       setCurrentUser(updatedUser);
     }
@@ -69,6 +70,8 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
     }
     if (error) console.error(error);
   }
+
+  // if (!currentUser) throw Error();
 
   return <UserContext.Provider value={{ currentUser, handleUpdateUserInfo }}>{children}</UserContext.Provider>;
 }

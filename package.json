@@ -21,7 +21,6 @@
     "@react-native-async-storage/async-storage": "1.23.1",
     "@react-navigation/native": "^6.0.2",
     "@rehookify/datepicker": "^6.6.6",
-    "@shopify/react-native-skia": "1.2.3",
     "@supabase/supabase-js": "^2.45.1",
     "@tamagui/babel-plugin": "^1.99.1",
     "@tamagui/config": "^1.99.1",
@@ -71,7 +70,8 @@
     "react-soundfont-player": "^1.0.2",
     "supabase": "^1.187.10",
     "tamagui": "^1.99.1",
-    "vexflow": "^4.2.4"
+    "vexflow": "^4.2.4",
+    "@shopify/react-native-skia": "1.2.3"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

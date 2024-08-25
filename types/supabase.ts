@@ -15,21 +15,21 @@ export type Database = {
           id: number
           interval_training: number | null
           pitch_perfect: number | null
-          profile: string | null
+          profile: string
         }
         Insert: {
           created_at?: string
           id?: number
           interval_training?: number | null
           pitch_perfect?: number | null
-          profile?: string | null
+          profile: string
         }
         Update: {
           created_at?: string
           id?: number
           interval_training?: number | null
           pitch_perfect?: number | null
-          profile?: string | null
+          profile?: string
         }
         Relationships: [
           {
@@ -67,21 +67,30 @@ export type Database = {
       }
       profiles: {
         Row: {
+          active_days: Json[] | null
           avatar_url: string | null
+          completed_sections: Json[] | null
           full_name: string | null
           id: string
+          total_xp: number
           updated_at: string | null
         }
         Insert: {
+          active_days?: Json[] | null
           avatar_url?: string | null
+          completed_sections?: Json[] | null
           full_name?: string | null
           id: string
+          total_xp?: number
           updated_at?: string | null
         }
         Update: {
+          active_days?: Json[] | null
           avatar_url?: string | null
+          completed_sections?: Json[] | null
           full_name?: string | null
           id?: string
+          total_xp?: number
           updated_at?: string | null
         }
         Relationships: [
@@ -135,6 +144,7 @@ export type Database = {
           answer_id: number | null
           created_at: string
           id: number
+          image: string | null
           question: string | null
           question_options: Json[] | null
           reading_text: string | null
@@ -147,6 +157,7 @@ export type Database = {
           answer_id?: number | null
           created_at?: string
           id?: number
+          image?: string | null
           question?: string | null
           question_options?: Json[] | null
           reading_text?: string | null
@@ -159,6 +170,7 @@ export type Database = {
           answer_id?: number | null
           created_at?: string
           id?: number
+          image?: string | null
           question?: string | null
           question_options?: Json[] | null
           reading_text?: string | null
@@ -181,7 +193,12 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      validate_completed_sections: {
+        Args: {
+          completed_sections: Json
+        }
+        Returns: boolean
+      }
     }
     Enums: {
       section_item_type:

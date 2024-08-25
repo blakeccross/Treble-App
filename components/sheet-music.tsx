@@ -22,7 +22,7 @@ export default function SheetMusic({
     contextSize: { x: width_ + 2, y: 100 }, // this determine the canvas size
     staveOffset: { x: 0, y: 0 }, // this determine the starting point of the staff relative to top-right corner of canvas
     staveWidth: width_, // ofc, stave width
-    clef: clef, // clef
+    clef: clef ? clef : "treble", // clef
     timeSig: timeSig, // time signiture
     colorScheme: colorScheme,
   }) as any;

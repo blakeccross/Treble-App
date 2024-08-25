@@ -17,14 +17,13 @@ import Toast from "react-native-toast-message";
 import { Image } from "expo-image";
 import { supabase } from "@/utils/supabase";
 import { Image as ImageComp } from "react-native-compressor";
+import getStreak from "@/hooks/getStreak";
 
 export default function TabTwoScreen() {
   const { currentUser, handleUpdateUserInfo } = useContext(UserContext);
-  const [totalXP, setTotalXP] = useMMKVNumber("totalXP");
   const userActiveDates = currentUser?.active_days ? currentUser?.active_days.map((item) => new Date(item)) : [];
 
   const [selectedDates, onDatesChange] = useState<Date[]>(userActiveDates);
-  // console.log("ACTIVE DAYS", currentUser);
 
   const {
     data: { calendars, weekDays, formattedDates, months, years },
@@ -87,13 +86,11 @@ export default function TabTwoScreen() {
   return (
     <>
       <XStack justifyContent="flex-end" paddingHorizontal="$4" position="absolute" right={"$4"} top={"$10"} zIndex={"$5"}>
-        <Link href={{ pathname: "/(profile)/profile-settings" }}>
+        {/* <Link href={{ pathname: "/(profile)/profile-settings" }}>
           <Settings size={"$2"} />
-        </Link>
+        </Link> */}
       </XStack>
       <ScrollView contentContainerStyle={{ paddingBottom: 200 }}>
-        {/* <Avatar size={"100%"}>
-          <Avatar.Image accessibilityLabel="Cam" src={currentUser?.profileImageURL} /> */}
         {currentUser?.avatar_url ? (
           <Pressable onPress={pickImage}>
             <Image source={currentUser?.avatar_url} style={{ width: "100%", height: size.$19 }}>
@@ -117,15 +114,22 @@ export default function TabTwoScreen() {
             </Button>
           </LinearGradient>
         )}
-        {/* </Avatar> */}
-        <YStack marginHorizontal="$4">
-          <H3 fontWeight={600} textAlign="left" marginVertical="$4">
-            {currentUser?.full_name}
-          </H3>
-          <Separator />
 
-          {/* <H5>Overview</H5> */}
-          <YStack alignItems="flex-start" gap="$3" marginBottom={"$4"}>
+        <YStack marginHorizontal="$4">
+          <XStack justifyContent="space-between" alignItems="center">
+            <H3 fontWeight={600} textAlign="left" marginVertical="$6">
+              {currentUser?.full_name}
+            </H3>
+            <Link asChild href={{ pathname: "/(profile)/profile-settings" }}>
+              <Button variant="outlined" color={"$gray10"} fontWeight={600} pressStyle={{ scale: 0.95 }}>
+                {/* <Settings color={"$gray8"} size={"$1"} /> */}
+                Edit Profile
+              </Button>
+            </Link>
+          </XStack>
+
+          <H5>Overview</H5>
+          <YStack alignItems="flex-start" gap="$3" marginBottom={"$6"}>
             <XStack gap="$3">
               <Card flex={1} bordered>
                 <Card.Header>
@@ -143,7 +147,7 @@ export default function TabTwoScreen() {
                   <XStack gap="$2">
                     <AntDesign name="star" size={24} color={yellow.yellow10} marginTop={4} />
                     <YStack>
-                      <Paragraph fontWeight="800">{totalXP}</Paragraph>
+                      <Paragraph fontWeight="800">{currentUser?.total_xp}</Paragraph>
                       <Paragraph fontSize={"$1"}>Total XP</Paragraph>
                     </YStack>
                   </XStack>
@@ -156,7 +160,7 @@ export default function TabTwoScreen() {
                   <XStack gap="$2">
                     <Ionicons name="flame-sharp" size={24} color={redA.redA10} marginTop={4} />
                     <YStack>
-                      <Paragraph fontWeight="800">3</Paragraph>
+                      <Paragraph fontWeight="800">{currentUser?.active_days ? getStreak(currentUser?.active_days) : 0}</Paragraph>
                       <Paragraph fontSize={"$1"}>Day Streak</Paragraph>
                     </YStack>
                   </XStack>
@@ -174,7 +178,7 @@ export default function TabTwoScreen() {
               </Card>
             </XStack>
           </YStack>
-
+          <H5>Streak</H5>
           <XStack alignItems="center" justifyContent="space-between" width={"100%"} marginBottom="$2">
             <H2 fontWeight={600}>{month}</H2>
             <XStack gap="$3">

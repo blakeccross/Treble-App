@@ -6,7 +6,7 @@ type useScoreProps = {
   contextSize: { x: number; y: number };
   staveOffset: { x: number; y: number };
   staveWidth: number;
-  clef?: "treble" | "bass" | "alto" | "percussion" | "";
+  clef?: "treble" | "bass" | "alto" | "percussion" | "tenor";
   timeSig: string;
   colorScheme: "light" | "dark";
 };
@@ -15,7 +15,7 @@ const useScore = ({
   contextSize = { x: 300, y: 300 },
   staveOffset = { x: 5, y: 5 },
   staveWidth = 500,
-  clef = "treble",
+  clef,
   timeSig = "4/4",
   colorScheme,
 }: useScoreProps) => {
