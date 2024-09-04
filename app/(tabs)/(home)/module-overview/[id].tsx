@@ -62,30 +62,32 @@ export default function ModuleStartScreen() {
         </View>
       }
     >
-      <ScrollView backgroundColor={"$blue1"} contentContainerStyle={{ paddingBottom: 200 }}>
-        {currentModule?.section.map((section) => (
-          <Link
-            asChild
-            href={{ pathname: `/${section.section_item[0]?.type}`, params: { module_id: currentModule.id, section_id: section.id } }}
-            disabled={(section.premium && currentUser?.premium) || !section.section_item[0]?.type}
-            key={section.id}
-          >
-            <XStack padding="$4" justifyContent="space-between" pressStyle={{ scale: 0.99, backgroundColor: "$backgroundPress" }}>
-              <YStack>
-                <H4 fontWeight={600}>{section.title}</H4>
-                <Paragraph>
-                  15 minutes{" "}
-                  {section.completed && (
-                    <>
-                      • <Paragraph color={"$blue10"}>Completed</Paragraph>
-                    </>
-                  )}
-                </Paragraph>
-              </YStack>
-              <Button variant="outlined" white circular icon={section.completed ? RefreshCw : Play} />
-            </XStack>
-          </Link>
-        ))}
+      <ScrollView backgroundColor={"$blue1"} minHeight={"100% - 250px"}>
+        <View paddingBottom="$15">
+          {currentModule?.section.map((section) => (
+            <Link
+              asChild
+              href={{ pathname: `/${section.section_item[0]?.type}`, params: { module_id: currentModule.id, section_id: section.id } }}
+              disabled={(section.premium && currentUser?.premium) || !section.section_item[0]?.type}
+              key={section.id}
+            >
+              <XStack padding="$4" justifyContent="space-between" pressStyle={{ scale: 0.99, backgroundColor: "$backgroundPress" }}>
+                <YStack>
+                  <H4 fontWeight={600}>{section.title}</H4>
+                  <Paragraph>
+                    15 minutes{" "}
+                    {section.completed && (
+                      <>
+                        • <Paragraph color={"$blue10"}>Completed</Paragraph>
+                      </>
+                    )}
+                  </Paragraph>
+                </YStack>
+                <Button variant="outlined" white circular icon={section.completed ? RefreshCw : Play} />
+              </XStack>
+            </Link>
+          ))}
+        </View>
       </ScrollView>
     </ParallaxScrollView>
   );
