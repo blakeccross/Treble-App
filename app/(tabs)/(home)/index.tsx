@@ -66,7 +66,7 @@ export default function HomeScreen() {
       </LinearGradient>
 
       <ScrollView height={"100%"}>
-        <XStack $sm={{ flexDirection: "column" }} padding="$4" gap="$4">
+        <XStack $sm={{ flexDirection: "column" }} padding="$3" gap="$3">
           {data.map((module) => (
             <Link
               // href={{
@@ -78,7 +78,7 @@ export default function HomeScreen() {
               key={module.id}
             >
               <Card bordered elevate borderRadius="$8" pressStyle={{ scale: 0.95 }} animation="bouncy" backgroundColor={"$blue1"}>
-                <Card.Header padded>
+                <Card.Header padding="$4">
                   <XStack gap="$4" flex={1}>
                     <Image
                       style={{ width: screenWidth * 0.2, height: screenWidth * 0.2, borderRadius: 10 }}
@@ -94,18 +94,19 @@ export default function HomeScreen() {
 
                           <YStack>
                             <Paragraph size={"$2"}>{module.section.length + " Chapters"}</Paragraph>
-                            <H3 fontWeight={600}>{module.id + " - " + module.title}</H3>
+                            <H3 fontWeight={600}>{module.title}</H3>
                           </YStack>
                         </XStack>
                         {/* <Button white>Testing</Button> */}
-                        <Button fontWeight={600} borderRadius={"$8"} circular disabled variant="outlined">
-                          {module.progress !== 0 ? <ChevronRight color={"$blue10"} /> : "Start"}
-                        </Button>
+                        {/* <Button fontWeight={600} borderRadius={"$8"} circular disabled variant="outlined"> */}
+                        {module.progress !== 0 && <ChevronRight color={"$blue10"} />}
+                        {/* </Button> */}
                       </XStack>
-                      {/* {module.progress !== 0 && ( */}
-                      <Progress value={module.progress} backgroundColor={"$gray3"}>
-                        <Progress.Indicator animation="lazy" backgroundColor={"$blue10"} />
-                      </Progress>
+                      {module.progress !== 0 && (
+                        <Progress value={module.progress} backgroundColor={"$gray3"}>
+                          <Progress.Indicator animation="lazy" backgroundColor={"$blue10"} />
+                        </Progress>
+                      )}
                     </YStack>
                   </XStack>
                 </Card.Header>

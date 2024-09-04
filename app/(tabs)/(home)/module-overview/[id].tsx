@@ -44,24 +44,22 @@ export default function ModuleStartScreen() {
     <ParallaxScrollView
       headerBackgroundColor={{ light: blue.blue10, dark: blueDark.blue10 }}
       headerImage={
-        <>
-          <View style={{ position: "relative", width: "100%", height: 250 }}>
-            <Image
-              source={currentModule?.local_poster_uri} // Replace with your image URL
-              style={{ position: "absolute", width: "100%", height: "100%" }}
-              contentFit="cover"
-            />
-            <View style={{ padding: 20, height: 250, width: "100%", backgroundColor: "rgba(0, 0, 0, 0.1)" }}>
-              <SafeAreaView />
-              <XStack gap="$4">
-                <Button icon={<ArrowLeft size="$3" />} circular onPress={() => router.dismiss()} themeInverse />
-                <H2 color={"$background"} fontWeight={600}>
-                  {currentModule?.title}
-                </H2>
-              </XStack>
-            </View>
+        <View style={{ position: "relative", width: "100%" }}>
+          <Image
+            source={currentModule?.local_poster_uri} // Replace with your image URL
+            style={{ position: "absolute", width: "100%", height: "100%" }}
+            contentFit="cover"
+          />
+          <View padding="$4" height={250} style={{ width: "100%", backgroundColor: "rgba(0, 0, 0, 0.1)" }}>
+            <SafeAreaView />
+            <XStack gap="$4">
+              <Button icon={<ArrowLeft size="$3" />} circular onPress={() => router.navigate("/(home)")} themeInverse />
+              <H2 color={"$background"} fontWeight={600}>
+                {currentModule?.title}
+              </H2>
+            </XStack>
           </View>
-        </>
+        </View>
       }
     >
       <ScrollView backgroundColor={"$blue1"} contentContainerStyle={{ paddingBottom: 200 }}>

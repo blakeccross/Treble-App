@@ -4,18 +4,6 @@ import { router } from "expo-router";
 import { createContext, useEffect } from "react";
 import { useMMKVObject } from "react-native-mmkv";
 
-// type User = {
-//   id: string;
-//   full_name: string;
-//   email: string;
-//   completedModules?: number[];
-//   completed_sections?: number[];
-//   avatar_url?: string;
-//   premium?: boolean;
-//   active_days?: string[];
-//   total_xp?: number;
-// };
-
 type UserContextProps = { currentUser: Profile | undefined; handleUpdateUserInfo: (info: any) => void };
 
 export const UserContext = createContext<UserContextProps>({} as UserContextProps);
@@ -57,7 +45,7 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
     if (profile) {
       handleUpdateUserInfo(profile);
       const updatedUser = { ...(currentUser || {}), ...profile };
-      
+
       setCurrentUser(updatedUser);
     }
   }

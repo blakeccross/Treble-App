@@ -22,7 +22,6 @@ export default function QuizProvider({ children }: { children: JSX.Element[] }) 
   const { module_id, section_id } = useLocalSearchParams<{ module_id: string; section_id: string }>();
   const { currentUser, handleUpdateUserInfo } = useContext(UserContext);
   const { data: moduleData } = useContext(ModuleContext);
-  const [totalXP, setTotalXP] = useMMKVNumber("totalXP");
 
   const sections = moduleData.flatMap((item) => item.section);
 
@@ -75,11 +74,11 @@ export default function QuizProvider({ children }: { children: JSX.Element[] }) 
       handleUpdateUserInfo({ active_days: [...(currentUser?.active_days || []), new Date().toString()] });
     }
     const XPGained = currentSection?.section_item.length || 0 - (3 - lives);
-    const newXPValue = (totalXP ? Number(totalXP) : 0) + XPGained;
+    const newXPValue = (currentUser?.total_xp ? Number(currentUser?.total_xp) : 0) + XPGained;
     setLives(3);
     currentQuestionIndex.current = 0;
 
-    setTotalXP(newXPValue);
+    handleUpdateUserInfo({ total_xp: newXPValue });
     router.push({
       pathname: "/quiz-complete",
       params: { numOfCorrectAnswers: XPGained },

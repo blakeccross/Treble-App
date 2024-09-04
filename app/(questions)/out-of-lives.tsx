@@ -7,12 +7,12 @@ import { Button, Card, H1, H3, Paragraph, Progress, Spinner, YStack } from "tama
 
 export default function Index() {
   const router = useRouter();
-  const { currentQuestionIndex, questions } = useContext(QuizContext);
+  const { currentQuestionIndex, questions, section } = useContext(QuizContext);
 
   function handle() {
-    // TODO: Add next module to router ID
     router.navigate({
-      pathname: "/(tabs)/(home)/module-overview/2",
+      pathname: "/(tabs)/(home)/module-overview/[id]",
+      params: { id: section.id },
     });
   }
   return (
