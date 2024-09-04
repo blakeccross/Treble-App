@@ -19,7 +19,7 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
 
   useEffect(() => {
     setData(updateCompletedModules(updateCompletedSections(data)));
-  }, [currentUser?.completedSections]);
+  }, [currentUser?.completed_sections]);
 
   async function getModuleData() {
     try {
@@ -46,11 +46,11 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
   }
 
   function updateCompletedModules(data: Module[]) {
-    const completedModuleIDs = new Set(currentUser?.completedModules);
+    const completedModuleIDs = new Set(currentUser?.completed_modules);
 
     return data.map((module) => {
       const numOfCompletedSectionsInModule = module.section.filter(
-        (section) => currentUser?.completedSections && currentUser?.completedSections.includes(section.id)
+        (section) => currentUser?.completed_sections && currentUser?.completed_sections.includes(section.id)
       ).length;
 
       return {
@@ -62,7 +62,7 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
   }
 
   function updateCompletedSections(data: Module[]): Module[] {
-    const completedSectionIds = new Set(currentUser?.completedSections);
+    const completedSectionIds = new Set(currentUser?.completed_sections);
 
     return data.map((module) => {
       return {

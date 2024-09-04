@@ -36,6 +36,10 @@ export default function ModuleStartScreen() {
     scrollViewRef.current?.scrollTo({ x: 0, y: scrollPosition, animated: true });
   }
 
+  useEffect(() => {
+    if (!currentModule) router.replace("/(home)");
+  }, []);
+
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: blue.blue10, dark: blueDark.blue10 }}

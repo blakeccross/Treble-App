@@ -1,7 +1,7 @@
 import React, { useRef, useState, useContext, useEffect } from "react";
 import { FlatList, SafeAreaView, View, useWindowDimensions } from "react-native";
 import SheetMusic from "@/components/sheet-music";
-import { Card, H1, H2, H3 } from "tamagui";
+import { Card, H1, H2, H3, Paragraph } from "tamagui";
 import { Stack } from "expo-router";
 import AnswerDrawer from "@/components/AnswerDrawer";
 import { QuizContext } from "@/context/quiz-context";
@@ -23,7 +23,7 @@ export default function Page() {
     <>
       <SafeAreaView />
       <View style={{ flex: 1, width: "100%", alignItems: "center", justifyContent: "center" }}>
-        {question.sheet_music && <SheetMusic maxWidth={width * 0.5} data={question.sheet_music} clef="treble" timeSig="4/4" />}
+        {question.sheet_music && <SheetMusic maxWidth={width * 0.5} data={question.sheet_music} />}
       </View>
 
       <View style={{ padding: 10 }}>
@@ -42,6 +42,7 @@ export default function Page() {
                 pressStyle={{ scale: 0.95 }}
                 animation="bouncy"
                 flex={1}
+                borderWidth={"$1"}
                 onPress={() => setSelectedAnswer(item.id)}
                 backgroundColor={
                   selectedAnswer === item.id ? (answerIsCorrect ? "$green5" : answerIsCorrect !== undefined ? "$red5" : "$gray6") : "$background"
@@ -51,9 +52,9 @@ export default function Page() {
                 }
               >
                 <Card.Header alignItems="center">
-                  <H2 fontWeight={600} paddingVertical={"$3"}>
+                  <Paragraph fontWeight={600} paddingVertical={"$3"}>
                     {item.option_text}
-                  </H2>
+                  </Paragraph>
                 </Card.Header>
               </Card>
             )}

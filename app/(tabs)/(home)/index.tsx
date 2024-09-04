@@ -1,8 +1,8 @@
-import { StyleSheet } from "react-native";
+import { Dimensions, StyleSheet } from "react-native";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Avatar, Card, Button, H1, H2, H3, Paragraph, Progress, ScrollView, XStack, YStack, View, H5, H4 } from "tamagui";
-import { Flame, Gem, Music, Trophy } from "@tamagui/lucide-icons";
+import { ChevronRight, Flame, Gem, Music, Trophy } from "@tamagui/lucide-icons";
 import { Link, router } from "expo-router";
 import { ModuleContext } from "@/context/module-context";
 import React, { useContext } from "react";
@@ -22,7 +22,7 @@ export default function HomeScreen() {
   const { currentUser } = useContext(UserContext);
   const blurhash =
     "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
-
+  const screenWidth = Dimensions.get("window").width;
   return (
     <View backgroundColor={"$blue1"}>
       <LinearGradient colors={["$blue10", "$blue8"]} start={[0.3, 1]} end={[0, 0]} padding="$5" paddingTop="$0" paddingBottom="$4">
@@ -81,7 +81,7 @@ export default function HomeScreen() {
                 <Card.Header padded>
                   <XStack gap="$4" flex={1}>
                     <Image
-                      style={{ width: 90, height: 90, borderRadius: 10 }}
+                      style={{ width: screenWidth * 0.2, height: screenWidth * 0.2, borderRadius: 10 }}
                       source={module.local_poster_uri}
                       placeholder={{ blurhash }}
                       contentFit="cover"
@@ -98,8 +98,8 @@ export default function HomeScreen() {
                           </YStack>
                         </XStack>
                         {/* <Button white>Testing</Button> */}
-                        <Button fontWeight={600} borderRadius={"$8"} disabled>
-                          {module.progress !== 0 ? "Continue" : "Start"}
+                        <Button fontWeight={600} borderRadius={"$8"} circular disabled variant="outlined">
+                          {module.progress !== 0 ? <ChevronRight color={"$blue10"} /> : "Start"}
                         </Button>
                       </XStack>
                       {/* {module.progress !== 0 && ( */}

@@ -1,7 +1,12 @@
 import { Database } from "./supabase";
 
 export type Profile = Omit<Database["public"]["Tables"]["profiles"]["Row"],"active_days"> & {active_days: string[]}
-export type SheetMusic = { clef: string; keys: string[]; duration: string }[];
+export type SheetMusic = {
+  key: string;
+  clef: "treble" | "bass" | "alto" | "percussion" | "";
+  timeSig: string;
+  notes: { clef: string; keys: string[]; duration: string }[];
+}
 export type SectionItem = Database["public"]["Tables"]["section_item"]["Row"] & {
   question_options: { id: number; option_text: string }[];
   sheet_music: SheetMusic;

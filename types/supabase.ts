@@ -69,27 +69,33 @@ export type Database = {
         Row: {
           active_days: Json[] | null
           avatar_url: string | null
+          completed_modules: number[] | null
           completed_sections: Json[] | null
           full_name: string | null
           id: string
+          premium: boolean | null
           total_xp: number
           updated_at: string | null
         }
         Insert: {
           active_days?: Json[] | null
           avatar_url?: string | null
+          completed_modules?: number[] | null
           completed_sections?: Json[] | null
           full_name?: string | null
           id: string
+          premium?: boolean | null
           total_xp?: number
           updated_at?: string | null
         }
         Update: {
           active_days?: Json[] | null
           avatar_url?: string | null
+          completed_modules?: number[] | null
           completed_sections?: Json[] | null
           full_name?: string | null
           id?: string
+          premium?: boolean | null
           total_xp?: number
           updated_at?: string | null
         }
