@@ -54,21 +54,26 @@ export default function QuizProvider({ children }: { children: JSX.Element[] }) 
         });
       } else {
         // Finished Section
-        if (currentModule?.section && sectionIndexInModule + 1 < currentModule?.section.length) {
-          finishedSection();
-        } else {
-          // Finished Module
-          currentQuestionIndex.current = 0;
-          router.push({
-            pathname: "/module-complete",
-          });
-        }
+        const userFinishedModule = currentModule?.section && sectionIndexInModule + 1 < currentModule?.section.length;
+
+        finishedSection(userFinishedModule || false);
+
+        // Finished Module
+        // currentQuestionIndex.current = 0;
+        // router.push({
+        //   pathname: "/module-complete",
+        // });
       }
     }
   }
 
-  function finishedSection() {
-    handleUpdateUserInfo({ completed_sections: [...(currentUser?.completed_sections || []), currentSection?.id] });
+  function finishedSection(moduleComplete: boolean) {
+    const completedSections = [...(currentUser?.completed_sections || []), currentSection?.id];
+    const completedModules = [...(currentUser?.completed_modules || []), currentModule?.id];
+
+    handleUpdateUserInfo({ completed_sections: completedSections });
+    console.log("CM")
+    if (moduleComplete) handleUpdateUserInfo({ completed_modules: completedModules });
 
     if (!currentUser?.active_days || (currentUser?.active_days && !currentUser?.active_days.some((date) => moment(date).isSame(moment(), "day")))) {
       handleUpdateUserInfo({ active_days: [...(currentUser?.active_days || []), new Date().toString()] });
@@ -81,7 +86,7 @@ export default function QuizProvider({ children }: { children: JSX.Element[] }) 
     handleUpdateUserInfo({ total_xp: newXPValue });
     router.push({
       pathname: "/quiz-complete",
-      params: { numOfCorrectAnswers: XPGained },
+      params: { numOfCorrectAnswers: XPGained, moduleComplete: String(moduleComplete) },
     });
   }
 

@@ -7,12 +7,12 @@ import { Button, Card, H1, H3, Progress, Spinner, YStack } from "tamagui";
 
 export default function Index() {
   const router = useRouter();
-  const { currentQuestionIndex, questions } = useContext(QuizContext);
+  const { currentModule } = useContext(QuizContext);
 
   function handle() {
-    // TODO: Add next module to router ID
     router.navigate({
-      pathname: "/(tabs)/(home)/module-overview/2",
+      pathname: "/module-overview/[id]",
+      params: { id: currentModule.id },
     });
   }
   return (

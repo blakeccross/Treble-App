@@ -13,6 +13,7 @@ import { UserContext } from "@/context/user-context";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { blue, blueDark } from "@tamagui/themes";
 import { Button } from "@/components/button";
+import { StickyHeader } from "@/components/StickyHeader";
 
 const PAGE_WIDTH = window.width;
 const PAGE_HEIGHT = window.height;
@@ -41,28 +42,8 @@ export default function ModuleStartScreen() {
   }, []);
 
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: blue.blue10, dark: blueDark.blue10 }}
-      headerImage={
-        <View style={{ position: "relative", width: "100%" }}>
-          <Image
-            source={currentModule?.local_poster_uri} // Replace with your image URL
-            style={{ position: "absolute", width: "100%", height: "100%" }}
-            contentFit="cover"
-          />
-          <View padding="$4" height={250} style={{ width: "100%", backgroundColor: "rgba(0, 0, 0, 0.1)" }}>
-            <SafeAreaView />
-            <XStack gap="$4">
-              <Button icon={<ArrowLeft size="$3" />} circular onPress={() => router.navigate("/(home)")} themeInverse />
-              <H2 color={"$background"} fontWeight={600}>
-                {currentModule?.title}
-              </H2>
-            </XStack>
-          </View>
-        </View>
-      }
-    >
-      <ScrollView backgroundColor={"$blue1"} minHeight={"100% - 250px"}>
+    <StickyHeader image={currentModule?.local_poster_uri || ""} title={currentModule?.title || ""}>
+      <ScrollView backgroundColor={"$background"}>
         <View paddingBottom="$15">
           {currentModule?.section.map((section) => (
             <Link
@@ -72,13 +53,16 @@ export default function ModuleStartScreen() {
               key={section.id}
             >
               <XStack padding="$4" justifyContent="space-between" pressStyle={{ scale: 0.99, backgroundColor: "$backgroundPress" }}>
-                <YStack>
+                <YStack flex={1}>
                   <H4 fontWeight={600}>{section.title}</H4>
                   <Paragraph>
                     15 minutes{" "}
                     {section.completed && (
                       <>
-                        • <Paragraph color={"$blue10"}>Completed</Paragraph>
+                        •{" "}
+                        <Paragraph color={"$blue10"} fontWeight={600}>
+                          Completed
+                        </Paragraph>
                       </>
                     )}
                   </Paragraph>
@@ -89,6 +73,6 @@ export default function ModuleStartScreen() {
           ))}
         </View>
       </ScrollView>
-    </ParallaxScrollView>
+    </StickyHeader>
   );
 }

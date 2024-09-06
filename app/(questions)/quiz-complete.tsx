@@ -10,15 +10,20 @@ import { LinearGradient } from "tamagui/linear-gradient";
 
 export default function Index() {
   const router = useRouter();
-  const { currentQuestionIndex, questions, section } = useContext(QuizContext);
-  const { numOfCorrectAnswers } = useLocalSearchParams();
+  const { currentQuestionIndex, questions, currentModule } = useContext(QuizContext);
+  const { numOfCorrectAnswers, moduleComplete } = useLocalSearchParams();
 
   function handle() {
-    // router.dismiss();
-    router.navigate({
-      pathname: "/module-overview/[id]",
-      params: { id: section.id },
-    });
+    if (Boolean(moduleComplete)) {
+      router.push({
+        pathname: "/module-complete",
+      });
+    } else {
+      router.navigate({
+        pathname: "/module-overview/[id]",
+        params: { id: currentModule.id },
+      });
+    }
   }
 
   return (
@@ -58,22 +63,7 @@ export default function Index() {
             // animation="lazy"
           >
             <YGroup.Item>
-              <ListItem
-                hoverTheme
-                // themeInverse
-                // backgroundColor={}
-                icon={Star}
-                title={`${numOfCorrectAnswers} XP`}
-                color={"$blue10"}
-                // subTitle="Twinkles"
-                // color={"$background"}
-                // enterStyle={{
-                //   // scale: 3,
-                //   y: 100,
-                //   opacity: 0,
-                // }}
-                // animation="lazy"
-              />
+              <ListItem hoverTheme icon={Star} title={`${numOfCorrectAnswers} XP`} color={"$blue10"} />
             </YGroup.Item>
           </YGroup>
         </View>

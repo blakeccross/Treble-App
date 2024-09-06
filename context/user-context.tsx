@@ -10,7 +10,7 @@ export const UserContext = createContext<UserContextProps>({} as UserContextProp
 
 export default function ModuleProvider({ children }: { children: JSX.Element }) {
   const [currentUser, setCurrentUser] = useMMKVObject<Profile>("user");
-
+  console.log(currentUser?.completed_modules);
   useEffect(() => {
     async function getUser() {
       const { data, error } = await supabase.auth.getSession();
@@ -52,6 +52,7 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
 
   async function handleUpdateUserInfo(info: any) {
     const updatedUser = { ...(currentUser || {}), ...info };
+    console.log("UPDATED INFO", info);
 
     const { data, error } = await supabase.from("profiles").update(info).eq("id", currentUser?.id).select();
     if (data) {
