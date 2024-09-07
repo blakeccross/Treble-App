@@ -27,7 +27,13 @@ export default function MultipleCHoice() {
         <View flex={1} style={{ width: "100%", justifyContent: "center" }} paddingBottom="$4">
           <H3 fontWeight={600}>Question:</H3>
           <Paragraph marginBottom="$2">{question.current.question}</Paragraph>
-          {question.current.image && <Image source={question.current.image} style={{ flex: 1, borderRadius: 20 }} />}
+          {question.current.image && (
+            <Image
+              source={question.current.image}
+              style={{ borderRadius: 20, aspectRatio: "4/3", maxWidth: "100%", backgroundColor: "white" }}
+              contentFit="contain"
+            />
+          )}
         </View>
 
         <View>

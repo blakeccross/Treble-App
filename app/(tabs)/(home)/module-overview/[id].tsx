@@ -43,8 +43,8 @@ export default function ModuleStartScreen() {
 
   return (
     <StickyHeader image={currentModule?.local_poster_uri || ""} title={currentModule?.title || ""}>
-      <ScrollView backgroundColor={"$background"} minHeight={PAGE_HEIGHT / 1.2}>
-        <View paddingBottom="$15">
+      <ScrollView backgroundColor={"$background"} minHeight={PAGE_HEIGHT - 118.6}>
+        <View paddingBottom="$10">
           {currentModule?.section.map((section) => (
             <Link
               asChild

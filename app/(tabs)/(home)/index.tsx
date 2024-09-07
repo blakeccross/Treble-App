@@ -41,7 +41,7 @@ export default function HomeScreen() {
             </Link>
           </View>
 
-          <View width={100} height={50}>
+          <View width={80} height={40}>
             <TrebleLogo />
           </View>
 

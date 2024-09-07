@@ -44,7 +44,7 @@ export default function ProgressHeader() {
         modal
         open={open}
         onOpenChange={setOpen}
-        snapPoints={[400]}
+        snapPoints={[250]}
         snapPointsMode={"constant"}
         dismissOnSnapToBottom
         zIndex={100_000}
@@ -64,7 +64,7 @@ export default function ProgressHeader() {
           <Button
             onPress={() => route.navigate(`/module-overview/${currentModule.id}`)}
             fontWeight={600}
-            themeInverse
+            theme={"alt1"}
             marginBottom="$4"
             fontSize={"$7"}
             height={"$5"}

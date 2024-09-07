@@ -80,7 +80,7 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
         // Check if the file already exists
         const fileInfo = await FileSystem.getInfoAsync(localUri);
         if (fileInfo.exists) {
-          console.log("File already exists at ", localUri);
+          // console.log("File already exists at ", localUri);
           return { ...module, local_poster_uri: localUri };
         }
 
@@ -92,7 +92,7 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
         );
 
         const { uri }: any = await downloadResumable.downloadAsync();
-        console.log("Finished downloading to ", uri);
+        // console.log("Finished downloading to ", uri);
         return { ...module, local_poster_uri: uri };
       })
     );

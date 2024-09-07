@@ -20,59 +20,63 @@ type FormInput = {
 export default function ProfileSettings() {
   const [profile, setProfile] = useState({ name: "", email: "" });
   const { currentUser, handleUpdateUserInfo } = useContext(UserContext);
-  const [open, setOpen] = React.useState(false);
-  const timerRef = React.useRef(0);
 
   useEffect(() => {
-    setProfile({ name: currentUser?.full_name || "", email: currentUser?.email || "" });
-  }, []);
-
-  React.useEffect(() => {
-    return () => clearTimeout(timerRef.current);
+    async function getUser() {
+      const { data, error } = await supabase.auth.getSession();
+      if (data.session) {
+        setProfile({ name: currentUser?.full_name || "", email: data.session.user.email || "" });
+        setValue("fullName", currentUser?.full_name || "");
+        setValue("email", data.session.user.email || "");
+      }
+    }
+    getUser();
   }, []);
 
   const {
     control,
     handleSubmit,
-    formState: { errors },
+    setValue,
+    formState: { errors, isDirty },
   } = useForm({
     defaultValues: {
-      fullName: currentUser?.full_name || "",
-      email: currentUser?.email || "",
+      fullName: "",
+      email: "",
       password: "Hello123",
     },
   });
 
-  async function onSubmit(formInputs: FormInput) {
-    const { data: auth, error } = await supabase.auth.signUp({
-      email: formInputs.email,
-      password: formInputs.password,
-      options: {
-        data: {
-          full_name: formInputs.fullName,
-        },
-      },
-    });
-    if (error) {
-      console.error(error);
-      Toast.show({
-        type: "error",
-        text1: "Account could not be created at this time",
-      });
-    }
+  // async function onSubmit(formInputs: FormInput) {
+  //   const { data: auth, error } = await supabase.auth.signUp({
+  //     email: formInputs.email,
+  //     password: formInputs.password,
+  //     options: {
+  //       data: {
+  //         full_name: formInputs.fullName,
+  //       },
+  //     },
+  //   });
+  //   if (error) {
+  //     console.error(error);
+  //     Toast.show({
+  //       type: "error",
+  //       text1: "Account could not be created at this time",
+  //     });
+  //   }
 
-    if (auth.user) {
-      console.log("SUCCESS", auth);
-      Toast.show({
-        type: "success",
-        text1: "Account Created",
-      });
-      router.back();
-    }
-  }
+  //   if (auth.user) {
+  //     console.log("SUCCESS", auth);
+  //     Toast.show({
+  //       type: "success",
+  //       text1: "Account Created",
+  //     });
+  //     router.back();
+  //   }
+  // }
 
-  function handleUpdate() {
-    handleUpdateUserInfo({ ...profile });
+  function handleUpdate(formInputs: FormInput) {
+    console.log("DIRTY", isDirty);
+    handleUpdateUserInfo({ full_name: formInputs.fullName });
     Toast.show({
       type: "success",
       text1: "Account Updated",
@@ -199,7 +203,7 @@ export default function ProfileSettings() {
             fontSize={"$7"}
             height={"$5"}
             // onPress={handleUpdate}
-            onPress={handleSubmit(onSubmit)}
+            onPress={handleSubmit(handleUpdate)}
           >
             Update
           </Button>

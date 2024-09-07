@@ -68,9 +68,11 @@ function ScreenHeader({ sv, title }: { sv: SharedValue<number>; title: string })
           zIndex: 10,
           flexDirection: "row",
           justifyContent: "space-between",
-          alignItems: "flex-start",
         },
       ]}
+      alignItems={"center"}
+      borderBottomWidth={1}
+      borderBottomColor={"$gray5"}
     >
       <View width={"$3"} height={"$3"} alignItems="center" justifyContent="center" onPress={() => router.back()}>
         <ChevronLeft size={"$2"} />
@@ -143,6 +145,7 @@ function PosterImage({ sv, image, title }: { sv: SharedValue<number>; image: str
         </SizableText>
         <View position="absolute" top="$0" left="$4">
           <SafeAreaView />
+
           <Button icon={<ArrowLeft size="$3" />} circular onPress={() => router.back()} theme={"alt1"} />
         </View>
       </Animated.View>
