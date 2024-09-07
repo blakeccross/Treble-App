@@ -1,8 +1,12 @@
 import { QuizContext } from "@/context/quiz-context";
+import { playSFX } from "@/hooks/playSFX";
 import { Link, useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import React, { RefAttributes, useContext, useEffect, useRef, useState } from "react";
 import { View, Animated, SafeAreaView } from "react-native";
 import { Button, H1, H2, H3, Paragraph, Sheet, XStack, YStack } from "tamagui";
+import { AVPlaybackSource, Audio } from "expo-av";
+
+const correctSFX = require("@/assets/audio/correct_sfx.mp3");
 
 export default function AnswerDrawer({
   validateAnswer,
@@ -17,11 +21,34 @@ export default function AnswerDrawer({
   const { currentQuestionIndex, nextQuestion, lives, setLives } = useContext(QuizContext);
   const [open, setOpen] = useState(false);
   const [answerIsCorrect, setAnswerIsCorrect] = useState<boolean>();
-  // const animatedHeight = useRef(new Animated.Value(0)).current;
+  const [sound, setSound] = useState<Audio.Sound>();
 
   useEffect(() => {
-    if (answerIsCorrect !== undefined) startAnimation();
+    if (answerIsCorrect !== undefined) {
+      startAnimation();
+    }
   }, [answerIsCorrect]);
+
+  useEffect(() => {
+    return sound
+      ? () => {
+          sound.unloadAsync();
+        }
+      : undefined;
+  }, [sound]);
+
+  async function playSFX(sfx: AVPlaybackSource, interrupt?: boolean) {
+    const { sound } = await Audio.Sound.createAsync(sfx);
+    await Audio.setAudioModeAsync({
+      playsInSilentModeIOS: true,
+    });
+
+    if (interrupt) {
+      setSound(sound);
+    }
+
+    await sound.playAsync();
+  }
 
   const startAnimation = () => {
     setOpen(true);
@@ -32,6 +59,7 @@ export default function AnswerDrawer({
       const validateFunction = validateAnswer();
       setAnswerIsCorrect(validateFunction);
       if (validateFunction === false) setLives(lives - 1);
+      else playSFX(correctSFX);
     }
   }
 

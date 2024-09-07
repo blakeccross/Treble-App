@@ -14,7 +14,7 @@ export default function Index() {
   const { numOfCorrectAnswers, moduleComplete } = useLocalSearchParams();
 
   function handle() {
-    if (Boolean(moduleComplete)) {
+    if (moduleComplete === "true") {
       router.push({
         pathname: "/module-complete",
       });

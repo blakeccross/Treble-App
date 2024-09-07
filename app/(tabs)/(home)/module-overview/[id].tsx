@@ -43,7 +43,7 @@ export default function ModuleStartScreen() {
 
   return (
     <StickyHeader image={currentModule?.local_poster_uri || ""} title={currentModule?.title || ""}>
-      <ScrollView backgroundColor={"$background"}>
+      <ScrollView backgroundColor={"$background"} minHeight={PAGE_HEIGHT / 1.2}>
         <View paddingBottom="$15">
           {currentModule?.section.map((section) => (
             <Link
@@ -67,7 +67,7 @@ export default function ModuleStartScreen() {
                     )}
                   </Paragraph>
                 </YStack>
-                <Button variant="outlined" white circular icon={section.completed ? RefreshCw : Play} />
+                <Button variant="outlined" theme={"alt1"} circular icon={section.completed ? RefreshCw : Play} />
               </XStack>
             </Link>
           ))}

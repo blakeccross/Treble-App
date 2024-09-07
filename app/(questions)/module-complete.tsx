@@ -10,6 +10,7 @@ export default function Index() {
   const { currentModule } = useContext(QuizContext);
 
   function handle() {
+    // router.dismissAll();
     router.navigate({
       pathname: "/module-overview/[id]",
       params: { id: currentModule.id },

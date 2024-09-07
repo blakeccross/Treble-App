@@ -3,7 +3,6 @@ import { Dispatch, SetStateAction, createContext, useContext, useEffect, useRef,
 import { ModuleContext } from "./module-context";
 import { Module, Section, SectionItem } from "@/types";
 import { UserContext } from "./user-context";
-import { useMMKVNumber } from "react-native-mmkv";
 import moment from "moment";
 
 type Quiz = {
@@ -26,7 +25,8 @@ export default function QuizProvider({ children }: { children: JSX.Element[] }) 
   const sections = moduleData.flatMap((item) => item.section);
 
   const currentModule = moduleData.find((item) => item.id === +module_id);
-  const currentSection = sections.find((item) => item.id === +section_id);
+  const currentSection = sections.find((item) => item.id === +section_id) as Section;
+  const currentSectionQuestions = sortQuestions(currentSection.section_item);
 
   const sectionIndexInModule = currentModule?.section.map((item) => item.id).indexOf(currentSection?.id || 0) as number;
 
@@ -54,17 +54,22 @@ export default function QuizProvider({ children }: { children: JSX.Element[] }) 
         });
       } else {
         // Finished Section
-        const userFinishedModule = currentModule?.section && sectionIndexInModule + 1 < currentModule?.section.length;
+
+        const userFinishedModule = currentModule?.section
+          .map((item) => item.id)
+          .every((v) => [...(currentUser?.completed_sections || []), currentSection.id].includes(v));
 
         finishedSection(userFinishedModule || false);
-
-        // Finished Module
-        // currentQuestionIndex.current = 0;
-        // router.push({
-        //   pathname: "/module-complete",
-        // });
       }
     }
+  }
+
+  function sortQuestions(questions: SectionItem[]) {
+    return questions.sort((a, b) => {
+      if (a.type === "reading" && b.type !== "reading") return -1;
+      if (a.type !== "reading" && b.type === "reading") return 1;
+      return Math.random() - 0.5; // Randomize the rest
+    });
   }
 
   function finishedSection(moduleComplete: boolean) {
@@ -72,7 +77,7 @@ export default function QuizProvider({ children }: { children: JSX.Element[] }) 
     const completedModules = [...(currentUser?.completed_modules || []), currentModule?.id];
 
     handleUpdateUserInfo({ completed_sections: completedSections });
-    console.log("CM")
+
     if (moduleComplete) handleUpdateUserInfo({ completed_modules: completedModules });
 
     if (!currentUser?.active_days || (currentUser?.active_days && !currentUser?.active_days.some((date) => moment(date).isSame(moment(), "day")))) {
@@ -95,7 +100,7 @@ export default function QuizProvider({ children }: { children: JSX.Element[] }) 
       value={{
         currentQuestionIndex: currentQuestionIndex.current,
         nextQuestion,
-        questions: currentSection?.section_item,
+        questions: currentSectionQuestions,
         section: currentSection,
         currentModule,
         lives,

@@ -9,14 +9,14 @@ export default function TabLayout() {
   return (
     <>
       <QuizProvider>
-        {currentRoute !== "/loading" && currentRoute !== "/quiz-complete" ? <ProgressHeader /> : <></>}
+        {currentRoute !== "/loading" && currentRoute !== "/quiz-complete" && currentRoute !== "module-complete" ? <ProgressHeader /> : <></>}
         <Stack>
           <Stack.Screen name="loading" options={{ headerShown: false, presentation: "fullScreenModal" }} />
           <Stack.Screen name="reading" options={{ headerShown: false }} getId={({ params }) => String(Date.now())} />
           <Stack.Screen name="identify-the-chord-sheet" options={{ headerShown: false }} getId={({ params }) => String(Date.now())} />
           <Stack.Screen name="fill-in-the-blank" options={{ headerShown: false }} getId={({ params }) => String(Date.now())} />
           <Stack.Screen name="multiple-choice" options={{ headerShown: false }} getId={({ params }) => String(Date.now())} />
-          <Stack.Screen name="quiz-complete" options={{ headerShown: false, presentation: "fullScreenModal" }} />
+          <Stack.Screen name="quiz-complete" options={{ headerShown: false }} />
           <Stack.Screen name="module-complete" options={{ headerShown: false, presentation: "fullScreenModal" }} />
           <Stack.Screen name="out-of-lives" options={{ headerShown: false, presentation: "fullScreenModal" }} />
         </Stack>

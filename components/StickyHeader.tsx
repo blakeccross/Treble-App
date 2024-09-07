@@ -143,7 +143,7 @@ function PosterImage({ sv, image, title }: { sv: SharedValue<number>; image: str
         </SizableText>
         <View position="absolute" top="$0" left="$4">
           <SafeAreaView />
-          <Button icon={<ArrowLeft size="$3" />} circular onPress={() => router.back()} backgroundColor={"$background"} color={"$gray12"} />
+          <Button icon={<ArrowLeft size="$3" />} circular onPress={() => router.back()} theme={"alt1"} />
         </View>
       </Animated.View>
       <AnimatedLinearGradient
@@ -193,28 +193,7 @@ export function StickyHeader({ image, title, children }: { image: string; title:
       <ScreenHeader sv={sv} title={title} />
       <PosterImage sv={sv} image={image} title={title} />
       <Animated.ScrollView onScroll={scrollHandler} scrollEventThrottle={16} style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
-        <Animated.View style={[animatedScrollStyle, { paddingBottom: 40 }]}>
-          {/* Button Section */}
-          {/* <Animated.View
-            onLayout={(event: LayoutChangeEvent) => {
-              "worklet";
-              layoutY.value = event.nativeEvent.layout.y;
-            }}
-            style={[stickyElement, { paddingVertical: 16, justifyContent: "center", alignItems: "center" }]}
-          >
-            <View backgroundColor="green" paddingHorizontal={40} paddingVertical={8}>
-              <SizableText color="white" fontWeight="bold" size="$4">
-                Shuffle Play
-              </SizableText>
-            </View>
-          </Animated.View> */}
-          {/* <YStack paddingVertical={16} paddingHorizontal={40} backgroundColor={"$background"}>
-            <SizableText color="white" fontWeight="bold" size="$6">
-              Popular
-            </SizableText>
-          </YStack> */}
-          {children}
-        </Animated.View>
+        <Animated.View style={[animatedScrollStyle, { paddingBottom: 40 }]}>{children}</Animated.View>
       </Animated.ScrollView>
     </YStack>
   );
