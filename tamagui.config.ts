@@ -5,7 +5,6 @@ import { shorthands } from "@tamagui/shorthands";
 import { blue, blueDark, themes, whiteA } from "@tamagui/themes";
 import { createTamagui } from "tamagui";
 import { tokens } from "./theme";
-import { FontWeight } from "vexflow/src/font";
 
 const animations = createAnimations({
   bouncy: {

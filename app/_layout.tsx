@@ -27,6 +27,7 @@ export default function RootLayout() {
   const [loaded] = useFonts({
     Inter: require("@tamagui/font-inter/otf/Inter-Medium.otf"),
     InterBold: require("@tamagui/font-inter/otf/Inter-Bold.otf"),
+    InterItalic: require("@tamagui/font-inter/otf/Inter-Italic.otf"),
   });
 
   useEffect(() => {

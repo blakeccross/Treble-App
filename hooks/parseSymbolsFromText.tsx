@@ -9,7 +9,6 @@ import SixteenthNote from "@/assets/icons/sixteenthNote";
 import WholeNote from "@/assets/icons/wholeNote";
 import React, { useState, useEffect } from "react";
 import { Text, View, StyleSheet, Image } from "react-native";
-import Svg, { Path } from "react-native-svg";
 import { H1, H2, H3, Paragraph } from "tamagui";
 
 // Hook that converts markdown text to React Native elements without dependencies
@@ -69,9 +68,9 @@ const parseMarkdown = (text: string): JSX.Element[] => {
     } else {
       const formattedText = parseUnicodeSymbols(line);
       elements.push(
-        <Paragraph key={i} fontSize={"$7"} lineHeight={"$7"}>
+        <Text style={{ fontSize: 20, lineHeight: 27 }} key={i}>
           {formattedText}
-        </Paragraph>
+        </Text>
       );
     }
     i++;
@@ -128,32 +127,54 @@ const renderImage = (line: string, index: number): JSX.Element => {
   return <View key={index} />;
 };
 
-// Function to parse Unicode HTML symbols and replace them with SVGs
+// Main function to parse Unicode symbols and italic text
 const parseUnicodeSymbols = (text: string): JSX.Element[] => {
-  const unicodeRegex = /&#x([0-9A-Fa-f]+);/g;
-  const parts = text.split(unicodeRegex);
+  const italicRegex = /(\*|_)(.*?)\1/g;
   const elements: JSX.Element[] = [];
+  let lastIndex = 0;
+  let match;
 
-  for (let i = 0; i < parts.length; i++) {
-    if (i % 2 === 0) {
-      if (parts[i].replace(/ /g, ""))
-        elements.push(
-          <Paragraph key={i} fontSize={"$7"} lineHeight={"$7"}>
-            {parts[i]}
-          </Paragraph>
-        );
-      // Regular text part
-    } else {
-      // Unicode part (convert to SVG)
-      const unicode = parseInt(parts[i], 16);
-      const svgPath = getSvgPathForUnicode(unicode); // Convert Unicode to SVG path
-      elements.push(svgPath);
+  while ((match = italicRegex.exec(text)) !== null) {
+    if (lastIndex < match.index) {
+      const plainText = text.slice(lastIndex, match.index);
+      elements.push(...parsePlainTextAndUnicode(plainText, `text-${elements.length}`));
     }
+
+    elements.push(<Text style={{ fontStyle: "italic" }}>{parseUnicodeSymbols(match[2])}</Text>);
+
+    lastIndex = match.index + match[0].length;
+  }
+
+  if (lastIndex < text.length) {
+    const remainingText = text.slice(lastIndex);
+    elements.push(...parsePlainTextAndUnicode(remainingText, `remaining-${elements.length}`));
   }
 
   return elements;
 };
 
+// Helper function to handle plain text and Unicode symbols
+const parsePlainTextAndUnicode = (text: string, keyPrefix: string): JSX.Element[] => {
+  const unicodeRegex = /&#x([0-9A-Fa-f]+);/g;
+  const parts = text.split(unicodeRegex);
+  const elements: JSX.Element[] = [];
+
+  parts.forEach((part, index) => {
+    if (index % 2 === 0) {
+      if (part.trim()) {
+        elements.push(<Text>{part}</Text>);
+      }
+    } else {
+      const unicode = parseInt(parts[index], 16);
+      const svgPath = getSvgPathForUnicode(unicode);
+      elements.push(<React.Fragment key={`${keyPrefix}-unicode-${index}`}>{svgPath}</React.Fragment>);
+    }
+  });
+
+  return elements;
+};
+
+// Function to map Unicode symbols to their corresponding SVG paths
 const getSvgPathForUnicode = (unicode: number): JSX.Element => {
   const paths: { [key: number]: JSX.Element } = {
     0x1d15d: <WholeNote width={15} height={15} />,
@@ -182,6 +203,7 @@ const styles = StyleSheet.create({
   imageContainer: { marginVertical: 10, alignItems: "center" },
   image: { width: 200, height: 200, resizeMode: "contain" },
   imageCaption: { marginTop: 5, fontStyle: "italic", fontSize: 12 },
+  plainText: { fontStyle: "normal" },
 });
 
 export default useMarkdown;
