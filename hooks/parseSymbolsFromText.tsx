@@ -68,7 +68,11 @@ const parseMarkdown = (text: string): JSX.Element[] => {
       elements.push(renderImage(line, i));
     } else {
       const formattedText = parseUnicodeSymbols(line);
-      elements.push(<Paragraph key={i}>{formattedText}</Paragraph>);
+      elements.push(
+        <Paragraph key={i} fontSize={"$7"} lineHeight={"$7"}>
+          {formattedText}
+        </Paragraph>
+      );
     }
     i++;
   }
@@ -132,7 +136,12 @@ const parseUnicodeSymbols = (text: string): JSX.Element[] => {
 
   for (let i = 0; i < parts.length; i++) {
     if (i % 2 === 0) {
-      if (parts[i].replace(/ /g, "")) elements.push(<Paragraph key={i}>{parts[i]}</Paragraph>);
+      if (parts[i].replace(/ /g, ""))
+        elements.push(
+          <Paragraph key={i} fontSize={"$7"} lineHeight={"$7"}>
+            {parts[i]}
+          </Paragraph>
+        );
       // Regular text part
     } else {
       // Unicode part (convert to SVG)
@@ -146,7 +155,6 @@ const parseUnicodeSymbols = (text: string): JSX.Element[] => {
 };
 
 const getSvgPathForUnicode = (unicode: number): JSX.Element => {
-  console.log(unicode);
   const paths: { [key: number]: JSX.Element } = {
     0x1d15d: <WholeNote width={15} height={15} />,
     0x1d15e: <HalfNote width={15} height={40} />,

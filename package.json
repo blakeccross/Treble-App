@@ -11,7 +11,8 @@
     "test": "jest --watchAll",
     "lint": "expo lint",
     "update-types": "npx supabase gen types typescript --project-id \"pueoumkuxzosxrzqoefw\" > types/supabase.ts",
-    "build-sim": "eas build --profile development-simulator --platform ios"
+    "build-sim": "eas build --profile development-simulator --platform ios",
+    "build-ios": "eas build --profile preview --platform ios"
   },
   "jest": {
     "preset": "jest-expo"

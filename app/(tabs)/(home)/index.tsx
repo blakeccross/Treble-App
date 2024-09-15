@@ -85,15 +85,11 @@ export default function HomeScreen() {
                       <XStack justifyContent="space-between">
                         <XStack gap="$4" flex={1}>
                           <YStack>
-                            <Paragraph size={"$2"} color={module.completed ? "$yellow11Light" : undefined}>
-                              {"Chapter " + module.id}
-                            </Paragraph>
-                            <H3 fontWeight={600} color={module.completed ? "$yellow11Light" : undefined}>
-                              {module.title}
-                            </H3>
+                            <Paragraph size={"$2"}>{"Chapter " + module.id}</Paragraph>
+                            <H3 fontWeight={600}>{module.title}</H3>
                           </YStack>
                         </XStack>
-                        {module.progress !== 0 && <ChevronRight color={module.completed ? "$yellow11Light" : "$blue10"} />}
+                        {module.progress !== 0 && <ChevronRight color={module.completed ? "$gray12" : "$blue10"} />}
                       </XStack>
                       {module.progress !== 0 && !module.completed && (
                         <Progress value={module.progress} backgroundColor={"$gray3"}>
@@ -104,7 +100,7 @@ export default function HomeScreen() {
                   </XStack>
                 </Card.Header>
                 <CardBackground borderRadius="$8">
-                  {module.completed && <StripedPattern color1={yellowA.yellowA8} color2={yellowA.yellowA5} size={100} strokeWidth={30} />}
+                  {module.completed && <StripedPattern color1={yellowA.yellowA10} color2={yellowA.yellowA8} size={100} strokeWidth={30} />}
                 </CardBackground>
               </Card>
             </Link>
