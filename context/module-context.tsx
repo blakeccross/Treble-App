@@ -26,7 +26,7 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
       // setLoading(true)
       // if (!session?.user) throw new Error('No user on the session!')
 
-      const { data, error, status } = await supabase.from("module").select(`*, section(*, section_item(*))`);
+      const { data, error, status } = await supabase.from("module").select(`*, section(*, section_item(*))`).order("id", { ascending: true });
 
       if (error && status !== 406) {
         throw error;

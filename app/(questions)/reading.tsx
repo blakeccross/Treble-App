@@ -5,11 +5,15 @@ import Markdown from "react-native-markdown-display";
 import AnswerDrawer from "@/components/AnswerDrawer";
 import { ScrollView } from "tamagui";
 import { Appearance, useColorScheme } from "react-native";
+import Entypo from "@expo/vector-icons/Entypo";
+import useMarkdown from "@/hooks/parseSymbolsFromText";
+import WholeNote from "@/assets/icons/wholeNote";
 
 export default function Index() {
   let colorScheme = useColorScheme();
   const { currentQuestionIndex, questions, nextQuestion } = useContext(QuizContext);
   const questionTextRef = useRef(questions[currentQuestionIndex]?.reading_text || "");
+  const markdownElement = useMarkdown(questionTextRef.current?.replace(/(\r\n|\r|\n)/g, "\n"));
 
   const styles = StyleSheet.create({
     heading1: {
@@ -38,10 +42,11 @@ export default function Index() {
   return (
     <>
       <SafeAreaView />
-      <ScrollView backgroundColor={"$background"}>
-        <Markdown mergeStyle style={styles}>
+      <ScrollView backgroundColor={"$background"} contentContainerStyle={{ padding: 20 }}>
+        {/* <Markdown mergeStyle style={styles}>
           {questionTextRef.current?.replace(/(\r\n|\r|\n)/g, "\n")}
-        </Markdown>
+        </Markdown> */}
+        {markdownElement}
         <AnswerDrawer enabled />
       </ScrollView>
     </>
