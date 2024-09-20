@@ -17,6 +17,7 @@ export default function SheetMusic({
   };
   maxWidth: number;
 }) {
+  console.log("DATA", data);
   const screenWidth = Dimensions.get("window").width;
   const staveWidth = Math.min(screenWidth - 20, data.notes.length * 100);
   const colorScheme = useColorScheme() || "light";
@@ -36,7 +37,7 @@ export default function SheetMusic({
   var notes = data.notes.map((item) => new VF.StaveNote({ ...item }));
 
   // Create a voice in 4/4 and add the notes from above
-  var voice = new VF.Voice({ num_beats: data.notes.length, beat_value: 4 });
+  var voice = new VF.Voice({ num_beats: 4, beat_value: 4 }).setStrict(false);
   voice.addTickables(notes);
   VF.Accidental.applyAccidentals([voice], data.key);
   // Format and justify the notes to 400 pixels.

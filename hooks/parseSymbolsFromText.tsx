@@ -68,7 +68,7 @@ const parseMarkdown = (text: string): JSX.Element[] => {
     } else {
       const formattedText = parseUnicodeSymbols(line);
       elements.push(
-        <Text style={{ fontSize: 20, lineHeight: 27 }} key={i}>
+        <Text style={{ fontSize: 20, lineHeight: 28 }} key={i}>
           {formattedText}
         </Text>
       );
