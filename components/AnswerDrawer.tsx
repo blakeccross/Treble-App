@@ -1,10 +1,10 @@
 import { QuizContext } from "@/context/quiz-context";
-import { playSFX } from "@/hooks/playSFX";
 import { Link, useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import React, { RefAttributes, useContext, useEffect, useRef, useState } from "react";
 import { View, Animated, SafeAreaView } from "react-native";
 import { Button, H1, H2, H3, Paragraph, Sheet, XStack, YStack } from "tamagui";
 import { AVPlaybackSource, Audio } from "expo-av";
+import * as Haptics from "expo-haptics";
 
 const correctSFX = require("@/assets/audio/correct_sfx.mp3");
 
@@ -59,7 +59,10 @@ export default function AnswerDrawer({
       const validateFunction = validateAnswer();
       setAnswerIsCorrect(validateFunction);
       if (validateFunction === false) setLives(lives - 1);
-      else playSFX(correctSFX);
+      else {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        playSFX(correctSFX);
+      }
     }
   }
 

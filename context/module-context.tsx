@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { user_data } from "@/utils/sample-user-data";
 import { supabase } from "@/utils/supabase";
-import { Module } from "@/types";
+import { Module, SectionItem } from "@/types";
 import { UserContext } from "./user-context";
 import * as FileSystem from "expo-file-system";
 
@@ -33,8 +33,13 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
       }
 
       if (data) {
-        const addedLocalImage = await downloadEachPoster(data);
-        setData(updateCompletedModules(updateCompletedSections(addedLocalImage)));
+        const addedLocalImage = (await downloadEachPoster(data)) as Module[];
+        const sortedQuestions = addedLocalImage.map((module) => ({
+          ...module,
+          section: module.section.map((section) => ({ ...section, section_item: sortQuestions(section.section_item) })),
+        }));
+
+        setData(updateCompletedModules(updateCompletedSections(sortedQuestions)));
       }
     } catch (error) {
       // if (error instanceof Error) {
@@ -43,6 +48,14 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
     } finally {
       // setLoading(false)
     }
+  }
+
+  function sortQuestions(questions: SectionItem[]): SectionItem[] {
+    return questions.sort((a, b) => {
+      if (a.type === "reading" && b.type !== "reading") return -1;
+      if (a.type !== "reading" && b.type === "reading") return 1;
+      return Math.random() - 0.5; // Randomize the rest
+    });
   }
 
   function updateCompletedModules(data: Module[]) {
