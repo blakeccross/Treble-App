@@ -11,11 +11,12 @@ export default function Page() {
   const { height, width } = useWindowDimensions();
   const [selectedAnswer, setSelectedAnswer] = useState<number>();
   const [answerIsCorrect, setAnswerIsCorrect] = useState<boolean>();
-  const question = questions[currentQuestionIndex];
+  // const question = questions[currentQuestionIndex];
+  const question = useRef(questions[currentQuestionIndex]);
 
   function validate() {
-    setAnswerIsCorrect(selectedAnswer === question.answer_id);
-    if (selectedAnswer === question.answer_id) return true;
+    setAnswerIsCorrect(selectedAnswer === question.current.answer_id);
+    if (selectedAnswer === question.current.answer_id) return true;
     else return false;
   }
 
@@ -23,13 +24,13 @@ export default function Page() {
     <>
       <SafeAreaView />
       <View style={{ flex: 1, width: "100%", alignItems: "center", justifyContent: "center" }}>
-        {question.sheet_music && <SheetMusic maxWidth={width * 0.5} data={question.sheet_music} />}
+        {question.current.sheet_music && <SheetMusic maxWidth={width * 0.5} data={question.current.sheet_music} />}
       </View>
 
       <View style={{ padding: 10 }}>
-        {question.question_options && (
+        {question.current.question_options && (
           <FlatList
-            data={question.question_options}
+            data={question.current.question_options}
             columnWrapperStyle={{ gap: 10 }}
             contentContainerStyle={{ gap: 10 }}
             style={{ overflow: "visible" }}
@@ -61,7 +62,7 @@ export default function Page() {
           />
         )}
       </View>
-      <AnswerDrawer validateAnswer={validate} explanation={question.answer_explanation || ""} enabled />
+      <AnswerDrawer validateAnswer={validate} explanation={question.current.answer_explanation || ""} enabled />
     </>
   );
 }

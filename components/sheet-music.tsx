@@ -21,7 +21,7 @@ export default function SheetMusic({
   const screenWidth = Dimensions.get("window").width;
   const staveWidth = Math.min(screenWidth - 20, data.notes.length * 100);
   const colorScheme = useColorScheme() || "light";
-  const width_ = data.notes.length * 100;
+  const width_ = data.notes.length * 120;
   const [context, stave] = useScore({
     contextSize: { x: width_ + 2, y: 100 }, // this determine the canvas size
     staveOffset: { x: 0, y: 0 }, // this determine the starting point of the staff relative to top-right corner of canvas
@@ -41,7 +41,7 @@ export default function SheetMusic({
   voice.addTickables(notes);
   VF.Accidental.applyAccidentals([voice], data.key);
   // Format and justify the notes to 400 pixels.
-  new VF.Formatter().joinVoices([voice]).format([voice], width_ - 100);
+  new VF.Formatter().joinVoices([voice]).format([voice], width_);
   // Render voice
   voice.draw(context, stave);
 
