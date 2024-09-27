@@ -23,7 +23,7 @@ export default function Page() {
   return (
     <>
       <SafeAreaView />
-      <View style={{ flex: 1, width: "100%", alignItems: "center", justifyContent: "center" }}>
+      <View flex={1} justifyContent="center" alignItems="center">
         {question.current.sheet_music && <SheetMusic maxWidth={width * 0.5} data={question.current.sheet_music} />}
       </View>
 
