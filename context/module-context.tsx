@@ -5,25 +5,27 @@ import { Module, SectionItem } from "@/types";
 import { UserContext } from "./user-context";
 import * as FileSystem from "expo-file-system";
 
-type ModuleContextProps = { data: Module[] };
+type ModuleContextProps = { modules: { data: Module[] | null; loading: boolean } };
 
 export const ModuleContext = createContext<ModuleContextProps>({} as ModuleContextProps);
 
 export default function ModuleProvider({ children }: { children: JSX.Element }) {
-  const [data, setData] = useState<Module[]>([]);
+  const [modules, setModules] = useState<{ data: Module[] | null; loading: boolean }>({ data: null, loading: false });
   const { currentUser, handleUpdateUserInfo } = useContext(UserContext);
 
   useEffect(() => {
-    getModuleData();
-  }, []);
-
-  useEffect(() => {
-    setData(updateCompletedModules(updateCompletedSections(data)));
+    if (!modules.data) {
+      getModuleData();
+    } else {
+      setModules({ ...modules, data: modules.data ? updateCompletedModules(updateCompletedSections(modules.data)) : null });
+    }
   }, [currentUser?.completed_sections]);
 
+  // useEffect(() => {}, [currentUser?.completed_sections]);
+
   async function getModuleData() {
+    setModules({ ...modules, loading: true });
     try {
-      // setLoading(true)
       // if (!session?.user) throw new Error('No user on the session!')
 
       const { data, error, status } = await supabase.from("module").select(`*, section(*, section_item(*))`).order("id", { ascending: true });
@@ -39,7 +41,7 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
           section: module.section.map((section) => ({ ...section, section_item: sortQuestions(section.section_item) })),
         }));
 
-        setData(updateCompletedModules(updateCompletedSections(sortedQuestions)));
+        setModules({ ...modules, data: updateCompletedModules(updateCompletedSections(sortedQuestions)), loading: false });
       }
     } catch (error) {
       // if (error instanceof Error) {
@@ -113,5 +115,5 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
     return updatedModules;
   }
 
-  return <ModuleContext.Provider value={{ data }}>{children}</ModuleContext.Provider>;
+  return <ModuleContext.Provider value={{ modules }}>{children}</ModuleContext.Provider>;
 }
