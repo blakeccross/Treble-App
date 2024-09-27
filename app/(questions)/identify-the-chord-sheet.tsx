@@ -1,7 +1,7 @@
 import React, { useRef, useState, useContext, useEffect } from "react";
-import { FlatList, SafeAreaView, View, useWindowDimensions } from "react-native";
+import { FlatList, SafeAreaView, useWindowDimensions } from "react-native";
 import SheetMusic from "@/components/sheet-music";
-import { Card, H1, H2, H3, Paragraph } from "tamagui";
+import { Card, H1, H2, H3, Paragraph, View } from "tamagui";
 import { Stack } from "expo-router";
 import AnswerDrawer from "@/components/AnswerDrawer";
 import { QuizContext } from "@/context/quiz-context";
@@ -27,7 +27,7 @@ export default function Page() {
         {question.current.sheet_music && <SheetMusic maxWidth={width * 0.5} data={question.current.sheet_music} />}
       </View>
 
-      <View style={{ padding: 10 }}>
+      <View paddingHorizontal="$4">
         {question.current.question_options && (
           <FlatList
             data={question.current.question_options}

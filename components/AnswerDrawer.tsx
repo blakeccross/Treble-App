@@ -1,8 +1,8 @@
 import { QuizContext } from "@/context/quiz-context";
 import { Link, useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import React, { RefAttributes, useContext, useEffect, useRef, useState } from "react";
-import { View, Animated, SafeAreaView } from "react-native";
-import { Button, H1, H2, H3, Paragraph, Sheet, XStack, YStack } from "tamagui";
+import { Animated, SafeAreaView } from "react-native";
+import { Button, H1, H2, H3, Paragraph, Sheet, View } from "tamagui";
 import { AVPlaybackSource, Audio } from "expo-av";
 import * as Haptics from "expo-haptics";
 
@@ -109,7 +109,6 @@ export default function AnswerDrawer({
         <View
           style={{
             position: "absolute",
-            padding: 25, // Adjust padding as needed
             justifyContent: "flex-end",
             //alignItems: "flex-start",
             // flex: 1,
@@ -117,6 +116,7 @@ export default function AnswerDrawer({
             width: "100%",
             bottom: 0,
           }}
+          padding="$4"
         >
           {validateAnswer && answerIsCorrect === undefined ? (
             <Button onPress={handleValidateAnswer} width={"100%"} fontWeight={600} disabled={!enabled} fontSize={"$7"} height={"$5"}>

@@ -3,7 +3,7 @@ import React, { useContext, useRef } from "react";
 import { SafeAreaView, StyleSheet } from "react-native";
 import Markdown from "react-native-markdown-display";
 import AnswerDrawer from "@/components/AnswerDrawer";
-import { ScrollView } from "tamagui";
+import { ScrollView, View } from "tamagui";
 import { Appearance, useColorScheme } from "react-native";
 import Entypo from "@expo/vector-icons/Entypo";
 import useMarkdown from "@/hooks/parseSymbolsFromText";
@@ -42,11 +42,8 @@ export default function Index() {
   return (
     <>
       <SafeAreaView />
-      <ScrollView backgroundColor={"$background"} contentContainerStyle={{ padding: 20 }}>
-        {/* <Markdown mergeStyle style={styles}>
-          {questionTextRef.current?.replace(/(\r\n|\r|\n)/g, "\n")}
-        </Markdown> */}
-        {markdownElement}
+      <ScrollView backgroundColor={"$background"}>
+        <View padding="$4">{markdownElement}</View>
         <AnswerDrawer enabled />
       </ScrollView>
     </>
