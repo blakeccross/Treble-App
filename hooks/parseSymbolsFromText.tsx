@@ -7,27 +7,32 @@ import QuarterNote from "@/assets/icons/quarterNote";
 import Sharp from "@/assets/icons/sharp";
 import SixteenthNote from "@/assets/icons/sixteenthNote";
 import WholeNote from "@/assets/icons/wholeNote";
+import { whiteA } from "@tamagui/themes";
 import React, { useState, useEffect } from "react";
-import { Text, View, StyleSheet, Image } from "react-native";
-import { H1, H2, H3, Paragraph } from "tamagui";
+import { View, StyleSheet, Image } from "react-native";
+import { H1, H2, H3, Text } from "tamagui";
+import { useColorScheme } from "./useColorScheme";
 
 // Hook that converts markdown text to React Native elements without dependencies
 const useMarkdown = (markdownText: string) => {
+  const colorScheme = useColorScheme() || "light";
   const [markdownElement, setMarkdownElement] = useState<JSX.Element | null>(null);
+
+  console.log(colorScheme);
 
   useEffect(() => {
     if (markdownText) {
       // Parse the markdown text and create React Native elements
-      const parsedElements = parseMarkdown(markdownText);
+      const parsedElements = parseMarkdown(markdownText, colorScheme);
       setMarkdownElement(<View>{parsedElements}</View>);
     }
-  }, [markdownText]);
+  }, [markdownText, colorScheme]);
 
   return markdownElement;
 };
 
 // Function to parse the markdown text and return corresponding React Native elements
-const parseMarkdown = (text: string): JSX.Element[] => {
+const parseMarkdown = (text: string, colorScheme: "light" | "dark"): JSX.Element[] => {
   const lines = text.split("\n");
   const elements: JSX.Element[] = [];
 
@@ -38,19 +43,19 @@ const parseMarkdown = (text: string): JSX.Element[] => {
     if (line.startsWith("# ")) {
       elements.push(
         <H1 key={i} fontWeight={600}>
-          {parseUnicodeSymbols(line.replace("# ", ""))}
+          {parseUnicodeSymbols(line.replace("# ", ""), colorScheme)}
         </H1>
       );
     } else if (line.startsWith("## ")) {
       elements.push(
         <H2 key={i} fontWeight={600}>
-          {parseUnicodeSymbols(line.replace("## ", ""))}
+          {parseUnicodeSymbols(line.replace("## ", ""), colorScheme)}
         </H2>
       );
     } else if (line.startsWith("### ")) {
       elements.push(
         <H3 key={i} fontWeight={600}>
-          {parseUnicodeSymbols(line.replace("### ", ""))}
+          {parseUnicodeSymbols(line.replace("### ", ""), colorScheme)}
         </H3>
       );
     } else if (line.startsWith("|")) {
@@ -60,15 +65,15 @@ const parseMarkdown = (text: string): JSX.Element[] => {
         tableBlock.push(lines[i]);
         i++;
       }
-      elements.push(renderTable(tableBlock, elements.length));
+      elements.push(renderTable(tableBlock, elements.length, colorScheme));
       continue; // Skip increment to avoid missing lines
     } else if (line.startsWith("![")) {
       // Handle images
       elements.push(renderImage(line, i));
     } else {
-      const formattedText = parseUnicodeSymbols(line);
+      const formattedText = parseUnicodeSymbols(line, colorScheme);
       elements.push(
-        <Text style={{ fontSize: 20, lineHeight: 28 }} key={i}>
+        <Text lineHeight={"$5"} fontSize={"$7"} key={i}>
           {formattedText}
         </Text>
       );
@@ -80,14 +85,14 @@ const parseMarkdown = (text: string): JSX.Element[] => {
 };
 
 // Function to render a table from a block of markdown
-const renderTable = (tableBlock: string[], key: number): JSX.Element => {
+const renderTable = (tableBlock: string[], key: number, colorScheme: "light" | "dark"): JSX.Element => {
   const rows = tableBlock.map((row, rowIndex) => {
     const cells = row.split("|").filter((cell) => cell.trim() !== "");
 
     if (rowIndex === 0) {
-      return renderTableRow(cells, true, rowIndex); // Header row
+      return renderTableRow(cells, true, rowIndex, colorScheme); // Header row
     } else {
-      return renderTableRow(cells, false, rowIndex); // Body rows
+      return renderTableRow(cells, false, rowIndex, colorScheme); // Body rows
     }
   });
 
@@ -99,12 +104,12 @@ const renderTable = (tableBlock: string[], key: number): JSX.Element => {
 };
 
 // Function to render a table row
-const renderTableRow = (cells: string[], isHeader: boolean, index: number): JSX.Element => {
+const renderTableRow = (cells: string[], isHeader: boolean, index: number, colorScheme: "light" | "dark"): JSX.Element => {
   return (
     <View key={index} style={[styles.tableRow, isHeader && styles.tableHeader]}>
       {cells.map((cell, cellIndex) => (
         <View key={cellIndex} style={[styles.tableCell, isHeader && styles.tableHeaderCell]}>
-          {parseUnicodeSymbols(cell)}
+          {parseUnicodeSymbols(cell, colorScheme)}
         </View>
       ))}
     </View>
@@ -128,7 +133,7 @@ const renderImage = (line: string, index: number): JSX.Element => {
 };
 
 // Main function to parse Unicode symbols and italic text
-const parseUnicodeSymbols = (text: string): JSX.Element[] => {
+const parseUnicodeSymbols = (text: string, colorScheme: "light" | "dark"): JSX.Element[] => {
   const italicRegex = /(\*|_)(.*?)\1/g;
   const elements: JSX.Element[] = [];
   let lastIndex = 0;
@@ -137,24 +142,24 @@ const parseUnicodeSymbols = (text: string): JSX.Element[] => {
   while ((match = italicRegex.exec(text)) !== null) {
     if (lastIndex < match.index) {
       const plainText = text.slice(lastIndex, match.index);
-      elements.push(...parsePlainTextAndUnicode(plainText, `text-${elements.length}`));
+      elements.push(...parsePlainTextAndUnicode(plainText, `text-${elements.length}`, colorScheme));
     }
 
-    elements.push(<Text style={{ fontStyle: "italic" }}>{parseUnicodeSymbols(match[2])}</Text>);
+    elements.push(<Text style={{ fontStyle: "italic" }}>{parseUnicodeSymbols(match[2], colorScheme)}</Text>);
 
     lastIndex = match.index + match[0].length;
   }
 
   if (lastIndex < text.length) {
     const remainingText = text.slice(lastIndex);
-    elements.push(...parsePlainTextAndUnicode(remainingText, `remaining-${elements.length}`));
+    elements.push(...parsePlainTextAndUnicode(remainingText, `remaining-${elements.length}`, colorScheme));
   }
 
   return elements;
 };
 
 // Helper function to handle plain text and Unicode symbols
-const parsePlainTextAndUnicode = (text: string, keyPrefix: string): JSX.Element[] => {
+const parsePlainTextAndUnicode = (text: string, keyPrefix: string, colorScheme: "light" | "dark"): JSX.Element[] => {
   const unicodeRegex = /&#x([0-9A-Fa-f]+);/g;
   const parts = text.split(unicodeRegex);
   const elements: JSX.Element[] = [];
@@ -166,7 +171,7 @@ const parsePlainTextAndUnicode = (text: string, keyPrefix: string): JSX.Element[
       }
     } else {
       const unicode = parseInt(parts[index], 16);
-      const svgPath = getSvgPathForUnicode(unicode);
+      const svgPath = getSvgPathForUnicode(unicode, colorScheme);
       elements.push(<React.Fragment key={`${keyPrefix}-unicode-${index}`}>{svgPath}</React.Fragment>);
     }
   });
@@ -175,20 +180,33 @@ const parsePlainTextAndUnicode = (text: string, keyPrefix: string): JSX.Element[
 };
 
 // Function to map Unicode symbols to their corresponding SVG paths
-const getSvgPathForUnicode = (unicode: number): JSX.Element => {
-  const paths: { [key: number]: JSX.Element } = {
-    0x1d15d: <WholeNote width={15} height={15} />,
-    0x1d15e: <HalfNote width={15} height={40} />,
-    0x1d15f: <QuarterNote width={15} height={40} />,
-    0x1d160: <EighthNote width={20} height={40} />,
-    0x1d161: <SixteenthNote width={20} height={40} />,
-    0x266f: <Sharp width={15} height={20} />,
-    0x266d: <Flat width={15} height={20} />,
-    0x1d12a: <DoubleSharp width={15} height={20} />,
-    0x1d12b: <DoubleFlat width={15} height={20} />,
-  };
+const getSvgPathForUnicode = (unicode: number, colorScheme: "light" | "dark"): JSX.Element => {
+  const fill = colorScheme === "dark" ? "white" : "black";
 
-  return paths[unicode] || <></>;
+  // Log to see if the colorScheme is updated
+
+  switch (unicode) {
+    case 0x1d15d:
+      return <WholeNote width={15} height={15} fill={fill} />;
+    case 0x1d15e:
+      return <HalfNote width={15} height={40} fill={fill} />;
+    case 0x1d15f:
+      return <QuarterNote width={15} height={40} fill={fill} />;
+    case 0x1d160:
+      return <EighthNote width={20} height={40} fill={fill} />;
+    case 0x1d161:
+      return <SixteenthNote width={20} height={40} fill={fill} />;
+    case 0x266f:
+      return <Sharp width={15} height={20} fill={fill} />;
+    case 0x266d:
+      return <Flat width={15} height={20} fill={fill} />;
+    case 0x1d12a:
+      return <DoubleSharp width={15} height={20} fill={fill} />;
+    case 0x1d12b:
+      return <DoubleFlat width={15} height={20} fill={fill} />;
+    default:
+      return <></>;
+  }
 };
 
 // Basic styles for markdown elements

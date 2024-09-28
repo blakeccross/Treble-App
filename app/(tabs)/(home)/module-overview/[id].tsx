@@ -19,23 +19,23 @@ const PAGE_WIDTH = window.width;
 const PAGE_HEIGHT = window.height;
 
 export default function ModuleStartScreen() {
-  const { data } = useContext(ModuleContext);
   const { currentUser } = useContext(UserContext);
   const { id } = useLocalSearchParams();
-  const currentModule = data.find((item) => item.id === Number(id));
+  const { modules } = useContext(ModuleContext);
+  const currentModule = modules.data && modules.data.find((item) => item.id === Number(id));
   const scrollViewRef = useRef<ScrollView>(null);
   const [visibleModule, setVisibleModule] = useState("Module 1");
   const [snapIntervals, setSnapIntervals] = useState<number[]>([]);
   const moduleHeights = useRef<number[]>([]);
 
-  function handleSelectModule(value: string) {
-    setVisibleModule(value);
-    const selectedModuleIndex = data.findIndex((item) => item.title === value);
+  // function handleSelectModule(value: string) {
+  //   setVisibleModule(value);
+  //   const selectedModuleIndex = data.findIndex((item) => item.title === value);
 
-    const scrollPosition = snapIntervals[selectedModuleIndex - 1];
+  //   const scrollPosition = snapIntervals[selectedModuleIndex - 1];
 
-    scrollViewRef.current?.scrollTo({ x: 0, y: scrollPosition, animated: true });
-  }
+  //   scrollViewRef.current?.scrollTo({ x: 0, y: scrollPosition, animated: true });
+  // }
 
   useEffect(() => {
     if (!currentModule) router.replace("/(home)");

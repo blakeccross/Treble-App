@@ -10,8 +10,8 @@ import { Image } from "expo-image";
 
 export default function ModuleStartScreen() {
   const { id } = useLocalSearchParams();
-  const { data: moduleData } = useContext(ModuleContext);
-  const module = moduleData.find((item) => item.id === Number(id));
+  const { modules } = useContext(ModuleContext);
+  const module = modules.data && modules.data.find((item) => item.id === Number(id));
 
   return (
     <ParallaxScrollView

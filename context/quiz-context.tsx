@@ -7,7 +7,7 @@ import moment from "moment";
 
 type Quiz = {
   currentQuestionIndex: number;
-  questions: SectionItem[];
+  questions: SectionItem[] | null;
   section: Section;
   currentModule: Module;
   nextQuestion: () => void;
@@ -20,13 +20,13 @@ export default function QuizProvider({ children }: { children: JSX.Element[] }) 
   const router = useRouter();
   const { module_id, section_id } = useLocalSearchParams<{ module_id: string; section_id: string }>();
   const { currentUser, handleUpdateUserInfo } = useContext(UserContext);
-  const { data: moduleData } = useContext(ModuleContext);
+  const { modules } = useContext(ModuleContext);
 
-  const sections = moduleData.flatMap((item) => item.section);
+  const sections = modules.data && modules.data.flatMap((item) => item.section);
 
-  const currentModule = moduleData.find((item) => item.id === +module_id);
-  const currentSection = sections.find((item) => item.id === +section_id) as Section;
-  const currentSectionQuestions = sortQuestions(currentSection.section_item);
+  const currentModule = modules.data && modules.data.find((item) => item.id === +module_id);
+  const currentSection = sections && (sections.find((item) => item.id === +section_id) as Section);
+  const currentSectionQuestions = currentSection && sortQuestions(currentSection.section_item);
 
   const sectionIndexInModule = currentModule?.section.map((item) => item.id).indexOf(currentSection?.id || 0) as number;
 
@@ -57,7 +57,7 @@ export default function QuizProvider({ children }: { children: JSX.Element[] }) 
 
         const userFinishedModule = currentModule?.section
           .map((item) => item.id)
-          .every((v) => [...(currentUser?.completed_sections || []), currentSection.id].includes(v));
+          .every((v) => [...(currentUser?.completed_sections || []), currentSection?.id].includes(v));
 
         finishedSection(userFinishedModule || false);
       }
