@@ -23,11 +23,17 @@ export default function Page() {
   return (
     <>
       <SafeAreaView />
+      {question.current.question && (
+        <View paddingHorizontal="$4" style={{ width: "100%", justifyContent: "center" }} paddingBottom="$4">
+          <H3 fontWeight={600}>Question:</H3>
+          <Paragraph>{question.current.question}</Paragraph>
+        </View>
+      )}
       <View flex={1} justifyContent="center" alignItems="center">
         {question.current.sheet_music && <SheetMusic maxWidth={width * 0.5} data={question.current.sheet_music} />}
       </View>
 
-      <View paddingHorizontal="$4">
+      <View paddingHorizontal="$4" marginTop="$4">
         {question.current.question_options && (
           <FlatList
             data={question.current.question_options}

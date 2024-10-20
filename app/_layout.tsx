@@ -13,6 +13,7 @@ import UserProvider from "@/context/user-context";
 import Header from "@/components/header";
 import Toast from "react-native-toast-message";
 import { toastConfig } from "@/components/toastConfig";
+import Purchases from "react-native-purchases";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -29,6 +30,22 @@ export default function RootLayout() {
     InterBold: require("@tamagui/font-inter/otf/Inter-Bold.otf"),
     InterItalic: require("@tamagui/font-inter/otf/Inter-Italic.otf"),
   });
+
+  useEffect(() => {
+    /* Enable debug logs before calling `setup`. */
+    Purchases.setLogLevel(Purchases.LOG_LEVEL.DEBUG);
+
+    /*
+      Initialize the RevenueCat Purchases SDK.
+
+      - appUserID is nil, so an anonymous ID will be generated automatically by the Purchases SDK. Read more about Identifying Users here: https://docs.revenuecat.com/docs/user-ids
+
+      - observerMode is false, so Purchases will automatically handle finishing transactions. Read more about Observer Mode here: https://docs.revenuecat.com/docs/observer-mode
+
+      - useAmazon is false, so it will use the Play Store in Android and App Store in iOS by default.
+      */
+    Purchases.configure({ apiKey: "appl_zZGUxbBzchveUkWXlMPDeuztdeD", appUserID: null, useAmazon: false });
+  }, []);
 
   useEffect(() => {
     if (loaded) {

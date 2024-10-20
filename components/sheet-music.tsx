@@ -34,7 +34,7 @@ export default function SheetMusic({
   // picked from Vexflow tutorial: https://github.com/0xfe/vexflow/wiki/The-VexFlow-Tutorial
   const VF = Vex.Flow;
 
-  var notes = data.notes.map((item) => new VF.StaveNote({ ...item }));
+  var notes = data.notes.map((item) => new VF.StaveNote({ ...item, clef: data.clef }));
 
   // Create a voice in 4/4 and add the notes from above
   var voice = new VF.Voice({ num_beats: 4, beat_value: 4 }).setStrict(false);

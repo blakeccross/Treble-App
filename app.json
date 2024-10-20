@@ -14,7 +14,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.blakecross.treble"
+      "bundleIdentifier": "com.blakecross.trebleapp"
     },
     "expo": {
       "experiments": {
@@ -26,7 +26,7 @@
         "foregroundImage": "./assets/images/treble-icon.png",
         "backgroundColor": "#3D7ABE"
       },
-      "package": "com.blakecross.treble"
+      "package": "com.blakecross.trebleapp"
     },
     "web": {
       "bundler": "metro",
