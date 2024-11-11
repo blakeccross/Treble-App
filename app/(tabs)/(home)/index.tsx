@@ -19,6 +19,7 @@ import TrebleLogo from "@/assets/trebleLogo";
 import StripedPattern from "@/components/stripedPattern";
 import { SkeletonLoader } from "@/components/SkeletonLoader";
 import Purchases from "react-native-purchases";
+import Paywall from "@/app/paywall";
 
 export default function HomeScreen() {
   const { modules } = useContext(ModuleContext);
@@ -27,19 +28,20 @@ export default function HomeScreen() {
     "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
   const screenWidth = Dimensions.get("window").width;
 
-  async function getOfferings() {
-    try {
-      const offerings = await Purchases.getOfferings();
-      if (offerings.current !== null && offerings.current.availablePackages.length !== 0) {
-        console.log("OFFERINGS", offerings);
-      }
-    } catch (e) {
-      console.log("NO GOOD", e);
-    }
-  }
-
   useEffect(() => {
-    getOfferings();
+    /* Enable debug logs before calling `setup`. */
+    Purchases.setLogLevel(Purchases.LOG_LEVEL.DEBUG);
+
+    /*
+      Initialize the RevenueCat Purchases SDK.
+
+      - appUserID is nil, so an anonymous ID will be generated automatically by the Purchases SDK. Read more about Identifying Users here: https://docs.revenuecat.com/docs/user-ids
+
+      - observerMode is false, so Purchases will automatically handle finishing transactions. Read more about Observer Mode here: https://docs.revenuecat.com/docs/observer-mode
+
+      - useAmazon is false, so it will use the Play Store in Android and App Store in iOS by default.
+      */
+    Purchases.configure({ apiKey: "appl_zZGUxbBzchveUkWXlMPDeuztdeD", appUserID: currentUser?.id, useAmazon: false });
   }, []);
 
   return (
@@ -108,6 +110,7 @@ export default function HomeScreen() {
                               <YStack>
                                 <Paragraph size={"$2"}>{"Chapter " + module.id}</Paragraph>
                                 <H3 fontWeight={600}>{module.title}</H3>
+                                {module.completed && <Paragraph color={"$blue10"}>Completed</Paragraph>}
                               </YStack>
                             </XStack>
                             {module.progress !== 0 && <ChevronRight color={"$blue10"} />}
@@ -120,13 +123,11 @@ export default function HomeScreen() {
                         </YStack>
                       </XStack>
                     </Card.Header>
-                    {/* <CardBackground borderRadius="$8">
-                      {module.completed && <StripedPattern color1={yellowA.yellowA10} color2={yellowA.yellowA8} size={100} strokeWidth={30} />}
-                    </CardBackground> */}
                   </Card>
                 </Link>
               ))}
         </XStack>
+        <Paywall openPaywall={true} />
       </ScrollView>
     </>
   );

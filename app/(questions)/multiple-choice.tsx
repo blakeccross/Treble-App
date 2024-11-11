@@ -23,14 +23,16 @@ export default function MultipleCHoice() {
   return (
     <>
       <SafeAreaView />
-      <View padding="$4" flex={1}>
+      <View padding="$4" paddingBottom="0" flex={1}>
         <View flex={1} style={{ width: "100%", justifyContent: "center" }} paddingBottom="$4">
-          <H3 fontWeight={600}>Question:</H3>
-          <Paragraph marginBottom="$2">{question.current.question}</Paragraph>
+          <H3 fontWeight={800}>Question:</H3>
+          <Paragraph marginBottom="$2" fontSize={"$7"}>
+            {question.current.question}
+          </Paragraph>
           {question.current.image && (
             <Image
               source={question.current.image}
-              style={{ borderRadius: 20, aspectRatio: "4/3", maxWidth: "100%", backgroundColor: "white" }}
+              style={{ borderRadius: 20, aspectRatio: "16/9", maxWidth: "100%", backgroundColor: "white" }}
               contentFit="contain"
             />
           )}
@@ -40,14 +42,11 @@ export default function MultipleCHoice() {
           {question.current.question_options && (
             <FlatList
               data={question.current.question_options}
-              // columnWrapperStyle={{ gap: 10 }}
               contentContainerStyle={{ gap: 10 }}
               style={{ overflow: "visible" }}
-              // numColumns={2}
               renderItem={({ item }) => (
                 <Card
                   bordered
-                  // elevate
                   borderRadius="$8"
                   pressStyle={{ scale: 0.95 }}
                   animation="bouncy"

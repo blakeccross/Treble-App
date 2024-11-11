@@ -18,8 +18,6 @@ const useMarkdown = (markdownText: string) => {
   const colorScheme = useColorScheme() || "light";
   const [markdownElement, setMarkdownElement] = useState<JSX.Element | null>(null);
 
-  console.log(colorScheme);
-
   useEffect(() => {
     if (markdownText) {
       // Parse the markdown text and create React Native elements

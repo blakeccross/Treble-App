@@ -2,14 +2,14 @@ import { DarkTheme, DefaultTheme, ThemeProvider, useRoute } from "@react-navigat
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import { H3, H4, TamaguiProvider } from "tamagui";
 import tamaguiConfig from "../tamagui.config";
 import "react-native-reanimated";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import ModuleProvider from "@/context/module-context";
-import UserProvider from "@/context/user-context";
+import UserProvider, { UserContext } from "@/context/user-context";
 import Header from "@/components/header";
 import Toast from "react-native-toast-message";
 import { toastConfig } from "@/components/toastConfig";
@@ -30,22 +30,6 @@ export default function RootLayout() {
     InterBold: require("@tamagui/font-inter/otf/Inter-Bold.otf"),
     InterItalic: require("@tamagui/font-inter/otf/Inter-Italic.otf"),
   });
-
-  useEffect(() => {
-    /* Enable debug logs before calling `setup`. */
-    Purchases.setLogLevel(Purchases.LOG_LEVEL.DEBUG);
-
-    /*
-      Initialize the RevenueCat Purchases SDK.
-
-      - appUserID is nil, so an anonymous ID will be generated automatically by the Purchases SDK. Read more about Identifying Users here: https://docs.revenuecat.com/docs/user-ids
-
-      - observerMode is false, so Purchases will automatically handle finishing transactions. Read more about Observer Mode here: https://docs.revenuecat.com/docs/observer-mode
-
-      - useAmazon is false, so it will use the Play Store in Android and App Store in iOS by default.
-      */
-    Purchases.configure({ apiKey: "appl_zZGUxbBzchveUkWXlMPDeuztdeD", appUserID: null, useAmazon: false });
-  }, []);
 
   useEffect(() => {
     if (loaded) {

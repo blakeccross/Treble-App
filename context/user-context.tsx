@@ -53,7 +53,7 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
 
   async function handleUpdateUserInfo(info: any) {
     const updatedUser = { ...(currentUser || {}), ...info };
-    console.log("UPDATED INFO", updatedUser, currentUser?.id);
+    // console.log("UPDATED INFO", updatedUser, currentUser?.id);
 
     const { data, error } = await supabase.from("profiles").update(info).eq("id", currentUser?.id).select();
     if (data) {

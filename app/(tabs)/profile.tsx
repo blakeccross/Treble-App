@@ -1,14 +1,14 @@
 import { UserContext } from "@/context/user-context";
-import { ArrowRight, Award, ChevronLeft, ChevronRight, Flame, Music, Settings } from "@tamagui/lucide-icons";
+import { ArrowRight, Award, ChevronLeft, ChevronRight, Flame, Music, Settings, Sparkle, Star, StarFull } from "@tamagui/lucide-icons";
 import { Link } from "expo-router";
 import { useContext, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FlatList, Pressable } from "react-native";
 import { useMMKVNumber } from "react-native-mmkv";
-import { Avatar, Card, H3, H5, Paragraph, Separator, View, XStack, YStack, Text, Button, H2, CardHeader, H1, ScrollView } from "tamagui";
+import { Avatar, Card, H3, H5, Paragraph, Separator, View, XStack, YStack, Text, Button, H2, CardHeader, H1, ScrollView, H4 } from "tamagui";
 import { useDatePicker } from "@rehookify/datepicker";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import { blue, blueA, purpleA, redA, size, yellow } from "@tamagui/themes";
+import { blue, blueA, purpleA, redA, size, yellow, yellowA } from "@tamagui/themes";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { LinearGradient } from "tamagui/linear-gradient";
@@ -18,12 +18,14 @@ import { Image } from "expo-image";
 import { supabase } from "@/utils/supabase";
 import { Image as ImageComp } from "react-native-compressor";
 import getStreak from "@/hooks/getStreak";
+import Paywall from "../paywall";
 
 export default function TabTwoScreen() {
   const { currentUser, handleUpdateUserInfo } = useContext(UserContext);
   const userActiveDates = currentUser?.active_days ? currentUser?.active_days.map((item) => new Date(item)) : [];
 
   const [selectedDates, onDatesChange] = useState<Date[]>(userActiveDates);
+  const [openPaywall, setOpenPaywall] = useState(false);
 
   const {
     data: { calendars, weekDays, formattedDates, months, years },
@@ -130,6 +132,42 @@ export default function TabTwoScreen() {
             </Link>
           </XStack>
 
+          <Card
+            bordered
+            width={"100%"}
+            backgroundColor={"$blue10"}
+            borderRadius="$8"
+            overflow="hidden"
+            marginBottom="$6"
+            onPress={() => setOpenPaywall(true)}
+            pressStyle={{ scale: 0.95 }}
+            animation="bouncy"
+          >
+            <Card.Header>
+              <XStack alignItems="center" gap="$2">
+                <Sparkle color={"$background"} />
+                <YStack>
+                  <H4 fontWeight={800} themeInverse={true}>
+                    Go Pro
+                  </H4>
+                  <Paragraph>Unlock all modules and features</Paragraph>
+                </YStack>
+              </XStack>
+            </Card.Header>
+            <Card.Background overflow="hidden">
+              <LinearGradient
+                colors={["$blue10", "$purple7"]}
+                start={[0.3, 1]}
+                end={[0, 0]}
+                width={"100%"}
+                height={"$19"}
+                justifyContent="center"
+                alignItems="center"
+                overflow="hidden"
+              />
+            </Card.Background>
+          </Card>
+
           <H5 fontWeight={600}>Overview</H5>
           <YStack alignItems="flex-start" gap="$3" marginBottom={"$6"}>
             <XStack gap="$3">
@@ -227,6 +265,7 @@ export default function TabTwoScreen() {
             />
           </Card>
         </YStack>
+        <Paywall openPaywall={openPaywall} />
       </ScrollView>
     </>
   );
