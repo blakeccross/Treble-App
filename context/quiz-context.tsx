@@ -50,7 +50,7 @@ export default function QuizProvider({ children }: { children: JSX.Element[] }) 
         currentQuestionIndex.current = currentQuestionIndex.current + 1;
 
         router.push({
-          pathname: `/${currentSection.section_item[currentQuestionIndex.current].type}`,
+          pathname: `/(questions)/${currentSection.section_item[currentQuestionIndex.current].type}`,
         });
       } else {
         // Finished Section

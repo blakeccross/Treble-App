@@ -5,7 +5,25 @@ import { useContext, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FlatList, Pressable } from "react-native";
 import { useMMKVNumber } from "react-native-mmkv";
-import { Avatar, Card, H3, H5, Paragraph, Separator, View, XStack, YStack, Text, Button, H2, CardHeader, H1, ScrollView, H4 } from "tamagui";
+import {
+  Avatar,
+  Card,
+  H3,
+  H5,
+  Paragraph,
+  Separator,
+  View,
+  XStack,
+  YStack,
+  Text,
+  Button,
+  H2,
+  CardHeader,
+  H1,
+  ScrollView,
+  H4,
+  SizableText,
+} from "tamagui";
 import { useDatePicker } from "@rehookify/datepicker";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { blue, blueA, purpleA, redA, size, yellow, yellowA } from "@tamagui/themes";
@@ -16,7 +34,7 @@ import * as ImagePicker from "expo-image-picker";
 import Toast from "react-native-toast-message";
 import { Image } from "expo-image";
 import { supabase } from "@/utils/supabase";
-import { Image as ImageComp } from "react-native-compressor";
+// import { Image as ImageComp } from "react-native-compressor";
 import getStreak from "@/hooks/getStreak";
 import Paywall from "../paywall";
 
@@ -29,7 +47,7 @@ export default function TabTwoScreen() {
 
   const {
     data: { calendars, weekDays, formattedDates, months, years },
-    propGetters: { dayButton, addOffset, subtractOffset, monthButton, nextYearsButton, previousYearsButton, yearButton },
+    propGetters: { addOffset, subtractOffset },
   } = useDatePicker({
     selectedDates,
     onDatesChange,
@@ -60,15 +78,15 @@ export default function TabTwoScreen() {
       const fileExt = image.uri?.split(".").pop()?.toLowerCase() ?? "jpeg";
       const path = `${Date.now()}.${fileExt}`;
 
-      const compressedImage = await ImageComp.compress(image.uri, {
-        compressionMethod: "manual",
-        output: "jpg",
-        maxWidth: 1000,
-        maxHeight: 1000,
-        quality: 0.8,
-      });
+      // const compressedImage = await ImageComp.compress(image.uri, {
+      //   compressionMethod: "manual",
+      //   output: "jpg",
+      //   maxWidth: 1000,
+      //   maxHeight: 1000,
+      //   quality: 0.8,
+      // });
 
-      const arraybuffer = await fetch(compressedImage).then((res) => res.arrayBuffer());
+      const arraybuffer = await fetch(image.uri).then((res) => res.arrayBuffer());
 
       const { data, error } = await supabase.storage.from("avatars").upload(path, arraybuffer, {
         cacheControl: "3600",
@@ -89,15 +107,10 @@ export default function TabTwoScreen() {
 
   return (
     <>
-      <XStack justifyContent="flex-end" paddingHorizontal="$4" position="absolute" right={"$4"} top={"$10"} zIndex={"$5"}>
-        {/* <Link href={{ pathname: "/(profile)/profile-settings" }}>
-          <Settings size={"$2"} />
-        </Link> */}
-      </XStack>
       <ScrollView contentContainerStyle={{ paddingBottom: 200 }}>
         {currentUser?.avatar_url ? (
           <Pressable onPress={pickImage}>
-            <Image source={currentUser?.avatar_url} style={{ width: "100%", height: size.$19 }}>
+            <Image source={currentUser.avatar_url} style={{ width: "100%", height: size.$19 }}>
               <SafeAreaView edges={["right", "left", "top"]} />
             </Image>
           </Pressable>
@@ -121,52 +134,60 @@ export default function TabTwoScreen() {
 
         <YStack marginHorizontal="$4">
           <XStack justifyContent="space-between" alignItems="center">
-            <H3 fontWeight={600} textAlign="left" marginVertical="$6">
-              {currentUser?.full_name}
-            </H3>
+            <XStack alignItems="center" gap="$2">
+              <H3 fontWeight={600} textAlign="left" marginVertical="$6">
+                {currentUser?.full_name}
+              </H3>
+              {currentUser?.purchased_products.length && (
+                <LinearGradient colors={["$blue10", "$purple7"]} start={[0.3, 1]} end={[0, 0]} paddingHorizontal="$3" borderRadius="$10">
+                  <SizableText color={"$background"}>Pro</SizableText>
+                </LinearGradient>
+              )}
+            </XStack>
             <Link asChild href={{ pathname: "/(profile)/profile-settings" }}>
               <Button variant="outlined" color={"$gray10"} fontWeight={600} pressStyle={{ scale: 0.95 }}>
-                {/* <Settings color={"$gray8"} size={"$1"} /> */}
                 Edit Profile
               </Button>
             </Link>
           </XStack>
 
-          <Card
-            bordered
-            width={"100%"}
-            backgroundColor={"$blue10"}
-            borderRadius="$8"
-            overflow="hidden"
-            marginBottom="$6"
-            onPress={() => setOpenPaywall(true)}
-            pressStyle={{ scale: 0.95 }}
-            animation="bouncy"
-          >
-            <Card.Header>
-              <XStack alignItems="center" gap="$2">
-                <Sparkle color={"$background"} />
-                <YStack>
-                  <H4 fontWeight={800} themeInverse={true}>
-                    Go Pro
-                  </H4>
-                  <Paragraph>Unlock all modules and features</Paragraph>
-                </YStack>
-              </XStack>
-            </Card.Header>
-            <Card.Background overflow="hidden">
-              <LinearGradient
-                colors={["$blue10", "$purple7"]}
-                start={[0.3, 1]}
-                end={[0, 0]}
-                width={"100%"}
-                height={"$19"}
-                justifyContent="center"
-                alignItems="center"
-                overflow="hidden"
-              />
-            </Card.Background>
-          </Card>
+          {!currentUser?.purchased_products.length && (
+            <Card
+              bordered
+              width={"100%"}
+              backgroundColor={"$blue10"}
+              borderRadius="$8"
+              overflow="hidden"
+              marginBottom="$6"
+              onPress={() => setOpenPaywall(true)}
+              pressStyle={{ scale: 0.95 }}
+              animation="bouncy"
+            >
+              <Card.Header>
+                <XStack alignItems="center" gap="$2">
+                  <Sparkle color={"$background"} />
+                  <YStack>
+                    <H4 fontWeight={800} themeInverse={true}>
+                      Go Pro
+                    </H4>
+                    <Paragraph>Unlock all modules and features</Paragraph>
+                  </YStack>
+                </XStack>
+              </Card.Header>
+              <Card.Background overflow="hidden">
+                <LinearGradient
+                  colors={["$blue10", "$purple7"]}
+                  start={[0.3, 1]}
+                  end={[0, 0]}
+                  width={"100%"}
+                  height={"$19"}
+                  justifyContent="center"
+                  alignItems="center"
+                  overflow="hidden"
+                />
+              </Card.Background>
+            </Card>
+          )}
 
           <H5 fontWeight={600}>Overview</H5>
           <YStack alignItems="flex-start" gap="$3" marginBottom={"$6"}>
@@ -211,61 +232,63 @@ export default function TabTwoScreen() {
             </XStack>
           </YStack>
           <H5 fontWeight={600}>Streak</H5>
-          <Card bordered width={"100%"}>
-            <XStack alignItems="center" justifyContent="space-between" width={"100%"} marginBottom="$2" paddingHorizontal="$2.5" paddingTop="$2.5">
-              <H2 fontWeight={600}>{month}</H2>
-              <XStack gap="$3">
-                <View
-                  onPress={(evt) => {
-                    const result = subtractOffset({ months: 1 });
-                    if (result && result.onClick) {
-                      result.onClick(evt as any);
-                    }
-                  }}
-                >
-                  <ChevronLeft size={"2"} />
-                </View>
-                <View
-                  onPress={(evt) => {
-                    const result = addOffset({ months: 1 });
-                    if (result && result.onClick) {
-                      result.onClick(evt as any);
-                    }
-                  }}
-                >
-                  <ChevronRight size={"2"} />
-                </View>
+          {weekDays && days && (
+            <Card bordered width={"100%"}>
+              <XStack alignItems="center" justifyContent="space-between" width={"100%"} marginBottom="$2" paddingHorizontal="$2.5" paddingTop="$2.5">
+                <H2 fontWeight={600}>{month}</H2>
+                <XStack gap="$3">
+                  <View
+                    onPress={(evt) => {
+                      const result = subtractOffset({ months: 1 });
+                      if (result && result.onClick) {
+                        result.onClick(evt as any);
+                      }
+                    }}
+                  >
+                    <ChevronLeft size={"2"} />
+                  </View>
+                  <View
+                    onPress={(evt) => {
+                      const result = addOffset({ months: 1 });
+                      if (result && result.onClick) {
+                        result.onClick(evt as any);
+                      }
+                    }}
+                  >
+                    <ChevronRight size={"2"} />
+                  </View>
+                </XStack>
               </XStack>
-            </XStack>
 
-            <FlatList
-              data={weekDays}
-              numColumns={7}
-              contentContainerStyle={{ width: "100%" }}
-              scrollEnabled={false}
-              renderItem={({ item }) => (
-                <Paragraph paddingVertical="$2" flex={1} textAlign="center">
-                  {item}
-                </Paragraph>
-              )}
-            />
-            <FlatList
-              data={days}
-              numColumns={7}
-              contentContainerStyle={{ width: "100%", height: "auto" }}
-              scrollEnabled={false}
-              renderItem={({ item }) => (
-                <YStack paddingVertical="$3" flex={1}>
-                  <Paragraph textAlign="center" opacity={item.inCurrentMonth ? 1 : 0}>
-                    {item.day}
+              <FlatList
+                data={weekDays}
+                numColumns={7}
+                contentContainerStyle={{ width: "100%" }}
+                scrollEnabled={false}
+                renderItem={({ item }) => (
+                  <Paragraph paddingVertical="$2" flex={1} textAlign="center">
+                    {item}
                   </Paragraph>
-                  {item.selected && <MaterialCommunityIcons name="music-note" size={24} color={blueA.blueA10} style={{ position: "absolute" }} />}
-                </YStack>
-              )}
-            />
-          </Card>
+                )}
+              />
+              <FlatList
+                data={days}
+                numColumns={7}
+                contentContainerStyle={{ width: "100%", height: "auto" }}
+                scrollEnabled={false}
+                renderItem={({ item }) => (
+                  <YStack paddingVertical="$3" flex={1}>
+                    <Paragraph textAlign="center" opacity={item.inCurrentMonth ? 1 : 0}>
+                      {item.day}
+                    </Paragraph>
+                    {item.selected && <MaterialCommunityIcons name="music-note" size={24} color={blueA.blueA10} style={{ position: "absolute" }} />}
+                  </YStack>
+                )}
+              />
+            </Card>
+          )}
         </YStack>
-        <Paywall openPaywall={openPaywall} />
+        <Paywall openPaywall={openPaywall} setOpenPaywall={setOpenPaywall} />
       </ScrollView>
     </>
   );

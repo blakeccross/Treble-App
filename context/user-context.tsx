@@ -3,6 +3,7 @@ import { supabase } from "@/utils/supabase";
 import { router } from "expo-router";
 import { createContext, useEffect } from "react";
 import { useMMKVObject } from "react-native-mmkv";
+import Purchases from "react-native-purchases";
 
 type UserContextProps = { currentUser: Profile | undefined; handleUpdateUserInfo: (info: any) => void };
 
@@ -41,11 +42,17 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
     };
   }, []);
 
+  // useEffect(() => {
+  //   Purchases.getCustomerInfo().then((info) => {
+  //     console.log("Customer Info", info.allPurchasedProductIdentifiers);
+  //   });
+  // }, []);
+
   async function handleGetUserData(id: string) {
     let { data: profile, error } = await supabase.from("profiles").select("*").eq("id", id).single();
+    const { allPurchasedProductIdentifiers } = await Purchases.getCustomerInfo();
     if (profile) {
-      handleUpdateUserInfo(profile);
-      const updatedUser = { ...(currentUser || {}), ...profile };
+      const updatedUser = { ...(currentUser || {}), ...profile, purchased_products: allPurchasedProductIdentifiers };
 
       setCurrentUser(updatedUser);
     }

@@ -7,11 +7,12 @@ import QuarterNote from "@/assets/icons/quarterNote";
 import Sharp from "@/assets/icons/sharp";
 import SixteenthNote from "@/assets/icons/sixteenthNote";
 import WholeNote from "@/assets/icons/wholeNote";
-import { whiteA } from "@tamagui/themes";
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, Image } from "react-native";
-import { H1, H2, H3, Text } from "tamagui";
+import { StyleSheet, Image } from "react-native";
+import { View, H1, H2, H3 } from "tamagui";
 import { useColorScheme } from "./useColorScheme";
+import { Text as RNText } from "react-native";
+import { size } from "@tamagui/themes";
 
 // Hook that converts markdown text to React Native elements without dependencies
 const useMarkdown = (markdownText: string) => {
@@ -40,19 +41,19 @@ const parseMarkdown = (text: string, colorScheme: "light" | "dark"): JSX.Element
 
     if (line.startsWith("# ")) {
       elements.push(
-        <H1 key={i} fontWeight={600}>
+        <H1 key={`h1-${i}`} fontWeight={600}>
           {parseUnicodeSymbols(line.replace("# ", ""), colorScheme)}
         </H1>
       );
     } else if (line.startsWith("## ")) {
       elements.push(
-        <H2 key={i} fontWeight={600}>
+        <H2 key={`h2-${i}`} fontWeight={600}>
           {parseUnicodeSymbols(line.replace("## ", ""), colorScheme)}
         </H2>
       );
     } else if (line.startsWith("### ")) {
       elements.push(
-        <H3 key={i} fontWeight={600}>
+        <H3 key={`h3-${i}`} fontWeight={600}>
           {parseUnicodeSymbols(line.replace("### ", ""), colorScheme)}
         </H3>
       );
@@ -71,9 +72,9 @@ const parseMarkdown = (text: string, colorScheme: "light" | "dark"): JSX.Element
     } else {
       const formattedText = parseUnicodeSymbols(line, colorScheme);
       elements.push(
-        <Text lineHeight={"$5"} fontSize={"$7"} key={i}>
+        <RNText style={styles.plainText} key={`text-${i}-${elements.length}`}>
           {formattedText}
-        </Text>
+        </RNText>
       );
     }
     i++;
@@ -106,7 +107,7 @@ const renderTableRow = (cells: string[], isHeader: boolean, index: number, color
   return (
     <View key={index} style={[styles.tableRow, isHeader && styles.tableHeader]}>
       {cells.map((cell, cellIndex) => (
-        <View key={cellIndex} style={[styles.tableCell, isHeader && styles.tableHeaderCell]}>
+        <View key={`${index}-cell-${cellIndex}`} style={[styles.tableCell]}>
           {parseUnicodeSymbols(cell, colorScheme)}
         </View>
       ))}
@@ -123,7 +124,7 @@ const renderImage = (line: string, index: number): JSX.Element => {
     return (
       <View key={index} style={styles.imageContainer}>
         <Image source={{ uri: imageUrl }} style={styles.image} />
-        <Text style={styles.imageCaption}>{altText}</Text>
+        <RNText style={styles.imageCaption}>{altText}</RNText>
       </View>
     );
   }
@@ -143,7 +144,7 @@ const parseUnicodeSymbols = (text: string, colorScheme: "light" | "dark"): JSX.E
       elements.push(...parsePlainTextAndUnicode(plainText, `text-${elements.length}`, colorScheme));
     }
 
-    elements.push(<Text style={{ fontStyle: "italic" }}>{parseUnicodeSymbols(match[2], colorScheme)}</Text>);
+    elements.push(<RNText style={{ ...styles.plainText, fontStyle: "italic" }}>{parseUnicodeSymbols(match[2], colorScheme)}</RNText>);
 
     lastIndex = match.index + match[0].length;
   }
@@ -165,12 +166,12 @@ const parsePlainTextAndUnicode = (text: string, keyPrefix: string, colorScheme: 
   parts.forEach((part, index) => {
     if (index % 2 === 0) {
       if (part.trim()) {
-        elements.push(<Text>{part}</Text>);
+        elements.push(<RNText key={`${keyPrefix}-text-${index}`}>{part}</RNText>);
       }
     } else {
       const unicode = parseInt(parts[index], 16);
       const svgPath = getSvgPathForUnicode(unicode, colorScheme);
-      elements.push(<React.Fragment key={`${keyPrefix}-unicode-${index}`}>{svgPath}</React.Fragment>);
+      elements.push(<RNText key={`${keyPrefix}-unicode-${index}`}>{svgPath}</RNText>);
     }
   });
 
@@ -219,7 +220,7 @@ const styles = StyleSheet.create({
   imageContainer: { marginVertical: 10, alignItems: "center" },
   image: { width: 200, height: 200, resizeMode: "contain" },
   imageCaption: { marginTop: 5, fontStyle: "italic", fontSize: 12 },
-  plainText: { fontStyle: "normal" },
+  plainText: { fontStyle: "normal", lineHeight: 24, fontSize: 20 },
 });
 
 export default useMarkdown;

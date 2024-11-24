@@ -10,26 +10,28 @@ import { Image } from "expo-image";
 export default function MultipleCHoice() {
   const { currentQuestionIndex, questions } = useContext(QuizContext);
   const { height, width } = useWindowDimensions();
-  const [selectedAnswer, setSelectedAnswer] = useState<number>();
+  const [selectedAnswers, setSelectedAnswers] = useState<number[]>([]);
   const [answerIsCorrect, setAnswerIsCorrect] = useState<boolean>();
-  const question = useRef(questions[currentQuestionIndex]);
+  const question = useRef(questions && questions[currentQuestionIndex]);
 
   function validate() {
-    setAnswerIsCorrect(selectedAnswer === question.current.answer_id);
-    if (selectedAnswer === question.current.answer_id) return true;
-    else return false;
+    const isCorrect =
+      selectedAnswers.every((answer) => question.current?.answer_id?.includes(answer)) &&
+      selectedAnswers.length === question.current?.answer_id?.length;
+    setAnswerIsCorrect(isCorrect);
+    return isCorrect;
   }
 
   return (
     <>
       <SafeAreaView />
       <View padding="$4" paddingBottom="0" flex={1}>
-        <View flex={1} style={{ width: "100%", justifyContent: "center" }} paddingBottom="$4">
-          <H3 fontWeight={800}>Question:</H3>
+        <View flex={1} style={{ width: "100%" }} paddingBottom="$4" justifyContent="flex-start">
+          <H3 fontWeight={800}>{question.current?.answer_id && question.current?.answer_id.length > 1 ? "Multiple Answer:" : "Multiple Choice:"}</H3>
           <Paragraph marginBottom="$2" fontSize={"$7"}>
-            {question.current.question}
+            {question.current?.question}
           </Paragraph>
-          {question.current.image && (
+          {question.current?.image && (
             <Image
               source={question.current.image}
               style={{ borderRadius: 20, aspectRatio: "16/9", maxWidth: "100%", backgroundColor: "white" }}
@@ -39,7 +41,8 @@ export default function MultipleCHoice() {
         </View>
 
         <View>
-          {question.current.question_options && (
+          {question.current?.answer_id && question.current?.answer_id.length > 1 && <Paragraph textAlign="center">Select all that apply</Paragraph>}
+          {question.current?.question_options && (
             <FlatList
               data={question.current.question_options}
               contentContainerStyle={{ gap: 10 }}
@@ -51,12 +54,40 @@ export default function MultipleCHoice() {
                   pressStyle={{ scale: 0.95 }}
                   animation="bouncy"
                   flex={1}
-                  onPress={() => setSelectedAnswer(item.id)}
+                  onPress={() => {
+                    if (question.current?.answer_id) {
+                      setSelectedAnswers((prev) => {
+                        const isSelected = prev.includes(item.id);
+                        const maxSelections = question.current?.answer_id.length || 0;
+
+                        if (isSelected) {
+                          return prev.filter((id) => id !== item.id);
+                        } else if (maxSelections === 1) {
+                          return [item.id];
+                        } else if (selectedAnswers.length < maxSelections) {
+                          return [...prev, item.id];
+                        }
+                        return [...prev.slice(1), item.id];
+                      });
+                    }
+                  }}
                   backgroundColor={
-                    selectedAnswer === item.id ? (answerIsCorrect ? "$green5" : answerIsCorrect !== undefined ? "$red5" : "$gray6") : "$background"
+                    selectedAnswers.includes(item.id)
+                      ? answerIsCorrect
+                        ? "$green5"
+                        : answerIsCorrect !== undefined
+                        ? "$red5"
+                        : "$gray6"
+                      : "$background"
                   }
                   borderColor={
-                    selectedAnswer === item.id ? (answerIsCorrect ? "$green8" : answerIsCorrect !== undefined ? "$red10" : "$gray6") : undefined
+                    selectedAnswers.includes(item.id)
+                      ? answerIsCorrect
+                        ? "$green8"
+                        : answerIsCorrect !== undefined
+                        ? "$red10"
+                        : "$gray6"
+                      : undefined
                   }
                 >
                   <Card.Header>
@@ -68,7 +99,7 @@ export default function MultipleCHoice() {
           )}
         </View>
       </View>
-      <AnswerDrawer validateAnswer={validate} explanation={question.current.answer_explanation || ""} enabled />
+      <AnswerDrawer validateAnswer={validate} explanation={question.current?.answer_explanation || ""} enabled />
     </>
   );
 }

@@ -51,7 +51,7 @@ export default function RootLayout() {
                 screenOptions={{
                   // header: (props) => <Header {...props} />,
                   headerTitle: (props) => <H4 fontWeight={600}>{props.children}</H4>,
-                  headerBackTitleVisible: false,
+                  //headerBackTitleVisible: false,
                 }}
               >
                 <Stack.Screen name="(auth)" options={{ headerShown: false }} />

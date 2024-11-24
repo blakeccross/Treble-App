@@ -62,7 +62,9 @@ export default function ProgressHeader() {
             </Paragraph>
           </YStack>
           <Button
-            onPress={() => route.navigate(`/module-overview/${currentModule.id}`)}
+            onPress={() => route.navigate({ pathname: "/module-overview/[id]", params: { id: currentModule.id } })}
+            //onPress={() => route.navigate({ pathname: "/module-overview/[id]", params: { id: currentModule.id } })}
+            //onPress={() => route.dismissAll()}
             fontWeight={600}
             theme={"alt1"}
             marginBottom="$4"

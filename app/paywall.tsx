@@ -1,20 +1,25 @@
+import { UserContext } from "@/context/user-context";
 import { Star } from "@tamagui/lucide-icons";
 import { Image } from "expo-image";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Modal } from "react-native";
 import Purchases from "react-native-purchases";
 import { Button, H3, ListItem, Separator, View, YGroup } from "tamagui";
 
-export default function Paywall({ openPaywall }: { openPaywall: boolean }) {
+export default function Paywall({ openPaywall, setOpenPaywall }: { openPaywall: boolean; setOpenPaywall: (open: boolean) => void }) {
+  const { currentUser, handleUpdateUserInfo } = useContext(UserContext);
   const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
-    setModalVisible(openPaywall);
+    if (!currentUser?.purchased_products.length) {
+      setModalVisible(openPaywall);
+    }
   }, [openPaywall]);
 
   async function handleTryForFree() {
     try {
       const offerings = await Purchases.getOfferings();
+
       const { customerInfo } = await Purchases.purchasePackage(offerings.all.monthly_test.availablePackages[0]);
       if (typeof customerInfo.entitlements.active["my_entitlement_identifier"] !== "undefined") {
         // Unlock that great "pro" content

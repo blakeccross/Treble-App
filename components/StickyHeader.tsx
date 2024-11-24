@@ -1,7 +1,7 @@
 import { ArrowLeft, ChevronLeft } from "@tamagui/lucide-icons";
-import { LinearGradient } from "expo-linear-gradient";
+import { Image } from "expo-image";
 import React from "react";
-import { Dimensions, LayoutChangeEvent, Pressable, SafeAreaView, StyleSheet } from "react-native";
+import { Dimensions, LayoutChangeEvent, StyleSheet } from "react-native";
 import Animated, {
   Extrapolation,
   interpolate,
@@ -10,13 +10,9 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
 } from "react-native-reanimated";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Image } from "expo-image";
-// import { LinearGradient } from "react-native-svg";
-import { Stack, Text, YStack, XStack, SizableText, View, Button, Paragraph, H5 } from "tamagui";
-import { color, size } from "@tamagui/themes";
-import { colorTokens } from "@/theme";
-import { Link, router } from "expo-router";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
+import { router } from "expo-router";
+import { Button, H5, SizableText, View, YStack } from "tamagui";
 const blurhash =
   "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
 
@@ -144,9 +140,11 @@ function PosterImage({ sv, image, title }: { sv: SharedValue<number>; image: str
           {title}
         </SizableText>
         <View position="absolute" top="$0" left="$4">
-          <SafeAreaView />
+          <SafeAreaView edges={["top"]} />
 
-          <Button icon={<ArrowLeft size="$3" />} circular onPress={() => router.back()} theme={"alt1"} />
+          <Button circular theme={"alt1"}>
+            <ArrowLeft size="$3" />
+          </Button>
         </View>
       </Animated.View>
       <AnimatedLinearGradient

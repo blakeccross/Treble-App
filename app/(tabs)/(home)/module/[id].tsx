@@ -1,12 +1,12 @@
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ModuleContext } from "@/context/module-context";
-import { ArrowLeft, ChevronLast, ChevronLeft, StepBack } from "@tamagui/lucide-icons";
+import { ArrowLeft } from "@tamagui/lucide-icons";
 import { blue, blueDark } from "@tamagui/themes";
-import { Link, router, useGlobalSearchParams, useLocalSearchParams } from "expo-router";
-import { useContext } from "react";
-import { View, Text, StyleSheet, SafeAreaView } from "react-native";
-import { Button, H1, H2, H3, Paragraph, ScrollView, XStack } from "tamagui";
 import { Image } from "expo-image";
+import { Link, router, useLocalSearchParams } from "expo-router";
+import { useContext } from "react";
+import { SafeAreaView, View } from "react-native";
+import { Button, H2, Paragraph, ScrollView, XStack } from "tamagui";
 
 export default function ModuleStartScreen() {
   const { id } = useLocalSearchParams();

@@ -5,7 +5,7 @@ import { Avatar, Card, Button, H1, H2, H3, Paragraph, Progress, ScrollView, XSta
 import { ChevronRight, Flame, Gem, Music, Star, StarFull, Trophy } from "@tamagui/lucide-icons";
 import { Link, router } from "expo-router";
 import { ModuleContext } from "@/context/module-context";
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { blue, darkColors, grayA, orange, orangeA, red, whiteA, yellow, yellowA } from "@tamagui/themes";
 import { LinearGradient } from "tamagui/linear-gradient";
 import { BlurView } from "expo-blur";
@@ -27,6 +27,7 @@ export default function HomeScreen() {
   const blurhash =
     "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
   const screenWidth = Dimensions.get("window").width;
+  const [openPaywall, setOpenPaywall] = useState(false);
 
   useEffect(() => {
     /* Enable debug logs before calling `setup`. */
@@ -35,13 +36,15 @@ export default function HomeScreen() {
     /*
       Initialize the RevenueCat Purchases SDK.
 
-      - appUserID is nil, so an anonymous ID will be generated automatically by the Purchases SDK. Read more about Identifying Users here: https://docs.revenuecat.com/docs/user-ids
-
       - observerMode is false, so Purchases will automatically handle finishing transactions. Read more about Observer Mode here: https://docs.revenuecat.com/docs/observer-mode
 
       - useAmazon is false, so it will use the Play Store in Android and App Store in iOS by default.
       */
     Purchases.configure({ apiKey: "appl_zZGUxbBzchveUkWXlMPDeuztdeD", appUserID: currentUser?.id, useAmazon: false });
+
+    if (!currentUser?.purchased_products.length) {
+      setOpenPaywall(true);
+    }
   }, []);
 
   return (
@@ -127,7 +130,7 @@ export default function HomeScreen() {
                 </Link>
               ))}
         </XStack>
-        <Paywall openPaywall={true} />
+        <Paywall openPaywall={openPaywall} setOpenPaywall={setOpenPaywall} />
       </ScrollView>
     </>
   );
