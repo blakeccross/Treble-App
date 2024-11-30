@@ -39,19 +39,19 @@ const parseMarkdown = (text: string, colorScheme: "light" | "dark"): JSX.Element
 
     if (line.startsWith("# ")) {
       elements.push(
-        <RNText key={`h1-${i}`} style={styles.heading1}>
+        <RNText key={`h1-${i}`} style={{ ...styles.heading1, color: colorScheme === "light" ? "black" : "white" }}>
           {parseUnicodeSymbols(line.replace("# ", ""), colorScheme)}
         </RNText>
       );
     } else if (line.startsWith("## ")) {
       elements.push(
-        <RNText key={`h2-${i}`} style={styles.heading2}>
+        <RNText key={`h2-${i}`} style={{ ...styles.heading2, color: colorScheme === "light" ? "black" : "white" }}>
           {parseUnicodeSymbols(line.replace("## ", ""), colorScheme)}
         </RNText>
       );
     } else if (line.startsWith("### ")) {
       elements.push(
-        <RNText key={`h3-${i}`} style={styles.heading3}>
+        <RNText key={`h3-${i}`} style={{ ...styles.heading3, color: colorScheme === "light" ? "black" : "white" }}>
           {parseUnicodeSymbols(line.replace("### ", ""), colorScheme)}
         </RNText>
       );
@@ -70,7 +70,7 @@ const parseMarkdown = (text: string, colorScheme: "light" | "dark"): JSX.Element
     } else {
       const formattedText = parseUnicodeSymbols(line, colorScheme);
       elements.push(
-        <RNText style={styles.plainText} key={`text-${i}-${elements.length}`}>
+        <RNText style={{ ...styles.plainText, color: colorScheme === "light" ? "black" : "white" }} key={`text-${i}-${elements.length}`}>
           {formattedText}
         </RNText>
       );
@@ -103,7 +103,7 @@ const renderTable = (tableBlock: string[], key: number, colorScheme: "light" | "
 // Function to render a table row
 const renderTableRow = (cells: string[], isHeader: boolean, index: number, colorScheme: "light" | "dark"): JSX.Element => {
   return (
-    <View key={index} style={[styles.tableRow, isHeader && styles.tableHeader]}>
+    <View key={index} style={[styles.tableRow, isHeader && { backgroundColor: colorScheme === "light" ? "#f0f0f0" : "#333" }]}>
       {cells.map((cell, cellIndex) => (
         <View key={`${index}-cell-${cellIndex}`} style={[styles.tableCell]}>
           {parseUnicodeSymbols(cell, colorScheme)}
@@ -142,7 +142,11 @@ const parseUnicodeSymbols = (text: string, colorScheme: "light" | "dark"): JSX.E
       elements.push(...parsePlainTextAndUnicode(plainText, `text-${elements.length}`, colorScheme));
     }
 
-    elements.push(<RNText style={{ ...styles.plainText, fontStyle: "italic" }}>{parseUnicodeSymbols(match[2], colorScheme)}</RNText>);
+    elements.push(
+      <RNText style={{ ...styles.plainText, fontStyle: "italic", color: colorScheme === "light" ? "black" : "white" }}>
+        {parseUnicodeSymbols(match[2], colorScheme)}
+      </RNText>
+    );
 
     lastIndex = match.index + match[0].length;
   }
@@ -164,12 +168,20 @@ const parsePlainTextAndUnicode = (text: string, keyPrefix: string, colorScheme: 
   parts.forEach((part, index) => {
     if (index % 2 === 0) {
       if (part.trim()) {
-        elements.push(<RNText key={`${keyPrefix}-text-${index}`}>{part}</RNText>);
+        elements.push(
+          <RNText style={{ color: colorScheme === "light" ? "black" : "white" }} key={`${keyPrefix}-text-${index}`}>
+            {part}
+          </RNText>
+        );
       }
     } else {
       const unicode = parseInt(parts[index], 16);
       const svgPath = getSvgPathForUnicode(unicode, colorScheme);
-      elements.push(<RNText key={`${keyPrefix}-unicode-${index}`}>{svgPath}</RNText>);
+      elements.push(
+        <RNText key={`${keyPrefix}-unicode-${index}`} style={{ color: colorScheme === "light" ? "black" : "white" }}>
+          {svgPath}
+        </RNText>
+      );
     }
   });
 
