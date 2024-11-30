@@ -8,11 +8,9 @@ import Sharp from "@/assets/icons/sharp";
 import SixteenthNote from "@/assets/icons/sixteenthNote";
 import WholeNote from "@/assets/icons/wholeNote";
 import React, { useState, useEffect } from "react";
-import { StyleSheet, Image } from "react-native";
-import { View, H1, H2, H3 } from "tamagui";
+import { View, StyleSheet, Image } from "react-native";
 import { useColorScheme } from "./useColorScheme";
 import { Text as RNText } from "react-native";
-import { size } from "@tamagui/themes";
 
 // Hook that converts markdown text to React Native elements without dependencies
 const useMarkdown = (markdownText: string) => {
@@ -41,21 +39,21 @@ const parseMarkdown = (text: string, colorScheme: "light" | "dark"): JSX.Element
 
     if (line.startsWith("# ")) {
       elements.push(
-        <H1 key={`h1-${i}`} fontWeight={600}>
+        <RNText key={`h1-${i}`} style={styles.heading1}>
           {parseUnicodeSymbols(line.replace("# ", ""), colorScheme)}
-        </H1>
+        </RNText>
       );
     } else if (line.startsWith("## ")) {
       elements.push(
-        <H2 key={`h2-${i}`} fontWeight={600}>
+        <RNText key={`h2-${i}`} style={styles.heading2}>
           {parseUnicodeSymbols(line.replace("## ", ""), colorScheme)}
-        </H2>
+        </RNText>
       );
     } else if (line.startsWith("### ")) {
       elements.push(
-        <H3 key={`h3-${i}`} fontWeight={600}>
+        <RNText key={`h3-${i}`} style={styles.heading3}>
           {parseUnicodeSymbols(line.replace("### ", ""), colorScheme)}
-        </H3>
+        </RNText>
       );
     } else if (line.startsWith("|")) {
       // Handle table block
@@ -221,6 +219,9 @@ const styles = StyleSheet.create({
   image: { width: 200, height: 200, resizeMode: "contain" },
   imageCaption: { marginTop: 5, fontStyle: "italic", fontSize: 12 },
   plainText: { fontStyle: "normal", lineHeight: 24, fontSize: 20 },
+  heading1: { fontWeight: "bold", fontSize: 40 },
+  heading2: { fontWeight: 800, fontSize: 30 },
+  heading3: { fontWeight: 800, fontSize: 25 },
 });
 
 export default useMarkdown;
