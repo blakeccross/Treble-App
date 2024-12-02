@@ -9,11 +9,13 @@
       "ios": {
         "simulator": true,
         "enterpriseProvisioning": "universal"
-      }
+      },
+      "channel": "development-simulator"
     },
     "development": {
       "developmentClient": true,
-      "distribution": "internal"
+      "distribution": "internal",
+      "channel": "development"
     },
     "preview": {
       "channel": "staging",
@@ -24,6 +26,13 @@
     }
   },
   "submit": {
-    "production": {}
+    "production": {
+      "ios": {
+        "ascAppId": "1534001963",
+        "appleId": "blake.cross@gmail.com",
+        "appleTeamId": "6U2Y6W57T7",
+        "bundleIdentifier": "com.blakecross.trebleapp"
+      }
+    }
   }
 }

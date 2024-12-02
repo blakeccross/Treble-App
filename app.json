@@ -2,7 +2,7 @@
   "expo": {
     "name": "Treble",
     "slug": "notate",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/images/treble-icon.png",
     "scheme": "myapp",
@@ -15,11 +15,6 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.blakecross.trebleapp"
-    },
-    "expo": {
-      "experiments": {
-        "typedRoutes": true
-      }
     },
     "android": {
       "adaptiveIcon": {
