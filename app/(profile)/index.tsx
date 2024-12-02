@@ -1,15 +1,13 @@
 import { UserContext } from "@/context/user-context";
-import Ionicons from "@expo/vector-icons/Ionicons";
-import { color } from "@tamagui/themes";
-import { router, useRouter } from "expo-router";
-import React, { useContext, useEffect, useState } from "react";
-import { StyleSheet, Image, Platform, SafeAreaView } from "react-native";
-import Toast from "react-native-toast-message";
-import { Avatar, Button, Card, H3, H5, Input, Label, Paragraph, ScrollView, Separator, Stack, Theme, View, XStack, YStack } from "tamagui";
-import * as ImagePicker from "expo-image-picker";
-import { Music } from "@tamagui/lucide-icons";
-import { useForm, Controller } from "react-hook-form";
 import { supabase } from "@/utils/supabase";
+import { Music, X } from "@tamagui/lucide-icons";
+import * as ImagePicker from "expo-image-picker";
+import { router } from "expo-router";
+import React, { useContext, useEffect, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { Pressable, SafeAreaView } from "react-native";
+import Toast from "react-native-toast-message";
+import { Avatar, Button, H5, Input, Label, ScrollView, Theme, View, XStack, YStack } from "tamagui";
 
 type FormInput = {
   fullName: string;
@@ -45,34 +43,6 @@ export default function ProfileSettings() {
       password: "Hello123",
     },
   });
-
-  // async function onSubmit(formInputs: FormInput) {
-  //   const { data: auth, error } = await supabase.auth.signUp({
-  //     email: formInputs.email,
-  //     password: formInputs.password,
-  //     options: {
-  //       data: {
-  //         full_name: formInputs.fullName,
-  //       },
-  //     },
-  //   });
-  //   if (error) {
-  //     console.error(error);
-  //     Toast.show({
-  //       type: "error",
-  //       text1: "Account could not be created at this time",
-  //     });
-  //   }
-
-  //   if (auth.user) {
-  //     console.log("SUCCESS", auth);
-  //     Toast.show({
-  //       type: "success",
-  //       text1: "Account Created",
-  //     });
-  //     router.back();
-  //   }
-  // }
 
   function handleUpdate(formInputs: FormInput) {
     console.log("DIRTY", isDirty);
@@ -117,12 +87,22 @@ export default function ProfileSettings() {
 
   return (
     <SafeAreaView>
-      {/* <ToastViewport /> */}
+      <SafeAreaView />
+      <YStack gap="$2" padding="$3">
+        <XStack alignItems="center" justifyContent="space-between">
+          <Pressable onPress={() => router.back()}>
+            <X size="$3" />
+          </Pressable>
+          <H5 fontWeight={500}>Profile Settings</H5>
+
+          <XStack gap="$1" width={"$3"}></XStack>
+        </XStack>
+      </YStack>
       <ScrollView height={"100%"}>
         <YStack gap="$2" padding="$4">
           <YStack alignItems="center">
             <Avatar circular size="$12" onPress={pickImage}>
-              <Avatar.Image accessibilityLabel="Cam" src={currentUser?.avatar_url} />
+              <Avatar.Image accessibilityLabel="Cam" src={currentUser?.avatar_url || ""} />
               <Avatar.Fallback backgroundColor="$blue10" />
               <Music size={70} />
             </Avatar>

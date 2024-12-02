@@ -2,8 +2,8 @@ import { StyleSheet, Platform, SafeAreaView, Pressable } from "react-native";
 import { Avatar, Card, Circle, H1, H3, H5, Paragraph, Separator, View, XStack, Button, ScrollView, YStack, H2 } from "tamagui";
 import { Image } from "expo-image";
 import { BlurView } from "expo-blur";
-import { AudioWaveform, Play } from "@tamagui/lucide-icons";
-import { Link, useRouter } from "expo-router";
+import { AudioWaveform, Lock, Play } from "@tamagui/lucide-icons";
+import { Href, Link, useRouter } from "expo-router";
 const blurhash =
   "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
 
@@ -13,18 +13,21 @@ const games = [
     description: `Test your ear in a\nfast pace matching game`,
     backgroundImage: require("@/assets/images/blue_shapes.jpg"),
     route: "/pitch-perfect",
+    disabled: false,
   },
   {
     title: "Nashville Roundup",
     description: `Match the Nashville numbers`,
     backgroundImage: require("@/assets/images/hassaan-here-bKfkhVRAJTQ-unsplash.jpg"),
     route: "/name-that-chord",
+    disabled: true,
   },
   {
     title: "Interval Training",
     description: `Test your ear in a\nfast pace matching game`,
     backgroundImage: require("@/assets/images/blue_shapes.jpg"),
     route: "/interval-training",
+    disabled: true,
   },
 ];
 
@@ -52,7 +55,9 @@ export default function TabTwoScreen() {
               overflow="hidden"
               height={400}
               flex={1}
-              onPress={() => router.push(game.route)}
+              onPress={() => {
+                game.disabled ? null : router.push(game.route as Href<string>);
+              }}
             >
               <Card.Background>
                 <Image
@@ -75,18 +80,33 @@ export default function TabTwoScreen() {
                         Test your ear in a{`\n`}fast pace matching game
                       </Paragraph>
                     </YStack>
-                    <Button
-                      borderRadius={"$10"}
-                      size={"$3"}
-                      iconAfter={<Play />}
-                      themeInverse
-                      backgroundColor={"white"}
-                      color={"black"}
-                      fontWeight={600}
-                      disabled
-                    >
-                      Play
-                    </Button>
+                    {game.disabled ? (
+                      <Button
+                        borderRadius={"$10"}
+                        size={"$3"}
+                        iconAfter={<Lock />}
+                        themeInverse
+                        backgroundColor={"white"}
+                        color={"black"}
+                        fontWeight={600}
+                        disabled
+                      >
+                        Locked
+                      </Button>
+                    ) : (
+                      <Button
+                        borderRadius={"$10"}
+                        size={"$3"}
+                        iconAfter={<Play />}
+                        themeInverse
+                        backgroundColor={"white"}
+                        color={"black"}
+                        fontWeight={600}
+                        disabled
+                      >
+                        Play
+                      </Button>
+                    )}
                   </XStack>
                 </BlurView>
               </Card.Footer>

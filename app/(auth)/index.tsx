@@ -1,31 +1,41 @@
+import TrebleLogo from "@/assets/trebleLogo";
 import { Button } from "@/components/button";
+import { BlurView } from "expo-blur";
 import { Link } from "expo-router";
 import React, { useContext, useEffect, useState } from "react";
 import { SafeAreaView } from "react-native";
 import { H1, H3, Paragraph, View, YStack } from "tamagui";
-
 import { LinearGradient } from "tamagui/linear-gradient";
 
 export default function LandingPage() {
   return (
-    <LinearGradient width="100%" height="100%" colors={["$blue10", "$blue8"]} start={[0.5, 1]} end={[0, 0]} paddingHorizontal={"$4"}>
-      <SafeAreaView style={{ flex: 1 }}>
-        <View flex={1}></View>
-        <YStack gap="$4" marginBottom="$6">
-          <YStack>
-            <H3 color={"$background"} textAlign="center" fontWeight={600}>
+    <LinearGradient width="100%" height="100%" colors={["$blue10", "$blue8"]} start={[0.5, 1]} end={[0, 0]}>
+      <View flex={1} justifyContent="center" alignItems="center">
+        <View width={200} height={200}>
+          <TrebleLogo />
+        </View>
+      </View>
+      <BlurView intensity={100} tint="prominent" style={{ borderTopLeftRadius: 20, borderTopRightRadius: 20 }}>
+        <YStack gap="$4" paddingTop="$6" paddingHorizontal={"$4"}>
+          <YStack justifyContent="center" alignItems="center">
+            <H3 textAlign="center" fontWeight={800}>
               Welcome to Treble!
             </H3>
-            <Paragraph color={"$background"} textAlign="center">
-              The best way to learn music theory from anywhere!
+            <Paragraph textAlign="center" maxWidth={"$17"}>
+              The best way to learn music theory from anywhere
             </Paragraph>
           </YStack>
-          <Link asChild href={"/(auth)/log-in"}>
-            <Button white>Log in</Button>
+          <Link asChild href={{ pathname: "/(auth)/signUp", params: { type: "signup" } }}>
+            <Button>Sign Up</Button>
           </Link>
-          <Button themeInverse>Sign Up</Button>
+          <Link asChild href={{ pathname: "/(auth)/signUp", params: { type: "login" } }}>
+            <Button unstyled textAlign="center" color={"$gray12"}>
+              Log in
+            </Button>
+          </Link>
         </YStack>
-      </SafeAreaView>
+        <SafeAreaView />
+      </BlurView>
     </LinearGradient>
   );
 }

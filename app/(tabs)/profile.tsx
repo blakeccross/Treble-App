@@ -144,7 +144,7 @@ export default function TabTwoScreen() {
                 </LinearGradient>
               )}
             </XStack>
-            <Link asChild href={{ pathname: "/(profile)/profile-settings" }}>
+            <Link asChild href={{ pathname: "/(profile)" }}>
               <Button variant="outlined" color={"$gray10"} fontWeight={600} pressStyle={{ scale: 0.95 }}>
                 Edit Profile
               </Button>

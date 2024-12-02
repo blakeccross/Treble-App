@@ -1,4 +1,4 @@
-import { Play, RefreshCw } from "@tamagui/lucide-icons";
+import { Lock, Play, RefreshCw } from "@tamagui/lucide-icons";
 import { Link, useLocalSearchParams, useRouter } from "expo-router";
 import React, { useContext, useEffect } from "react";
 
@@ -23,6 +23,9 @@ export default function ModuleStartScreen() {
     if (!currentModule) router.dismissAll();
   }, []);
 
+  const isPremium = currentUser?.premium;
+  console.log("isPremium", isPremium);
+
   return (
     <StickyHeader image={currentModule?.local_poster_uri || ""} title={currentModule?.title || ""}>
       <ScrollView backgroundColor={"$background"} minHeight={PAGE_HEIGHT - 118.6}>
@@ -34,7 +37,12 @@ export default function ModuleStartScreen() {
               disabled={(section.premium && currentUser?.premium) || !section.section_item[0]?.type}
               key={section.id}
             >
-              <XStack padding="$4" justifyContent="space-between" pressStyle={{ scale: 0.99, backgroundColor: "$backgroundPress" }}>
+              <XStack
+                padding="$4"
+                alignItems="center"
+                justifyContent="space-between"
+                pressStyle={{ scale: 0.99, backgroundColor: "$backgroundPress" }}
+              >
                 <YStack flex={1}>
                   <H4 fontWeight={600}>{section.title}</H4>
                   <Paragraph>
@@ -49,7 +57,11 @@ export default function ModuleStartScreen() {
                     )}
                   </Paragraph>
                 </YStack>
-                <Button variant="outlined" theme={"alt1"} circular icon={section.completed ? RefreshCw : Play} />
+                {section.premium && !currentUser?.premium ? (
+                  <Button disabled variant="outlined" theme={"alt1"} circular icon={Lock} />
+                ) : (
+                  <Button disabled variant="outlined" theme={"alt1"} circular icon={section.completed ? RefreshCw : Play} />
+                )}
               </XStack>
             </Link>
           ))}

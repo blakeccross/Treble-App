@@ -16,20 +16,7 @@ type FormInput = {
   password: string;
 };
 
-export default function ProfileSettings() {
-  const [profile, setProfile] = useState({ name: "", email: "" });
-  const { currentUser, handleUpdateUserInfo } = useContext(UserContext);
-  const [open, setOpen] = React.useState(false);
-  const timerRef = React.useRef(0);
-
-  useEffect(() => {
-    setProfile({ name: currentUser?.name || "", email: currentUser?.email || "" });
-  }, []);
-
-  React.useEffect(() => {
-    return () => clearTimeout(timerRef.current);
-  }, []);
-
+export default function Login() {
   const {
     control,
     handleSubmit,
@@ -61,8 +48,8 @@ export default function ProfileSettings() {
   }
 
   return (
-    <SafeAreaView>
-      <YStack gap="$2" padding="$4">
+    <>
+      <YStack>
         <Controller
           control={control}
           rules={{
@@ -90,7 +77,7 @@ export default function ProfileSettings() {
             minLength: 6,
           }}
           render={({ field: { onChange, onBlur, value } }) => (
-            <View>
+            <View marginBottom="$4">
               <Theme name={errors.password ? "red" : null}>
                 <Label>Password</Label>
 
@@ -106,6 +93,6 @@ export default function ProfileSettings() {
         </Button>
         {errors.email && <Label color={"red"}>Incorrect log in credentials</Label>}
       </YStack>
-    </SafeAreaView>
+    </>
   );
 }

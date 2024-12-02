@@ -42,11 +42,13 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
     };
   }, []);
 
-  // useEffect(() => {
-  //   Purchases.getCustomerInfo().then((info) => {
-  //     console.log("Customer Info", info.allPurchasedProductIdentifiers);
-  //   });
-  // }, []);
+  useEffect(() => {
+    Purchases.getCustomerInfo().then((info) => {
+      if (info.allPurchasedProductIdentifiers.length > 0) {
+        handleUpdateUserInfo({ premium: true });
+      }
+    });
+  }, []);
 
   async function handleGetUserData(id: string) {
     let { data: profile, error } = await supabase.from("profiles").select("*").eq("id", id).single();

@@ -58,7 +58,7 @@ export default function RootLayout() {
                 <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
                 <Stack.Screen name="(questions)" options={{ headerShown: false }} />
                 <Stack.Screen name="(ear-training)" options={{ headerShown: false }} />
-                <Stack.Screen name="(profile)/profile-settings" options={{ headerShown: true, title: "Settings" }} />
+                <Stack.Screen name="(profile)" options={{ headerShown: false }} />
                 <Stack.Screen name="+not-found" />
               </Stack>
               <Toast config={toastConfig} topOffset={60} />
