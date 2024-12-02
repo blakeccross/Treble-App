@@ -85,20 +85,25 @@ export default function Page() {
   }));
 
   function validateAnswer(selectedId: string) {
-    setSelectedAnswer(selectedId);
-    // Replace with real value
-    if (selectedId === correctAnswer.current) {
-      setAnswerIsCorrect(true);
-      setCurrentScore(currentScore + 1);
-      playSFX(correctSFX);
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    } else {
-      handleIncorrect();
-    }
-    // correctAnswer.current = "";
-    setIsRunning(false);
+    try {
+      setSelectedAnswer(selectedId);
+      // Replace with real value
+      if (selectedId === correctAnswer.current) {
+        setAnswerIsCorrect(true);
+        setCurrentScore(currentScore + 1);
+        playSFX(correctSFX);
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      } else {
+        handleIncorrect();
+      }
+      // correctAnswer.current = "";
+      setIsRunning(false);
 
-    springOut();
+      springOut();
+    } catch (error) {
+      console.error("Error validating answer:", error);
+      // Optionally, show an alert or fallback UI
+    }
   }
 
   function handleIncorrect() {
@@ -170,16 +175,20 @@ export default function Page() {
   }
 
   async function playSFX(sfx: AVPlaybackSource, interrupt?: boolean) {
-    const { sound } = await Audio.Sound.createAsync(sfx);
-    await Audio.setAudioModeAsync({
-      playsInSilentModeIOS: true,
-    });
+    try {
+      const { sound } = await Audio.Sound.createAsync(sfx);
+      await Audio.setAudioModeAsync({
+        playsInSilentModeIOS: true,
+      });
 
-    if (interrupt) {
-      setSound(sound);
+      if (interrupt) {
+        setSound(sound);
+      }
+
+      await sound.playAsync();
+    } catch (error) {
+      console.error("Error playing SFX:", error);
     }
-
-    await sound.playAsync();
   }
 
   async function playAudio() {
@@ -350,14 +359,7 @@ export default function Page() {
           </Animated.View>
           <TapGestureHandler onActivated={handlePressPlay}>
             <Animated.View style={[animatedStyle4, { position: "absolute" }]}>
-              <Circle
-                size={PAGE_WIDTH * 0.4}
-                // backgroundColor="$blue3Dark"
-                elevation="$0.25"
-                pressStyle={{ scale: 0.95 }}
-                animation="bouncy"
-                overflow="hidden"
-              >
+              <Circle size={PAGE_WIDTH * 0.4} elevation="$0.25" pressStyle={{ scale: 0.95 }} animation="bouncy" overflow="hidden">
                 <LinearGradient
                   width={"100%"}
                   height={"100%"}

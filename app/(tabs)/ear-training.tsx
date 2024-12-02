@@ -1,9 +1,10 @@
-import { StyleSheet, Platform, SafeAreaView, Pressable } from "react-native";
+import { StyleSheet, Platform, Pressable } from "react-native";
 import { Avatar, Card, Circle, H1, H3, H5, Paragraph, Separator, View, XStack, Button, ScrollView, YStack, H2 } from "tamagui";
 import { Image } from "expo-image";
 import { BlurView } from "expo-blur";
 import { AudioWaveform, Lock, Play } from "@tamagui/lucide-icons";
 import { Href, Link, useRouter } from "expo-router";
+import { SafeAreaView } from "react-native-safe-area-context";
 const blurhash =
   "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
 
@@ -35,10 +36,11 @@ export default function TabTwoScreen() {
   const router = useRouter();
   return (
     <View flex={1} backgroundColor={"$background"}>
-      <SafeAreaView />
+      <SafeAreaView edges={["top"]} />
       <ScrollView padding="$4" contentContainerStyle={{ paddingBottom: 150 }}>
-        <XStack justifyContent="space-between">
-          <H2 fontWeight={600}>Ear Training</H2>
+        <XStack alignItems="center" gap={"$2"} marginBottom="$4">
+          <AudioWaveform />
+          <H2 fontWeight={800}>Ear Training</H2>
           {/* <Pressable onPress={() => router.push("/(ear-training)/tuner")}>
             <AudioWaveform />
           </Pressable> */}

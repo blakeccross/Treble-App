@@ -28,7 +28,12 @@
       "output": "static",
       "favicon": "./assets/images/favicon.png"
     },
-    "plugins": ["expo-router", "expo-font", "react-native-compressor"],
+    "plugins": [
+      "expo-router",
+      "expo-font",
+      "react-native-compressor",
+      "expo-audio"
+    ],
     "experiments": {
       "typedRoutes": true
     },
