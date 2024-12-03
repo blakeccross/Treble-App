@@ -4,8 +4,9 @@ import { router } from "expo-router";
 import { createContext, useEffect } from "react";
 import { useMMKVObject } from "react-native-mmkv";
 import Purchases from "react-native-purchases";
+import Toast from "react-native-toast-message";
 
-type UserContextProps = { currentUser: Profile | undefined; handleUpdateUserInfo: (info: any) => void };
+type UserContextProps = { currentUser: Profile | undefined; handleUpdateUserInfo: (info: any) => void; handleSignOut: () => void };
 
 export const UserContext = createContext<UserContextProps>({} as UserContextProps);
 
@@ -62,7 +63,6 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
 
   async function handleUpdateUserInfo(info: any) {
     const updatedUser = { ...(currentUser || {}), ...info };
-    // console.log("UPDATED INFO", updatedUser, currentUser?.id);
 
     const { data, error } = await supabase.from("profiles").update(info).eq("id", currentUser?.id).select();
     if (data) {
@@ -71,7 +71,21 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
     if (error) console.error(error);
   }
 
+  async function handleSignOut() {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      console.error(error);
+      Toast.show({
+        type: "error",
+        text1: "Error trying to sign user out",
+      });
+    } else {
+      setCurrentUser(undefined);
+      router.replace("/(auth)");
+    }
+  }
+
   // if (!currentUser) throw Error();
 
-  return <UserContext.Provider value={{ currentUser, handleUpdateUserInfo }}>{children}</UserContext.Provider>;
+  return <UserContext.Provider value={{ currentUser, handleUpdateUserInfo, handleSignOut }}>{children}</UserContext.Provider>;
 }

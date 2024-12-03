@@ -136,7 +136,7 @@ export default function TabTwoScreen() {
           <XStack justifyContent="space-between" alignItems="center">
             <XStack alignItems="center" gap="$2">
               <H3 fontWeight={600} textAlign="left" marginVertical="$6">
-                {currentUser?.full_name}
+                {currentUser?.full_name ? currentUser?.full_name : "Guest User"}
               </H3>
               {currentUser?.purchased_products.length && (
                 <LinearGradient colors={["$blue10", "$purple7"]} start={[0.3, 1]} end={[0, 0]} paddingHorizontal="$3" borderRadius="$10">
@@ -205,7 +205,7 @@ export default function TabTwoScreen() {
                 <XStack gap="$2">
                   <AntDesign name="star" size={24} color={yellow.yellow10} marginTop={4} />
                   <YStack>
-                    <Paragraph fontWeight="800">{currentUser?.total_xp}</Paragraph>
+                    <Paragraph fontWeight="800">{currentUser?.total_xp ? currentUser?.total_xp : 0}</Paragraph>
                     <Paragraph fontSize={"$1"}>Total XP</Paragraph>
                   </YStack>
                 </XStack>

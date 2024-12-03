@@ -1,13 +1,16 @@
 import { QuizContext } from "@/context/quiz-context";
 import { NavigationContainer } from "@react-navigation/native";
-import { Link, Stack, useRouter } from "expo-router";
+import { Check, Star } from "@tamagui/lucide-icons";
+import { Link, Stack, useLocalSearchParams, useRouter } from "expo-router";
 import React, { useContext, useEffect } from "react";
 import { SafeAreaView, ScrollView, View, useWindowDimensions } from "react-native";
-import { Button, Card, H1, H3, Progress, Spinner, YStack } from "tamagui";
+import { Button, Card, H1, H2, H3, H4, ListItem, Paragraph, Progress, Spinner, XStack, YGroup, YStack } from "tamagui";
+import { LinearGradient } from "tamagui/linear-gradient";
 
 export default function Index() {
   const router = useRouter();
   const { currentModule } = useContext(QuizContext);
+  // const { numOfCorrectAnswers, moduleComplete } = useLocalSearchParams();
 
   function handle() {
     // router.dismissAll();
@@ -17,11 +20,59 @@ export default function Index() {
     });
   }
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <LinearGradient width="100%" height="100%" colors={["$purple10", "$purple8"]} start={[0.5, 1]} end={[0, 0]} paddingHorizontal={"$4"}>
       <YStack alignItems="center" justifyContent="center" flex={1} padding="$4">
-        <H1>Wow you finished an entire module!</H1>
-        <Button onPress={handle}>Continue</Button>
+        <XStack gap="$2">
+          <Paragraph color={"$background"}>Completed</Paragraph>
+          <Check color={"$background"} size={"$1"} />
+        </XStack>
+        <H2
+          key={0}
+          color={"$background"}
+          fontWeight={800}
+          enterStyle={{
+            scale: 3,
+            y: -10,
+            opacity: 0,
+          }}
+          opacity={1}
+          scale={1}
+          y={0}
+          animation="lazy"
+          textAlign="center"
+        >
+          Wow you finished an entire module!
+        </H2>
       </YStack>
-    </SafeAreaView>
+      <YStack padding="$4" gap="$5">
+        {/* <View>
+          <H4 color={"$background"} fontWeight={600}>
+            Your rewards
+          </H4>
+          <YGroup
+            alignSelf="center"
+            bordered
+            size="$4"
+            enterStyle={{
+              // scale: 3,
+              y: 100,
+              opacity: 0,
+            }}
+            // animation="lazy"
+          >
+            <YGroup.Item>
+              <ListItem hoverTheme icon={Star} title={`${numOfCorrectAnswers} XP`} color={"$blue10"} />
+            </YGroup.Item>
+          </YGroup>
+        </View> */}
+        <View>
+          <Button onPress={handle} fontWeight={600} fontSize={"$7"} height={"$5"} width={"100%"} themeInverse>
+            Continue
+          </Button>
+        </View>
+      </YStack>
+
+      <SafeAreaView />
+    </LinearGradient>
   );
 }

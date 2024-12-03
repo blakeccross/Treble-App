@@ -51,7 +51,9 @@ export default function SignUp() {
       setError("password", { type: "custom", message: "Password is too short" });
     }
 
-    if (auth.session) {
+    console.log("AUTH", auth);
+
+    if (auth.user) {
       router.dismissAll();
       router.push("/(tabs)/(home)/");
     }

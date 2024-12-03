@@ -23,9 +23,6 @@ export default function ModuleStartScreen() {
     if (!currentModule) router.dismissAll();
   }, []);
 
-  const isPremium = currentUser?.premium;
-  console.log("isPremium", isPremium);
-
   return (
     <StickyHeader image={currentModule?.local_poster_uri || ""} title={currentModule?.title || ""}>
       <ScrollView backgroundColor={"$background"} minHeight={PAGE_HEIGHT - 118.6}>
@@ -46,7 +43,7 @@ export default function ModuleStartScreen() {
                 <YStack flex={1}>
                   <H4 fontWeight={600}>{section.title}</H4>
                   <Paragraph>
-                    15 minutes{" "}
+                    {section.section_item.length} minutes{" "}
                     {section.completed && (
                       <>
                         •{" "}

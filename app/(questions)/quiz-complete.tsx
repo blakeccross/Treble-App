@@ -14,16 +14,20 @@ export default function Index() {
   const { numOfCorrectAnswers, moduleComplete } = useLocalSearchParams();
 
   function handle() {
-    if (moduleComplete === "true") {
-      router.push({
-        pathname: "/module-complete",
-      });
-    } else {
-      router.navigate({
-        pathname: "/module-overview/[id]",
-        params: { id: currentModule.id },
-      });
-    }
+    router.navigate({
+      pathname: "/module-overview/[id]",
+      params: { id: currentModule.id },
+    });
+    // if (moduleComplete === "true") {
+    //   router.push({
+    //     pathname: "/module-complete",
+    //   });
+    // } else {
+    //   router.navigate({
+    //     pathname: "/module-overview/[id]",
+    //     params: { id: currentModule.id },
+    //   });
+    // }
   }
 
   return (
@@ -34,6 +38,7 @@ export default function Index() {
           <Check color={"$background"} size={"$1"} />
         </XStack>
         <H1
+          key={0}
           color={"$background"}
           fontWeight={800}
           enterStyle={{
@@ -41,6 +46,9 @@ export default function Index() {
             y: -10,
             opacity: 0,
           }}
+          opacity={1}
+          scale={1}
+          y={0}
           animation="lazy"
         >
           Nice work!
@@ -62,6 +70,11 @@ export default function Index() {
             }}
             // animation="lazy"
           >
+            {moduleComplete === "true" && (
+              <YGroup.Item>
+                <ListItem hoverTheme icon={Star} title={`10 XP`} subTitle="Completed an entire module" color={"$blue10"} />
+              </YGroup.Item>
+            )}
             <YGroup.Item>
               <ListItem hoverTheme icon={Star} title={`${numOfCorrectAnswers} XP`} color={"$blue10"} />
             </YGroup.Item>

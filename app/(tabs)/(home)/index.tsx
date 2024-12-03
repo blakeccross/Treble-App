@@ -49,7 +49,16 @@ export default function HomeScreen() {
 
   return (
     <>
-      <LinearGradient colors={["$blue10", "$blue8"]} start={[0.3, 1]} end={[0, 0]} padding="$5" paddingTop="$0" paddingBottom="$4">
+      <LinearGradient
+        colors={["$blue10", "$blue8"]}
+        borderBottomWidth={1}
+        borderBottomColor={"$gray8"}
+        start={[0.3, 1]}
+        end={[0, 0]}
+        padding="$5"
+        paddingTop="$0"
+        paddingBottom="$4"
+      >
         <SafeAreaView edges={["right", "left", "top"]} />
 
         <XStack gap="$2" justifyContent="space-between" alignItems="center">

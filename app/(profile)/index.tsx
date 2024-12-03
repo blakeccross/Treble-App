@@ -17,7 +17,7 @@ type FormInput = {
 
 export default function ProfileSettings() {
   const [profile, setProfile] = useState({ name: "", email: "" });
-  const { currentUser, handleUpdateUserInfo } = useContext(UserContext);
+  const { currentUser, handleUpdateUserInfo, handleSignOut } = useContext(UserContext);
 
   useEffect(() => {
     async function getUser() {
@@ -52,19 +52,6 @@ export default function ProfileSettings() {
       text1: "Account Updated",
     });
     router.back();
-  }
-
-  async function handleSignOut() {
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      console.error(error);
-      Toast.show({
-        type: "error",
-        text1: "Error trying to sign user out",
-      });
-    } else {
-      router.replace("/(auth)");
-    }
   }
 
   const pickImage = async () => {

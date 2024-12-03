@@ -59,7 +59,12 @@ export default function QuizProvider({ children }: { children: JSX.Element[] }) 
           .map((item) => item.id)
           .every((v) => [...(currentUser?.completed_sections || []), currentSection?.id].includes(v));
 
-        finishedSection(userFinishedModule || false);
+        // Check if current module has already been completed
+        if (userFinishedModule && currentModule && !currentUser?.completed_modules?.includes(currentModule?.id)) {
+          finishedSection(userFinishedModule || false);
+        } else {
+          finishedSection(false);
+        }
       }
     }
   }
@@ -76,14 +81,19 @@ export default function QuizProvider({ children }: { children: JSX.Element[] }) 
     const completedSections = [...(currentUser?.completed_sections || []), currentSection?.id];
     const completedModules = [...(currentUser?.completed_modules || []), currentModule?.id];
 
+    let XPGained = currentSection?.section_item.length || 0 - (3 - lives);
+
     handleUpdateUserInfo({ completed_sections: completedSections });
 
-    if (moduleComplete) handleUpdateUserInfo({ completed_modules: completedModules });
+    if (moduleComplete) {
+      handleUpdateUserInfo({ completed_modules: completedModules });
+      XPGained += 10;
+    }
 
     if (!currentUser?.active_days || (currentUser?.active_days && !currentUser?.active_days.some((date) => moment(date).isSame(moment(), "day")))) {
       handleUpdateUserInfo({ active_days: [...(currentUser?.active_days || []), new Date().toString()] });
     }
-    const XPGained = currentSection?.section_item.length || 0 - (3 - lives);
+
     const newXPValue = (currentUser?.total_xp ? Number(currentUser?.total_xp) : 0) + XPGained;
     setLives(3);
     currentQuestionIndex.current = 0;
