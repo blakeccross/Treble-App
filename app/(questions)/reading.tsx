@@ -7,7 +7,7 @@ import { ScrollView, View } from "tamagui";
 
 export default function Index() {
   const { currentQuestionIndex, questions, nextQuestion } = useContext(QuizContext);
-  const questionTextRef = useRef(questions[currentQuestionIndex]?.reading_text || "");
+  const questionTextRef = useRef(questions?.[currentQuestionIndex]?.reading_text || "");
   const markdownElement = useMarkdown(questionTextRef.current?.replace(/(\r\n|\r|\n)/g, "\n"));
 
   return (

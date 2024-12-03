@@ -31,13 +31,14 @@ export default function MultipleCHoice() {
           <Paragraph marginBottom="$2" fontSize={"$7"}>
             {question.current?.question}
           </Paragraph>
-          {question.current?.image && (
-            <Image
-              source={question.current.image}
-              style={{ borderRadius: 20, aspectRatio: "16/9", maxWidth: "100%", backgroundColor: "white" }}
-              contentFit="contain"
-            />
-          )}
+          {question.current?.local_image_uri ||
+            (question.current?.image && (
+              <Image
+                source={question.current?.local_image_uri || question.current?.image}
+                style={{ borderRadius: 20, aspectRatio: "16/9", maxWidth: "100%", backgroundColor: "white" }}
+                contentFit="contain"
+              />
+            ))}
         </View>
 
         <View>
@@ -58,7 +59,7 @@ export default function MultipleCHoice() {
                     if (question.current?.answer_id) {
                       setSelectedAnswers((prev) => {
                         const isSelected = prev.includes(item.id);
-                        const maxSelections = question.current?.answer_id.length || 0;
+                        const maxSelections = question.current?.answer_id?.length || 0;
 
                         if (isSelected) {
                           return prev.filter((id) => id !== item.id);
