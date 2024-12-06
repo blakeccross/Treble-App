@@ -133,6 +133,7 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
           // Check if the file already exists
           const fileInfo = await FileSystem.getInfoAsync(localUri);
           if (fileInfo.exists) {
+            console.log("File Exists");
             return { ...sectionItem, local_image_uri: localUri };
           }
 

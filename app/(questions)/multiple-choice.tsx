@@ -1,7 +1,7 @@
 import React, { useRef, useState, useContext, useEffect } from "react";
 import { FlatList, SafeAreaView, useWindowDimensions } from "react-native";
 import SheetMusic from "@/components/sheet-music";
-import { Card, H1, H2, H3, Paragraph, View } from "tamagui";
+import { Card, H1, H2, H3, H5, Paragraph, View } from "tamagui";
 import { Stack } from "expo-router";
 import AnswerDrawer from "@/components/AnswerDrawer";
 import { QuizContext } from "@/context/quiz-context";
@@ -27,18 +27,17 @@ export default function MultipleCHoice() {
       <SafeAreaView />
       <View padding="$4" paddingBottom="0" flex={1}>
         <View flex={1} style={{ width: "100%" }} paddingBottom="$4" justifyContent="flex-start">
-          <H3 fontWeight={800}>{question.current?.answer_id && question.current?.answer_id.length > 1 ? "Multiple Answer:" : "Multiple Choice:"}</H3>
+          <H5 fontWeight={800}>{question.current?.answer_id && question.current?.answer_id.length > 1 ? "Multiple Answer:" : "Multiple Choice:"}</H5>
           <Paragraph marginBottom="$2" fontSize={"$7"}>
             {question.current?.question}
           </Paragraph>
-          {question.current?.local_image_uri ||
-            (question.current?.image && (
-              <Image
-                source={question.current?.local_image_uri || question.current?.image}
-                style={{ borderRadius: 20, aspectRatio: "16/9", maxWidth: "100%", backgroundColor: "white" }}
-                contentFit="contain"
-              />
-            ))}
+          {(question.current?.local_image_uri || question.current?.image) && (
+            <Image
+              source={question.current?.local_image_uri || question.current?.image}
+              style={{ borderRadius: 20, aspectRatio: "16/9", maxWidth: "100%", backgroundColor: "white" }}
+              contentFit="contain"
+            />
+          )}
         </View>
 
         <View>
