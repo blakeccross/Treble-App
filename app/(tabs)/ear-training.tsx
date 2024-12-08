@@ -1,12 +1,78 @@
-import { StyleSheet, Platform, Pressable } from "react-native";
-import { Avatar, Card, Circle, H1, H3, H5, Paragraph, Separator, View, XStack, Button, ScrollView, YStack, H2 } from "tamagui";
+import { StyleSheet, Platform, Pressable, Dimensions } from "react-native";
+import { Avatar, Card, Circle, H1, H3, H5, Paragraph, Separator, View, XStack, Button, YStack, H2 } from "tamagui";
 import { Image } from "expo-image";
 import { BlurView } from "expo-blur";
 import { AudioWaveform, Lock, Play } from "@tamagui/lucide-icons";
 import { Href, Link, useRouter } from "expo-router";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
+import Animated, {
+  Extrapolation,
+  interpolate,
+  SharedValue,
+  useAnimatedScrollHandler,
+  useAnimatedStyle,
+  useSharedValue,
+} from "react-native-reanimated";
+
 const blurhash =
   "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
+
+const AnimatedLinearGradient = Animated.createAnimatedComponent(View);
+const AnimatedView = Animated.createAnimatedComponent(View);
+const AnimatedImage = Animated.createAnimatedComponent(Image);
+
+const posterSize = Dimensions.get("screen").height / 2;
+const headerTop = 44 - 16;
+
+function ScreenHeader({ sv, title }: { sv: SharedValue<number>; title: string }) {
+  const inset = useSafeAreaInsets();
+  const opacityAnim = useAnimatedStyle(() => {
+    return {
+      opacity: interpolate(sv.value, [((posterSize - (headerTop + inset.top)) / 4) * 3, posterSize - (headerTop + inset.top) + 1], [0, 1]),
+      transform: [
+        {
+          scale: interpolate(
+            sv.value,
+            [((posterSize - (headerTop + inset.top)) / 4) * 3, posterSize - (headerTop + inset.top) + 1],
+            [0.98, 1],
+            Extrapolation.CLAMP
+          ),
+        },
+        {
+          translateY: interpolate(
+            sv.value,
+            [((posterSize - (headerTop + inset.top)) / 4) * 3, posterSize - (headerTop + inset.top) + 1],
+            [-10, 0],
+            Extrapolation.CLAMP
+          ),
+        },
+      ],
+      paddingTop: inset.top === 0 ? 8 : inset.top,
+    };
+  });
+  return (
+    <AnimatedView
+      backgroundColor={"$background"}
+      style={[
+        opacityAnim,
+        {
+          position: "absolute",
+          width: "100%",
+          paddingHorizontal: 16,
+          paddingBottom: 8,
+          zIndex: 10,
+          flexDirection: "row",
+          justifyContent: "center",
+        },
+      ]}
+      alignItems={"center"}
+      borderBottomWidth={1}
+      borderBottomColor={"$gray5"}
+    >
+      <H5 fontWeight={600}>{title}</H5>
+    </AnimatedView>
+  );
+}
 
 const games = [
   {
@@ -34,10 +100,24 @@ const games = [
 
 export default function TabTwoScreen() {
   const router = useRouter();
+  const sv = useSharedValue<number>(0);
+  const scrollHandler = useAnimatedScrollHandler({
+    onScroll: (event) => {
+      "worklet";
+      sv.value = event.contentOffset.y;
+    },
+  });
   return (
     <View flex={1} backgroundColor={"$background"}>
       <SafeAreaView edges={["top"]} />
-      <ScrollView padding="$4" contentContainerStyle={{ paddingBottom: 150 }}>
+      <ScreenHeader sv={sv} title="Ear Training" />
+      <Animated.ScrollView
+        onScroll={scrollHandler}
+        scrollEventThrottle={16}
+        style={{ padding: 15, paddingBottom: 150 }}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* <ScrollView padding="$4" contentContainerStyle={{ paddingBottom: 150 }}> */}
         <XStack alignItems="center" gap={"$2"} marginBottom="$4">
           <AudioWaveform />
           <H2 fontWeight={800}>Ear Training</H2>
@@ -93,7 +173,7 @@ export default function TabTwoScreen() {
                         fontWeight={600}
                         disabled
                       >
-                        Locked
+                        Coming Soon
                       </Button>
                     ) : (
                       <Button
@@ -115,7 +195,7 @@ export default function TabTwoScreen() {
             </Card>
           ))}
         </YStack>
-      </ScrollView>
+      </Animated.ScrollView>
     </View>
   );
 }

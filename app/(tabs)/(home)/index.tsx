@@ -89,7 +89,7 @@ export default function HomeScreen() {
         <XStack $sm={{ flexDirection: "column" }} padding="$3" gap="$3">
           {modules.loading
             ? [...Array(6)].map((item, index) => (
-                <Card key={index} bordered elevate borderRadius="$8" pressStyle={{ scale: 0.95 }} animation="bouncy" height={"$10"}>
+                <Card key={index} elevate borderRadius="$8" pressStyle={{ scale: 0.95 }} animation="bouncy" height={"$10"}>
                   <Card.Background borderRadius="$8">
                     <SkeletonLoader width={"100%"} height={"100%"} backgroundColor={grayA.grayA3} />
                   </Card.Background>
@@ -98,7 +98,7 @@ export default function HomeScreen() {
             : modules.data &&
               modules.data.map((module) => (
                 <Link href={`/module-overview/${module?.id}`} asChild key={module.id}>
-                  <Card bordered borderRadius="$8" pressStyle={{ scale: 0.95 }} animation="bouncy" backgroundColor={"$blue1"}>
+                  <Card borderRadius="$8" pressStyle={{ scale: 0.95 }} animation="bouncy" backgroundColor={"$blue1"}>
                     <Card.Header padding="$4">
                       <XStack gap="$4" flex={1}>
                         <View position="relative">
