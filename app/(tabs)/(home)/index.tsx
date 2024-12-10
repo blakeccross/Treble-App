@@ -1,29 +1,24 @@
-import { Dimensions, StyleSheet } from "react-native";
-import ParallaxScrollView from "@/components/ParallaxScrollView";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Avatar, Card, Button, H1, H2, H3, Paragraph, Progress, ScrollView, XStack, YStack, View, H5, H4, CardBackground } from "tamagui";
-import { ChevronRight, Flame, Gem, Music, Star, StarFull, Trophy } from "@tamagui/lucide-icons";
-import { Link, router } from "expo-router";
+import Paywall from "@/app/paywall";
+import TrebleLogo from "@/assets/trebleLogo";
+import { SkeletonLoader } from "@/components/SkeletonLoader";
 import { ModuleContext } from "@/context/module-context";
-import React, { useContext, useEffect, useState } from "react";
-import { blue, darkColors, grayA, orange, orangeA, red, whiteA, yellow, yellowA } from "@tamagui/themes";
-import { LinearGradient } from "tamagui/linear-gradient";
-import { BlurView } from "expo-blur";
 import { UserContext } from "@/context/user-context";
-import { Image } from "expo-image";
-import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
-import { useMMKVNumber } from "react-native-mmkv";
-import TrebleLogo from "@/assets/trebleLogo";
-import StripedPattern from "@/components/stripedPattern";
-import { SkeletonLoader } from "@/components/SkeletonLoader";
+import { ChevronRight, StarFull } from "@tamagui/lucide-icons";
+import { blue, grayA, yellow, yellowA } from "@tamagui/themes";
+import { Image } from "expo-image";
+import { Link } from "expo-router";
+import React, { useContext, useEffect, useState } from "react";
+import { Dimensions } from "react-native";
 import Purchases from "react-native-purchases";
-import Paywall from "@/app/paywall";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Avatar, Card, H3, H5, Paragraph, Progress, ScrollView, View, XStack, YStack } from "tamagui";
+import { LinearGradient } from "tamagui/linear-gradient";
 
 export default function HomeScreen() {
   const { modules } = useContext(ModuleContext);
-  const { currentUser } = useContext(UserContext);
+  const { currentUser, handleUpdateUserInfo } = useContext(UserContext);
   const blurhash =
     "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
   const screenWidth = Dimensions.get("window").width;
@@ -33,18 +28,11 @@ export default function HomeScreen() {
     /* Enable debug logs before calling `setup`. */
     Purchases.setLogLevel(Purchases.LOG_LEVEL.DEBUG);
 
-    /*
-      Initialize the RevenueCat Purchases SDK.
+    // Purchases.configure({ apiKey: "appl_zZGUxbBzchveUkWXlMPDeuztdeD", appUserID: currentUser?.id, useAmazon: false });
 
-      - observerMode is false, so Purchases will automatically handle finishing transactions. Read more about Observer Mode here: https://docs.revenuecat.com/docs/observer-mode
-
-      - useAmazon is false, so it will use the Play Store in Android and App Store in iOS by default.
-      */
-    Purchases.configure({ apiKey: "appl_zZGUxbBzchveUkWXlMPDeuztdeD", appUserID: currentUser?.id, useAmazon: false });
-
-    if (!currentUser?.purchased_products.length) {
-      setOpenPaywall(true);
-    }
+    // if (!currentUser?.purchased_products.length) {
+    //   setOpenPaywall(true);
+    // }
   }, []);
 
   return (

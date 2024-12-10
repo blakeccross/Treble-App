@@ -1,12 +1,16 @@
 import { Profile } from "@/types";
 import { supabase } from "@/utils/supabase";
 import { router } from "expo-router";
-import { createContext, useEffect } from "react";
+import { createContext, useEffect, useState } from "react";
 import { useMMKVObject } from "react-native-mmkv";
 import Purchases from "react-native-purchases";
 import Toast from "react-native-toast-message";
 
-type UserContextProps = { currentUser: Profile | undefined; handleUpdateUserInfo: (info: any) => void; handleSignOut: () => void };
+type UserContextProps = {
+  currentUser: Profile | undefined;
+  handleUpdateUserInfo: (info: Partial<Profile>) => Promise<void>;
+  handleSignOut: () => void;
+};
 
 export const UserContext = createContext<UserContextProps>({} as UserContextProps);
 
@@ -61,13 +65,15 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
     }
   }
 
-  async function handleUpdateUserInfo(info: any) {
-    const updatedUser = { ...(currentUser || {}), ...info };
+  async function handleUpdateUserInfo(info: Partial<Profile>) {
+    console.log("info", info);
+    const updatedUser = { ...(currentUser || {}), ...info } as Profile;
+    setCurrentUser(updatedUser);
 
     const { data, error } = await supabase.from("profiles").update(info).eq("id", currentUser?.id).select();
-    if (data) {
-      setCurrentUser(updatedUser);
-    }
+    // if (data) {
+    //   setCurrentUser(updatedUser);
+    // }
     if (error) console.error(error);
   }
 

@@ -56,7 +56,7 @@ export default function RootLayout() {
               >
                 <Stack.Screen name="(auth)" options={{ headerShown: false }} />
                 <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-                <Stack.Screen name="(questions)" options={{ headerShown: false }} />
+                <Stack.Screen name="(questions)" options={{ headerShown: false, gestureEnabled: false }} />
                 <Stack.Screen name="(ear-training)" options={{ headerShown: false }} />
                 <Stack.Screen name="(profile)" options={{ headerShown: false }} />
                 <Stack.Screen name="+not-found" />

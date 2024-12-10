@@ -196,7 +196,7 @@ export default function TabTwoScreen() {
                 <XStack gap="$2">
                   <Award color={"$purple10"} fill={purpleA.purpleA10} marginTop={4} />
                   <YStack>
-                    <Paragraph fontWeight="800">1</Paragraph>
+                    <Paragraph fontWeight="800">{currentUser?.completed_modules ? currentUser?.completed_modules.length : 0}</Paragraph>
                     <Paragraph fontSize={"$1"}>Modules Completed</Paragraph>
                   </YStack>
                 </XStack>
@@ -221,14 +221,14 @@ export default function TabTwoScreen() {
                   </YStack>
                 </XStack>
               </Card>
-              <Card flex={1} bordered padding="$2.5">
+              {/* <Card flex={1} bordered padding="$2.5">
                 <XStack gap="$2">
                   <YStack>
                     <Paragraph fontWeight="800">3</Paragraph>
                     <Paragraph fontSize={"$1"}>Current League</Paragraph>
                   </YStack>
                 </XStack>
-              </Card>
+              </Card> */}
             </XStack>
           </YStack>
           <H5 fontWeight={600}>Streak</H5>

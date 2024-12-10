@@ -31,7 +31,7 @@ export default function ModuleStartScreen() {
             <Link
               asChild
               href={{ pathname: `/${section.section_item[0]?.type}`, params: { module_id: currentModule.id, section_id: section.id } }}
-              disabled={(section.premium && currentUser?.premium) || !section.section_item[0]?.type}
+              //disabled={(section.premium && currentUser?.premium) || !section.section_item[0]?.type}
               key={section.id}
             >
               <XStack
@@ -44,7 +44,7 @@ export default function ModuleStartScreen() {
                   <H4 fontWeight={600}>{section.title}</H4>
                   <Paragraph>
                     {section.section_item.length} minutes{" "}
-                    {section.completed && (
+                    {currentUser?.completed_sections?.includes(section.id) && (
                       <>
                         •{" "}
                         <Paragraph color={"$blue10"} fontWeight={600}>

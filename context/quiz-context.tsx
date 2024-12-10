@@ -77,28 +77,37 @@ export default function QuizProvider({ children }: { children: JSX.Element[] }) 
     });
   }
 
-  function finishedSection(moduleComplete: boolean) {
-    const completedSections = [...(currentUser?.completed_sections || []), currentSection?.id];
-    const completedModules = [...(currentUser?.completed_modules || []), currentModule?.id];
+  async function finishedSection(moduleComplete: boolean) {
+    const completedSections = Array.from(new Set([...(currentUser?.completed_sections || []), currentSection?.id])).filter(
+      (id): id is number => id !== undefined
+    );
+
+    const completedModules = Array.from(new Set([...(currentUser?.completed_modules || []), currentModule?.id])).filter(
+      (id): id is number => id !== undefined
+    );
 
     let XPGained = currentSection?.section_item.length || 0 - (3 - lives);
 
-    handleUpdateUserInfo({ completed_sections: completedSections });
+    const updates: Partial<typeof currentUser> = {
+      completed_sections: completedSections,
+      total_xp: 0,
+    };
 
     if (moduleComplete) {
-      handleUpdateUserInfo({ completed_modules: completedModules });
+      updates.completed_modules = completedModules;
       XPGained += 10;
     }
 
     if (!currentUser?.active_days || (currentUser?.active_days && !currentUser?.active_days.some((date) => moment(date).isSame(moment(), "day")))) {
-      handleUpdateUserInfo({ active_days: [...(currentUser?.active_days || []), new Date().toString()] });
+      updates.active_days = [...(currentUser?.active_days || []), new Date().toString()];
     }
 
-    const newXPValue = (currentUser?.total_xp ? Number(currentUser?.total_xp) : 0) + XPGained;
+    // Single call to handleUpdateUserInfo with all updates
+    await handleUpdateUserInfo(updates);
+
     setLives(3);
     currentQuestionIndex.current = 0;
 
-    handleUpdateUserInfo({ total_xp: newXPValue });
     router.push({
       pathname: "/quiz-complete",
       params: { numOfCorrectAnswers: XPGained, moduleComplete: String(moduleComplete) },

@@ -18,16 +18,6 @@ export default function Index() {
       pathname: "/module-overview/[id]",
       params: { id: currentModule.id },
     });
-    // if (moduleComplete === "true") {
-    //   router.push({
-    //     pathname: "/module-complete",
-    //   });
-    // } else {
-    //   router.navigate({
-    //     pathname: "/module-overview/[id]",
-    //     params: { id: currentModule.id },
-    //   });
-    // }
   }
 
   return (
