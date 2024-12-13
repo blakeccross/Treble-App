@@ -1,7 +1,7 @@
 import { ArrowLeft, ChevronLeft } from "@tamagui/lucide-icons";
 import { Image } from "expo-image";
 import React from "react";
-import { Dimensions, LayoutChangeEvent, StyleSheet } from "react-native";
+import { Dimensions, LayoutChangeEvent, StyleSheet, TouchableWithoutFeedback } from "react-native";
 import Animated, {
   Extrapolation,
   interpolate,
@@ -28,8 +28,10 @@ const headerTop = 44 - 16;
 function ScreenHeader({ sv, title }: { sv: SharedValue<number>; title: string }) {
   const inset = useSafeAreaInsets();
   const opacityAnim = useAnimatedStyle(() => {
+    const visibilityThreshold = posterSize - (headerTop + inset.top);
+    const opacity = interpolate(sv.value, [(visibilityThreshold / 4) * 3, visibilityThreshold + 1], [0, 1]);
     return {
-      opacity: interpolate(sv.value, [((posterSize - (headerTop + inset.top)) / 4) * 3, posterSize - (headerTop + inset.top) + 1], [0, 1]),
+      opacity,
       transform: [
         {
           scale: interpolate(
@@ -49,6 +51,7 @@ function ScreenHeader({ sv, title }: { sv: SharedValue<number>; title: string })
         },
       ],
       paddingTop: inset.top === 0 ? 8 : inset.top,
+      pointerEvents: opacity > 0.95 ? "auto" : "none", // Disable touches if not fully visible
     };
   });
   return (
@@ -139,13 +142,6 @@ function PosterImage({ sv, image, title }: { sv: SharedValue<number>; image: str
         <SizableText numberOfLines={2} color="white" size="$10" fontWeight="bold" textAlign="center">
           {title}
         </SizableText>
-        <View position="absolute" top="$0" left="$4">
-          <SafeAreaView edges={["top"]} />
-
-          <Button circular theme={"alt1"}>
-            <ArrowLeft size="$3" />
-          </Button>
-        </View>
       </Animated.View>
       <AnimatedLinearGradient
         style={[{ position: "absolute", inset: 0 }, scaleAnim]}
@@ -194,6 +190,11 @@ export function StickyHeader({ image, title, children }: { image: string; title:
       <ScreenHeader sv={sv} title={title} />
       <PosterImage sv={sv} image={image} title={title} />
       <Animated.ScrollView onScroll={scrollHandler} scrollEventThrottle={16} style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
+        <View position="absolute" top={inset.top} left="$4" zIndex={100}>
+          <Button circular theme={"alt1"} onPress={() => router.back()}>
+            <ArrowLeft size="$3" />
+          </Button>
+        </View>
         <Animated.View style={[animatedScrollStyle, { paddingBottom: 40 }]}>{children}</Animated.View>
       </Animated.ScrollView>
     </YStack>

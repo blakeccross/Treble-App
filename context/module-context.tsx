@@ -21,8 +21,6 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
     }
   }, [currentUser?.completed_sections]);
 
-  // useEffect(() => {}, [currentUser?.completed_sections]);
-
   async function getModuleData() {
     setModules({ ...modules, loading: true });
     try {
@@ -87,9 +85,10 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
     const completedSectionIds = new Set(currentUser?.completed_sections);
 
     return data.map((module) => {
+      const addedCompletedSections = module.section.map((task) => ({ ...task, completed: completedSectionIds.has(task.id) }));
       return {
         ...module,
-        section: module.section.map((task) => ({ ...task, completed: completedSectionIds.has(task.id) })),
+        section: addedCompletedSections.sort((a, b) => a.id - b.id),
       };
     });
   }
@@ -133,7 +132,6 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
           // Check if the file already exists
           const fileInfo = await FileSystem.getInfoAsync(localUri);
           if (fileInfo.exists) {
-            console.log("File Exists");
             return { ...sectionItem, local_image_uri: localUri };
           }
 
