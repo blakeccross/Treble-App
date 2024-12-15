@@ -11,14 +11,12 @@ interface PlaceholderProps {
 const Placeholder = ({ offset }: PlaceholderProps) => {
   return (
     <View
-      style={{
-        position: "absolute",
-        top: offset.originalY.value + MARGIN_TOP + 2,
-        left: offset.originalX.value - MARGIN_LEFT + 2,
-        width: offset.width.value - 4,
-        height: WORD_HEIGHT - 4,
-        borderRadius: 8,
-      }}
+      position="absolute"
+      top={offset.originalY.value + MARGIN_TOP + 2}
+      left={offset.originalX.value - MARGIN_LEFT + 2}
+      width={offset.width.value - 4}
+      borderRadius={8}
+      height={WORD_HEIGHT - 4}
       backgroundColor={"$gray4"}
     />
   );

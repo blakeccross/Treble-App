@@ -103,7 +103,7 @@ export default function QuizProvider({ children }: { children: JSX.Element[] }) 
     }
 
     // Single call to handleUpdateUserInfo with all updates
-    await handleUpdateUserInfo(updates);
+    await handleUpdateUserInfo({ ...updates, total_xp: XPGained });
 
     setLives(3);
     currentQuestionIndex.current = 0;

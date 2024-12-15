@@ -105,7 +105,8 @@ export default function AnswerDrawer({
             <Button
               onPress={handleContinue}
               textAlign="center"
-              backgroundColor={answerIsCorrect ? "$green7Dark" : "$red5Dark"}
+              backgroundColor={answerIsCorrect ? "$green12" : "$red12"}
+              pressStyle={{ backgroundColor: answerIsCorrect ? "$green10" : "$red11" }}
               fontWeight={600}
               fontSize={"$7"}
               height={"$5"}

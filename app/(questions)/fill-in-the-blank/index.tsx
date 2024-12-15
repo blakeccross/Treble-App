@@ -24,13 +24,6 @@ const data = {
   ],
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    // backgroundColor: "white",
-  },
-});
-
 const Duolingo = () => {
   const { currentQuestionIndex, questions } = useContext(QuizContext);
   const wordListRef = useRef<any>();
@@ -62,7 +55,7 @@ const Duolingo = () => {
   return (
     <>
       <SafeAreaView style={{ flex: 0 }} />
-      <View style={styles.container}>
+      <View flex={1}>
         <YStack padding="$4" gap="$4" flex={1}>
           <Paragraph marginBottom="$2" fontSize={"$7"}>
             {question.current?.question}
