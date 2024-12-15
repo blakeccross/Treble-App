@@ -17,7 +17,6 @@ import { supabase } from "@/utils/supabase";
 import { Leaderboard } from "@/types";
 
 export default function LeaderBoard() {
-  const { data } = useContext(ModuleContext);
   const { currentUser } = useContext(UserContext);
   const { gameName } = useLocalSearchParams();
   const [leaderboard, setLeaderboard] = useState<Leaderboard[]>([]);

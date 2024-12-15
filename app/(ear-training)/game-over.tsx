@@ -31,8 +31,8 @@ export default function Index() {
     const { data, error } = await supabase
       .from("leaderboard")
       .upsert({ ...update, profile: currentUser?.id })
-      .eq("profile", currentUser?.id)
       .select();
+
     if (data) {
       console.log("UPDATED HIGH SCORE", data);
     }
@@ -44,7 +44,7 @@ export default function Index() {
   return (
     <LinearGradient width="100%" height="100%" colors={["$blue10", "$blue8"]} start={[0.5, 1]} end={[0, 0]} paddingHorizontal={"$4"}>
       <SafeAreaView style={{ flex: 1 }}>
-        <XStack paddingHorizontal="$4">
+        <XStack>
           <Pressable onPress={() => router.navigate("/ear-training")}>
             <X size="$3" color={"white"} />
           </Pressable>
