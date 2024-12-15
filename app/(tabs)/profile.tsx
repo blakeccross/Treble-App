@@ -153,7 +153,6 @@ export default function TabTwoScreen() {
 
           {!currentUser?.purchased_products.length && (
             <Card
-              bordered
               width={"100%"}
               backgroundColor={"$blue10"}
               borderRadius="$8"
@@ -191,49 +190,38 @@ export default function TabTwoScreen() {
 
           <H5 fontWeight={600}>Overview</H5>
           <YStack alignItems="flex-start" gap="$3" marginBottom={"$6"}>
-            <XStack gap="$3">
-              <Card flex={1} bordered padding="$2.5">
-                <XStack gap="$2">
-                  <Award color={"$purple10"} fill={purpleA.purpleA10} marginTop={4} />
-                  <YStack>
-                    <Paragraph fontWeight="800">{currentUser?.completed_modules ? currentUser?.completed_modules.length : 0}</Paragraph>
-                    <Paragraph fontSize={"$1"}>Modules Completed</Paragraph>
-                  </YStack>
-                </XStack>
-              </Card>
-              <Card flex={1} bordered padding="$2.5">
-                <XStack gap="$2">
-                  <AntDesign name="star" size={24} color={yellow.yellow10} marginTop={4} />
-                  <YStack>
-                    <Paragraph fontWeight="800">{currentUser?.total_xp ? currentUser?.total_xp : 0}</Paragraph>
-                    <Paragraph fontSize={"$1"}>Total XP</Paragraph>
-                  </YStack>
-                </XStack>
-              </Card>
-            </XStack>
-            <XStack gap="$3">
-              <Card flex={1} bordered padding="$2.5">
-                <XStack gap="$2">
-                  <Ionicons name="flame-sharp" size={24} color={redA.redA10} marginTop={4} />
-                  <YStack>
-                    <Paragraph fontWeight="800">{currentUser?.active_days ? getStreak(currentUser?.active_days) : 0}</Paragraph>
-                    <Paragraph fontSize={"$1"}>Day Streak</Paragraph>
-                  </YStack>
-                </XStack>
-              </Card>
-              {/* <Card flex={1} bordered padding="$2.5">
-                <XStack gap="$2">
-                  <YStack>
-                    <Paragraph fontWeight="800">3</Paragraph>
-                    <Paragraph fontSize={"$1"}>Current League</Paragraph>
-                  </YStack>
-                </XStack>
-              </Card> */}
-            </XStack>
+            <Card width={"100%"} padding="$2.5">
+              <XStack gap="$2">
+                <Award color={"$purple10"} fill={purpleA.purpleA10} marginTop={4} />
+                <YStack>
+                  <Paragraph fontWeight="800">{currentUser?.completed_modules ? currentUser?.completed_modules.length : 0}</Paragraph>
+                  <Paragraph fontSize={"$1"}>Modules Completed</Paragraph>
+                </YStack>
+              </XStack>
+            </Card>
+            <Card width={"100%"} padding="$2.5">
+              <XStack gap="$2">
+                <AntDesign name="star" size={24} color={yellow.yellow10} marginTop={4} />
+                <YStack>
+                  <Paragraph fontWeight="800">{currentUser?.total_xp ? currentUser?.total_xp : 0}</Paragraph>
+                  <Paragraph fontSize={"$1"}>Total XP</Paragraph>
+                </YStack>
+              </XStack>
+            </Card>
+
+            <Card width={"100%"} padding="$2.5">
+              <XStack gap="$2">
+                <Ionicons name="flame-sharp" size={24} color={redA.redA10} marginTop={4} />
+                <YStack>
+                  <Paragraph fontWeight="800">{currentUser?.active_days ? getStreak(currentUser?.active_days) : 0}</Paragraph>
+                  <Paragraph fontSize={"$1"}>Day Streak</Paragraph>
+                </YStack>
+              </XStack>
+            </Card>
           </YStack>
           <H5 fontWeight={600}>Streak</H5>
           {weekDays && days && (
-            <Card bordered width={"100%"}>
+            <Card width={"100%"}>
               <XStack alignItems="center" justifyContent="space-between" width={"100%"} marginBottom="$2" paddingHorizontal="$2.5" paddingTop="$2.5">
                 <H2 fontWeight={600}>{month}</H2>
                 <XStack gap="$3">
