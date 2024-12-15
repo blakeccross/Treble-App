@@ -30,7 +30,7 @@ export default function ModuleStartScreen() {
           {currentModule?.section.map((section) => (
             <Link
               asChild
-              href={{ pathname: `/${section.section_item[0]?.type}`, params: { module_id: currentModule.id, section_id: section.id } }}
+              href={{ pathname: `/${section.section_item[0]?.type}`, params: { module_id: currentModule?.id, section_id: section.id } }}
               //disabled={(section.premium && currentUser?.premium) || !section.section_item[0]?.type}
               key={section.id}
             >

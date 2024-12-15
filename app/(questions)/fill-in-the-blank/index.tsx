@@ -35,7 +35,7 @@ const Duolingo = () => {
   const { currentQuestionIndex, questions } = useContext(QuizContext);
   const [answerIsCorrect, setAnswerIsCorrect] = useState<boolean>();
   const wordListRef = useRef<any>();
-  const question = useRef<SectionItem>(questions[currentQuestionIndex]);
+  const question = useRef<SectionItem>(questions && questions[currentQuestionIndex]);
 
   function handleCheckAnswer(answerIsCorrect: boolean) {
     setAnswerIsCorrect(answerIsCorrect);
@@ -51,14 +51,18 @@ const Duolingo = () => {
       <SafeAreaView style={{ flex: 0 }} />
       <View style={styles.container}>
         <YStack padding="$4" gap="$4" flex={1}>
-          <H2 marginBottom="$8">{question.current.question}</H2>
-          <WordList validateAnswer={handleCheckAnswer} ref={wordListRef}>
-            {question.current.question_options.map((word: { id: number; option_text: string }) => (
-              <Word key={word?.id} id={word?.id} option_text={word?.option_text} />
-            ))}
-          </WordList>
+          <Paragraph marginBottom="$2" fontSize={"$7"}>
+            {question.current?.question}
+          </Paragraph>
+          {question.current?.question_options && (
+            <WordList validateAnswer={handleCheckAnswer} ref={wordListRef}>
+              {question.current.question_options.map((word: { id: number; option_text: string }) => (
+                <Word key={word?.id} id={word?.id} option_text={word?.option_text} />
+              ))}
+            </WordList>
+          )}
         </YStack>
-        <AnswerDrawer validateAnswer={validateAnswer} explanation={question.current.answer_explanation || ""} enabled />
+        <AnswerDrawer validateAnswer={validateAnswer} explanation={question.current?.answer_explanation || ""} enabled />
       </View>
     </>
   );

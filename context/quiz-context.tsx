@@ -34,7 +34,7 @@ export default function QuizProvider({ children }: { children: JSX.Element[] }) 
   const currentQuestionIndex = useRef<number>(0);
 
   if (!currentSection || !currentModule) {
-    router.push("/");
+    router.navigate("/(tabs)");
     return null;
   }
 
