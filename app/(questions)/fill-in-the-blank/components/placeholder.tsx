@@ -1,7 +1,8 @@
 import React from "react";
-import { View } from "react-native";
 
 import { MARGIN_LEFT, MARGIN_TOP, Offset, WORD_HEIGHT } from "./layout";
+import { lightColors } from "@tamagui/themes";
+import { View } from "tamagui";
 
 interface PlaceholderProps {
   offset: Offset;
@@ -11,7 +12,6 @@ const Placeholder = ({ offset }: PlaceholderProps) => {
   return (
     <View
       style={{
-        backgroundColor: "#E6E5E6",
         position: "absolute",
         top: offset.originalY.value + MARGIN_TOP + 2,
         left: offset.originalX.value - MARGIN_LEFT + 2,
@@ -19,6 +19,7 @@ const Placeholder = ({ offset }: PlaceholderProps) => {
         height: WORD_HEIGHT - 4,
         borderRadius: 8,
       }}
+      backgroundColor={"$gray4"}
     />
   );
 };

@@ -24,10 +24,9 @@ const styles = StyleSheet.create({
 
 interface WordListProps {
   children: ReactElement<{ id: number }>[];
-  validateAnswer: (answerIsCorrect: boolean) => void;
 }
 
-const WordList = forwardRef(({ children, validateAnswer }: WordListProps, ref) => {
+const WordList = forwardRef(({ children }: WordListProps, ref) => {
   const [ready, setReady] = useState(false);
 
   const offsets = children.map(() => ({
@@ -52,7 +51,7 @@ const WordList = forwardRef(({ children, validateAnswer }: WordListProps, ref) =
     currentOrder.sort((a, b) => a.order - b.order);
     const isCorrect = checkSorted(currentOrder.map((item) => item.id));
 
-    validateAnswer(isCorrect);
+    return isCorrect;
   }
 
   function checkSorted(arr: number[]) {

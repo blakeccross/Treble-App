@@ -1,9 +1,9 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { View, StyleSheet, SafeAreaView, Animated } from "react-native";
+import { StyleSheet, SafeAreaView, Animated } from "react-native";
 
 import WordList from "./components/word-list";
 import Word from "./components/word";
-import { Button, H1, H2, H3, Paragraph, XStack, YStack } from "tamagui";
+import { Button, H1, H2, H3, Paragraph, View, XStack, YStack } from "tamagui";
 import AnswerDrawer from "@/components/AnswerDrawer";
 import { QuizContext } from "@/context/quiz-context";
 import { SectionItem } from "@/types";
@@ -27,23 +27,36 @@ const data = {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "white",
+    // backgroundColor: "white",
   },
 });
 
 const Duolingo = () => {
   const { currentQuestionIndex, questions } = useContext(QuizContext);
-  const [answerIsCorrect, setAnswerIsCorrect] = useState<boolean>();
   const wordListRef = useRef<any>();
   const question = useRef<SectionItem>(questions && questions[currentQuestionIndex]);
+  const [shuffledOptions, setShuffledOptions] = useState<any[]>([]);
 
-  function handleCheckAnswer(answerIsCorrect: boolean) {
-    setAnswerIsCorrect(answerIsCorrect);
-    return answerIsCorrect;
+  useEffect(() => {
+    if (question.current?.question_options) {
+      setShuffledOptions(shuffleArray([...question.current.question_options]));
+    }
+  }, [question.current?.question_options]);
+
+  function shuffleArray(array: any[]) {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
   }
 
   function validateAnswer() {
-    return answerIsCorrect || false;
+    if (wordListRef.current) {
+      return wordListRef.current.validate();
+    } else {
+      return false;
+    }
   }
 
   return (
@@ -54,9 +67,9 @@ const Duolingo = () => {
           <Paragraph marginBottom="$2" fontSize={"$7"}>
             {question.current?.question}
           </Paragraph>
-          {question.current?.question_options && (
-            <WordList validateAnswer={handleCheckAnswer} ref={wordListRef}>
-              {question.current.question_options.map((word: { id: number; option_text: string }) => (
+          {shuffledOptions.length > 0 && (
+            <WordList ref={wordListRef}>
+              {shuffledOptions.map((word: { id: number; option_text: string }) => (
                 <Word key={word?.id} id={word?.id} option_text={word?.option_text} />
               ))}
             </WordList>

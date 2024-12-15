@@ -1,7 +1,7 @@
 import React, { ReactElement } from "react";
-import { StyleSheet, View } from "react-native";
-import Animated, { useAnimatedStyle, useAnimatedGestureHandler, withSpring, useSharedValue, useDerivedValue } from "react-native-reanimated";
-import { Gesture, GestureDetector, PanGestureHandler, PanGestureHandlerGestureEvent } from "react-native-gesture-handler";
+import { StyleSheet } from "react-native";
+import Animated, { useAnimatedStyle, withSpring, useSharedValue, useDerivedValue } from "react-native-reanimated";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { between, useVector } from "react-native-redash";
 
 import { calculateLayout, lastOrder, Offset, remove, reorder, WORD_HEIGHT, SENTENCE_HEIGHT, MARGIN_LEFT, MARGIN_TOP } from "./layout";
