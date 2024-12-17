@@ -9,7 +9,6 @@ import { Image } from "expo-image";
 
 export default function MultipleCHoice() {
   const { currentQuestionIndex, questions } = useContext(QuizContext);
-  const { height, width } = useWindowDimensions();
   const [selectedAnswers, setSelectedAnswers] = useState<number[]>([]);
   const [answerIsCorrect, setAnswerIsCorrect] = useState<boolean>();
   const question = useRef(questions && questions[currentQuestionIndex]);

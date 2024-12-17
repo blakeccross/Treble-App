@@ -26,17 +26,30 @@ export default function QuizProvider({ children }: { children: JSX.Element[] }) 
 
   const currentModule = modules.data && modules.data.find((item) => item.id === +module_id);
   const currentSection = sections && (sections.find((item) => item.id === +section_id) as Section);
-  const currentSectionQuestions = currentSection && sortQuestions(currentSection.section_item);
+  const currentSectionQuestions = currentSection?.section_item;
 
   const sectionIndexInModule = currentModule?.section.map((item) => item.id).indexOf(currentSection?.id || 0) as number;
 
   const [lives, setLives] = useState(0);
-  const currentQuestionIndex = useRef<number>(0);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
+  const [sortedQuestions, setSortedQuestions] = useState<SectionItem[]>([]); // New state for sorted questions
+  // const currentQuestionIndex = useRef<number>(0);
 
   if (!currentSection || !currentModule) {
     router.navigate("/(tabs)");
     return null;
   }
+
+  useEffect(() => {
+    if (currentSectionQuestions) {
+      const sorted = currentSectionQuestions.sort((a, b) => {
+        if (a.type === "reading" && b.type !== "reading") return -1;
+        if (a.type !== "reading" && b.type === "reading") return 1;
+        return Math.random() - 0.5; // Randomize the rest
+      });
+      setSortedQuestions(sorted); // Set sorted questions in state
+    }
+  }, [currentSectionQuestions]); // Update when currentSectionQuestions changes
 
   useEffect(() => {
     setLives(3);
@@ -46,11 +59,16 @@ export default function QuizProvider({ children }: { children: JSX.Element[] }) 
     if (lives < 1) {
       router.push(`/out-of-lives`);
     } else {
-      if (currentSection && currentQuestionIndex.current < currentSection.section_item.length - 1) {
-        currentQuestionIndex.current = currentQuestionIndex.current + 1;
+      if (currentSection && currentQuestionIndex < currentSection.section_item.length - 1) {
+        // const nextQuestion = currentSection.section_item[currentQuestionIndex.current + 1];
+        // currentQuestionIndex.current = currentQuestionIndex.current + 1;
+        const nextQuestion = sortedQuestions[currentQuestionIndex + 1];
+        setCurrentQuestionIndex(currentQuestionIndex + 1); // Update state instead of ref
+
+        console.log("NEXT QUESTION", currentQuestionIndex + 1, nextQuestion.type, nextQuestion.question);
 
         router.push({
-          pathname: `/(questions)/${currentSection.section_item[currentQuestionIndex.current].type}`,
+          pathname: `/(questions)/${nextQuestion.type}`,
         });
       } else {
         // Finished Section
@@ -106,7 +124,8 @@ export default function QuizProvider({ children }: { children: JSX.Element[] }) 
     await handleUpdateUserInfo({ ...updates, total_xp: XPGained });
 
     setLives(3);
-    currentQuestionIndex.current = 0;
+    setCurrentQuestionIndex(0);
+    // currentQuestionIndex.current = 0;
 
     router.push({
       pathname: "/quiz-complete",
@@ -117,9 +136,9 @@ export default function QuizProvider({ children }: { children: JSX.Element[] }) 
   return (
     <QuizContext.Provider
       value={{
-        currentQuestionIndex: currentQuestionIndex.current,
+        currentQuestionIndex,
         nextQuestion,
-        questions: currentSectionQuestions,
+        questions: sortedQuestions,
         section: currentSection,
         currentModule,
         lives,
