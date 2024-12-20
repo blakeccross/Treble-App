@@ -16,12 +16,8 @@ export default function Splash() {
   }, []);
 
   useEffect(() => {
-    if (isMounted) {
-      if (currentUser) {
-        router.push("/(tabs)/(home)/");
-      } else {
-        router.push("/(auth)/welcome");
-      }
+    if (isMounted && !currentUser) {
+      router.push("/(auth)/welcome");
     }
   }, [currentUser, isMounted]);
 
