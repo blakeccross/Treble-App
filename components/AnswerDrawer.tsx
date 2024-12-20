@@ -96,17 +96,17 @@ export default function AnswerDrawer({
           backgroundColor={answerIsCorrect ? "$green7" : "$red9"}
         >
           <YStack minHeight={100}>
-            <H3 fontWeight={600} textAlign="center" color={answerIsCorrect ? "$green7Dark" : "$red5Dark"}>
+            <H3 fontWeight={600} textAlign="center" color={answerIsCorrect ? "$green12" : "$red5Dark"}>
               {answerIsCorrect ? "Correct!" : "Incorrect"}
             </H3>
-            <Paragraph color={answerIsCorrect ? "$green7Dark" : "$red5Dark"}>{explanation}</Paragraph>
+            <Paragraph color={answerIsCorrect ? "$green12" : "$red5Dark"}>{explanation}</Paragraph>
           </YStack>
           <View width={"100%"} paddingBottom="$4">
             <Button
               onPress={handleContinue}
               textAlign="center"
-              backgroundColor={answerIsCorrect ? "$green12" : "$red12"}
-              pressStyle={{ backgroundColor: answerIsCorrect ? "$green10" : "$red11" }}
+              backgroundColor={answerIsCorrect ? "$green12Light" : "$red12Light"}
+              pressStyle={{ backgroundColor: answerIsCorrect ? "$green10Light" : "$red11Light" }}
               fontWeight={600}
               fontSize={"$7"}
               height={"$5"}

@@ -10,7 +10,7 @@ import { blue, grayA, yellow, yellowA } from "@tamagui/themes";
 import { Image } from "expo-image";
 import { Link } from "expo-router";
 import React, { useContext, useEffect, useState } from "react";
-import { Dimensions } from "react-native";
+import { Dimensions, useColorScheme } from "react-native";
 import Purchases from "react-native-purchases";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Avatar, Card, H3, H5, Paragraph, Progress, ScrollView, View, XStack, YStack } from "tamagui";
@@ -38,9 +38,9 @@ export default function HomeScreen() {
   return (
     <>
       <LinearGradient
-        colors={["$blue10", "$blue8"]}
+        colors={useColorScheme() === "light" ? ["$blue10", "$blue8"] : ["$blue3", "$blue5"]}
         borderBottomWidth={1}
-        borderBottomColor={"$gray8"}
+        borderBottomColor={useColorScheme() === "light" ? "$gray8" : "$gray1"}
         start={[0.3, 1]}
         end={[0, 0]}
         padding="$5"
@@ -66,7 +66,7 @@ export default function HomeScreen() {
 
           <XStack alignItems="center" justifyContent="flex-end" gap="$2" width={"$10"}>
             <AntDesign name="star" size={24} color={yellow.yellow10} />
-            <H5 color={"$background"} fontWeight={600}>
+            <H5 color={"white"} fontWeight={600}>
               {currentUser?.total_xp}
             </H5>
           </XStack>
