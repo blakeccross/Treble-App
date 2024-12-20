@@ -55,7 +55,6 @@ export default function ProfileSettings() {
   }
 
   const pickImage = async () => {
-    // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
@@ -64,11 +63,27 @@ export default function ProfileSettings() {
     });
 
     if (!result.canceled) {
-      handleUpdateUserInfo({ profileImageURL: result.assets[0].uri || "" });
-      Toast.show({
-        type: "success",
-        text1: "Profile image updated",
+      const image = result.assets[0];
+
+      const fileExt = image.uri?.split(".").pop()?.toLowerCase() ?? "jpeg";
+      const path = `${Date.now()}.${fileExt}`;
+
+      const arraybuffer = await fetch(image.uri).then((res) => res.arrayBuffer());
+
+      const { data, error } = await supabase.storage.from("avatars").upload(path, arraybuffer, {
+        cacheControl: "3600",
+        contentType: "image/jpeg",
+        upsert: false,
       });
+
+      if (error) console.error(error);
+      if (data) {
+        handleUpdateUserInfo({ avatar_url: "https://pueoumkuxzosxrzqoefw.supabase.co/storage/v1/object/public/" + data?.fullPath });
+        Toast.show({
+          type: "success",
+          text1: "Profile image updated",
+        });
+      }
     }
   };
 

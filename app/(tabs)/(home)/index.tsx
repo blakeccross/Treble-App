@@ -28,7 +28,7 @@ export default function HomeScreen() {
     /* Enable debug logs before calling `setup`. */
     Purchases.setLogLevel(Purchases.LOG_LEVEL.DEBUG);
 
-    // Purchases.configure({ apiKey: "appl_zZGUxbBzchveUkWXlMPDeuztdeD", appUserID: currentUser?.id, useAmazon: false });
+    Purchases.configure({ apiKey: "appl_zZGUxbBzchveUkWXlMPDeuztdeD", appUserID: currentUser?.id, useAmazon: false });
 
     // if (!currentUser?.purchased_products.length) {
     //   setOpenPaywall(true);

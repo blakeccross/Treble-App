@@ -11,7 +11,7 @@ export default function Paywall({ openPaywall, setOpenPaywall }: { openPaywall: 
   const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
-    if (!currentUser?.purchased_products.length) {
+    if (!currentUser?.purchased_products?.length) {
       setModalVisible(openPaywall);
     }
   }, [openPaywall]);

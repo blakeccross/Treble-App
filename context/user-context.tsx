@@ -56,10 +56,18 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
   }, []);
 
   async function handleGetUserData(id: string) {
+    console.log("profile", id);
     let { data: profile, error } = await supabase.from("profiles").select("*").eq("id", id).single();
-    const { allPurchasedProductIdentifiers } = await Purchases.getCustomerInfo();
+
+    console.log("profile", profile, error);
     if (profile) {
-      const updatedUser = { ...(currentUser || {}), ...profile, purchased_products: allPurchasedProductIdentifiers };
+      let allPurchasedProductIdentifiers;
+      try {
+        allPurchasedProductIdentifiers = (await Purchases.getCustomerInfo()).allPurchasedProductIdentifiers;
+      } catch (error) {
+        console.error(error);
+      }
+      const updatedUser = { ...(currentUser || {}), ...profile, purchased_products: allPurchasedProductIdentifiers || [] };
 
       setCurrentUser(updatedUser);
     }

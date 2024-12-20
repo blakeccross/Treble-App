@@ -63,7 +63,7 @@ export default function Login() {
             <View>
               <Theme name={errors.email ? "red" : null}>
                 <Label>Email</Label>
-                <Input placeholder="Email" size={"$6"} onBlur={onBlur} onChangeText={onChange} value={value} />
+                <Input autoCapitalize="none" placeholder="Email" size={"$6"} onBlur={onBlur} onChangeText={onChange} value={value} />
               </Theme>
             </View>
           )}
