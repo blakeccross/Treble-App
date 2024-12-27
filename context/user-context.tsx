@@ -24,6 +24,8 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
         router.replace("/(home)");
         //handleUpdateUserInfo({ email: data.session.user.email, id: data.session.user.id });
         handleGetUserData(data.session.user.id);
+      } else {
+        router.replace("/(auth)/welcome");
       }
     }
     getUser();
@@ -56,10 +58,8 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
   }, []);
 
   async function handleGetUserData(id: string) {
-    console.log("profile", id);
     let { data: profile, error } = await supabase.from("profiles").select("*").eq("id", id).single();
 
-    console.log("profile", profile, error);
     if (profile) {
       let allPurchasedProductIdentifiers;
       try {

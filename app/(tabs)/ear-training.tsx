@@ -111,21 +111,12 @@ export default function TabTwoScreen() {
     <View flex={1} backgroundColor={"$background"}>
       <SafeAreaView edges={["top"]} />
       <ScreenHeader sv={sv} title="Ear Training" />
-      <Animated.ScrollView
-        onScroll={scrollHandler}
-        scrollEventThrottle={16}
-        style={{ padding: 15, paddingBottom: 150 }}
-        showsVerticalScrollIndicator={false}
-      >
-        {/* <ScrollView padding="$4" contentContainerStyle={{ paddingBottom: 150 }}> */}
+      <Animated.ScrollView onScroll={scrollHandler} scrollEventThrottle={16} style={{ padding: 15 }} showsVerticalScrollIndicator={false}>
         <XStack alignItems="center" gap={"$2"} marginBottom="$4">
           <AudioWaveform />
           <H2 fontWeight={800}>Ear Training</H2>
-          {/* <Pressable onPress={() => router.push("/(ear-training)/tuner")}>
-            <AudioWaveform />
-          </Pressable> */}
         </XStack>
-        <YStack gap={"$4"}>
+        <YStack gap={"$4"} marginBottom="$15">
           {games.map((game) => (
             <Card
               key={game.title}

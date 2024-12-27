@@ -93,6 +93,7 @@ export default function Page() {
         setCurrentScore(currentScore + 1);
         playSFX(correctSFX);
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        setIsRunning(false);
       } else {
         handleIncorrect();
       }
@@ -107,10 +108,9 @@ export default function Page() {
   }
 
   function handleIncorrect() {
+    setLives(lives - 1);
     if (lives <= 1) {
       router.push({ pathname: "/game-over", params: { score: currentScore, gameName: "pitch_perfect" } });
-    } else {
-      setLives(lives - 1);
     }
     setAnswerIsCorrect(false);
     playSFX(incorrectSFX, true);
@@ -202,17 +202,20 @@ export default function Page() {
   }
 
   function handlePressPlay() {
-    if (!isRunning) {
-      if (!gameHasStarted) setGameHasStarted(true);
-      setSelectedAnswer("");
-      newQuestion();
-      changeColor();
-      bounce();
-      playAudio();
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    } else {
-      bounce();
-      playAudio();
+    if (lives >= 1) {
+      console.log("lives", lives);
+      if (!isRunning) {
+        if (!gameHasStarted) setGameHasStarted(true);
+        setSelectedAnswer("");
+        newQuestion();
+        changeColor();
+        bounce();
+        playAudio();
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      } else {
+        bounce();
+        playAudio();
+      }
     }
   }
 
@@ -291,6 +294,12 @@ export default function Page() {
         handleTimerFinished();
       }
     }, totalTime * 1000);
+
+    if (!isRunning && lives >= 1 && gameHasStarted) {
+      setTimeout(() => {
+        handlePressPlay();
+      }, 1000); // Wait for 1 second (1000 milliseconds)
+    }
 
     // Cleanup function to clear the timeout if the component unmounts
     return () => clearTimeout(timeoutId);
