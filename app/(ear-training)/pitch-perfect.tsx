@@ -53,6 +53,7 @@ export default function Page() {
     { value: "e4", option_text: "Eb" },
     { value: "f4", option_text: "F" },
   ]);
+  const [playEnabled, setTapEnabled] = useState(true);
 
   const correctAnswer = useRef("");
   // Shared values for scale animations
@@ -86,8 +87,8 @@ export default function Page() {
 
   function validateAnswer(selectedId: string) {
     try {
+      setTapEnabled(false);
       setSelectedAnswer(selectedId);
-      // Replace with real value
       if (selectedId === correctAnswer.current) {
         setAnswerIsCorrect(true);
         setCurrentScore(currentScore + 1);
@@ -97,13 +98,10 @@ export default function Page() {
       } else {
         handleIncorrect();
       }
-      // correctAnswer.current = "";
       setIsRunning(false);
-
       springOut();
     } catch (error) {
       console.error("Error validating answer:", error);
-      // Optionally, show an alert or fallback UI
     }
   }
 
@@ -207,6 +205,7 @@ export default function Page() {
       if (!isRunning) {
         if (!gameHasStarted) setGameHasStarted(true);
         setSelectedAnswer("");
+        setTapEnabled(true);
         newQuestion();
         changeColor();
         bounce();
@@ -366,7 +365,7 @@ export default function Page() {
           <Animated.View style={[animatedStyle3, { position: "absolute" }]}>
             <Circle size={PAGE_WIDTH * 0.55} backgroundColor={`$${colorSceme}7Dark`} elevation="$0.25" />
           </Animated.View>
-          <TapGestureHandler onActivated={handlePressPlay}>
+          <TapGestureHandler onActivated={handlePressPlay} enabled={playEnabled}>
             <Animated.View style={[animatedStyle4, { position: "absolute" }]}>
               <Circle size={PAGE_WIDTH * 0.4} elevation="$0.25" pressStyle={{ scale: 0.95 }} animation="bouncy" overflow="hidden">
                 <LinearGradient
