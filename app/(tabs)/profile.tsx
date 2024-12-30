@@ -1,39 +1,20 @@
 import { UserContext } from "@/context/user-context";
-import { ArrowRight, Award, ChevronLeft, ChevronRight, Flame, Music, Settings, Sparkle, Star, StarFull } from "@tamagui/lucide-icons";
-import { Link } from "expo-router";
-import { useContext, useState } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { FlatList, Pressable } from "react-native";
-import { useMMKVNumber } from "react-native-mmkv";
-import {
-  Avatar,
-  Card,
-  H3,
-  H5,
-  Paragraph,
-  Separator,
-  View,
-  XStack,
-  YStack,
-  Text,
-  Button,
-  H2,
-  CardHeader,
-  H1,
-  ScrollView,
-  H4,
-  SizableText,
-} from "tamagui";
-import { useDatePicker } from "@rehookify/datepicker";
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import { blue, blueA, purpleA, redA, size, yellow, yellowA } from "@tamagui/themes";
+import { supabase } from "@/utils/supabase";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { LinearGradient } from "tamagui/linear-gradient";
-import * as ImagePicker from "expo-image-picker";
-import Toast from "react-native-toast-message";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import { useDatePicker } from "@rehookify/datepicker";
+import { Award, ChevronLeft, ChevronRight, Sparkle } from "@tamagui/lucide-icons";
+import { blueA, purpleA, redA, size, yellow } from "@tamagui/themes";
 import { Image } from "expo-image";
-import { supabase } from "@/utils/supabase";
+import * as ImagePicker from "expo-image-picker";
+import { Link } from "expo-router";
+import { useContext, useState } from "react";
+import { FlatList, Pressable } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import Toast from "react-native-toast-message";
+import { Button, Card, H2, H3, H4, H5, Paragraph, ScrollView, SizableText, View, XStack, YStack } from "tamagui";
+import { LinearGradient } from "tamagui/linear-gradient";
 // import { Image as ImageComp } from "react-native-compressor";
 import getStreak from "@/hooks/getStreak";
 import Paywall from "../paywall";

@@ -14,6 +14,7 @@ import Header from "@/components/header";
 import Toast from "react-native-toast-message";
 import { toastConfig } from "@/components/toastConfig";
 import Purchases from "react-native-purchases";
+import { Platform } from "react-native";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -36,6 +37,18 @@ export default function RootLayout() {
       SplashScreen.hideAsync();
     }
   }, [loaded]);
+
+  useEffect(() => {
+    Purchases.setLogLevel(Purchases.LOG_LEVEL.DEBUG);
+    if (Platform.OS === "ios") {
+      try {
+        Purchases.configure({ apiKey: "appl_zZGUxbBzchveUkWXlMPDeuztdeD" });
+      } catch (e) {
+        console.log(e);
+      }
+    } else if (Platform.OS === "android") {
+    }
+  }, []);
 
   if (!loaded) {
     return null;

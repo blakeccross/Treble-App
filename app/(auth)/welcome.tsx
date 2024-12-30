@@ -25,10 +25,10 @@ export default function WelcomePage() {
               The best way to learn music theory from anywhere
             </Paragraph>
           </YStack>
-          <Link asChild href={{ pathname: "/(auth)/signUp", params: { type: "signup" } }}>
+          <Link asChild href={{ pathname: "/(auth)/auth", params: { type: "signup" } }}>
             <Button>Sign Up</Button>
           </Link>
-          <Link asChild href={{ pathname: "/(auth)/signUp", params: { type: "login" } }}>
+          <Link asChild href={{ pathname: "/(auth)/auth", params: { type: "login" } }}>
             <Button unstyled textAlign="center" color={"$gray12"}>
               Log in
             </Button>

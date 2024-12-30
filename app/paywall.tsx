@@ -17,17 +17,12 @@ export default function Paywall({ openPaywall, setOpenPaywall }: { openPaywall: 
   }, [openPaywall]);
 
   async function handleTryForFree() {
-    try {
+    if (await Purchases.isConfigured()) {
       const offerings = await Purchases.getOfferings();
-
       const { customerInfo } = await Purchases.purchasePackage(offerings.all.monthly_test.availablePackages[0]);
       if (typeof customerInfo.entitlements.active["my_entitlement_identifier"] !== "undefined") {
         // Unlock that great "pro" content
       }
-    } catch (e) {
-      // if (!e.userCancelled) {
-      //   showError(e);
-      // }
     }
   }
 

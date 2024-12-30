@@ -104,7 +104,7 @@ export default function ProfileSettings() {
         <YStack gap="$2" padding="$4">
           <YStack alignItems="center">
             <Avatar circular size="$12" onPress={pickImage}>
-              <Avatar.Image accessibilityLabel="Cam" src={currentUser?.avatar_url || ""} />
+              {currentUser?.avatar_url && <Avatar.Image accessibilityLabel="Cam" src={currentUser.avatar_url} />}
               <Avatar.Fallback backgroundColor="$blue10" />
               <Music size={70} />
             </Avatar>
@@ -174,11 +174,6 @@ export default function ProfileSettings() {
             )}
             name="password"
           />
-
-          {/* include validation with required or other standard HTML validation rules */}
-          {/* <input {...register("exampleRequired", { required: true })} /> */}
-          {/* errors will return when field validation fails  */}
-          {/* {errors.exampleRequired && <span>This field is required</span>} */}
 
           <Button
             fontWeight={600}

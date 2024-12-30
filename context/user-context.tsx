@@ -1,14 +1,15 @@
 import { Profile } from "@/types";
 import { supabase } from "@/utils/supabase";
-import { router } from "expo-router";
+import { router, usePathname } from "expo-router";
 import { createContext, useEffect, useState } from "react";
-import { useMMKVObject } from "react-native-mmkv";
+import { MMKV, useMMKVObject } from "react-native-mmkv";
 import Purchases from "react-native-purchases";
 import Toast from "react-native-toast-message";
 
 type UserContextProps = {
   currentUser: Profile | undefined;
   handleUpdateUserInfo: (info: Partial<Profile>) => Promise<void>;
+  getUser: () => Promise<void>;
   handleSignOut: () => void;
 };
 
@@ -16,20 +17,25 @@ export const UserContext = createContext<UserContextProps>({} as UserContextProp
 
 export default function ModuleProvider({ children }: { children: JSX.Element }) {
   const [currentUser, setCurrentUser] = useMMKVObject<Profile>("user");
-
+  const pathname = usePathname();
   useEffect(() => {
-    async function getUser() {
-      const { data, error } = await supabase.auth.getSession();
-      if (data.session) {
-        router.replace("/(home)");
-        //handleUpdateUserInfo({ email: data.session.user.email, id: data.session.user.id });
-        handleGetUserData(data.session.user.id);
-      } else {
+    getUser();
+  }, []);
+
+  async function getUser() {
+    const { data, error } = await supabase.auth.getSession();
+    console.log("data", data);
+    if (data.session) {
+      Purchases.logIn(data.session.user.id);
+      await handleGetUserData(data.session.user.id);
+      router.replace("/(home)");
+    } else {
+      console.log("pathname", pathname);
+      if (pathname !== "/welcome" && pathname !== "/") {
         router.replace("/(auth)/welcome");
       }
     }
-    getUser();
-  }, []);
+  }
 
   useEffect(() => {
     const {
@@ -50,26 +56,31 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
   }, []);
 
   useEffect(() => {
-    Purchases.getCustomerInfo().then((info) => {
-      if (info.allPurchasedProductIdentifiers.length > 0) {
-        handleUpdateUserInfo({ premium: true });
+    const fetchCustomerInfo = async () => {
+      if (await Purchases.isConfigured()) {
+        const info = await Purchases.getCustomerInfo();
+        if (info.allPurchasedProductIdentifiers.length > 0) {
+          handleUpdateUserInfo({ purchased_products: info.allPurchasedProductIdentifiers });
+        }
       }
-    });
-  }, []);
+    };
+
+    fetchCustomerInfo();
+  }, [currentUser?.id]);
 
   async function handleGetUserData(id: string) {
     let { data: profile, error } = await supabase.from("profiles").select("*").eq("id", id).single();
 
     if (profile) {
       let allPurchasedProductIdentifiers;
-      try {
-        allPurchasedProductIdentifiers = (await Purchases.getCustomerInfo()).allPurchasedProductIdentifiers;
-      } catch (error) {
-        console.error(error);
-      }
-      const updatedUser = { ...(currentUser || {}), ...profile, purchased_products: allPurchasedProductIdentifiers || [] };
+      // try {
+      //   allPurchasedProductIdentifiers = (await Purchases.getCustomerInfo()).allPurchasedProductIdentifiers;
+      // } catch (error) {
+      //   console.error(error);
+      // }
+      // const updatedUser = { ...(currentUser || {}), ...profile, purchased_products: allPurchasedProductIdentifiers || [] };
 
-      setCurrentUser(updatedUser);
+      setCurrentUser({ ...(currentUser || {}), ...profile });
     }
   }
 
@@ -101,5 +112,5 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
 
   // if (!currentUser) throw Error();
 
-  return <UserContext.Provider value={{ currentUser, handleUpdateUserInfo, handleSignOut }}>{children}</UserContext.Provider>;
+  return <UserContext.Provider value={{ currentUser, handleUpdateUserInfo, getUser, handleSignOut }}>{children}</UserContext.Provider>;
 }

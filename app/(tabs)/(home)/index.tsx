@@ -10,7 +10,7 @@ import { blue, grayA, yellow, yellowA } from "@tamagui/themes";
 import { Image } from "expo-image";
 import { Link } from "expo-router";
 import React, { useContext, useEffect, useState } from "react";
-import { Dimensions, useColorScheme } from "react-native";
+import { Dimensions, Platform, useColorScheme } from "react-native";
 import Purchases from "react-native-purchases";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Avatar, Card, H3, H5, Paragraph, Progress, ScrollView, View, XStack, YStack } from "tamagui";
@@ -25,15 +25,24 @@ export default function HomeScreen() {
   const [openPaywall, setOpenPaywall] = useState(false);
 
   useEffect(() => {
-    /* Enable debug logs before calling `setup`. */
-    Purchases.setLogLevel(Purchases.LOG_LEVEL.DEBUG);
-
-    Purchases.configure({ apiKey: "appl_zZGUxbBzchveUkWXlMPDeuztdeD", appUserID: currentUser?.id, useAmazon: false });
-
+    // async function configurePurchases() {
+    //   /* Enable debug logs before calling `setup`. */
+    // Purchases.setLogLevel(Purchases.LOG_LEVEL.DEBUG);
+    //   if (await Purchases.isConfigured())
+    //     if (currentUser?.id) {
+    //       console.log("currentUser?.id", currentUser?.id);
+    //       if (Platform.OS === "ios") {
+    //         Purchases.configure({ apiKey: "appl_zZGUxbBzchveUkWXlMPDeuztdeD", appUserID: currentUser.id });
+    //       } else if (Platform.OS === "android") {
+    //       }
+    //     }
+    // }
+    // configurePurchases();
+    // Purchases.logIn(currentUser?.id);
     // if (!currentUser?.purchased_products.length) {
     //   setOpenPaywall(true);
     // }
-  }, []);
+  }, [currentUser?.id]);
 
   return (
     <>

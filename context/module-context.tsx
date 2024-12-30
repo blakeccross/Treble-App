@@ -1,20 +1,20 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { user_data } from "@/utils/sample-user-data";
 import { supabase } from "@/utils/supabase";
 import { Module, SectionItem } from "@/types";
 import { UserContext } from "./user-context";
 import * as FileSystem from "expo-file-system";
+import { useMMKVObject } from "react-native-mmkv";
 
 type ModuleContextProps = { modules: { data: Module[] | null; loading: boolean } };
 
 export const ModuleContext = createContext<ModuleContextProps>({} as ModuleContextProps);
 
 export default function ModuleProvider({ children }: { children: JSX.Element }) {
-  const [modules, setModules] = useState<{ data: Module[] | null; loading: boolean }>({ data: null, loading: false });
+  const [modules, setModules] = useMMKVObject<{ data: Module[] | null; loading: boolean }>("modules");
   const { currentUser, handleUpdateUserInfo } = useContext(UserContext);
 
   useEffect(() => {
-    if (!modules.data) {
+    if (!modules?.data) {
       getModuleData();
     } else {
       setModules({ ...modules, data: modules.data ? updateCompletedModules(updateCompletedSections(modules.data)) : null });
@@ -22,7 +22,7 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
   }, [currentUser?.completed_sections]);
 
   async function getModuleData() {
-    setModules({ ...modules, loading: true });
+    setModules({ data: modules?.data ?? null, loading: true });
     try {
       // if (!session?.user) throw new Error('No user on the session!')
 
