@@ -8,28 +8,43 @@ import Sharp from "@/assets/icons/sharp";
 import SixteenthNote from "@/assets/icons/sixteenthNote";
 import WholeNote from "@/assets/icons/wholeNote";
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, Image } from "react-native";
+import { View, StyleSheet, Image, Modal, TouchableOpacity, Dimensions } from "react-native";
 import { useColorScheme } from "./useColorScheme";
 import { Text as RNText } from "react-native";
+
+// Add window dimensions
+const windowWidth = Dimensions.get("window").width;
+const windowHeight = Dimensions.get("window").height;
 
 // Hook that converts markdown text to React Native elements without dependencies
 const useMarkdown = (markdownText: string) => {
   const colorScheme = useColorScheme() || "light";
   const [markdownElement, setMarkdownElement] = useState<JSX.Element | null>(null);
+  // Add state for modal
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   useEffect(() => {
     if (markdownText) {
-      // Parse the markdown text and create React Native elements
-      const parsedElements = parseMarkdown(markdownText, colorScheme);
-      setMarkdownElement(<View>{parsedElements}</View>);
+      // Pass setSelectedImage to parseMarkdown
+      const parsedElements = parseMarkdown(markdownText, colorScheme, setSelectedImage);
+      setMarkdownElement(
+        <View>
+          {parsedElements}
+          <Modal visible={!!selectedImage} transparent={true} onRequestClose={() => setSelectedImage(null)}>
+            <TouchableOpacity style={styles.modalOverlay} activeOpacity={1} onPress={() => setSelectedImage(null)}>
+              <Image source={{ uri: selectedImage || "" }} style={styles.modalImage} resizeMode="contain" />
+            </TouchableOpacity>
+          </Modal>
+        </View>
+      );
     }
-  }, [markdownText, colorScheme]);
+  }, [markdownText, colorScheme, selectedImage]);
 
   return markdownElement;
 };
 
 // Function to parse the markdown text and return corresponding React Native elements
-const parseMarkdown = (text: string, colorScheme: "light" | "dark"): JSX.Element[] => {
+const parseMarkdown = (text: string, colorScheme: "light" | "dark", setSelectedImage: (url: string) => void): JSX.Element[] => {
   const lines = text.split("\n");
   const elements: JSX.Element[] = [];
 
@@ -66,7 +81,7 @@ const parseMarkdown = (text: string, colorScheme: "light" | "dark"): JSX.Element
       continue; // Skip increment to avoid missing lines
     } else if (line.startsWith("![")) {
       // Handle images
-      elements.push(renderImage(line, i));
+      elements.push(renderImage(line, i, setSelectedImage));
     } else {
       const formattedText = parseUnicodeSymbols(line, colorScheme);
       elements.push(
@@ -114,15 +129,17 @@ const renderTableRow = (cells: string[], isHeader: boolean, index: number, color
 };
 
 // Function to render images
-const renderImage = (line: string, index: number): JSX.Element => {
+const renderImage = (line: string, index: number, setSelectedImage: (url: string) => void): JSX.Element => {
   const match = line.match(/!\[(.*?)\]\((.*?)\)/);
   if (match) {
     const altText = match[1];
     const imageUrl = match[2];
     return (
       <View key={index} style={styles.imageContainer}>
-        <Image source={{ uri: imageUrl }} style={styles.image} />
-        <RNText style={styles.imageCaption}>{altText}</RNText>
+        <TouchableOpacity onPress={() => setSelectedImage(imageUrl)}>
+          <Image source={{ uri: imageUrl }} style={styles.image} />
+          <RNText style={styles.imageCaption}>{altText}</RNText>
+        </TouchableOpacity>
       </View>
     );
   }
@@ -230,10 +247,20 @@ const styles = StyleSheet.create({
   imageContainer: { marginVertical: 10, alignItems: "center" },
   image: { width: 200, height: 200, resizeMode: "contain" },
   imageCaption: { marginTop: 5, fontStyle: "italic", fontSize: 12 },
-  plainText: { fontStyle: "normal", lineHeight: 26, fontSize: 20 },
+  plainText: { fontStyle: "normal", lineHeight: 28, fontSize: 20 },
   heading1: { fontWeight: "bold", fontSize: 40, marginBottom: 10 },
   heading2: { fontWeight: 800, fontSize: 30 },
   heading3: { fontWeight: 800, fontSize: 25 },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.8)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalImage: {
+    width: windowWidth * 0.9,
+    height: windowHeight * 0.7,
+  },
 });
 
 export default useMarkdown;
