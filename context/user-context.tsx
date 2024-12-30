@@ -26,7 +26,7 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
     const { data, error } = await supabase.auth.getSession();
     console.log("data", data);
     if (data.session) {
-      Purchases.logIn(data.session.user.id);
+      // Purchases.logIn(data.session.user.id);
       await handleGetUserData(data.session.user.id);
       router.replace("/(home)");
     } else {
@@ -55,18 +55,18 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
     };
   }, []);
 
-  useEffect(() => {
-    const fetchCustomerInfo = async () => {
-      if (await Purchases.isConfigured()) {
-        const info = await Purchases.getCustomerInfo();
-        if (info.allPurchasedProductIdentifiers.length > 0) {
-          handleUpdateUserInfo({ purchased_products: info.allPurchasedProductIdentifiers });
-        }
-      }
-    };
+  // useEffect(() => {
+  //   const fetchCustomerInfo = async () => {
+  //     if (await Purchases.isConfigured()) {
+  //       const info = await Purchases.getCustomerInfo();
+  //       if (info.allPurchasedProductIdentifiers.length > 0) {
+  //         handleUpdateUserInfo({ purchased_products: info.allPurchasedProductIdentifiers });
+  //       }
+  //     }
+  //   };
 
-    fetchCustomerInfo();
-  }, [currentUser?.id]);
+  //   fetchCustomerInfo();
+  // }, [currentUser?.id]);
 
   async function handleGetUserData(id: string) {
     let { data: profile, error } = await supabase.from("profiles").select("*").eq("id", id).single();

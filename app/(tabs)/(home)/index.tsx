@@ -24,25 +24,25 @@ export default function HomeScreen() {
   const screenWidth = Dimensions.get("window").width;
   const [openPaywall, setOpenPaywall] = useState(false);
 
-  useEffect(() => {
-    // async function configurePurchases() {
-    //   /* Enable debug logs before calling `setup`. */
-    // Purchases.setLogLevel(Purchases.LOG_LEVEL.DEBUG);
-    //   if (await Purchases.isConfigured())
-    //     if (currentUser?.id) {
-    //       console.log("currentUser?.id", currentUser?.id);
-    //       if (Platform.OS === "ios") {
-    //         Purchases.configure({ apiKey: "appl_zZGUxbBzchveUkWXlMPDeuztdeD", appUserID: currentUser.id });
-    //       } else if (Platform.OS === "android") {
-    //       }
-    //     }
-    // }
-    // configurePurchases();
-    // Purchases.logIn(currentUser?.id);
-    // if (!currentUser?.purchased_products.length) {
-    //   setOpenPaywall(true);
-    // }
-  }, [currentUser?.id]);
+  // useEffect(() => {
+  // async function configurePurchases() {
+  //   /* Enable debug logs before calling `setup`. */
+  // Purchases.setLogLevel(Purchases.LOG_LEVEL.DEBUG);
+  //   if (await Purchases.isConfigured())
+  //     if (currentUser?.id) {
+  //       console.log("currentUser?.id", currentUser?.id);
+  //       if (Platform.OS === "ios") {
+  //         Purchases.configure({ apiKey: "appl_zZGUxbBzchveUkWXlMPDeuztdeD", appUserID: currentUser.id });
+  //       } else if (Platform.OS === "android") {
+  //       }
+  //     }
+  // }
+  // configurePurchases();
+  // Purchases.logIn(currentUser?.id);
+  // if (!currentUser?.purchased_products.length) {
+  //   setOpenPaywall(true);
+  // }
+  // }, [currentUser?.id]);
 
   return (
     <>

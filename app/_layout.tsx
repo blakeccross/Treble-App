@@ -38,17 +38,17 @@ export default function RootLayout() {
     }
   }, [loaded]);
 
-  useEffect(() => {
-    Purchases.setLogLevel(Purchases.LOG_LEVEL.DEBUG);
-    if (Platform.OS === "ios") {
-      try {
-        Purchases.configure({ apiKey: "appl_zZGUxbBzchveUkWXlMPDeuztdeD" });
-      } catch (e) {
-        console.log(e);
-      }
-    } else if (Platform.OS === "android") {
-    }
-  }, []);
+  // useEffect(() => {
+  //   Purchases.setLogLevel(Purchases.LOG_LEVEL.DEBUG);
+  //   if (Platform.OS === "ios") {
+  //     try {
+  //       Purchases.configure({ apiKey: "appl_zZGUxbBzchveUkWXlMPDeuztdeD" });
+  //     } catch (e) {
+  //       console.log(e);
+  //     }
+  //   } else if (Platform.OS === "android") {
+  //   }
+  // }, []);
 
   if (!loaded) {
     return null;

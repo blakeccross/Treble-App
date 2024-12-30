@@ -16,8 +16,10 @@ export default function Splash() {
   }, []);
 
   useEffect(() => {
-    if (isMounted && !currentUser) {
-      router.push("/(auth)/welcome");
+    if (isMounted) {
+      if (!currentUser) {
+        router.push("/(auth)/welcome");
+      }
     }
   }, [currentUser, isMounted]);
 
