@@ -52,10 +52,10 @@ export default function Auth() {
       <YStack padding="$4" flex={1}>
         <ToggleGroup type="single" value={toggle}>
           <ToggleGroup.Item value="login" flex={1} onPress={() => setToggle("login")}>
-            <Paragraph>Login</Paragraph>
+            <Paragraph fontWeight={toggle === "login" ? 600 : 300}>Login</Paragraph>
           </ToggleGroup.Item>
           <ToggleGroup.Item value="signup" flex={1} onPress={() => setToggle("signup")}>
-            <Paragraph>Sign Up</Paragraph>
+            <Paragraph fontWeight={toggle === "signup" ? 600 : 300}>Sign Up</Paragraph>
           </ToggleGroup.Item>
         </ToggleGroup>
         {toggle === "login" && <Login />}

@@ -82,11 +82,11 @@ export default function Login() {
             )}
             name="password"
           />
+          {errors.email && <Label color={"red"}>Incorrect log in credentials</Label>}
 
           <Button fontWeight={600} fontSize={"$7"} height={"$5"} onPress={handleSubmit(onSubmit)} marginTop="auto" marginBottom="$4">
             Log in
           </Button>
-          {errors.email && <Label color={"red"}>Incorrect log in credentials</Label>}
         </YStack>
       </ScrollView>
     </KeyboardAvoidingView>

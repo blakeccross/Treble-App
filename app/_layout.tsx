@@ -30,6 +30,7 @@ export default function RootLayout() {
     Inter: require("@tamagui/font-inter/otf/Inter-Medium.otf"),
     InterBold: require("@tamagui/font-inter/otf/Inter-Bold.otf"),
     InterItalic: require("@tamagui/font-inter/otf/Inter-Italic.otf"),
+    Bravura: require("../assets/fonts/BravuraText.otf"),
   });
 
   useEffect(() => {
@@ -38,17 +39,17 @@ export default function RootLayout() {
     }
   }, [loaded]);
 
-  // useEffect(() => {
-  //   Purchases.setLogLevel(Purchases.LOG_LEVEL.DEBUG);
-  //   if (Platform.OS === "ios") {
-  //     try {
-  //       Purchases.configure({ apiKey: "appl_zZGUxbBzchveUkWXlMPDeuztdeD" });
-  //     } catch (e) {
-  //       console.log(e);
-  //     }
-  //   } else if (Platform.OS === "android") {
-  //   }
-  // }, []);
+  useEffect(() => {
+    Purchases.setLogLevel(Purchases.LOG_LEVEL.DEBUG);
+    if (Platform.OS === "ios") {
+      try {
+        Purchases.configure({ apiKey: "appl_zZGUxbBzchveUkWXlMPDeuztdeD" });
+      } catch (e) {
+        console.log(e);
+      }
+    } else if (Platform.OS === "android") {
+    }
+  }, []);
 
   if (!loaded) {
     return null;

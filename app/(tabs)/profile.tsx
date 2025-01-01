@@ -123,7 +123,7 @@ export default function TabTwoScreen() {
             </Link>
           </XStack>
 
-          {!currentUser?.purchased_products && currentUser?.purchased_products?.length === 0 && (
+          {!currentUser?.purchased_products?.length && currentUser?.purchased_products?.length === 0 && (
             <Card
               width={"100%"}
               backgroundColor={"$blue10"}

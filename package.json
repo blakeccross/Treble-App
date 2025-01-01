@@ -12,7 +12,8 @@
     "lint": "expo lint",
     "update-types": "npx supabase gen types typescript --project-id \"pueoumkuxzosxrzqoefw\" > types/supabase.ts",
     "build:sim": "eas build --profile development-simulator --platform ios",
-    "build-ios": "eas build --profile preview --platform ios"
+    "build-ios": "eas build --profile production --platform ios",
+    "submit-ios": "eas submit --platform ios"
   },
   "jest": {
     "preset": "jest-expo"
@@ -58,7 +59,7 @@
     "react-native-gesture-handler": "~2.16.1",
     "react-native-markdown-display": "^7.0.2",
     "react-native-mmkv": "^2.12.2",
-    "react-native-purchases": "^8.2.2",
+    "react-native-purchases": "^8.5.0",
     "react-native-reanimated": "~3.10.1",
     "react-native-reanimated-carousel": "^3.5.1",
     "react-native-redash": "^18.1.3",

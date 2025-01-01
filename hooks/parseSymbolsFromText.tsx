@@ -11,6 +11,11 @@ import React, { useState, useEffect } from "react";
 import { View, StyleSheet, Image, Modal, TouchableOpacity, Dimensions } from "react-native";
 import { useColorScheme } from "./useColorScheme";
 import { Text as RNText } from "react-native";
+import Natural from "@/assets/icons/natural";
+import Breve from "@/assets/icons/breve";
+import ThirtySecond from "@/assets/icons/thirtySecond";
+import { Paragraph } from "tamagui";
+import SixtySecondNote from "@/assets/icons/sixtySecondNote";
 
 // Add window dimensions
 const windowWidth = Dimensions.get("window").width;
@@ -212,26 +217,34 @@ const getSvgPathForUnicode = (unicode: number, colorScheme: "light" | "dark"): J
   // Log to see if the colorScheme is updated
 
   switch (unicode) {
-    case 0x1d15d:
-      return <WholeNote width={15} height={15} fill={fill} />;
-    case 0x1d15e:
-      return <HalfNote width={15} height={40} fill={fill} />;
-    case 0x1d15f:
-      return <QuarterNote width={15} height={40} fill={fill} />;
-    case 0x1d160:
-      return <EighthNote width={20} height={40} fill={fill} />;
-    case 0x1d161:
-      return <SixteenthNote width={20} height={40} fill={fill} />;
-    case 0x266f:
-      return <Sharp width={15} height={20} fill={fill} />;
-    case 0x266d:
-      return <Flat width={15} height={20} fill={fill} />;
+    // case 0x1d15d:
+    //   return <WholeNote width={15} height={15} fill={fill} />;
+    // case 0x266e:
+    //   return <Natural width={15} height={25} fill={fill} />;
+    // case 0x1d15c:
+    //   return <Breve width={20} height={25} fill={fill} />;
+    // case 0x1d15e:
+    //   return <HalfNote width={15} height={40} fill={fill} />;
+    // case 0x1d15f:
+    //   return <QuarterNote width={15} height={40} fill={fill} />;
+    // case 0x1d160:
+    //   return <EighthNote width={20} height={40} fill={fill} />;
+    // case 0x1d161:
+    //   return <SixteenthNote width={20} height={40} fill={fill} />;
+    // case 0x266f:
+    //   return <Sharp width={15} height={20} fill={fill} />;
+    // case 0x266d:
+    //   return <Flat width={15} height={20} fill={fill} />;
     case 0x1d12a:
       return <DoubleSharp width={15} height={20} fill={fill} />;
-    case 0x1d12b:
-      return <DoubleFlat width={15} height={20} fill={fill} />;
+    // case 0x1d12b:
+    //   return <DoubleFlat width={15} height={20} fill={fill} />;
+    // case 0x1d162:
+    //   return <ThirtySecond width={25} height={40} fill={fill} />;
+    // case 0x1d163:
+    //   return <SixtySecondNote width={25} height={45} fill={fill} />;
     default:
-      return <></>;
+      return <RNText style={{ fontFamily: "BravuraText", fontSize: 40, color: fill }}>{String.fromCodePoint(unicode)}</RNText>;
   }
 };
 

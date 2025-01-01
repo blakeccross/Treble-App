@@ -26,7 +26,7 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
     const { data, error } = await supabase.auth.getSession();
     console.log("data", data);
     if (data.session) {
-      // Purchases.logIn(data.session.user.id);
+      Purchases.logIn(data.session.user.id);
       await handleGetUserData(data.session.user.id);
       router.replace("/(home)");
     } else {

@@ -7,7 +7,7 @@ import Purchases from "react-native-purchases";
 import { Button, H3, ListItem, Separator, View, YGroup } from "tamagui";
 
 export default function Paywall({ openPaywall, setOpenPaywall }: { openPaywall: boolean; setOpenPaywall: (open: boolean) => void }) {
-  const { currentUser, handleUpdateUserInfo } = useContext(UserContext);
+  const { currentUser } = useContext(UserContext);
   const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
@@ -17,13 +17,13 @@ export default function Paywall({ openPaywall, setOpenPaywall }: { openPaywall: 
   }, [openPaywall]);
 
   async function handleTryForFree() {
-    // if (await Purchases.isConfigured()) {
-    //   const offerings = await Purchases.getOfferings();
-    //   const { customerInfo } = await Purchases.purchasePackage(offerings.all.monthly_test.availablePackages[0]);
-    //   if (typeof customerInfo.entitlements.active["my_entitlement_identifier"] !== "undefined") {
-    //     // Unlock that great "pro" content
-    //   }
-    // }
+    if (await Purchases.isConfigured()) {
+      const offerings = await Purchases.getOfferings();
+      const { customerInfo } = await Purchases.purchasePackage(offerings.all.monthly_test.availablePackages[0]);
+      if (typeof customerInfo.entitlements.active["my_entitlement_identifier"] !== "undefined") {
+        // Unlock that great "pro" content
+      }
+    }
   }
 
   return (
@@ -32,7 +32,7 @@ export default function Paywall({ openPaywall, setOpenPaywall }: { openPaywall: 
       presentationStyle="pageSheet"
       visible={modalVisible}
       onRequestClose={() => {
-        setModalVisible(!modalVisible);
+        setOpenPaywall(!modalVisible);
       }}
     >
       <View backgroundColor="$blue2Light" flex={1}>
@@ -55,7 +55,7 @@ export default function Paywall({ openPaywall, setOpenPaywall }: { openPaywall: 
           </View>
           <View>
             <Button onPress={handleTryForFree}>Try for $0.00</Button>
-            <Button unstyled color={"black"} textAlign="center" padding="$4" onPress={() => setModalVisible(false)}>
+            <Button unstyled color={"black"} textAlign="center" padding="$4" onPress={() => setOpenPaywall(false)}>
               No Thanks
             </Button>
           </View>

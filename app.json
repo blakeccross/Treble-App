@@ -2,7 +2,7 @@
   "expo": {
     "name": "Treble",
     "slug": "notate",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "orientation": "portrait",
     "icon": "./assets/images/treble-icon.png",
     "scheme": "myapp",
@@ -28,12 +28,7 @@
       "output": "static",
       "favicon": "./assets/images/favicon.png"
     },
-    "plugins": [
-      "expo-router",
-      "expo-font",
-      "react-native-compressor",
-      "expo-audio"
-    ],
+    "plugins": ["expo-router", "expo-font", "react-native-compressor", "expo-audio"],
     "experiments": {
       "typedRoutes": true
     },
