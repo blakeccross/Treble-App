@@ -122,7 +122,15 @@ export default function SignUp() {
                 <Theme name={errors.password ? "red" : null}>
                   <Label>Confirm Password</Label>
 
-                  <Input placeholder="Confirm Password" size={"$6"} secureTextEntry onBlur={onBlur} onChangeText={onChange} value={value} />
+                  <Input
+                    placeholder="Confirm Password"
+                    size={"$6"}
+                    secureTextEntry
+                    onBlur={onBlur}
+                    onChangeText={onChange}
+                    value={value}
+                    returnKeyType="send"
+                  />
                 </Theme>
               </View>
             )}

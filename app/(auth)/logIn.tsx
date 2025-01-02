@@ -42,53 +42,62 @@ export default function Login() {
   }
 
   return (
-    <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{ flex: 1 }}>
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="never">
-        <YStack flex={1}>
-          <Controller
-            control={control}
-            rules={{
-              required: true,
-              pattern: {
-                value: /\S+@\S+\.\S+/,
-                message: "Entered value does not match email format",
-              },
-            }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <View>
-                <Theme name={errors.email ? "red" : null}>
-                  <Label>Email</Label>
-                  <Input autoCapitalize="none" placeholder="Email" size={"$6"} onBlur={onBlur} onChangeText={onChange} value={value} />
-                </Theme>
-              </View>
-            )}
-            name="email"
-          />
+    <>
+      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{ flex: 1 }} keyboardVerticalOffset={110}>
+        <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="never">
+          <YStack flex={1}>
+            <Controller
+              control={control}
+              rules={{
+                required: true,
+                pattern: {
+                  value: /\S+@\S+\.\S+/,
+                  message: "Entered value does not match email format",
+                },
+              }}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <View>
+                  <Theme name={errors.email ? "red" : null}>
+                    <Label>Email</Label>
+                    <Input autoCapitalize="none" placeholder="Email" size={"$6"} onBlur={onBlur} onChangeText={onChange} value={value} />
+                  </Theme>
+                </View>
+              )}
+              name="email"
+            />
 
-          <Controller
-            control={control}
-            rules={{
-              required: true,
-              minLength: 6,
-            }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <View marginBottom="$4">
-                <Theme name={errors.password ? "red" : null}>
-                  <Label>Password</Label>
+            <Controller
+              control={control}
+              rules={{
+                required: true,
+                minLength: 6,
+              }}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <View marginBottom="$4">
+                  <Theme name={errors.password ? "red" : null}>
+                    <Label>Password</Label>
 
-                  <Input placeholder="Password" size={"$6"} secureTextEntry onBlur={onBlur} onChangeText={onChange} value={value} />
-                </Theme>
-              </View>
-            )}
-            name="password"
-          />
-          {errors.email && <Label color={"red"}>Incorrect log in credentials</Label>}
-
-          <Button fontWeight={600} fontSize={"$7"} height={"$5"} onPress={handleSubmit(onSubmit)} marginTop="auto" marginBottom="$4">
-            Log in
-          </Button>
-        </YStack>
-      </ScrollView>
-    </KeyboardAvoidingView>
+                    <Input
+                      placeholder="Password"
+                      size={"$6"}
+                      secureTextEntry
+                      onBlur={onBlur}
+                      onChangeText={onChange}
+                      value={value}
+                      returnKeyType="send"
+                    />
+                  </Theme>
+                </View>
+              )}
+              name="password"
+            />
+            {errors.email && <Label color={"red"}>Incorrect log in credentials</Label>}
+          </YStack>
+        </ScrollView>
+        <Button fontWeight={600} fontSize={"$7"} height={"$5"} onPress={handleSubmit(onSubmit)} marginTop="auto" marginBottom="$4">
+          Log in
+        </Button>
+      </KeyboardAvoidingView>
+    </>
   );
 }

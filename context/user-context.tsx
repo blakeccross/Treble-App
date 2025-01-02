@@ -18,6 +18,7 @@ export const UserContext = createContext<UserContextProps>({} as UserContextProp
 export default function ModuleProvider({ children }: { children: JSX.Element }) {
   const [currentUser, setCurrentUser] = useMMKVObject<Profile>("user");
   const pathname = usePathname();
+
   useEffect(() => {
     getUser();
   }, []);
