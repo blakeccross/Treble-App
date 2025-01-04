@@ -32,6 +32,7 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
       await handleGetUserData(data.session.user.id);
       router.replace("/(home)");
     } else {
+      setCurrentUser(undefined);
       if (pathname !== "/welcome" && pathname !== "/") {
         router.replace("/(auth)/welcome");
       }
