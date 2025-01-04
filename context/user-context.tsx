@@ -46,6 +46,7 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
           console.log("USER SIGNED OUT");
           // setSession(null)
         } else if (event === "SIGNED_IN" && session) {
+          console.log("USER SIGNED IN");
           await handleGetUserData(session.user.id);
           router.dismissAll();
           router.push("/(tabs)/(home)/");
@@ -93,6 +94,7 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
 
   async function handleSignOut() {
     const { error } = await supabase.auth.signOut();
+    await Purchases.logOut();
     if (error) {
       console.error(error);
       Toast.show({
