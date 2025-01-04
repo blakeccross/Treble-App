@@ -2,9 +2,9 @@ import { UserContext } from "@/context/user-context";
 import { supabase } from "@/utils/supabase";
 import { ChevronLeft } from "@tamagui/lucide-icons";
 import { router, useLocalSearchParams } from "expo-router";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { KeyboardAvoidingView, Platform, ScrollView } from "react-native";
+import { KeyboardAvoidingView, Platform, ScrollView, TextInput } from "react-native";
 import { Button, Input, Label, Paragraph, Theme, ToggleGroup, View, YStack } from "tamagui";
 import Login from "./logIn";
 
@@ -15,8 +15,8 @@ type FormInput = {
 };
 
 export default function SignUp() {
-  const { type } = useLocalSearchParams();
-  const { getUser } = useContext(UserContext);
+  const passwordRef = useRef<TextInput | null>(null);
+  const confirmPasswordRef = useRef<TextInput | null>(null);
 
   const {
     control,
@@ -83,6 +83,8 @@ export default function SignUp() {
                     onBlur={onBlur}
                     onChangeText={onChange}
                     value={value}
+                    returnKeyType="next"
+                    onSubmitEditing={() => passwordRef?.current?.focus()} // Focus on password input
                   />
                 </Theme>
               </View>
@@ -102,7 +104,17 @@ export default function SignUp() {
                 <Theme name={errors.password ? "red" : null}>
                   <Label>Password</Label>
 
-                  <Input placeholder="Password" size={"$6"} secureTextEntry onBlur={onBlur} onChangeText={onChange} value={value} />
+                  <Input
+                    ref={passwordRef}
+                    placeholder="Password"
+                    size={"$6"}
+                    secureTextEntry
+                    onBlur={onBlur}
+                    onChangeText={onChange}
+                    value={value}
+                    returnKeyType="next"
+                    onSubmitEditing={() => confirmPasswordRef?.current?.focus()} // Focus on confirm password input
+                  />
                 </Theme>
               </View>
             )}
@@ -122,6 +134,7 @@ export default function SignUp() {
                   <Label>Confirm Password</Label>
 
                   <Input
+                    ref={confirmPasswordRef}
                     placeholder="Confirm Password"
                     size={"$6"}
                     secureTextEntry
@@ -129,6 +142,7 @@ export default function SignUp() {
                     onChangeText={onChange}
                     value={value}
                     returnKeyType="send"
+                    onSubmitEditing={() => handleSubmit(onSubmit)}
                   />
                 </Theme>
               </View>

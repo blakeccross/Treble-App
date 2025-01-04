@@ -1,7 +1,7 @@
 import { supabase } from "@/utils/supabase";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { ActivityIndicator, KeyboardAvoidingView, Platform } from "react-native";
+import { ActivityIndicator, KeyboardAvoidingView, Platform, TextInput } from "react-native";
 import { Button, Input, Label, ScrollView, Theme, View, YStack } from "tamagui";
 
 type FormInput = {
@@ -10,6 +10,7 @@ type FormInput = {
 };
 
 export default function Login() {
+  const passwordRef = useRef<TextInput | null>(null);
   const {
     control,
     handleSubmit,
@@ -63,7 +64,16 @@ export default function Login() {
                 <View>
                   <Theme name={errors.email ? "red" : null}>
                     <Label>Email</Label>
-                    <Input autoCapitalize="none" placeholder="Email" size={"$6"} onBlur={onBlur} onChangeText={onChange} value={value} />
+                    <Input
+                      autoCapitalize="none"
+                      placeholder="Email"
+                      size={"$6"}
+                      onBlur={onBlur}
+                      onChangeText={onChange}
+                      value={value}
+                      returnKeyType="next"
+                      onSubmitEditing={() => passwordRef?.current?.focus()}
+                    />
                   </Theme>
                 </View>
               )}
@@ -82,6 +92,7 @@ export default function Login() {
                     <Label>Password</Label>
 
                     <Input
+                      ref={passwordRef}
                       placeholder="Password"
                       size={"$6"}
                       secureTextEntry
@@ -89,6 +100,7 @@ export default function Login() {
                       onChangeText={onChange}
                       value={value}
                       returnKeyType="send"
+                      onSubmitEditing={() => handleSubmit(onSubmit)}
                     />
                   </Theme>
                 </View>
