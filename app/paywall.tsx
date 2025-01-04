@@ -34,7 +34,7 @@ export default function Paywall({ openPaywall, setOpenPaywall }: { openPaywall: 
       presentationStyle="pageSheet"
       visible={modalVisible}
       onRequestClose={() => {
-        setOpenPaywall(!modalVisible);
+        setOpenPaywall(false);
         setModalVisible(false);
       }}
     >

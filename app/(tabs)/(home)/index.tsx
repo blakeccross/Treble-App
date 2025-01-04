@@ -26,7 +26,9 @@ export default function HomeScreen() {
 
   useEffect(() => {
     if (currentUser?.is_subscribed === false) {
-      setOpenPaywall(true);
+      setTimeout(() => {
+        setOpenPaywall(true);
+      }, 2000);
     }
   }, [currentUser?.id, currentUser?.is_subscribed]);
 

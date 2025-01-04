@@ -21,7 +21,7 @@ export default function Splash() {
         router.push("/(auth)/welcome");
       }
     }
-  }, [currentUser, isMounted]);
+  }, [isMounted]);
 
   return (
     <LinearGradient flex={1} colors={["$blue10", "$blue8"]} start={[0.3, 1]} end={[0, 0]}>
