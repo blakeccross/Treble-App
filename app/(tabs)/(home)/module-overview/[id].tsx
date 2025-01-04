@@ -71,10 +71,10 @@ export default function ModuleStartScreen() {
                   )}
                 </Paragraph>
               </YStack>
-              {section.premium && !currentUser?.premium ? (
+              {section.premium && currentUser?.is_subscribed === false ? (
                 <Button disabled variant="outlined" theme={"alt1"} circular icon={Lock} />
               ) : (
-                <Button disabled variant="outlined" theme={"alt1"} circular icon={section.completed ? RefreshCw : Play} />
+                <Button variant="outlined" theme={"alt1"} circular icon={section.completed ? RefreshCw : Play} />
               )}
             </XStack>
             // </Link>

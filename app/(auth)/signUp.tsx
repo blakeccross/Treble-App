@@ -49,12 +49,11 @@ export default function SignUp() {
 
       console.error(error.message);
     }
-    console.log("AUTH", auth);
 
     if (auth.user) {
       // await getUser();
-      router.dismissAll();
-      router.push("/(tabs)/(home)/");
+      // router.dismissAll();
+      // router.push("/(tabs)/(home)/");
     }
   }
 
