@@ -26,7 +26,7 @@ export default function ModuleStartScreen() {
   }, []);
 
   function handleSectionPress(section: any) {
-    if (section.premium && !currentUser?.premium) {
+    if (section.premium && currentUser?.premium === false) {
       setOpenPaywall(true);
     } else {
       router.push({ pathname: `/${section.section_item[0]?.type}` as any, params: { module_id: currentModule?.id, section_id: section.id } });
