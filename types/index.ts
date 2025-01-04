@@ -1,6 +1,6 @@
 import { Database } from "./supabase";
 
-export type Profile = Omit<Database["public"]["Tables"]["profiles"]["Row"],"active_days"> & {active_days: string[], purchased_products?: string[]}
+export type Profile = Omit<Database["public"]["Tables"]["profiles"]["Row"],"active_days"> & {active_days: string[], is_subscribed?: boolean, purchased_products?: string[]}
 export type SheetMusic = {
   key: string;
   clef: "treble" | "bass" | "alto" | "percussion" | "";

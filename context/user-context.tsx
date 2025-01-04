@@ -63,11 +63,11 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
     if (profile) {
       try {
         const customerInfo = await Purchases.getCustomerInfo();
-        console.log("customerInfo", customerInfo.activeSubscriptions);
-        const purchasedProducts = customerInfo.entitlements.active["month"] ? ["month"] : [];
-        setCurrentUser({ ...(currentUser || {}), ...profile, purchased_products: purchasedProducts });
+        // console.log("customerInfo", customerInfo.entitlements.active["pro"].isActive);
+        const is_subscribed = customerInfo.entitlements.active["pro"].isActive;
+        setCurrentUser({ ...(currentUser || {}), ...profile, is_subscribed: is_subscribed });
       } catch (e) {
-        setCurrentUser({ ...(currentUser || {}), ...profile, purchased_products: [] });
+        setCurrentUser({ ...(currentUser || {}), ...profile, is_subscribed: false });
       }
     }
   }

@@ -110,7 +110,7 @@ export default function TabTwoScreen() {
               <H3 fontWeight={600} textAlign="left" marginVertical="$6">
                 {currentUser?.full_name ? currentUser?.full_name : "Guest User"}
               </H3>
-              {currentUser?.purchased_products && currentUser?.purchased_products?.length > 0 && (
+              {currentUser?.is_subscribed && (
                 <LinearGradient colors={["$blue10", "$purple7"]} start={[0.3, 1]} end={[0, 0]} paddingHorizontal="$3" borderRadius="$10">
                   <SizableText color={"$background"}>Pro</SizableText>
                 </LinearGradient>
@@ -124,7 +124,7 @@ export default function TabTwoScreen() {
             </Link>
           </XStack>
 
-          {!currentUser?.purchased_products?.length && currentUser?.purchased_products?.length === 0 && (
+          {!currentUser?.is_subscribed && (
             <Card
               width={"100%"}
               backgroundColor={"$blue10"}
