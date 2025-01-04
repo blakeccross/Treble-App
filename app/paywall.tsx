@@ -12,7 +12,7 @@ export default function Paywall({ openPaywall, setOpenPaywall }: { openPaywall: 
   const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
-    if (!currentUser?.is_subscribed) {
+    if (currentUser?.is_subscribed === false) {
       setModalVisible(openPaywall);
     }
   }, [openPaywall]);
@@ -35,6 +35,7 @@ export default function Paywall({ openPaywall, setOpenPaywall }: { openPaywall: 
       visible={modalVisible}
       onRequestClose={() => {
         setOpenPaywall(!modalVisible);
+        setModalVisible(false);
       }}
     >
       {!currentUser?.is_subscribed ? (
@@ -89,7 +90,7 @@ export default function Paywall({ openPaywall, setOpenPaywall }: { openPaywall: 
               Welcome to the Treble Pro!
             </H2>
           </YStack>
-          <Button onPress={() => setOpenPaywall(false)} fontWeight={600} fontSize={"$7"} height={"$5"} width={"100%"} themeInverse>
+          <Button onPress={() => setModalVisible(false)} fontWeight={600} fontSize={"$7"} height={"$5"} width={"100%"} themeInverse>
             Continue
           </Button>
 

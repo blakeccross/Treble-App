@@ -25,7 +25,7 @@ export default function HomeScreen() {
   const [openPaywall, setOpenPaywall] = useState(false);
 
   useEffect(() => {
-    if (!currentUser?.is_subscribed) {
+    if (currentUser?.is_subscribed === false) {
       setOpenPaywall(true);
     }
   }, [currentUser?.id, currentUser?.is_subscribed]);
