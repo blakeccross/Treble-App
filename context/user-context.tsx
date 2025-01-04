@@ -26,9 +26,6 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
   async function getUser() {
     const { data, error } = await supabase.auth.getSession();
     if (data.session) {
-      if (await Purchases.isConfigured()) {
-        Purchases.logIn(data.session.user.id);
-      }
       await handleGetUserData(data.session.user.id);
       router.replace("/(home)");
     } else {
@@ -43,13 +40,18 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === "SIGNED_OUT") {
-        console.log("USER SIGNED OUT");
-        // setSession(null)
-      } else if (session) {
-        console.log("USER SIGNED IN");
-        handleGetUserData(session.user.id);
-      }
+      const handleAuthChange = async () => {
+        if (event === "SIGNED_OUT") {
+          console.log("USER SIGNED OUT");
+          // setSession(null)
+        } else if (session) {
+          console.log("USER SIGNED IN");
+          await handleGetUserData(session.user.id);
+          router.dismissAll();
+          router.push("/(tabs)/(home)/");
+        }
+      };
+      handleAuthChange();
     });
 
     return () => {
@@ -58,6 +60,9 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
   }, []);
 
   async function handleGetUserData(id: string) {
+    if (await Purchases.isConfigured()) {
+      Purchases.logIn(id);
+    }
     let { data: profile, error } = await supabase.from("profiles").select("*").eq("id", id).single();
 
     if (profile) {

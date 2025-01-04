@@ -1,9 +1,8 @@
-import { router, useRouter } from "expo-router";
-import React, { useContext, useEffect, useState } from "react";
-import { Avatar, Button, Card, H3, H5, Input, Label, Paragraph, ScrollView, Separator, Stack, Theme, View, XStack, YStack } from "tamagui";
-import { useForm, Controller } from "react-hook-form";
 import { supabase } from "@/utils/supabase";
-import { KeyboardAvoidingView, Platform } from "react-native";
+import React, { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { ActivityIndicator, KeyboardAvoidingView, Platform } from "react-native";
+import { Button, Input, Label, ScrollView, Theme, View, YStack } from "tamagui";
 
 type FormInput = {
   email: string;
@@ -23,11 +22,16 @@ export default function Login() {
     },
   });
 
+  const [loading, setLoading] = useState(false);
+
   async function onSubmit(formInputs: FormInput) {
+    setLoading(true);
     const { data: auth, error } = await supabase.auth.signInWithPassword({
       email: formInputs.email,
       password: formInputs.password,
     });
+
+    setLoading(false);
 
     if (error) {
       console.error(error);
@@ -36,8 +40,8 @@ export default function Login() {
     }
 
     if (auth.session) {
-      router.dismissAll();
-      router.push("/(tabs)/(home)/");
+      // router.dismissAll();
+      // router.push("/(tabs)/(home)/");
     }
   }
 
@@ -94,8 +98,8 @@ export default function Login() {
             {errors.email && <Label color={"red"}>Incorrect log in credentials</Label>}
           </YStack>
         </ScrollView>
-        <Button fontWeight={600} fontSize={"$7"} height={"$5"} onPress={handleSubmit(onSubmit)} marginTop="auto" marginBottom="$4">
-          Log in
+        <Button fontWeight={600} fontSize={"$7"} height={"$5"} onPress={handleSubmit(onSubmit)} marginTop="auto" marginBottom="$4" disabled={loading}>
+          {loading ? <ActivityIndicator color="white" /> : "Log in"}
         </Button>
       </KeyboardAvoidingView>
     </>
