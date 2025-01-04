@@ -25,10 +25,10 @@ export default function HomeScreen() {
   const [openPaywall, setOpenPaywall] = useState(false);
 
   useEffect(() => {
-    if (currentUser?.purchased_products && !currentUser?.purchased_products?.length) {
+    if (currentUser?.purchased_products && currentUser?.purchased_products?.length === 0) {
       setOpenPaywall(true);
     }
-  }, [currentUser?.id]);
+  }, [currentUser?.id, currentUser?.purchased_products]);
 
   return (
     <>

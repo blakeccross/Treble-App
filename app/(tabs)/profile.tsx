@@ -4,7 +4,7 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { useDatePicker } from "@rehookify/datepicker";
-import { Award, ChevronLeft, ChevronRight, Sparkle } from "@tamagui/lucide-icons";
+import { Award, ChevronLeft, ChevronRight, Settings, Sparkle } from "@tamagui/lucide-icons";
 import { blueA, purpleA, redA, size, yellow } from "@tamagui/themes";
 import { Image } from "expo-image";
 import * as ImagePicker from "expo-image-picker";
@@ -116,9 +116,10 @@ export default function TabTwoScreen() {
                 </LinearGradient>
               )}
             </XStack>
-            <Link asChild href={{ pathname: "/(profile)" }}>
+            <Link asChild href={{ pathname: "/(settings)" }}>
               <Button variant="outlined" color={"$gray10"} fontWeight={600} pressStyle={{ scale: 0.95 }}>
-                Edit Profile
+                <Settings size={"$1"} color={"$gray10"} />
+                Settings
               </Button>
             </Link>
           </XStack>

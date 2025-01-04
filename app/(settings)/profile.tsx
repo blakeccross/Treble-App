@@ -163,7 +163,7 @@ export default function ProfileSettings() {
               minLength: 6,
             }}
             render={({ field: { onChange, onBlur, value } }) => (
-              <View>
+              <View marginBottom="$4">
                 <Theme name={errors.password ? "red" : null}>
                   <Label>Password</Label>
 
@@ -184,17 +184,6 @@ export default function ProfileSettings() {
           >
             Update
           </Button>
-          <Theme name={"red"}>
-            <Button
-              fontWeight={600}
-              fontSize={"$7"}
-              height={"$5"}
-              // variant="outlined"
-              onPress={handleSignOut}
-            >
-              Sign out
-            </Button>
-          </Theme>
         </YStack>
       </ScrollView>
     </SafeAreaView>

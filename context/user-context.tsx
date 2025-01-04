@@ -60,7 +60,14 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
     let { data: profile, error } = await supabase.from("profiles").select("*").eq("id", id).single();
 
     if (profile) {
-      setCurrentUser({ ...(currentUser || {}), ...profile });
+      try {
+        const customerInfo = await Purchases.getCustomerInfo();
+        console.log("customerInfo", customerInfo.activeSubscriptions);
+        const purchasedProducts = customerInfo.entitlements.active["month"] ? ["month"] : [];
+        setCurrentUser({ ...(currentUser || {}), ...profile, purchased_products: purchasedProducts });
+      } catch (e) {
+        setCurrentUser({ ...(currentUser || {}), ...profile, purchased_products: [] });
+      }
     }
   }
 

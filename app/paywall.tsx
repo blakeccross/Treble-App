@@ -35,7 +35,7 @@ export default function Paywall({ openPaywall, setOpenPaywall }: { openPaywall: 
         setOpenPaywall(!modalVisible);
       }}
     >
-      <View backgroundColor="$blue2Light" flex={1}>
+      <View backgroundColor="$background" flex={1}>
         <Image source={require("@/assets/images/gold_subscription.jpg")} style={{ width: "100%", aspectRatio: "1/1", backgroundColor: "grey" }} />
         <View padding="$4" flex={1} height={"100%"} justifyContent="space-between">
           <View>
@@ -55,7 +55,7 @@ export default function Paywall({ openPaywall, setOpenPaywall }: { openPaywall: 
           </View>
           <View>
             <Button onPress={handleTryForFree}>Try for $0.00</Button>
-            <Button unstyled color={"black"} textAlign="center" padding="$4" onPress={() => setOpenPaywall(false)}>
+            <Button unstyled color={"$gray12"} textAlign="center" padding="$4" onPress={() => setOpenPaywall(false)}>
               No Thanks
             </Button>
           </View>
