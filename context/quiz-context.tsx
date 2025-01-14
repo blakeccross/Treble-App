@@ -1,9 +1,10 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Dispatch, SetStateAction, createContext, useContext, useEffect, useRef, useState } from "react";
 import { ModuleContext } from "./module-context";
-import { Module, Section, SectionItem } from "@/types";
+import { Module, Section, SectionItem, XPHistory } from "@/types";
 import { UserContext } from "./user-context";
 import moment from "moment";
+import { useMMKVObject } from "react-native-mmkv";
 
 type Quiz = {
   currentQuestionIndex: number;
@@ -14,6 +15,7 @@ type Quiz = {
   lives: number;
   setLives: Dispatch<SetStateAction<number>>;
 };
+
 export const QuizContext = createContext<Quiz>({} as Quiz);
 
 export default function QuizProvider({ children }: { children: JSX.Element[] }) {
@@ -21,6 +23,7 @@ export default function QuizProvider({ children }: { children: JSX.Element[] }) 
   const { module_id, section_id } = useLocalSearchParams<{ module_id: string; section_id: string }>();
   const { currentUser, handleUpdateUserInfo } = useContext(UserContext);
   const { modules } = useContext(ModuleContext);
+  const [xpHistory, setXPHistory] = useMMKVObject<XPHistory[]>("xp_history");
 
   const sections = modules.data && modules.data.flatMap((item) => item.section);
 
@@ -122,6 +125,10 @@ export default function QuizProvider({ children }: { children: JSX.Element[] }) 
 
     // Single call to handleUpdateUserInfo with all updates
     await handleUpdateUserInfo({ ...updates, total_xp: currentUser?.total_xp ? currentUser.total_xp + XPGained : XPGained });
+    setXPHistory([
+      ...(xpHistory || []),
+      { title: currentModule?.title || "", description: currentSection?.title || "", xp_earned: XPGained, date: new Date().toString() },
+    ]);
 
     setLives(3);
     setCurrentQuestionIndex(0);

@@ -84,7 +84,7 @@ export default function SignUp() {
                     onChangeText={onChange}
                     value={value}
                     returnKeyType="next"
-                    onSubmitEditing={() => passwordRef?.current?.focus()} // Focus on password input
+                    onSubmitEditing={() => passwordRef?.current?.focus()} 
                   />
                 </Theme>
               </View>

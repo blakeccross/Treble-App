@@ -86,7 +86,7 @@ const parseMarkdown = (text: string, colorScheme: "light" | "dark", setSelectedI
       continue; // Skip increment to avoid missing lines
     } else if (line.startsWith("![")) {
       // Handle images
-      elements.push(renderImage(line, i, setSelectedImage));
+      elements.push(renderImage(line, i, setSelectedImage, colorScheme));
     } else {
       const formattedText = parseUnicodeSymbols(line, colorScheme);
       elements.push(
@@ -134,7 +134,7 @@ const renderTableRow = (cells: string[], isHeader: boolean, index: number, color
 };
 
 // Function to render images
-const renderImage = (line: string, index: number, setSelectedImage: (url: string) => void): JSX.Element => {
+const renderImage = (line: string, index: number, setSelectedImage: (url: string) => void, colorScheme: "light" | "dark"): JSX.Element => {
   const match = line.match(/!\[(.*?)\]\((.*?)\)/);
   if (match) {
     const altText = match[1];
@@ -143,7 +143,7 @@ const renderImage = (line: string, index: number, setSelectedImage: (url: string
       <View key={index} style={styles.imageContainer}>
         <TouchableOpacity onPress={() => setSelectedImage(imageUrl)}>
           <Image source={{ uri: imageUrl }} style={styles.image} />
-          <RNText style={styles.imageCaption}>{altText}</RNText>
+          <RNText style={{ ...styles.imageCaption, color: colorScheme === "light" ? "black" : "white" }}>{altText}</RNText>
         </TouchableOpacity>
       </View>
     );
@@ -259,7 +259,7 @@ const styles = StyleSheet.create({
   tableHeaderCell: { fontWeight: "bold", color: "black" },
   imageContainer: { marginVertical: 10, alignItems: "center" },
   image: { width: 200, height: 200, resizeMode: "contain" },
-  imageCaption: { marginTop: 5, fontStyle: "italic", fontSize: 12 },
+  imageCaption: { marginTop: 5, fontStyle: "italic", fontSize: 12, textAlign: "center" },
   plainText: { fontStyle: "normal", lineHeight: 28, fontSize: 20 },
   heading1: { fontWeight: "bold", fontSize: 40, marginBottom: 10 },
   heading2: { fontWeight: 800, fontSize: 30 },

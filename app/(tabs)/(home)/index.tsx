@@ -3,17 +3,20 @@ import TrebleLogo from "@/assets/trebleLogo";
 import { SkeletonLoader } from "@/components/SkeletonLoader";
 import { ModuleContext } from "@/context/module-context";
 import { UserContext } from "@/context/user-context";
+import { XPHistory } from "@/types";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { ChevronRight, StarFull } from "@tamagui/lucide-icons";
 import { blue, grayA, yellow, yellowA } from "@tamagui/themes";
 import { Image } from "expo-image";
 import { Link } from "expo-router";
+import moment from "moment";
 import React, { useContext, useEffect, useState } from "react";
-import { Dimensions, Platform, useColorScheme } from "react-native";
+import { Dimensions, FlatList, Platform, useColorScheme } from "react-native";
+import { useMMKVObject } from "react-native-mmkv";
 import Purchases from "react-native-purchases";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Avatar, Card, H3, H5, Paragraph, Progress, ScrollView, View, XStack, YStack } from "tamagui";
+import { Avatar, Card, H3, H4, H5, Paragraph, Progress, ScrollView, Separator, Sheet, View, XStack, YStack } from "tamagui";
 import { LinearGradient } from "tamagui/linear-gradient";
 
 export default function HomeScreen() {
@@ -23,6 +26,9 @@ export default function HomeScreen() {
     "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
   const screenWidth = Dimensions.get("window").width;
   const [openPaywall, setOpenPaywall] = useState(false);
+  const [openXPHistory, setOpenXPHistory] = useState(false);
+  const [xpHistory, setXPHistory] = useMMKVObject<XPHistory[]>("xp_history");
+  console.log("XP History", xpHistory);
 
   useEffect(() => {
     if (currentUser?.is_subscribed === false) {
@@ -61,7 +67,7 @@ export default function HomeScreen() {
             <TrebleLogo />
           </View>
 
-          <XStack alignItems="center" justifyContent="flex-end" gap="$2" width={"$10"}>
+          <XStack alignItems="center" justifyContent="flex-end" gap="$2" width={"$10"} onPress={() => setOpenXPHistory(true)}>
             <AntDesign name="star" size={24} color={yellow.yellow10} />
             <H5 color={"white"} fontWeight={600}>
               {currentUser?.total_xp}
@@ -69,6 +75,51 @@ export default function HomeScreen() {
           </XStack>
         </XStack>
       </LinearGradient>
+
+      <Sheet
+        forceRemoveScrollEnabled={openXPHistory}
+        modal
+        open={openXPHistory}
+        onOpenChange={setOpenXPHistory}
+        snapPoints={["80"]}
+        snapPointsMode="percent"
+        position={0}
+        zIndex={100_000}
+        animation="quick"
+        // dismissOnOverlayPress={false}
+      >
+        <Sheet.Overlay animation="lazy" enterStyle={{ opacity: 0 }} exitStyle={{ opacity: 0 }} />
+        <Sheet.Handle />
+        <Sheet.Frame padding="$4" justifyContent="space-between" alignItems="center" space="$5">
+          <YStack>
+            <H3 fontWeight={600} marginBottom="$2">
+              XP History
+            </H3>
+
+            <FlatList
+              data={xpHistory?.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())} // Sort by date descending
+              keyExtractor={(item) => String(item.date)}
+              style={{ height: "100%" }}
+              renderItem={({ item }) => (
+                <>
+                  <XStack key={item.date} alignItems="center" justifyContent="space-between" width={"100%"} marginBottom="$2">
+                    <YStack>
+                      <XStack alignItems="center" gap="$2">
+                        <H5 fontWeight={600}>{item.title + " • " + item.description}</H5>
+                      </XStack>
+                      <Paragraph fontSize={"$2"} color={"$gray10"}>
+                        {moment(item.date).format("MMM D, YYYY hh:mm a")}
+                      </Paragraph>
+                    </YStack>
+                    <H5 fontWeight={600}>{item.xp_earned}</H5>
+                  </XStack>
+                  <Separator />
+                </>
+              )}
+            />
+          </YStack>
+        </Sheet.Frame>
+      </Sheet>
 
       <ScrollView contentContainerStyle={{ paddingBottom: 150 }} showsVerticalScrollIndicator={false}>
         <XStack $sm={{ flexDirection: "column" }} padding="$3" gap="$3">
