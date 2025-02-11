@@ -3,7 +3,7 @@ import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import React, { useContext, useEffect } from "react";
-import { H3, H4, TamaguiProvider } from "tamagui";
+import { createTamagui, H3, H4, TamaguiProvider } from "tamagui";
 import tamaguiConfig from "../tamagui.config";
 import "react-native-reanimated";
 import { useColorScheme } from "@/hooks/useColorScheme";

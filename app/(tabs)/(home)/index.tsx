@@ -1,3 +1,5 @@
+import React, { useContext, useEffect, useState } from "react";
+import { Dimensions, FlatList, Platform, useColorScheme } from "react-native";
 import Paywall from "@/app/paywall";
 import TrebleLogo from "@/assets/trebleLogo";
 import { SkeletonLoader } from "@/components/SkeletonLoader";
@@ -6,14 +8,12 @@ import { UserContext } from "@/context/user-context";
 import { XPHistory } from "@/types";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
-import { ChevronRight, StarFull } from "@tamagui/lucide-icons";
-import { blue, grayA, yellow, yellowA } from "@tamagui/themes";
+import { ChevronRight, Heart, StarFull } from "@tamagui/lucide-icons";
+import { blue, grayA, red, yellow, yellowA } from "@tamagui/themes";
 import { Image } from "expo-image";
 import { Link } from "expo-router";
 import moment from "moment";
-import React, { useContext, useEffect, useState } from "react";
-import { Dimensions, FlatList, Platform, useColorScheme } from "react-native";
-import { useMMKVObject } from "react-native-mmkv";
+import { useMMKVNumber, useMMKVObject } from "react-native-mmkv";
 import Purchases from "react-native-purchases";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Avatar, Card, H3, H4, H5, Paragraph, Progress, ScrollView, Separator, Sheet, View, XStack, YStack } from "tamagui";
@@ -28,27 +28,32 @@ export default function HomeScreen() {
   const [openPaywall, setOpenPaywall] = useState(false);
   const [openXPHistory, setOpenXPHistory] = useState(false);
   const [xpHistory, setXPHistory] = useMMKVObject<XPHistory[]>("xp_history");
-  console.log("XP History", xpHistory);
+  const [lives, setLives] = useMMKVNumber("lives");
 
-  useEffect(() => {
-    if (currentUser?.is_subscribed === false) {
-      setTimeout(() => {
-        setOpenPaywall(true);
-      }, 2000);
-    }
-  }, [currentUser?.id, currentUser?.is_subscribed]);
+  // useEffect(() => {
+  //   if (currentUser?.is_subscribed === false) {
+  //     setTimeout(() => {
+  //       setOpenPaywall(true);
+  //     }, 2000);
+  //   }
+  // }, [currentUser?.id, currentUser?.is_subscribed]);
 
   return (
     <>
       <LinearGradient
         colors={useColorScheme() === "light" ? ["$blue10", "$blue8"] : ["$blue3", "$blue5"]}
-        borderBottomWidth={1}
-        borderBottomColor={useColorScheme() === "light" ? "$gray8" : "$gray1"}
+        borderBottomLeftRadius={35}
+        borderBottomRightRadius={35}
         start={[0.3, 1]}
         end={[0, 0]}
         padding="$5"
         paddingTop="$0"
-        paddingBottom="$4"
+        paddingBottom={20}
+        position="absolute"
+        top={0}
+        left={0}
+        right={0}
+        zIndex={100_000}
       >
         <SafeAreaView edges={["right", "left", "top"]} />
 
@@ -63,32 +68,40 @@ export default function HomeScreen() {
             </Link>
           </View>
 
-          <View width={80} height={40}>
-            <TrebleLogo />
-          </View>
+          <XStack gap="$3">
+            <XStack gap="$1.5" alignItems="center">
+              <Heart size="$1.5" color={"$red10"} fill={red.red10} />
+              <H5 color={"white"} fontWeight={600}>
+                {lives}
+              </H5>
+            </XStack>
 
-          <XStack alignItems="center" justifyContent="flex-end" gap="$2" width={"$10"} onPress={() => setOpenXPHistory(true)}>
-            <AntDesign name="star" size={24} color={yellow.yellow10} />
-            <H5 color={"white"} fontWeight={600}>
-              {currentUser?.total_xp}
-            </H5>
+            <XStack alignItems="center" justifyContent="flex-end" gap="$1.5" onPress={() => setOpenXPHistory(true)}>
+              <AntDesign name="star" size={24} color={yellow.yellow10} />
+              <H5 color={"white"} fontWeight={600}>
+                {currentUser?.total_xp}
+              </H5>
+            </XStack>
           </XStack>
         </XStack>
       </LinearGradient>
 
-      <Sheet
+      {/* <Sheet
         forceRemoveScrollEnabled={openXPHistory}
-        modal
         open={openXPHistory}
         onOpenChange={setOpenXPHistory}
-        snapPoints={["80"]}
+        snapPoints={[80]}
         snapPointsMode="percent"
         position={0}
         zIndex={100_000}
-        animation="quick"
+        // animation="quick"
         // dismissOnOverlayPress={false}
       >
-        <Sheet.Overlay animation="lazy" enterStyle={{ opacity: 0 }} exitStyle={{ opacity: 0 }} />
+        <Sheet.Overlay
+          // animation="lazy"
+          enterStyle={{ opacity: 0 }}
+          exitStyle={{ opacity: 0 }}
+        />
         <Sheet.Handle />
         <Sheet.Frame padding="$4" justifyContent="space-between" alignItems="center" space="$5">
           <YStack>
@@ -119,13 +132,20 @@ export default function HomeScreen() {
             />
           </YStack>
         </Sheet.Frame>
-      </Sheet>
-
-      <ScrollView contentContainerStyle={{ paddingBottom: 150 }} showsVerticalScrollIndicator={false}>
+      </Sheet> */}
+      <SafeAreaView edges={["right", "left", "top"]} />
+      <ScrollView contentContainerStyle={{ paddingTop: 60, paddingBottom: 150 }} showsVerticalScrollIndicator={false}>
         <XStack $sm={{ flexDirection: "column" }} padding="$3" gap="$3">
           {modules.loading
             ? [...Array(6)].map((item, index) => (
-                <Card key={index} elevate borderRadius="$8" pressStyle={{ scale: 0.95 }} animation="bouncy" height={"$10"}>
+                <Card
+                  key={index}
+                  elevate
+                  borderRadius="$8"
+                  pressStyle={{ scale: 0.95 }}
+                  // animation="bouncy"
+                  height={"$10"}
+                >
                   <Card.Background borderRadius="$8">
                     <SkeletonLoader width={"100%"} height={"100%"} backgroundColor={grayA.grayA3} />
                   </Card.Background>
@@ -134,7 +154,12 @@ export default function HomeScreen() {
             : modules.data &&
               modules.data.map((module) => (
                 <Link href={`/module-overview/${module?.id}`} asChild key={module.id}>
-                  <Card borderRadius="$8" pressStyle={{ scale: 0.95 }} animation="bouncy" backgroundColor={"$blue1"}>
+                  <Card
+                    borderRadius="$8"
+                    pressStyle={{ scale: 0.95 }}
+                    // animation="bouncy"
+                    backgroundColor={"$blue1"}
+                  >
                     <Card.Header padding="$4">
                       <XStack gap="$4" flex={1}>
                         <View position="relative">
@@ -165,7 +190,10 @@ export default function HomeScreen() {
                           </XStack>
                           {module.progress !== 0 && !module.completed && (
                             <Progress value={module.progress} backgroundColor={"$gray3"}>
-                              <Progress.Indicator animation="lazy" backgroundColor={"$blue10"} />
+                              <Progress.Indicator
+                                // animation="lazy"
+                                backgroundColor={"$blue10"}
+                              />
                             </Progress>
                           )}
                         </YStack>

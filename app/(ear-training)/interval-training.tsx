@@ -14,7 +14,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { Card, H3, Paragraph, XStack, H1, H2, YStack } from "tamagui";
 import { window } from "@/utils";
-import { TapGestureHandler } from "react-native-gesture-handler";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { AVPlaybackSource, Audio } from "expo-av";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Heart, X } from "@tamagui/lucide-icons";
@@ -51,7 +51,7 @@ const correctSFX = require("@/assets/audio/correct_sfx.mp3");
 const incorrectSFX = require("@/assets/audio/incorrect_sfx.mp3");
 
 export default function Page() {
-  const navigation = useNavigation();
+  const tap = Gesture.Tap();
   const circleWidth = PAGE_WIDTH * 0.55;
   const router = useRouter();
   const [sound, setSound] = useState<Audio.Sound>();
@@ -319,7 +319,8 @@ export default function Page() {
         </XStack>
       </XStack>
       <YStack justifyContent="center" alignItems="center" marginTop="$8">
-        <TapGestureHandler onActivated={handlePressPlay}>
+        {/* <TapGestureHandler onActivated={handlePressPlay}> */}
+        <GestureDetector gesture={tap}>
           <Animated.View style={[{ width: circleWidth, height: circleWidth }, animatedStyleRotate1]}>
             <Canvas style={{ flex: 1 }}>
               <Circle cx={circleWidth / 2} cy={circleWidth / 2} r={circleWidth / 2}>
@@ -327,7 +328,7 @@ export default function Page() {
               </Circle>
             </Canvas>
           </Animated.View>
-        </TapGestureHandler>
+        </GestureDetector>
 
         <Animated.View style={[{ width: circleWidth, height: circleWidth }, animatedStyleRotate2]}>
           <Canvas style={[{ flex: 1 }]}>

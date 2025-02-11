@@ -1,8 +1,7 @@
-import React, { useRef, useState, useContext, useEffect } from "react";
+import React, { useRef, useState, useContext } from "react";
 import { FlatList, SafeAreaView, useWindowDimensions } from "react-native";
 import SheetMusic from "@/components/sheet-music";
-import { Card, H1, H2, H3, Paragraph, View } from "tamagui";
-import { Stack } from "expo-router";
+import { Card, H3, Paragraph, View } from "tamagui";
 import AnswerDrawer from "@/components/AnswerDrawer";
 import { QuizContext } from "@/context/quiz-context";
 
@@ -11,30 +10,29 @@ export default function Page() {
   const { height, width } = useWindowDimensions();
   const [selectedAnswer, setSelectedAnswer] = useState<number>();
   const [answerIsCorrect, setAnswerIsCorrect] = useState<boolean>();
-  // const question = questions[currentQuestionIndex];
-  const question = useRef(questions[currentQuestionIndex]);
+  const question = useRef(questions && questions[currentQuestionIndex]);
 
   function validate() {
-    setAnswerIsCorrect(selectedAnswer === question.current.answer_id);
-    if (selectedAnswer === question.current.answer_id) return true;
+    setAnswerIsCorrect(selectedAnswer === question.current?.answer_id?.[0]);
+    if (selectedAnswer === question.current?.answer_id?.[0]) return true;
     else return false;
   }
 
   return (
     <>
       <SafeAreaView />
-      {question.current.question && (
+      {question.current?.question && (
         <View paddingHorizontal="$4" style={{ width: "100%", justifyContent: "center" }} paddingBottom="$4">
           <H3 fontWeight={600}>Question:</H3>
-          <Paragraph>{question.current.question}</Paragraph>
+          <Paragraph>{question.current?.question}</Paragraph>
         </View>
       )}
       <View flex={1} justifyContent="center" alignItems="center">
-        {question.current.sheet_music && <SheetMusic maxWidth={width * 0.5} data={question.current.sheet_music} />}
+        {question.current?.sheet_music && <SheetMusic maxWidth={width * 0.5} data={question.current.sheet_music} />}
       </View>
 
       <View paddingHorizontal="$4" marginTop="$4">
-        {question.current.question_options && (
+        {question.current?.question_options && (
           <FlatList
             data={question.current.question_options}
             columnWrapperStyle={{ gap: 10 }}
@@ -68,7 +66,7 @@ export default function Page() {
           />
         )}
       </View>
-      <AnswerDrawer validateAnswer={validate} explanation={question.current.answer_explanation || ""} enabled />
+      <AnswerDrawer validateAnswer={validate} explanation={question.current?.answer_explanation || ""} enabled />
     </>
   );
 }

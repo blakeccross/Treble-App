@@ -86,6 +86,13 @@ const games = [
     title: "Nashville Roundup",
     description: `Match the Nashville numbers`,
     backgroundImage: require("@/assets/images/hassaan-here-bKfkhVRAJTQ-unsplash.jpg"),
+    route: "/nashville-round-up",
+    disabled: false,
+  },
+  {
+    title: "Chord Detective",
+    description: `Identify the chord`,
+    backgroundImage: require("@/assets/images/hassaan-here-bKfkhVRAJTQ-unsplash.jpg"),
     route: "/name-that-chord",
     disabled: true,
   },

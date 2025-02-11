@@ -2,7 +2,7 @@ import { Profile } from "@/types";
 import { supabase } from "@/utils/supabase";
 import { router, usePathname } from "expo-router";
 import { createContext, useEffect, useState } from "react";
-import { MMKV, useMMKVObject } from "react-native-mmkv";
+import { MMKV, useMMKVNumber, useMMKVObject } from "react-native-mmkv";
 import Purchases from "react-native-purchases";
 import Toast from "react-native-toast-message";
 
@@ -11,24 +11,41 @@ type UserContextProps = {
   handleUpdateUserInfo: (info: Partial<Profile>) => Promise<void>;
   getUser: () => Promise<void>;
   handleSignOut: () => void;
+  lives?: number;
+  setLives: (lives: number) => void;
 };
 
 export const UserContext = createContext<UserContextProps>({} as UserContextProps);
 
 export default function ModuleProvider({ children }: { children: JSX.Element }) {
   const [currentUser, setCurrentUser] = useMMKVObject<Profile>("user");
+  const [lives, setLives] = useMMKVNumber("lives");
   const pathname = usePathname();
 
   useEffect(() => {
     getUser();
   }, []);
 
+  useEffect(() => {
+    if (!lives) {
+      setLives(5);
+    } else if (lives < 5) {
+      const interval = setInterval(() => {
+        setLives(5);
+      }, 3600000); // 1 hour in milliseconds
+
+      return () => clearInterval(interval);
+    }
+  }, [lives]);
+
   async function getUser() {
     const { data, error } = await supabase.auth.getSession();
     if (data.session) {
       await handleGetUserData(data.session.user.id);
-      router.dismissAll();
-      router.push("/(tabs)/(home)/");
+      if (router.canDismiss()) {
+        router.dismissAll();
+      }
+      router.push("/(tabs)/(home)");
     } else {
       setCurrentUser(undefined);
       if (pathname !== "/welcome" && pathname !== "/") {
@@ -49,7 +66,7 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
           console.log("USER SIGNED IN");
           await handleGetUserData(session.user.id);
           router.dismissAll();
-          router.push("/(tabs)/(home)/");
+          router.push("/home");
         } else if (session) {
           console.log(event);
         }
@@ -109,5 +126,7 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
 
   // if (!currentUser) throw Error();
 
-  return <UserContext.Provider value={{ currentUser, handleUpdateUserInfo, getUser, handleSignOut }}>{children}</UserContext.Provider>;
+  return (
+    <UserContext.Provider value={{ currentUser, handleUpdateUserInfo, getUser, handleSignOut, lives, setLives }}>{children}</UserContext.Provider>
+  );
 }

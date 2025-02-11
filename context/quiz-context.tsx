@@ -4,7 +4,7 @@ import { ModuleContext } from "./module-context";
 import { Module, Section, SectionItem, XPHistory } from "@/types";
 import { UserContext } from "./user-context";
 import moment from "moment";
-import { useMMKVObject } from "react-native-mmkv";
+import { useMMKVNumber, useMMKVObject } from "react-native-mmkv";
 
 type Quiz = {
   currentQuestionIndex: number;
@@ -12,8 +12,8 @@ type Quiz = {
   section: Section;
   currentModule: Module;
   nextQuestion: () => void;
-  lives: number;
-  setLives: Dispatch<SetStateAction<number>>;
+  lives?: number;
+  setLives: (lives: number) => void;
 };
 
 export const QuizContext = createContext<Quiz>({} as Quiz);
@@ -21,7 +21,7 @@ export const QuizContext = createContext<Quiz>({} as Quiz);
 export default function QuizProvider({ children }: { children: JSX.Element[] }) {
   const router = useRouter();
   const { module_id, section_id } = useLocalSearchParams<{ module_id: string; section_id: string }>();
-  const { currentUser, handleUpdateUserInfo } = useContext(UserContext);
+  const { currentUser, handleUpdateUserInfo, lives, setLives } = useContext(UserContext);
   const { modules } = useContext(ModuleContext);
   const [xpHistory, setXPHistory] = useMMKVObject<XPHistory[]>("xp_history");
 
@@ -31,12 +31,8 @@ export default function QuizProvider({ children }: { children: JSX.Element[] }) 
   const currentSection = sections && (sections.find((item) => item.id === +section_id) as Section);
   const currentSectionQuestions = currentSection?.section_item;
 
-  const sectionIndexInModule = currentModule?.section.map((item) => item.id).indexOf(currentSection?.id || 0) as number;
-
-  const [lives, setLives] = useState(0);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
-  const [sortedQuestions, setSortedQuestions] = useState<SectionItem[]>([]); // New state for sorted questions
-  // const currentQuestionIndex = useRef<number>(0);
+  const [sortedQuestions, setSortedQuestions] = useState<SectionItem[]>([]);
 
   if (!currentSection || !currentModule) {
     router.navigate("/(tabs)");
@@ -54,12 +50,8 @@ export default function QuizProvider({ children }: { children: JSX.Element[] }) 
     }
   }, [currentSectionQuestions]); // Update when currentSectionQuestions changes
 
-  useEffect(() => {
-    setLives(3);
-  }, []);
-
   function nextQuestion() {
-    if (lives < 1) {
+    if (lives && lives < 1) {
       router.push(`/out-of-lives`);
     } else {
       if (currentSection && currentQuestionIndex < currentSection.section_item.length - 1) {
@@ -90,14 +82,6 @@ export default function QuizProvider({ children }: { children: JSX.Element[] }) 
     }
   }
 
-  function sortQuestions(questions: SectionItem[]) {
-    return questions.sort((a, b) => {
-      if (a.type === "reading" && b.type !== "reading") return -1;
-      if (a.type !== "reading" && b.type === "reading") return 1;
-      return Math.random() - 0.5; // Randomize the rest
-    });
-  }
-
   async function finishedSection(moduleComplete: boolean) {
     const completedSections = Array.from(new Set([...(currentUser?.completed_sections || []), currentSection?.id])).filter(
       (id): id is number => id !== undefined
@@ -107,7 +91,7 @@ export default function QuizProvider({ children }: { children: JSX.Element[] }) 
       (id): id is number => id !== undefined
     );
 
-    let XPGained = currentSection?.section_item.length || 0 - (3 - lives);
+    let XPGained = currentSection?.section_item.length || 0 - (3 - (lives || 0));
 
     const updates: Partial<typeof currentUser> = {
       completed_sections: completedSections,
@@ -130,7 +114,6 @@ export default function QuizProvider({ children }: { children: JSX.Element[] }) 
       { title: currentModule?.title || "", description: currentSection?.title || "", xp_earned: XPGained, date: new Date().toString() },
     ]);
 
-    setLives(3);
     setCurrentQuestionIndex(0);
     // currentQuestionIndex.current = 0;
 

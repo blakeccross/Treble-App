@@ -30,7 +30,7 @@ const headingFont = createInterFont();
 const bodyFont = createInterFont();
 
 const config = createTamagui({
-  animations,
+  // animations,
   defaultTheme: "dark",
   shouldAddPrefersColorThemes: false,
   themeClassNameOnRoot: false,
@@ -61,7 +61,7 @@ const config = createTamagui({
       // placeholderColor: "#424242",
     },
     white_button: {
-      background: '#fff',
+      background: "#fff",
       fontWeight: 600,
       // backgroundFocus: "#424242",
       // backgroundHover: "#282828",

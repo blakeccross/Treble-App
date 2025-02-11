@@ -1,0 +1,17 @@
+<html>
+  <script type="module">
+    import { SplendidGrandPiano } from "https://unpkg.com/smplr/dist/index.mjs"; // needs to be a URL
+    const context = new AudioContext(); // Create the audio context
+    // const piano = new SplendidGrandPiano(context);
+    const piano = new piano(context);
+
+    async function playNote(notes) {
+      const now = context.currentTime;
+      await context.resume(); // Enable audio context after a user interaction
+      notes.forEach((note, i) => {
+        piano.start({ ...note, time: now + note.time });
+      });
+    }
+    window.playNote = playNote;
+  </script>
+</html>

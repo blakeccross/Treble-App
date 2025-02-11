@@ -1,6 +1,7 @@
 {
   "cli": {
-    "version": ">= 10.2.2"
+    "version": ">= 13.4.2",
+    "appVersionSource": "remote"
   },
   "build": {
     "development-simulator": {

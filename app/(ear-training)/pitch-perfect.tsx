@@ -4,7 +4,7 @@ import { View, Text, SafeAreaView, StyleSheet, FlatList, Pressable } from "react
 import Animated, { useSharedValue, useAnimatedStyle, withSpring, withDelay } from "react-native-reanimated";
 import { Card, H3, Paragraph, Circle, XStack, H1, H2 } from "tamagui";
 import { window } from "@/utils";
-import { TapGestureHandler } from "react-native-gesture-handler";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { AVPlaybackSource, Audio } from "expo-av";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Heart, X, FileLineChart, BarChart, BarChart2 } from "@tamagui/lucide-icons";
@@ -37,7 +37,8 @@ const noteToFile = {
 const correctSFX = require("@/assets/audio/correct_sfx.mp3");
 const incorrectSFX = require("@/assets/audio/incorrect_sfx.mp3");
 
-export default function Page() {
+export default function PitchPerfect() {
+  const tap = Gesture.Tap();
   const [gameHasStarted, setGameHasStarted] = useState(false);
   const [sound, setSound] = useState<Audio.Sound>();
   const [currentScore, setCurrentScore] = useState<number>(0);
@@ -365,7 +366,8 @@ export default function Page() {
           <Animated.View style={[animatedStyle3, { position: "absolute" }]}>
             <Circle size={PAGE_WIDTH * 0.55} backgroundColor={`$${colorSceme}7Dark`} elevation="$0.25" />
           </Animated.View>
-          <TapGestureHandler onActivated={handlePressPlay} enabled={playEnabled}>
+          {/* <TapGestureHandler onActivated={handlePressPlay} enabled={playEnabled}> */}
+          <GestureDetector gesture={tap}>
             <Animated.View style={[animatedStyle4, { position: "absolute" }]}>
               <Circle size={PAGE_WIDTH * 0.4} elevation="$0.25" pressStyle={{ scale: 0.95 }} animation="bouncy" overflow="hidden">
                 <LinearGradient
@@ -381,7 +383,7 @@ export default function Page() {
                 </LinearGradient>
               </Circle>
             </Animated.View>
-          </TapGestureHandler>
+          </GestureDetector>
         </View>
       </View>
       <Animated.View style={[{ padding: 10 }, animatedStyleFlatList]}>

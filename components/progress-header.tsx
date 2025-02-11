@@ -1,3 +1,4 @@
+import React from "react";
 import { QuizContext } from "@/context/quiz-context";
 import { Heart, X } from "@tamagui/lucide-icons";
 import { red } from "@tamagui/themes";
@@ -11,7 +12,7 @@ export default function ProgressHeader() {
   const { currentQuestionIndex, questions, section, currentModule, lives } = useContext(QuizContext);
   const currentRoute = usePathname();
   const [open, setOpen] = useState(false);
-  let quizPercentage = (currentQuestionIndex / questions?.length) * 100;
+  let quizPercentage = (currentQuestionIndex / (questions?.length || 0)) * 100;
 
   return (
     <>
