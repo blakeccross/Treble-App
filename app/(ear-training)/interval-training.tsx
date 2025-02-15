@@ -1,30 +1,24 @@
-import Ionicons from "@expo/vector-icons/Ionicons";
-import { blue, blueDark, color, colorTokens, red } from "@tamagui/themes";
-import { View, Text, SafeAreaView, StyleSheet, FlatList, Pressable } from "react-native";
+import { window } from "@/utils";
+import { Canvas, Circle, SweepGradient, vec } from "@shopify/react-native-skia";
+import { Heart, X } from "@tamagui/lucide-icons";
+import { blueDark, red } from "@tamagui/themes";
+import { AVPlaybackSource, Audio } from "expo-av";
+import * as Haptics from "expo-haptics";
+import { useFocusEffect, useRouter } from "expo-router";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { FlatList, Pressable, SafeAreaView, View } from "react-native";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
-  useSharedValue,
+  Easing,
+  ReduceMotion,
   useAnimatedStyle,
-  withSpring,
+  useSharedValue,
   withDelay,
   withRepeat,
+  withSpring,
   withTiming,
-  ReduceMotion,
-  Easing,
-  useAnimatedProps,
 } from "react-native-reanimated";
-import { Card, H3, Paragraph, XStack, H1, H2, YStack } from "tamagui";
-import { window } from "@/utils";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
-import { AVPlaybackSource, Audio } from "expo-av";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { Heart, X } from "@tamagui/lucide-icons";
-import { LinearGradient } from "tamagui/linear-gradient";
-import { useFocusEffect, useNavigation, useRouter } from "expo-router";
-import * as Haptics from "expo-haptics";
-import GradientCircle from "@/components/gradient-circle";
-import Gradient from "@/components/conic-gradient";
-import { Canvas, Circle, SweepGradient, vec } from "@shopify/react-native-skia";
-import { transform } from "@babel/core";
+import { Card, H1, H2, Paragraph, XStack, YStack } from "tamagui";
 
 const PAGE_WIDTH = window.width;
 const colorOptions = ["blue", "orange", "green", "red", "yellow", "purple", "pink"];

@@ -1,23 +1,22 @@
-import Ionicons from "@expo/vector-icons/Ionicons";
-import { color, colorTokens, red } from "@tamagui/themes";
-import { View, Text, SafeAreaView, StyleSheet, FlatList, Pressable } from "react-native";
-import Animated, { useSharedValue, useAnimatedStyle, withSpring, withDelay } from "react-native-reanimated";
-import { Card, H3, Paragraph, Circle, XStack, H1, H2, Square } from "tamagui";
-import { window } from "@/utils";
-import { TapGestureHandler } from "react-native-gesture-handler";
-import { AVPlaybackSource, Audio } from "expo-av";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { Heart, X } from "@tamagui/lucide-icons";
-import { LinearGradient } from "tamagui/linear-gradient";
-import { useFocusEffect, useNavigation, useRouter } from "expo-router";
-import * as Haptics from "expo-haptics";
-import GradientCircle from "@/components/gradient-circle";
 import SquareProgress from "@/components/aquare-progress";
+import usePlayMidi from "@/hooks/usePlayMidi";
+import { PianoKey } from "@/types/pianoKeys";
+import { window } from "@/utils";
+import { Heart, X } from "@tamagui/lucide-icons";
+import { red } from "@tamagui/themes";
+import { AVPlaybackSource, Audio } from "expo-av";
+import * as Haptics from "expo-haptics";
+import { useFocusEffect, useNavigation, useRouter } from "expo-router";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { FlatList, Pressable, SafeAreaView, View } from "react-native";
+import { TapGestureHandler } from "react-native-gesture-handler";
+import Animated, { useAnimatedStyle, useSharedValue, withDelay, withSpring } from "react-native-reanimated";
+import { Card, H1, H2, H3, Paragraph, Square, XStack } from "tamagui";
+import { LinearGradient } from "tamagui/linear-gradient";
 
 const PAGE_WIDTH = window.width;
 const colorOptions = ["blue", "orange", "green", "red", "yellow", "purple", "pink"];
-const notesHard = ["c3", "cs3", "d3", "ds3", "e3", "f3", "fs3", "g3", "gs3", "a3", "as3", "b3"];
-const notes = ["c", "cs", "d", "ds", "e", "f", "fs", "g", "gs", "a", "as", "b"];
+const notes = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
 type ChordType = "major" | "minor" | "major7" | "minor7" | "dim";
 const chordTypes: { type: ChordType; intervals: number[] }[] = [
   { type: "major", intervals: [0, 4, 7] }, // Root, Major Third, Perfect Fifth
@@ -35,20 +34,20 @@ const availableAnswers = [
 ];
 
 // Static imports for audio files
-const noteToFile = {
-  c3: require("@/assets/audio/piano_c3.mp3"),
-  cs3: require("@/assets/audio/piano_cs3.mp3"),
-  d3: require("@/assets/audio/piano_d3.mp3"),
-  ds3: require("@/assets/audio/piano_ds3.mp3"),
-  e3: require("@/assets/audio/piano_e3.mp3"),
-  f3: require("@/assets/audio/piano_f3.mp3"),
-  fs3: require("@/assets/audio/piano_fs3.mp3"),
-  g3: require("@/assets/audio/piano_g3.mp3"),
-  gs3: require("@/assets/audio/piano_gs3.mp3"),
-  a3: require("@/assets/audio/piano_a3.mp3"),
-  as3: require("@/assets/audio/piano_as3.mp3"),
-  b3: require("@/assets/audio/piano_b3.mp3"),
-};
+// const noteToFile = {
+//   c3: require("@/assets/audio/piano_c3.mp3"),
+//   cs3: require("@/assets/audio/piano_cs3.mp3"),
+//   d3: require("@/assets/audio/piano_d3.mp3"),
+//   ds3: require("@/assets/audio/piano_ds3.mp3"),
+//   e3: require("@/assets/audio/piano_e3.mp3"),
+//   f3: require("@/assets/audio/piano_f3.mp3"),
+//   fs3: require("@/assets/audio/piano_fs3.mp3"),
+//   g3: require("@/assets/audio/piano_g3.mp3"),
+//   gs3: require("@/assets/audio/piano_gs3.mp3"),
+//   a3: require("@/assets/audio/piano_a3.mp3"),
+//   as3: require("@/assets/audio/piano_as3.mp3"),
+//   b3: require("@/assets/audio/piano_b3.mp3"),
+// };
 
 const correctSFX = require("@/assets/audio/correct_sfx.mp3");
 const incorrectSFX = require("@/assets/audio/incorrect_sfx.mp3");
@@ -64,6 +63,8 @@ export default function Page() {
   const [answerIsCorrect, setAnswerIsCorrect] = useState<boolean>();
   const [totalTime, setTotalTime] = useState<number>(15);
   const [colorSceme, setColorSceme] = useState<string>("blue");
+
+  const { playSong, stopSong } = usePlayMidi();
   // const [availableAnswers, setAvailableAnswers] = useState([
   //   { value: "c4", option_text: "C" },
   //   { value: "d4", option_text: "D" },
@@ -169,7 +170,7 @@ export default function Page() {
   }
 
   function newQuestion() {
-    const randomNote = notes[Math.floor(Math.random() * notes.length)] as keyof typeof noteToFile;
+    const randomNote = notes[Math.floor(Math.random() * notes.length)];
     const randomType = chordTypes[Math.floor(Math.random() * chordTypes.length)].type as ChordType;
     const randomChord = getChordNotes(randomNote, randomType);
     console.log(randomChord, randomType);
@@ -205,19 +206,8 @@ export default function Page() {
   }
 
   async function playAudio() {
-    for (const note of correctAnswer.current?.chord) {
-      const noteFile = noteToFile[note as keyof typeof noteToFile];
-      if (noteFile) {
-        await playSFX(noteFile);
-      }
-    }
-    // const { sound } = await Audio.Sound.createAsync(noteToFile[correctAnswer.current[0] as keyof typeof noteToFile]);
-    // await Audio.setAudioModeAsync({
-    //   playsInSilentModeIOS: true,
-    // });
-
-    // setSound(sound);
-    // await sound.playAsync();
+    const chord = correctAnswer.current?.chord.map((note) => ({ note: note as PianoKey, time: 0, duration: 5 }));
+    playSong(chord, 7);
   }
 
   function handlePressPlay() {
@@ -375,7 +365,7 @@ export default function Page() {
                 // backgroundColor="$blue3Dark"
                 elevation="$0.25"
                 pressStyle={{ scale: 0.95 }}
-                animation="bouncy"
+                // animation="bouncy"
                 overflow="hidden"
               >
                 <LinearGradient
@@ -408,7 +398,7 @@ export default function Page() {
               disabled={!isRunning}
               borderRadius="$8"
               pressStyle={{ scale: 0.95 }}
-              animation="bouncy"
+              // animation="bouncy"
               flex={1}
               onPress={() => validateAnswer(item.value)}
               borderWidth={"$1"}

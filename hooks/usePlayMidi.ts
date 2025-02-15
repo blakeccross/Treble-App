@@ -1,12 +1,8 @@
-import { AudioBuffer, AudioContext, GainNode } from "react-native-audio-api";
-import * as FileSystem from "expo-file-system";
-import { Image } from "react-native";
-import { act, useEffect, useRef, useState } from "react";
-import { Asset, useAssets } from "expo-asset";
 import { PianoKey } from "@/types/pianoKeys";
-import { delay } from "@/utils/delay";
-
-type PR<V> = Partial<Record<PianoKey, V>>;
+import { useAssets } from "expo-asset";
+import * as FileSystem from "expo-file-system";
+import { useEffect, useRef, useState } from "react";
+import { AudioBuffer, AudioContext } from "react-native-audio-api";
 
 export default function usePlayMidi() {
   const [assets] = useAssets([
@@ -143,7 +139,7 @@ export default function usePlayMidi() {
     }
   }
 
-  const onKeyPressIn = (which: PianoKey, time: number, duration?: number, volume: number) => {
+  const onKeyPressIn = (which: PianoKey, time: number, duration?: number, volume: number = 1) => {
     if (!buffersLoaded) {
       console.warn("Buffers not fully loaded yet");
       return;

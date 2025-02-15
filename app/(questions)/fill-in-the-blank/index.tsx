@@ -1,12 +1,12 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { StyleSheet, SafeAreaView, Animated } from "react-native";
+import { SafeAreaView } from "react-native";
 
-import WordList from "./components/word-list";
-import Word from "./components/word";
-import { Button, H1, H2, H3, Paragraph, View, XStack, YStack } from "tamagui";
 import AnswerDrawer from "@/components/AnswerDrawer";
 import { QuizContext } from "@/context/quiz-context";
 import { SectionItem } from "@/types";
+import { Paragraph, View, YStack } from "tamagui";
+import Word from "./components/word";
+import WordList from "./components/word-list";
 
 const data = {
   question: "Place the notes in the correct order",

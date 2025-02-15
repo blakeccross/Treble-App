@@ -1,21 +1,7 @@
-import DoubleFlat from "@/assets/icons/doubleFlat";
 import DoubleSharp from "@/assets/icons/doubleSharp";
-import EighthNote from "@/assets/icons/eighthNote";
-import Flat from "@/assets/icons/flat";
-import HalfNote from "@/assets/icons/halfNote";
-import QuarterNote from "@/assets/icons/quarterNote";
-import Sharp from "@/assets/icons/sharp";
-import SixteenthNote from "@/assets/icons/sixteenthNote";
-import WholeNote from "@/assets/icons/wholeNote";
-import React, { useState, useEffect } from "react";
-import { View, StyleSheet, Image, Modal, TouchableOpacity, Dimensions } from "react-native";
+import React, { useEffect, useState } from "react";
+import { Dimensions, Image, Modal, Text as RNText, StyleSheet, TouchableOpacity, View } from "react-native";
 import { useColorScheme } from "./useColorScheme";
-import { Text as RNText } from "react-native";
-import Natural from "@/assets/icons/natural";
-import Breve from "@/assets/icons/breve";
-import ThirtySecond from "@/assets/icons/thirtySecond";
-import { Paragraph } from "tamagui";
-import SixtySecondNote from "@/assets/icons/sixtySecondNote";
 
 // Add window dimensions
 const windowWidth = Dimensions.get("window").width;
