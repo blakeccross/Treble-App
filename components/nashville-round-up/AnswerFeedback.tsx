@@ -9,9 +9,6 @@ export default function AnswerFeedback({ isCorrect }: { isCorrect: boolean | und
       <Animated.View
         style={{
           backgroundColor: "#EFBF04",
-          justifyContent: "center",
-          alignItems: "center",
-          marginTop: window.height * 0.1,
         }}
         entering={SlideInLeft.duration(500)}
         exiting={FadeOut.duration(1000)}
@@ -23,7 +20,8 @@ export default function AnswerFeedback({ isCorrect }: { isCorrect: boolean | und
             textShadowRadius={10}
             textShadowOffset={{ width: 2, height: 2 }}
             fontWeight={800}
-            themeInverse
+            color={"white"}
+            // themeInverse
           >
             Correct!
           </H1>
@@ -36,7 +34,6 @@ export default function AnswerFeedback({ isCorrect }: { isCorrect: boolean | und
         style={{
           justifyContent: "center",
           alignItems: "center",
-          marginTop: window.height * 0.1,
         }}
         entering={PinwheelIn.duration(500)}
         exiting={FadeOut.duration(1000)}

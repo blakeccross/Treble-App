@@ -18,18 +18,23 @@ import { Leaderboard } from "@/types";
 
 export default function LeaderBoard() {
   const { currentUser } = useContext(UserContext);
-  const { gameName } = useLocalSearchParams();
+  const { gameName } = useLocalSearchParams<{ gameName: string }>();
   const [leaderboard, setLeaderboard] = useState<Leaderboard[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     async function getLeaderboardData() {
+      setIsLoading(true);
       let { data: leaderboardRes, error } = await supabase
         .from("leaderboard")
         .select("*, profile(full_name, avatar_url)")
-        .order(String(gameName), { ascending: false });
+        .not(gameName, "is", null)
+        .order(gameName, { ascending: false })
+        .limit(100);
       if (leaderboardRes) {
-        setLeaderboard(leaderboardRes);
+        console.log(leaderboardRes);
+        const leaderboardFormatted = leaderboardRes.filter((item) => item.profile.full_name);
+        setLeaderboard(leaderboardFormatted);
       }
       setIsLoading(false);
     }
@@ -37,8 +42,8 @@ export default function LeaderBoard() {
   }, []);
 
   return (
-    <View backgroundColor={"$background"}>
-      <SafeAreaView style={{ marginBottom: 200, height: "100%" }}>
+    <View backgroundColor={"$background"} flex={1}>
+      <SafeAreaView style={{ marginBottom: 200, flex: 1 }}>
         <XStack padding="$3" alignItems="center" justifyContent="space-between">
           <Pressable onPress={() => router.dismiss()}>
             <X size="$3" />
@@ -51,8 +56,8 @@ export default function LeaderBoard() {
         ) : (
           <FlatList
             data={leaderboard}
-            keyExtractor={(item) => String(item.id)}
-            style={{ height: "100%" }}
+            keyExtractor={(item) => String(item.created_at)}
+            style={{ flex: 1 }}
             renderItem={({ item }) => (
               <>
                 <XStack
@@ -69,7 +74,7 @@ export default function LeaderBoard() {
                     </Avatar>
                     <H4 fontWeight={600}>{item.profile.full_name}</H4>
                   </XStack>
-                  <H5 fontWeight={600}>{item.pitch_perfect}</H5>
+                  <H5 fontWeight={600}>{item[gameName as keyof Leaderboard]}</H5>
                 </XStack>
                 <Separator />
               </>

@@ -1,7 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
-import { Dimensions, FlatList, Platform, useColorScheme } from "react-native";
-import Paywall from "@/app/paywall";
-import TrebleLogo from "@/assets/trebleLogo";
+import Paywall from "@/components/paywall.modal";
 import { SkeletonLoader } from "@/components/SkeletonLoader";
 import { ModuleContext } from "@/context/module-context";
 import { UserContext } from "@/context/user-context";
@@ -12,11 +9,11 @@ import { ChevronRight, Heart, StarFull } from "@tamagui/lucide-icons";
 import { blue, grayA, red, yellow, yellowA } from "@tamagui/themes";
 import { Image } from "expo-image";
 import { Link } from "expo-router";
-import moment from "moment";
+import React, { useContext, useState } from "react";
+import { Dimensions, useColorScheme } from "react-native";
 import { useMMKVNumber, useMMKVObject } from "react-native-mmkv";
-import Purchases from "react-native-purchases";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Avatar, Card, H3, H4, H5, Paragraph, Progress, ScrollView, Separator, Sheet, View, XStack, YStack } from "tamagui";
+import { Avatar, Card, H3, H5, Paragraph, Progress, ScrollView, View, XStack, YStack } from "tamagui";
 import { LinearGradient } from "tamagui/linear-gradient";
 
 export default function HomeScreen() {
@@ -136,7 +133,7 @@ export default function HomeScreen() {
       <SafeAreaView edges={["right", "left", "top"]} />
       <ScrollView contentContainerStyle={{ paddingTop: 60, paddingBottom: 150 }} showsVerticalScrollIndicator={false}>
         <XStack $sm={{ flexDirection: "column" }} padding="$3" gap="$3">
-          {modules.loading
+          {modules && modules.loading
             ? [...Array(6)].map((item, index) => (
                 <Card
                   key={index}
@@ -151,7 +148,8 @@ export default function HomeScreen() {
                   </Card.Background>
                 </Card>
               ))
-            : modules.data &&
+            : modules &&
+              modules.data &&
               modules.data.map((module) => (
                 <Link href={`/module-overview/${module?.id}`} asChild key={module.id}>
                   <Card

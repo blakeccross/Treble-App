@@ -35,7 +35,10 @@ export default function ProgressHeader() {
         </XStack>
         <XStack>
           <Progress value={quizPercentage} flex={1} backgroundColor={"$gray1"}>
-            <Progress.Indicator animation="bouncy" backgroundColor={"$blue10"} />
+            <Progress.Indicator
+              // animation="bouncy"
+              backgroundColor={"$blue10"}
+            />
           </Progress>
         </XStack>
       </YStack>
@@ -49,9 +52,13 @@ export default function ProgressHeader() {
         snapPointsMode={"constant"}
         dismissOnSnapToBottom
         zIndex={100_000}
-        animation={"quick"}
+        // animation={"quick"}
       >
-        <Sheet.Overlay animation="lazy" enterStyle={{ opacity: 0 }} exitStyle={{ opacity: 0 }} />
+        <Sheet.Overlay
+          // animation="lazy"
+          enterStyle={{ opacity: 0 }}
+          exitStyle={{ opacity: 0 }}
+        />
         <Sheet.Handle />
         <Sheet.Frame padding="$4" backgroundColor={"$blue10"}>
           <YStack flex={1} justifyContent="center" alignItems="center" space="$5">

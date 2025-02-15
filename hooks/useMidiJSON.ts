@@ -1,8 +1,9 @@
 import { Midi } from "@tonejs/midi";
 
 export const useMidiJSON = async (pathToMidiFile: string) => {
+  console.log("pathToMidiFile", pathToMidiFile);
   // load a midi file in the browser
-  const midi = await Midi.fromUrl("https://bitmidi.com/uploads/85263.mid");
+  const midi = await Midi.fromUrl(pathToMidiFile);
 
   //the file name decoded from the first track
   const name = midi.name;

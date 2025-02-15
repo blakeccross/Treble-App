@@ -51,7 +51,6 @@ const correctSFX = require("@/assets/audio/correct_sfx.mp3");
 const incorrectSFX = require("@/assets/audio/incorrect_sfx.mp3");
 
 export default function Page() {
-  const tap = Gesture.Tap();
   const circleWidth = PAGE_WIDTH * 0.55;
   const router = useRouter();
   const [sound, setSound] = useState<Audio.Sound>();
@@ -304,12 +303,14 @@ export default function Page() {
     springOut();
   }
 
+  const tapGesture = Gesture.Tap().onTouchesUp(handlePressPlay).runOnJS(true);
+
   return (
     <View style={{ flex: 1 }}>
       <SafeAreaView style={{ flex: 0 }} />
 
       <XStack justifyContent="space-between" alignItems="center" paddingHorizontal="$4">
-        <Pressable onPress={() => router.navigate("/ear-training")}>
+        <Pressable onPress={() => router.back()}>
           <X size="$3" />
         </Pressable>
         <H1 fontWeight={600}>{currentScore}</H1>
@@ -320,7 +321,7 @@ export default function Page() {
       </XStack>
       <YStack justifyContent="center" alignItems="center" marginTop="$8">
         {/* <TapGestureHandler onActivated={handlePressPlay}> */}
-        <GestureDetector gesture={tap}>
+        <GestureDetector gesture={tapGesture}>
           <Animated.View style={[{ width: circleWidth, height: circleWidth }, animatedStyleRotate1]}>
             <Canvas style={{ flex: 1 }}>
               <Circle cx={circleWidth / 2} cy={circleWidth / 2} r={circleWidth / 2}>
@@ -353,7 +354,7 @@ export default function Page() {
               disabled={!isRunning}
               borderRadius="$8"
               pressStyle={{ scale: 0.95 }}
-              animation="bouncy"
+              // animation="bouncy"
               flex={1}
               onPress={() => validateAnswer(item.value)}
               borderWidth={"$1"}

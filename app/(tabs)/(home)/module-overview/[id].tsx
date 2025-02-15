@@ -8,7 +8,7 @@ import { ModuleContext } from "@/context/module-context";
 import { UserContext } from "@/context/user-context";
 import { window } from "@/utils";
 import { H4, Paragraph, ScrollView, View, XStack, YStack } from "tamagui";
-import Paywall from "@/app/paywall";
+import Paywall from "@/components/paywall.modal";
 
 const PAGE_WIDTH = window.width;
 const PAGE_HEIGHT = window.height;

@@ -1,8 +1,9 @@
 import { Profile } from "@/types";
 import { supabase } from "@/utils/supabase";
 import { router, usePathname } from "expo-router";
-import { createContext, useEffect, useState } from "react";
-import { MMKV, useMMKVNumber, useMMKVObject } from "react-native-mmkv";
+import moment from "moment";
+import { createContext, useContext, useEffect } from "react";
+import { useMMKVNumber, useMMKVObject, useMMKVString } from "react-native-mmkv";
 import Purchases from "react-native-purchases";
 import Toast from "react-native-toast-message";
 
@@ -13,6 +14,8 @@ type UserContextProps = {
   handleSignOut: () => void;
   lives?: number;
   setLives: (lives: number) => void;
+  updatedLives: (value: number) => void;
+  livesRefreshTime?: string;
 };
 
 export const UserContext = createContext<UserContextProps>({} as UserContextProps);
@@ -20,23 +23,29 @@ export const UserContext = createContext<UserContextProps>({} as UserContextProp
 export default function ModuleProvider({ children }: { children: JSX.Element }) {
   const [currentUser, setCurrentUser] = useMMKVObject<Profile>("user");
   const [lives, setLives] = useMMKVNumber("lives");
+  const [livesRefreshTime, setLivesRefreshTime] = useMMKVString("livesRefreshTime");
   const pathname = usePathname();
 
   useEffect(() => {
+    setLives(5);
     getUser();
   }, []);
 
   useEffect(() => {
-    if (!lives) {
+    if (lives === undefined) {
       setLives(5);
-    } else if (lives < 5) {
+    } else if (lives < 5 || (livesRefreshTime && moment().isAfter(moment(livesRefreshTime)))) {
+      setLives(5);
+      setLivesRefreshTime(moment().add(1, "hour").format());
+    } else {
       const interval = setInterval(() => {
         setLives(5);
+        setLivesRefreshTime(moment().add(1, "hour").format());
       }, 3600000); // 1 hour in milliseconds
 
       return () => clearInterval(interval);
     }
-  }, [lives]);
+  }, [lives, livesRefreshTime]);
 
   async function getUser() {
     const { data, error } = await supabase.auth.getSession();
@@ -124,9 +133,17 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
     }
   }
 
+  function updatedLives(value: number) {
+    if (lives) setLives(lives + value);
+  }
+
   // if (!currentUser) throw Error();
 
   return (
-    <UserContext.Provider value={{ currentUser, handleUpdateUserInfo, getUser, handleSignOut, lives, setLives }}>{children}</UserContext.Provider>
+    <UserContext.Provider value={{ currentUser, handleUpdateUserInfo, getUser, handleSignOut, lives, setLives, updatedLives, livesRefreshTime }}>
+      {children}
+    </UserContext.Provider>
   );
 }
+
+export const useUser = () => useContext(UserContext);

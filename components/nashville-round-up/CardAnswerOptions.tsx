@@ -1,10 +1,10 @@
-import { router } from "expo-router";
-import React, { forwardRef, useEffect, useImperativeHandle } from "react";
-import { View, Pressable, Text } from "react-native";
-import Animated, { useSharedValue, useAnimatedStyle, withTiming, withDelay, withRepeat, withSequence } from "react-native-reanimated";
 import { window } from "@/utils";
+import { getTextColor } from "@/utils/nashville-round-up/getTextColor";
+import { lightColors, red } from "@tamagui/themes";
+import React, { forwardRef, useEffect, useImperativeHandle } from "react";
+import { Pressable, View } from "react-native";
+import Animated, { useAnimatedStyle, useSharedValue, withDelay, withRepeat, withSequence, withTiming } from "react-native-reanimated";
 import { H1 } from "tamagui";
-import GoldenRaysCardEffect from "./goldenRaysCardEffect";
 
 const CARD_WIDTH = window.width * 0.33;
 const CARD_HEIGHT = 140;
@@ -45,13 +45,23 @@ const Card = ({
     }
   }, [isSelected]);
 
-  const glowStyle = useAnimatedStyle(() => ({
-    shadowColor: "gold",
+  const pulsingEffect = useAnimatedStyle(() => ({
     shadowOpacity: glowOpacity.value,
+  }));
+
+  const correctAnswerStyle = {
+    shadowColor: "gold",
     shadowRadius: 10,
     borderWidth: 2,
     borderColor: "gold",
-  }));
+  };
+
+  const incorrectAnswerStyle = {
+    shadowColor: lightColors.red9,
+    shadowRadius: 10,
+    borderWidth: 2,
+    borderColor: lightColors.red9,
+  };
 
   const animatedStyle = useAnimatedStyle(() => {
     return {
@@ -69,6 +79,12 @@ const Card = ({
     onPress();
   };
 
+  useEffect(() => {
+    if (selectedAnswer !== "" && !isSelected) {
+      animatedValue.value = withTiming(animatedValue.value - window.height * -0.25, { duration: 600 });
+    }
+  }, [selectedAnswer]);
+
   return (
     <Animated.View
       style={[
@@ -78,23 +94,32 @@ const Card = ({
           left: "50%",
           marginLeft: -CARD_WIDTH / 2,
           width: CARD_WIDTH,
-          //   height: CARD_HEIGHT,
           aspectRatio: 100 / 140,
-          //backgroundColor: ["#ff6666", "#66ff66", "#6666ff"][index],
+          borderRadius: 12,
+        },
+        pulsingEffect,
+        animatedStyle,
+        isSelected ? (answerIsCorrect ? correctAnswerStyle : incorrectAnswerStyle) : {},
+      ]}
+    >
+      <View
+        style={{
+          flex: 1,
           backgroundColor: "white",
+          borderRadius: 10,
+          shadowColor: "black",
           shadowOffset: { width: 0, height: 2 },
           shadowOpacity: 0.25,
           shadowRadius: 3.84,
-          borderRadius: 10,
-          // opacity: 0.5,
-        },
-        animatedStyle,
-        isSelected && answerIsCorrect ? glowStyle : {},
-      ]}
-    >
-      <Pressable disabled={selectedAnswer !== ""} onPress={handlePress} style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <H1 color={["#ff6666", "#171717", "#ff6666"][index]}>{text}</H1>
-      </Pressable>
+          borderColor: "transparent",
+        }}
+      >
+        <Pressable disabled={selectedAnswer !== ""} onPress={handlePress} style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+          <H1 fontWeight={800} color={getTextColor(text)}>
+            {text}
+          </H1>
+        </Pressable>
+      </View>
     </Animated.View>
   );
 };
@@ -107,7 +132,7 @@ const CardAnswerOptions = forwardRef(
       selectedAnswer,
       answerIsCorrect,
     }: {
-      availableAnswers: { option_text: string; value: string }[];
+      availableAnswers: string[];
       onCardPress: (index: string) => void;
       selectedAnswer: string;
       answerIsCorrect: boolean | undefined;
@@ -134,20 +159,13 @@ const CardAnswerOptions = forwardRef(
 
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        {/* <Pressable onPress={handlePress} style={{ marginTop: 20, padding: 10, backgroundColor: "black" }}>
-        <Text style={{ color: "white" }}>Show Cards</Text>
-      </Pressable>
-      <Pressable onPress={() => router.back()} style={{ marginTop: 20, padding: 10, backgroundColor: "black" }}>
-        <Text style={{ color: "white" }}>Go Back</Text>
-      </Pressable> */}
-
         {animatedValues.map((animatedValue, index) => (
           <Card
             key={index}
-            onPress={() => onCardPress(availableAnswers[index].value)}
+            onPress={() => onCardPress(availableAnswers[index])}
             index={index}
             animatedValue={animatedValue}
-            text={availableAnswers[index].option_text}
+            text={availableAnswers[index]}
             selectedAnswer={selectedAnswer}
             answerIsCorrect={answerIsCorrect}
           />

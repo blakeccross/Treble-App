@@ -1,10 +1,8 @@
-import { StyleSheet, Platform, Pressable, Dimensions } from "react-native";
-import { Avatar, Card, Circle, H1, H3, H5, Paragraph, Separator, View, XStack, Button, YStack, H2 } from "tamagui";
-import { Image } from "expo-image";
-import { BlurView } from "expo-blur";
 import { AudioWaveform, Lock, Play } from "@tamagui/lucide-icons";
-import { Href, Link, useRouter } from "expo-router";
-import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
+import { BlurView } from "expo-blur";
+import { Image } from "expo-image";
+import { Href, useRouter } from "expo-router";
+import { Dimensions } from "react-native";
 import Animated, {
   Extrapolation,
   interpolate,
@@ -13,11 +11,12 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
 } from "react-native-reanimated";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
+import { Button, Card, H2, H5, Paragraph, View, XStack, YStack } from "tamagui";
 
 const blurhash =
   "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
 
-const AnimatedLinearGradient = Animated.createAnimatedComponent(View);
 const AnimatedView = Animated.createAnimatedComponent(View);
 const AnimatedImage = Animated.createAnimatedComponent(Image);
 
@@ -77,15 +76,15 @@ function ScreenHeader({ sv, title }: { sv: SharedValue<number>; title: string })
 const games = [
   {
     title: "Pitch Perfect",
-    description: `Test your ear in a\nfast pace matching game`,
-    backgroundImage: require("@/assets/images/blue_shapes.jpg"),
+    description: `Identify the pitch before the timer ends`,
+    backgroundImage: require("@/assets/images/pitch_perfect.png"),
     route: "/pitch-perfect",
     disabled: false,
   },
   {
     title: "Nashville Roundup",
-    description: `Match the Nashville numbers`,
-    backgroundImage: require("@/assets/images/hassaan-here-bKfkhVRAJTQ-unsplash.jpg"),
+    description: `Test your ear in this\nfast paced matching game`,
+    backgroundImage: require("@/assets/images/nashville_round_up_poster.png"),
     route: "/nashville-round-up",
     disabled: false,
   },
@@ -101,7 +100,7 @@ const games = [
     description: `Test your ear in a\nfast pace matching game`,
     backgroundImage: require("@/assets/images/blue_shapes.jpg"),
     route: "/interval-training",
-    disabled: true,
+    disabled: false,
   },
 ];
 
@@ -128,9 +127,9 @@ export default function TabTwoScreen() {
             <Card
               key={game.title}
               elevate
-              bordered
+              // bordered
               pressStyle={{ scale: 0.95 }}
-              animation="bouncy"
+              // animation="bouncy"
               borderRadius={"$8"}
               overflow="hidden"
               height={400}
@@ -152,12 +151,12 @@ export default function TabTwoScreen() {
               <Card.Footer>
                 <BlurView style={{ flex: 1, padding: 20 }} tint="light">
                   <XStack justifyContent="space-between">
-                    <YStack>
-                      <H5 fontWeight={600} themeInverse>
+                    <YStack flex={1}>
+                      <H5 fontWeight={600} color={"$gray1Dark"}>
                         {game.title}
                       </H5>
-                      <Paragraph lineHeight={17} themeInverse>
-                        Test your ear in a{`\n`}fast pace matching game
+                      <Paragraph lineHeight={17} color={"$gray1Dark"}>
+                        {game.description}
                       </Paragraph>
                     </YStack>
                     {game.disabled ? (

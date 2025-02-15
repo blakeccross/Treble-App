@@ -1,3 +1,4 @@
+import React, { useContext, useState } from "react";
 import { UserContext } from "@/context/user-context";
 import { supabase } from "@/utils/supabase";
 import AntDesign from "@expo/vector-icons/AntDesign";
@@ -9,7 +10,6 @@ import { blueA, purpleA, redA, size, yellow } from "@tamagui/themes";
 import { Image } from "expo-image";
 import * as ImagePicker from "expo-image-picker";
 import { Link } from "expo-router";
-import { useContext, useState } from "react";
 import { FlatList, Pressable } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
@@ -17,7 +17,7 @@ import { Button, Card, H2, H3, H4, H5, Paragraph, ScrollView, SizableText, View,
 import { LinearGradient } from "tamagui/linear-gradient";
 // import { Image as ImageComp } from "react-native-compressor";
 import getStreak from "@/hooks/getStreak";
-import Paywall from "../paywall";
+import Paywall from "@/components/paywall.modal";
 
 export default function TabTwoScreen() {
   const { currentUser, handleUpdateUserInfo } = useContext(UserContext);
@@ -133,16 +133,16 @@ export default function TabTwoScreen() {
               marginBottom="$6"
               onPress={() => setOpenPaywall(true)}
               pressStyle={{ scale: 0.95 }}
-              animation="bouncy"
+              // animation="bouncy"
             >
               <Card.Header>
                 <XStack alignItems="center" gap="$2">
-                  <Sparkle color={"$background"} />
+                  <Sparkle color={"white"} />
                   <YStack>
-                    <H4 fontWeight={800} themeInverse={true}>
+                    <H4 fontWeight={800} color={"white"}>
                       Go Pro
                     </H4>
-                    <Paragraph>Unlock all modules and features</Paragraph>
+                    <Paragraph color={"white"}>Unlock all modules and features</Paragraph>
                   </YStack>
                 </XStack>
               </Card.Header>

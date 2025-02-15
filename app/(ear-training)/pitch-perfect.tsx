@@ -1,44 +1,46 @@
-import Ionicons from "@expo/vector-icons/Ionicons";
-import { color, colorTokens, red } from "@tamagui/themes";
-import { View, Text, SafeAreaView, StyleSheet, FlatList, Pressable } from "react-native";
-import Animated, { useSharedValue, useAnimatedStyle, withSpring, withDelay } from "react-native-reanimated";
-import { Card, H3, Paragraph, Circle, XStack, H1, H2 } from "tamagui";
-import { window } from "@/utils";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
-import { AVPlaybackSource, Audio } from "expo-av";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { Heart, X, FileLineChart, BarChart, BarChart2 } from "@tamagui/lucide-icons";
-import { LinearGradient } from "tamagui/linear-gradient";
-import { Link, router, useFocusEffect, useNavigation, useRouter } from "expo-router";
-import * as Haptics from "expo-haptics";
 import GradientCircle from "@/components/gradient-circle";
+import { useUser } from "@/context/user-context";
+import usePlayMidi from "@/hooks/usePlayMidi";
+import { PianoKey } from "@/types/pianoKeys";
+import { window } from "@/utils";
+import { BarChart2, Heart, X } from "@tamagui/lucide-icons";
+import { darkColors, red } from "@tamagui/themes";
+import { AVPlaybackSource, Audio } from "expo-av";
+import * as Haptics from "expo-haptics";
+import { Link, router, useFocusEffect } from "expo-router";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { FlatList, Pressable, SafeAreaView, View } from "react-native";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import Animated, { useAnimatedStyle, useSharedValue, withDelay, withSpring } from "react-native-reanimated";
+import { Card, Circle, H1, H2, H3, Paragraph, XStack } from "tamagui";
+import { LinearGradient } from "tamagui/linear-gradient";
 
 const PAGE_WIDTH = window.width;
 const colorOptions = ["blue", "orange", "green", "red", "yellow", "purple", "pink"];
-const notes = ["c3", "d3", "e3", "f3", "g3", "a3", "b3"];
-const notesHard = ["c3", "cs3", "d3", "ds3", "e3", "f3", "fs3", "g3", "gs3", "a3", "as3", "b3"];
+const notes = ["C3", "D3", "E3", "F3", "G3", "A3", "B3"];
+const notesHard = ["C3", "C#3", "D3", "D#3", "E3", "F3", "F#3", "G3", "G#3", "A3", "A#3", "B3"];
 
 // Static imports for audio files
 const noteToFile = {
-  c3: require("@/assets/audio/piano_c3.mp3"),
-  cs3: require("@/assets/audio/piano_cs3.mp3"),
-  d3: require("@/assets/audio/piano_d3.mp3"),
-  ds3: require("@/assets/audio/piano_ds3.mp3"),
-  e3: require("@/assets/audio/piano_e3.mp3"),
-  f3: require("@/assets/audio/piano_f3.mp3"),
-  fs3: require("@/assets/audio/piano_fs3.mp3"),
-  g3: require("@/assets/audio/piano_g3.mp3"),
-  gs3: require("@/assets/audio/piano_gs3.mp3"),
-  a3: require("@/assets/audio/piano_a3.mp3"),
-  as3: require("@/assets/audio/piano_as3.mp3"),
-  b3: require("@/assets/audio/piano_b3.mp3"),
+  C3: require("@/assets/audio/piano_c3.mp3"),
+  "C#3": require("@/assets/audio/piano_cs3.mp3"),
+  D3: require("@/assets/audio/piano_d3.mp3"),
+  "D#3": require("@/assets/audio/piano_ds3.mp3"),
+  E3: require("@/assets/audio/piano_e3.mp3"),
+  F3: require("@/assets/audio/piano_f3.mp3"),
+  "F#3": require("@/assets/audio/piano_fs3.mp3"),
+  G3: require("@/assets/audio/piano_g3.mp3"),
+  "G#3": require("@/assets/audio/piano_gs3.mp3"),
+  A3: require("@/assets/audio/piano_a3.mp3"),
+  "A#3": require("@/assets/audio/piano_as3.mp3"),
+  B3: require("@/assets/audio/piano_b3.mp3"),
 };
 
 const correctSFX = require("@/assets/audio/correct_sfx.mp3");
 const incorrectSFX = require("@/assets/audio/incorrect_sfx.mp3");
 
 export default function PitchPerfect() {
-  const tap = Gesture.Tap();
+  const { currentUser, updatedLives, lives: userLives } = useUser();
   const [gameHasStarted, setGameHasStarted] = useState(false);
   const [sound, setSound] = useState<Audio.Sound>();
   const [currentScore, setCurrentScore] = useState<number>(0);
@@ -49,12 +51,13 @@ export default function PitchPerfect() {
   const [totalTime, setTotalTime] = useState<number>(15);
   const [colorSceme, setColorSceme] = useState<string>("blue");
   const [availableAnswers, setAvailableAnswers] = useState([
-    { value: "c4", option_text: "C" },
-    { value: "d4", option_text: "D" },
-    { value: "e4", option_text: "Eb" },
-    { value: "f4", option_text: "F" },
+    { value: "C4", option_text: "C" },
+    { value: "D4", option_text: "D" },
+    { value: "E4", option_text: "E" },
+    { value: "F4", option_text: "F" },
   ]);
   const [playEnabled, setTapEnabled] = useState(true);
+  const { playSong, stopSong } = usePlayMidi();
 
   const correctAnswer = useRef("");
   // Shared values for scale animations
@@ -161,7 +164,7 @@ export default function PitchPerfect() {
     }
     correctAnswer.current = "";
     startAnimation();
-    let randomNote: keyof typeof noteToFile = "c3";
+    let randomNote: keyof typeof noteToFile = "C3";
 
     if (currentScore > 0) {
       randomNote = answerOptions[Math.floor(Math.random() * notes.length)] as keyof typeof noteToFile;
@@ -191,18 +194,24 @@ export default function PitchPerfect() {
   }
 
   async function playAudio() {
-    const { sound } = await Audio.Sound.createAsync(noteToFile[correctAnswer.current as keyof typeof noteToFile]);
-    await Audio.setAudioModeAsync({
-      playsInSilentModeIOS: true,
-    });
+    playSong([{ note: correctAnswer.current as PianoKey, time: 0, duration: 5 }], 7);
+    // const { sound } = await Audio.Sound.createAsync(noteToFile[correctAnswer.current as keyof typeof noteToFile]);
+    // await Audio.setAudioModeAsync({
+    //   playsInSilentModeIOS: true,
+    // });
 
-    setSound(sound);
-    await sound.playAsync();
+    // setSound(sound);
+    // await sound.playAsync();
   }
 
   function handlePressPlay() {
+    if (userLives !== undefined && userLives <= 0) {
+      router.push("/out-of-lives");
+      return;
+    } else {
+      updatedLives(-1);
+    }
     if (lives >= 1) {
-      console.log("lives", lives);
       if (!isRunning) {
         if (!gameHasStarted) setGameHasStarted(true);
         setSelectedAnswer("");
@@ -317,25 +326,31 @@ export default function PitchPerfect() {
     springOut();
   }
 
+  const tapGesture = Gesture.Tap().onTouchesUp(handlePressPlay).runOnJS(true);
+
   return (
     <View style={{ flex: 1 }}>
       <SafeAreaView style={{ flex: 0 }} />
 
       <XStack justifyContent="space-between" alignItems="center" paddingHorizontal="$4">
-        <Pressable onPress={() => router.back()}>
-          <X size="$3" />
-        </Pressable>
+        <View style={{ width: 50 }}>
+          <Pressable onPress={() => router.back()}>
+            <X size="$3" />
+          </Pressable>
+        </View>
         <H1 fontWeight={600}>{currentScore}</H1>
-        {gameHasStarted ? (
-          <XStack gap="$1">
-            <Heart size="$2" color={"$red10"} fill={red.red10} />
-            <Paragraph fontWeight={600}>{lives}</Paragraph>
-          </XStack>
-        ) : (
-          <Link asChild href={{ pathname: "/leaderboard", params: { gameName: "pitch_perfect" } }}>
-            <BarChart2 size="$2" />
-          </Link>
-        )}
+        <View style={{ width: 50, alignItems: "flex-end" }}>
+          {gameHasStarted ? (
+            <XStack gap="$1">
+              <Heart size="$2" color={"$red10"} fill={red.red10} />
+              <Paragraph fontWeight={600}>{lives}</Paragraph>
+            </XStack>
+          ) : (
+            <Link asChild href={{ pathname: "/leaderboard", params: { gameName: "pitch_perfect" } }}>
+              <BarChart2 size="$2" />
+            </Link>
+          )}
+        </View>
       </XStack>
 
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
@@ -367,13 +382,19 @@ export default function PitchPerfect() {
             <Circle size={PAGE_WIDTH * 0.55} backgroundColor={`$${colorSceme}7Dark`} elevation="$0.25" />
           </Animated.View>
           {/* <TapGestureHandler onActivated={handlePressPlay} enabled={playEnabled}> */}
-          <GestureDetector gesture={tap}>
+          <GestureDetector gesture={tapGesture}>
             <Animated.View style={[animatedStyle4, { position: "absolute" }]}>
-              <Circle size={PAGE_WIDTH * 0.4} elevation="$0.25" pressStyle={{ scale: 0.95 }} animation="bouncy" overflow="hidden">
+              <Circle
+                size={PAGE_WIDTH * 0.4}
+                elevation="$0.25"
+                pressStyle={{ scale: 0.95 }}
+                // animation="bouncy"
+                overflow="hidden"
+              >
                 <LinearGradient
                   width={"100%"}
                   height={"100%"}
-                  colors={[`$${colorSceme}3Dark`, `$${colorSceme}4Dark`]}
+                  colors={[darkColors[(colorSceme + "3") as keyof typeof darkColors], darkColors[(colorSceme + "4") as keyof typeof darkColors]]}
                   start={[1, 1]}
                   end={[0, 0]}
                   justifyContent="center"
@@ -400,7 +421,7 @@ export default function PitchPerfect() {
               disabled={!isRunning}
               borderRadius="$8"
               pressStyle={{ scale: 0.95 }}
-              animation="bouncy"
+              // animation="bouncy"
               flex={1}
               onPress={() => validateAnswer(item.value)}
               borderWidth={"$1"}

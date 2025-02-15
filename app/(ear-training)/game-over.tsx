@@ -45,7 +45,12 @@ export default function Index() {
     <LinearGradient width="100%" height="100%" colors={["$blue10", "$blue8"]} start={[0.5, 1]} end={[0, 0]} paddingHorizontal={"$4"}>
       <SafeAreaView style={{ flex: 1 }}>
         <XStack>
-          <Pressable onPress={() => router.navigate("/ear-training")}>
+          <Pressable
+            onPress={() => {
+              router.push("/ear-training");
+              router.dismissAll();
+            }}
+          >
             <X size="$3" color={"white"} />
           </Pressable>
         </XStack>
@@ -74,11 +79,9 @@ export default function Index() {
               </Link>
             </XStack>
             <Theme name={"alt1_Button"}>
-              <Link asChild href={"/pitch-perfect"}>
-                <Button fontWeight={600} size={"$6"} width={"100%"} elevate icon={<RefreshCw />}>
-                  Play Again
-                </Button>
-              </Link>
+              <Button onPress={() => router.back()} fontWeight={600} size={"$6"} width={"100%"} elevate icon={<RefreshCw />}>
+                Play Again
+              </Button>
             </Theme>
           </YStack>
         </YStack>

@@ -59,7 +59,7 @@ export default function AnswerDrawer({
     if (validateAnswer) {
       const validateFunction = validateAnswer();
       setAnswerIsCorrect(validateFunction);
-      if (validateFunction === false) setLives(lives - 1);
+      if (validateFunction === false && lives !== undefined) setLives(lives - 1);
       else {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         playSFX(correctSFX);
@@ -83,10 +83,14 @@ export default function AnswerDrawer({
         snapPointsMode="fit"
         position={0}
         zIndex={100_000}
-        animation="quick"
+        // animation="quick"
         dismissOnOverlayPress={false}
       >
-        <Sheet.Overlay animation="lazy" enterStyle={{ opacity: 0 }} exitStyle={{ opacity: 0 }} />
+        <Sheet.Overlay
+          // animation="lazy"
+          enterStyle={{ opacity: 0 }}
+          exitStyle={{ opacity: 0 }}
+        />
         <Sheet.Handle />
         <Sheet.Frame
           padding="$4"

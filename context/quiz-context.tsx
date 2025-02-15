@@ -1,10 +1,10 @@
-import { useLocalSearchParams, useRouter } from "expo-router";
-import { Dispatch, SetStateAction, createContext, useContext, useEffect, useRef, useState } from "react";
-import { ModuleContext } from "./module-context";
 import { Module, Section, SectionItem, XPHistory } from "@/types";
-import { UserContext } from "./user-context";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import moment from "moment";
-import { useMMKVNumber, useMMKVObject } from "react-native-mmkv";
+import { createContext, useContext, useEffect, useState } from "react";
+import { useMMKVObject } from "react-native-mmkv";
+import { ModuleContext } from "./module-context";
+import { UserContext } from "./user-context";
 
 type Quiz = {
   currentQuestionIndex: number;
@@ -25,19 +25,14 @@ export default function QuizProvider({ children }: { children: JSX.Element[] }) 
   const { modules } = useContext(ModuleContext);
   const [xpHistory, setXPHistory] = useMMKVObject<XPHistory[]>("xp_history");
 
-  const sections = modules.data && modules.data.flatMap((item) => item.section);
+  const sections = modules?.data && modules.data.flatMap((item) => item.section);
 
-  const currentModule = modules.data && modules.data.find((item) => item.id === +module_id);
+  const currentModule = modules?.data && modules.data.find((item) => item.id === +module_id);
   const currentSection = sections && (sections.find((item) => item.id === +section_id) as Section);
   const currentSectionQuestions = currentSection?.section_item;
 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
   const [sortedQuestions, setSortedQuestions] = useState<SectionItem[]>([]);
-
-  if (!currentSection || !currentModule) {
-    router.navigate("/(tabs)");
-    return null;
-  }
 
   useEffect(() => {
     if (currentSectionQuestions) {
@@ -46,9 +41,14 @@ export default function QuizProvider({ children }: { children: JSX.Element[] }) 
         if (a.type !== "reading" && b.type === "reading") return 1;
         return Math.random() - 0.5; // Randomize the rest
       });
-      setSortedQuestions(sorted); // Set sorted questions in state
+      setSortedQuestions(sorted);
     }
-  }, [currentSectionQuestions]); // Update when currentSectionQuestions changes
+  }, [currentSectionQuestions]);
+
+  if (!currentSection || !currentModule) {
+    router.navigate("/(tabs)");
+    return null;
+  }
 
   function nextQuestion() {
     if (lives && lives < 1) {
