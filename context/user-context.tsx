@@ -6,10 +6,16 @@ import { createContext, useContext, useEffect } from "react";
 import { useMMKVNumber, useMMKVObject, useMMKVString } from "react-native-mmkv";
 import Purchases from "react-native-purchases";
 import Toast from "react-native-toast-message";
+import * as Network from "expo-network";
 
 type UserContextProps = {
   currentUser: Profile | undefined;
-  handleUpdateUserInfo: (info: Partial<Profile>) => Promise<void>;
+  handleUpdateUserInfo: (info: Partial<Profile>) =>
+    | Promise<any[]>
+    | {
+        data: {};
+        status: string;
+      };
   getUser: () => Promise<void>;
   handleSignOut: () => void;
   lives?: number;
@@ -21,34 +27,38 @@ type UserContextProps = {
 export const UserContext = createContext<UserContextProps>({} as UserContextProps);
 
 export default function ModuleProvider({ children }: { children: JSX.Element }) {
+  const networkState = Network.useNetworkState();
   const [currentUser, setCurrentUser] = useMMKVObject<Profile>("user");
   const [lives, setLives] = useMMKVNumber("lives");
   const [livesRefreshTime, setLivesRefreshTime] = useMMKVString("livesRefreshTime");
   const pathname = usePathname();
 
   useEffect(() => {
-    setLives(5);
+    // setLives(2);
     getUser();
   }, []);
 
   useEffect(() => {
-    if (lives === undefined) {
-      setLives(5);
-    } else if (lives < 5 || (livesRefreshTime && moment().isAfter(moment(livesRefreshTime)))) {
-      setLives(5);
-      setLivesRefreshTime(moment().add(1, "hour").format());
-    } else {
-      const interval = setInterval(() => {
+    if (!currentUser?.is_subscribed) {
+      if (lives === undefined) {
+        setLives(5);
+      } else if (lives < 5 && livesRefreshTime && moment().isAfter(moment(livesRefreshTime))) {
         setLives(5);
         setLivesRefreshTime(moment().add(1, "hour").format());
-      }, 3600000); // 1 hour in milliseconds
+      } else {
+        const interval = setInterval(() => {
+          setLives(5);
+          setLivesRefreshTime(moment().add(1, "hour").format());
+        }, 3600000); // 1 hour in milliseconds
 
-      return () => clearInterval(interval);
+        return () => clearInterval(interval);
+      }
     }
   }, [lives, livesRefreshTime]);
 
   async function getUser() {
     const { data, error } = await supabase.auth.getSession();
+
     if (data.session) {
       await handleGetUserData(data.session.user.id);
       if (router.canDismiss()) {
@@ -75,7 +85,7 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
           console.log("USER SIGNED IN");
           await handleGetUserData(session.user.id);
           router.dismissAll();
-          router.push("/home");
+          router.push("/(tabs)/(home)");
         } else if (session) {
           console.log(event);
         }
@@ -107,15 +117,16 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
   }
 
   async function handleUpdateUserInfo(info: Partial<Profile>) {
-    console.log("info", info);
+    console.log("updating user", info);
     const updatedUser = { ...(currentUser || {}), ...info } as Profile;
     setCurrentUser(updatedUser);
-
-    const { data, error } = await supabase.from("profiles").update(info).eq("id", currentUser?.id).select();
-    // if (data) {
-    //   setCurrentUser(updatedUser);
-    // }
-    if (error) console.error(error);
+    if (networkState.isConnected) {
+      return await supabase.from("profiles").update(info).eq("id", currentUser?.id).select();
+      // if (data) {
+      //   setCurrentUser(updatedUser);
+      // }
+    }
+    return { data: {}, status: "" };
   }
 
   async function handleSignOut() {

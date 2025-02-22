@@ -45,39 +45,42 @@ export default function QuizProvider({ children }: { children: JSX.Element[] }) 
     }
   }, [currentSectionQuestions]);
 
+  useEffect(() => {
+    console.log("LIVES", sortedQuestions[currentQuestionIndex]?.type);
+    if (lives && lives <= 0 && sortedQuestions[currentQuestionIndex] && sortedQuestions[currentQuestionIndex]?.type !== "reading") {
+      router.replace(`/out-of-lives`);
+    }
+  }, [lives, currentQuestionIndex]);
+
   if (!currentSection || !currentModule) {
     router.navigate("/(tabs)");
     return null;
   }
 
   function nextQuestion() {
-    if (lives && lives < 1) {
-      router.push(`/out-of-lives`);
+    if (currentSection && currentQuestionIndex < currentSection.section_item.length - 1) {
+      // const nextQuestion = currentSection.section_item[currentQuestionIndex.current + 1];
+      // currentQuestionIndex.current = currentQuestionIndex.current + 1;
+      const nextQuestion = sortedQuestions[currentQuestionIndex + 1];
+      setCurrentQuestionIndex(currentQuestionIndex + 1); // Update state instead of ref
+
+      console.log("NEXT QUESTION", currentQuestionIndex + 1, nextQuestion.type, nextQuestion.question);
+
+      router.replace({
+        pathname: `/(questions)/${nextQuestion.type}`,
+      });
     } else {
-      if (currentSection && currentQuestionIndex < currentSection.section_item.length - 1) {
-        // const nextQuestion = currentSection.section_item[currentQuestionIndex.current + 1];
-        // currentQuestionIndex.current = currentQuestionIndex.current + 1;
-        const nextQuestion = sortedQuestions[currentQuestionIndex + 1];
-        setCurrentQuestionIndex(currentQuestionIndex + 1); // Update state instead of ref
+      // Finished Section
 
-        console.log("NEXT QUESTION", currentQuestionIndex + 1, nextQuestion.type, nextQuestion.question);
+      const userFinishedModule = currentModule?.section
+        .map((item) => item.id)
+        .every((v) => [...(currentUser?.completed_sections || []), currentSection?.id].includes(v));
 
-        router.push({
-          pathname: `/(questions)/${nextQuestion.type}`,
-        });
+      // Check if current module has already been completed
+      if (userFinishedModule && currentModule && !currentUser?.completed_modules?.includes(currentModule?.id)) {
+        finishedSection(userFinishedModule || false);
       } else {
-        // Finished Section
-
-        const userFinishedModule = currentModule?.section
-          .map((item) => item.id)
-          .every((v) => [...(currentUser?.completed_sections || []), currentSection?.id].includes(v));
-
-        // Check if current module has already been completed
-        if (userFinishedModule && currentModule && !currentUser?.completed_modules?.includes(currentModule?.id)) {
-          finishedSection(userFinishedModule || false);
-        } else {
-          finishedSection(false);
-        }
+        finishedSection(false);
       }
     }
   }
@@ -117,7 +120,7 @@ export default function QuizProvider({ children }: { children: JSX.Element[] }) 
     setCurrentQuestionIndex(0);
     // currentQuestionIndex.current = 0;
 
-    router.push({
+    router.replace({
       pathname: "/quiz-complete",
       params: { numOfCorrectAnswers: XPGained, moduleComplete: String(moduleComplete) },
     });

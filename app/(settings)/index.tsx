@@ -1,6 +1,6 @@
 import { UserContext } from "@/context/user-context";
-import { ArrowLeft, ChevronRight, Lock, Moon, User } from "@tamagui/lucide-icons";
-import { Href, Link, router } from "expo-router";
+import { ArrowLeft, ChevronRight, Lock, Moon, User, Volume, Volume1, Volume2 } from "@tamagui/lucide-icons";
+import { Href, Link, RelativePathString, router } from "expo-router";
 import React, { useContext } from "react";
 import { Alert, FlatList, Pressable, SafeAreaView } from "react-native";
 import { H4, H5, XStack, YStack } from "tamagui";
@@ -10,6 +10,7 @@ export default function ProfileSettings() {
   const menuItems = [
     { name: "Profile", href: "/(settings)/profile", icon: <User size="$2" /> },
     { name: "Appearance", href: "/(settings)/appearance", icon: <Moon size="$1.5" /> },
+    { name: "Audio", href: "/(settings)/audio", icon: <Volume2 /> },
     // { name: "Notifications", href: "/(settings)/notifications", icon: <Bell size="$1.5" /> },
   ];
 
@@ -30,7 +31,7 @@ export default function ProfileSettings() {
       <SafeAreaView />
       <YStack gap="$2" padding="$3">
         <XStack alignItems="center" justifyContent="space-between">
-          <Pressable onPress={() => router.back()}>
+          <Pressable onPress={() => router.dismissTo("/(tabs)/profile")}>
             <ArrowLeft size="$3" />
           </Pressable>
           <H5 fontWeight={500}>Settings</H5>
@@ -44,7 +45,7 @@ export default function ProfileSettings() {
           data={menuItems}
           style={{ height: "100%" }}
           renderItem={({ item }) => (
-            <Link asChild href={item.href as Href<string>}>
+            <Link asChild href={item.href as RelativePathString}>
               <XStack alignItems="center" justifyContent="space-between" paddingVertical="$3" borderBottomWidth={1} borderBottomColor="$gray7">
                 <XStack alignItems="center" gap="$2">
                   {item.icon}

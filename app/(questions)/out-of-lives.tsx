@@ -1,62 +1,106 @@
 import { QuizContext } from "@/context/quiz-context";
-import { NavigationContainer } from "@react-navigation/native";
-import { RefreshCw, Share, Trophy, X } from "@tamagui/lucide-icons";
-import { Link, Stack, useRouter } from "expo-router";
-import React, { useContext, useEffect } from "react";
-import { Pressable, SafeAreaView, ScrollView, View, useWindowDimensions } from "react-native";
-import { Button, Card, H1, H3, Paragraph, Progress, Spinner, Theme, XStack, YStack } from "tamagui";
+import { useUser } from "@/context/user-context";
+import { Check, HeartCrack, Star } from "@tamagui/lucide-icons";
+import { useRouter } from "expo-router";
+import moment from "moment";
+import React, { useContext } from "react";
+import { SafeAreaView } from "react-native";
+import Purchases from "react-native-purchases";
+import { Button, H2, H3, ListItem, Paragraph, Separator, View, XStack, YGroup, YStack } from "tamagui";
 import { LinearGradient } from "tamagui/linear-gradient";
 
 export default function Index() {
   const router = useRouter();
-  const { currentQuestionIndex, questions, currentModule } = useContext(QuizContext);
+  const { currentUser, handleUpdateUserInfo, livesRefreshTime } = useUser();
+  const { currentModule } = useContext(QuizContext);
 
   function handleExitSection() {
-    router.navigate({
+    router.dismissTo({
       pathname: "/(tabs)/(home)/module-overview/[id]",
       params: { id: currentModule.id },
     });
   }
+  async function handleTryForFree() {
+    if (await Purchases.isConfigured()) {
+      const offerings = await Purchases.getOfferings();
+      const { customerInfo } = await Purchases.purchasePackage(offerings.all.monthly_test.availablePackages[0]);
+      if (typeof customerInfo.entitlements.active["pro"] !== "undefined") {
+        await handleUpdateUserInfo({ is_subscribed: true });
+        router.dismiss();
+      }
+    }
+  }
   return (
-    // <SafeAreaView style={{ flex: 1 }}>
-    //   <YStack alignItems="center" justifyContent="center" flex={1} padding="$4">
-    //     <H1>You've run out of lives</H1>
-    //     <Paragraph>Try studying a bit more and try again later.</Paragraph>
-    //     <Button onPress={handle} wi>Continue</Button>
-    //   </YStack>
-    // </SafeAreaView>
-    <LinearGradient width="100%" height="100%" colors={["$blue10", "$blue8"]} start={[0.5, 1]} end={[0, 0]} paddingHorizontal={"$4"}>
-      <SafeAreaView style={{ flex: 1 }}>
-        <XStack paddingHorizontal="$4">
-          <Pressable onPress={handleExitSection}>
-            <X size="$3" color={"white"} />
-          </Pressable>
-        </XStack>
-        <YStack alignItems="center" justifyContent="center" flex={1} padding="$4">
-          <YStack flex={1} gap="$6">
-            <YStack alignItems="center" justifyContent="center" flex={1}>
-              <H1 textAlign="center" fontWeight={800} color={"white"}>
-                You've run out of lives!
-              </H1>
-            </YStack>
-            <YStack alignItems="center" justifyContent="center" marginBottom="$10">
-              {/* <H1 fontWeight={600} themeInverse>
-                {highScore}
-              </H1> */}
-              {/* <H3 themeInverse>Best Score</H3> */}
-            </YStack>
-          </YStack>
-          <YStack gap="$4" width={"100%"}>
-            <Theme name={"alt1_Button"}>
-              {/* <Link asChild href={"/pitch-perfect"}> */}
-              <Button fontWeight={600} size={"$6"} width={"100%"} elevate icon={<RefreshCw />} onPress={handleExitSection}>
-                Play Again
+    <View backgroundColor="$background" flex={1}>
+      {!currentUser?.is_subscribed ? (
+        <>
+          <View flex={1} justifyContent="center" alignItems="center">
+            <HeartCrack color={"$red10"} size={"$10"} />
+            <H2>You are out of lives!</H2>
+            {livesRefreshTime && (
+              <>
+                <Paragraph>Lives will not reset until</Paragraph>
+                <Paragraph>{moment(livesRefreshTime).format("h:mm a")}</Paragraph>
+              </>
+            )}
+          </View>
+
+          <View padding="$4" flex={1} height={"100%"} justifyContent="space-between">
+            <View>
+              <View>
+                <H3 fontWeight={800} textAlign="center">
+                  Unlock your learning potential
+                </H3>
+              </View>
+              <YGroup alignSelf="center" bordered size="$4" separator={<Separator />}>
+                <YGroup.Item>
+                  <ListItem hoverTheme icon={Star} title="Unlock All Modules" subTitle="Begin learning beyond the basics" />
+                </YGroup.Item>
+                <YGroup.Item>
+                  <ListItem hoverTheme icon={Star} title="All Games" subTitle="Train your ear with fun games" />
+                </YGroup.Item>
+              </YGroup>
+            </View>
+            <View>
+              <Button onPress={handleTryForFree}>Try for $0.00</Button>
+              <Button unstyled color={"$gray12"} textAlign="center" padding="$4" onPress={handleExitSection}>
+                No Thanks
               </Button>
-              {/* </Link> */}
-            </Theme>
+            </View>
+          </View>
+        </>
+      ) : (
+        <LinearGradient width="100%" height="100%" colors={["$blue10", "$blue8"]} start={[0.5, 1]} end={[0, 0]} paddingHorizontal={"$4"}>
+          <YStack alignItems="center" justifyContent="center" flex={1} padding="$4">
+            <XStack gap="$2">
+              <Paragraph color={"$background"}>Success!</Paragraph>
+              <Check color={"$background"} size={"$1"} />
+            </XStack>
+            <H2
+              key={0}
+              color={"$background"}
+              textAlign="center"
+              fontWeight={800}
+              enterStyle={{
+                scale: 3,
+                y: -10,
+                opacity: 0,
+              }}
+              opacity={1}
+              scale={1}
+              y={0}
+              // animation="lazy"
+            >
+              Welcome to the Treble Pro!
+            </H2>
           </YStack>
-        </YStack>
-      </SafeAreaView>
-    </LinearGradient>
+          <Button onPress={() => router.dismiss()} fontWeight={600} fontSize={"$7"} height={"$5"} width={"100%"} themeInverse>
+            Continue
+          </Button>
+
+          <SafeAreaView />
+        </LinearGradient>
+      )}
+    </View>
   );
 }

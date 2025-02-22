@@ -1,15 +1,6 @@
-import React, { SetStateAction, useEffect, useState } from "react";
-import { View, StyleSheet, Button } from "react-native";
-import Animated, {
-  Easing,
-  SharedValue,
-  cancelAnimation,
-  runOnJS,
-  useAnimatedProps,
-  useDerivedValue,
-  useSharedValue,
-  withTiming,
-} from "react-native-reanimated";
+import React from "react";
+import { View } from "react-native";
+import Animated, { SharedValue, useAnimatedProps, withTiming } from "react-native-reanimated";
 import Svg, { Circle } from "react-native-svg";
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
@@ -69,12 +60,6 @@ const CircularProgress = ({
           animatedProps={animatedProps}
         />
       </Svg>
-      {/* <Button
-        title="Animate!"
-        onPress={() => {
-          theta.value = animateTo.value;
-        }}
-      /> */}
     </View>
   );
 };

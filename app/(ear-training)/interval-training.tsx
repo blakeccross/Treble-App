@@ -1,3 +1,4 @@
+import usePlayMidi from "@/hooks/usePlayMidi";
 import { window } from "@/utils";
 import { Canvas, Circle, SweepGradient, vec } from "@shopify/react-native-skia";
 import { Heart, X } from "@tamagui/lucide-icons";
@@ -25,22 +26,6 @@ const colorOptions = ["blue", "orange", "green", "red", "yellow", "purple", "pin
 const notes = ["c3", "d3", "e3", "f3", "g3", "a3", "b3"];
 const notesHard = ["c3", "cs3", "d3", "ds3", "e3", "f3", "fs3", "g3", "gs3", "a3", "as3", "b3"];
 
-// Static imports for audio files
-const noteToFile = {
-  c3: require("@/assets/audio/piano_c3.mp3"),
-  cs3: require("@/assets/audio/piano_cs3.mp3"),
-  d3: require("@/assets/audio/piano_d3.mp3"),
-  ds3: require("@/assets/audio/piano_ds3.mp3"),
-  e3: require("@/assets/audio/piano_e3.mp3"),
-  f3: require("@/assets/audio/piano_f3.mp3"),
-  fs3: require("@/assets/audio/piano_fs3.mp3"),
-  g3: require("@/assets/audio/piano_g3.mp3"),
-  gs3: require("@/assets/audio/piano_gs3.mp3"),
-  a3: require("@/assets/audio/piano_a3.mp3"),
-  as3: require("@/assets/audio/piano_as3.mp3"),
-  b3: require("@/assets/audio/piano_b3.mp3"),
-};
-
 const correctSFX = require("@/assets/audio/correct_sfx.mp3");
 const incorrectSFX = require("@/assets/audio/incorrect_sfx.mp3");
 
@@ -61,6 +46,8 @@ export default function Page() {
     { value: "e4", option_text: "Eb" },
     { value: "f4", option_text: "F" },
   ]);
+
+  const { playSong, stopSong } = usePlayMidi();
 
   const correctAnswer = useRef("");
   // Shared values for scale animations
@@ -166,10 +153,10 @@ export default function Page() {
     }
     correctAnswer.current = "";
     startAnimation();
-    let randomNote: keyof typeof noteToFile = "c3";
+    let randomNote = "c3";
 
     if (currentScore > 0) {
-      randomNote = answerOptions[Math.floor(Math.random() * notes.length)] as keyof typeof noteToFile;
+      randomNote = answerOptions[Math.floor(Math.random() * notes.length)];
     }
 
     correctAnswer.current = randomNote;
@@ -192,13 +179,12 @@ export default function Page() {
   }
 
   async function playAudio() {
-    const { sound } = await Audio.Sound.createAsync(noteToFile[correctAnswer.current as keyof typeof noteToFile]);
-    await Audio.setAudioModeAsync({
-      playsInSilentModeIOS: true,
-    });
-
-    setSound(sound);
-    await sound.playAsync();
+    // const { sound } = await Audio.Sound.createAsync(noteToFile[correctAnswer.current]);
+    // await Audio.setAudioModeAsync({
+    //   playsInSilentModeIOS: true,
+    // });
+    // setSound(sound);
+    // await sound.playAsync();
   }
 
   function handlePressPlay() {

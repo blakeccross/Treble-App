@@ -1,20 +1,20 @@
-import { DarkTheme, DefaultTheme, ThemeProvider, useRoute } from "@react-navigation/native";
+import { toastConfig } from "@/components/toastConfig";
+import ModuleProvider from "@/context/module-context";
+import UserProvider from "@/context/user-context";
+import { useColorScheme } from "@/hooks/useColorScheme";
+import { DarkTheme, DefaultTheme, ThemeProvider } from "@react-navigation/native";
 import { useFonts } from "expo-font";
+import * as Network from "expo-network";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import React, { useContext, useEffect } from "react";
-import { createTamagui, H3, H4, TamaguiProvider } from "tamagui";
-import tamaguiConfig from "../tamagui.config";
-import "react-native-reanimated";
-import { useColorScheme } from "@/hooks/useColorScheme";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
-import ModuleProvider from "@/context/module-context";
-import UserProvider, { UserContext } from "@/context/user-context";
-import Header from "@/components/header";
-import Toast from "react-native-toast-message";
-import { toastConfig } from "@/components/toastConfig";
-import Purchases from "react-native-purchases";
+import React, { useEffect } from "react";
 import { Platform } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import Purchases from "react-native-purchases";
+import "react-native-reanimated";
+import Toast from "react-native-toast-message";
+import { H4, TamaguiProvider } from "tamagui";
+import tamaguiConfig from "../tamagui.config";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -26,6 +26,7 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
+  const networkState = Network.useNetworkState();
   const [loaded] = useFonts({
     Inter: require("@tamagui/font-inter/otf/Inter-Medium.otf"),
     InterBold: require("@tamagui/font-inter/otf/Inter-Bold.otf"),
@@ -40,14 +41,17 @@ export default function RootLayout() {
   }, [loaded]);
 
   useEffect(() => {
-    Purchases.setLogLevel(Purchases.LOG_LEVEL.DEBUG);
-    if (Platform.OS === "ios") {
-      try {
-        Purchases.configure({ apiKey: "appl_zZGUxbBzchveUkWXlMPDeuztdeD" });
-      } catch (e) {
-        console.log(e);
+    if (networkState.isConnected) {
+      Purchases.setLogLevel(Purchases.LOG_LEVEL.DEBUG);
+      if (Platform.OS === "ios") {
+        try {
+          Purchases.configure({ apiKey: "appl_zZGUxbBzchveUkWXlMPDeuztdeD" });
+        } catch (e) {
+          console.log(e);
+        }
+      } else if (Platform.OS === "android") {
+        // ANDROID LOGIC
       }
-    } else if (Platform.OS === "android") {
     }
   }, []);
 

@@ -1,6 +1,6 @@
 import GradientCircle from "@/components/gradient-circle";
 import { useUser } from "@/context/user-context";
-import usePlayMidi from "@/hooks/usePlayMidi";
+import usePlayMidi from "@/hooks/usePlayMidi2";
 import { PianoKey } from "@/types/pianoKeys";
 import { window } from "@/utils";
 import { BarChart2, Heart, X } from "@tamagui/lucide-icons";
@@ -19,22 +19,6 @@ const PAGE_WIDTH = window.width;
 const colorOptions = ["blue", "orange", "green", "red", "yellow", "purple", "pink"];
 const notes = ["C3", "D3", "E3", "F3", "G3", "A3", "B3"];
 const notesHard = ["C3", "C#3", "D3", "D#3", "E3", "F3", "F#3", "G3", "G#3", "A3", "A#3", "B3"];
-
-// Static imports for audio files
-// const noteToFile = {
-//   C3: require("@/assets/audio/piano_c3.mp3"),
-//   "C#3": require("@/assets/audio/piano_cs3.mp3"),
-//   D3: require("@/assets/audio/piano_d3.mp3"),
-//   "D#3": require("@/assets/audio/piano_ds3.mp3"),
-//   E3: require("@/assets/audio/piano_e3.mp3"),
-//   F3: require("@/assets/audio/piano_f3.mp3"),
-//   "F#3": require("@/assets/audio/piano_fs3.mp3"),
-//   G3: require("@/assets/audio/piano_g3.mp3"),
-//   "G#3": require("@/assets/audio/piano_gs3.mp3"),
-//   A3: require("@/assets/audio/piano_a3.mp3"),
-//   "A#3": require("@/assets/audio/piano_as3.mp3"),
-//   B3: require("@/assets/audio/piano_b3.mp3"),
-// };
 
 const correctSFX = require("@/assets/audio/correct_sfx.mp3");
 const incorrectSFX = require("@/assets/audio/incorrect_sfx.mp3");
@@ -195,13 +179,6 @@ export default function PitchPerfect() {
 
   async function playAudio() {
     playSong([{ note: correctAnswer.current as PianoKey, time: 0, duration: 5 }], 7);
-    // const { sound } = await Audio.Sound.createAsync(noteToFile[correctAnswer.current as keyof typeof noteToFile]);
-    // await Audio.setAudioModeAsync({
-    //   playsInSilentModeIOS: true,
-    // });
-
-    // setSound(sound);
-    // await sound.playAsync();
   }
 
   function handlePressPlay() {
@@ -450,8 +427,8 @@ export default function PitchPerfect() {
             >
               <Card.Header alignItems="center">
                 <H2 fontWeight={600} paddingVertical={"$3"}>
-                  {item.option_text.charAt(0).toUpperCase()}
-                  {item.option_text.charAt(1) === "s" && "#"}
+                  {item.option_text.replaceAll("3", "").replaceAll("4", "")}
+                  {/* {item.option_text.charAt(1) === "s" && "#"} */}
                 </H2>
               </Card.Header>
             </Card>

@@ -24,7 +24,7 @@ export default function MultipleCHoice() {
   return (
     <>
       <SafeAreaView />
-      <View padding="$4" paddingBottom="0" flex={1}>
+      <View padding="$4" paddingBottom={0} flex={1}>
         <View flex={1} style={{ width: "100%" }} paddingBottom="$4" justifyContent="flex-start">
           {/* <H5 fontWeight={800}>{question.current?.answer_id && question.current?.answer_id.length > 1 ? "Multiple Answer:" : "Multiple Choice:"}</H5> */}
           <Paragraph marginBottom="$2" fontSize={"$7"}>
@@ -51,7 +51,7 @@ export default function MultipleCHoice() {
                   bordered
                   borderRadius="$8"
                   pressStyle={{ scale: 0.95 }}
-                  animation="bouncy"
+                  // animation="bouncy"
                   flex={1}
                   onPress={() => {
                     if (question.current?.answer_id) {

@@ -24,20 +24,18 @@ export default function Index() {
   }, []);
 
   async function updateLeaderboard() {
-    let update;
-    if (gameName === "pitch_perfect") {
-      update = { pitch_perfect: Number(score) };
-    }
-    const { data, error } = await supabase
-      .from("leaderboard")
-      .upsert({ ...update, profile: currentUser?.id })
-      .select();
+    if (currentUser) {
+      const { data, error } = await supabase
+        .from("leaderboard")
+        .upsert({ ...{ [gameName as string]: Number(score) }, profile: currentUser?.id })
+        .select();
 
-    if (data) {
-      console.log("UPDATED HIGH SCORE", data);
-    }
-    if (error) {
-      console.error(error);
+      if (data) {
+        console.log("UPDATED HIGH SCORE", data);
+      }
+      if (error) {
+        console.error(error);
+      }
     }
   }
 
@@ -78,7 +76,7 @@ export default function Index() {
                 </Button>
               </Link>
             </XStack>
-            <Theme name={"alt1_Button"}>
+            <Theme name={"alt1_Button" as any}>
               <Button onPress={() => router.back()} fontWeight={600} size={"$6"} width={"100%"} elevate icon={<RefreshCw />}>
                 Play Again
               </Button>

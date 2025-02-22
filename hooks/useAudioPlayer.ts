@@ -12,20 +12,6 @@ export default function useAudioPlayer() {
   };
 
   const playAudio = async (audioFile: number, volume: number = 0.5) => {
-    // const audioFileURI = getAudioFileURI(audioFile);
-
-    // if (!audioFile) return;
-
-    // const audioContext = new AudioContext();
-
-    // const audioBuffer = await audioContext.decodeAudioDataSource(audioFile);
-
-    // const playerNode = audioContext.createBufferSource();
-    // playerNode.buffer = audioBuffer;
-
-    // playerNode.connect(audioContext.destination);
-    // playerNode.start(audioContext.currentTime);
-    // playerNode.stop(audioContext.currentTime + 10);
     try {
       const { sound } = await Audio.Sound.createAsync(audioFile);
       await Audio.setAudioModeAsync({

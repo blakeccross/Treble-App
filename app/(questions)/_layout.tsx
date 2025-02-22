@@ -9,7 +9,14 @@ export default function TabLayout() {
   return (
     <>
       <QuizProvider>
-        {currentRoute !== "/loading" && currentRoute !== "/quiz-complete" && currentRoute !== "module-complete" ? <ProgressHeader /> : <></>}
+        {currentRoute !== "/loading" &&
+        currentRoute !== "/out-of-lives" &&
+        currentRoute !== "/quiz-complete" &&
+        currentRoute !== "module-complete" ? (
+          <ProgressHeader />
+        ) : (
+          <></>
+        )}
         <Stack screenOptions={{ gestureEnabled: false }}>
           <Stack.Screen name="loading" options={{ headerShown: false, presentation: "fullScreenModal" }} />
           <Stack.Screen name="reading" options={{ headerShown: false }} getId={({ params }) => String(Date.now())} />

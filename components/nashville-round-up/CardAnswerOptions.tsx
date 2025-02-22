@@ -175,4 +175,6 @@ const CardAnswerOptions = forwardRef(
   }
 );
 
+CardAnswerOptions.displayName = "CardAnswerOptions";
+
 export default CardAnswerOptions;

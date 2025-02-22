@@ -71,7 +71,9 @@
     "react-native-webview": "13.12.5",
     "supabase": "^1.187.10",
     "tamagui": "^1.124.4",
-    "vexflow": "^4.2.4"
+    "vexflow": "^4.2.4",
+    "expo-network": "~7.0.5",
+    "expo-audio": "~0.3.4"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

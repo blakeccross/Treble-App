@@ -11,8 +11,9 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { FlatList, Pressable, SafeAreaView, View } from "react-native";
 import { TapGestureHandler } from "react-native-gesture-handler";
 import Animated, { useAnimatedStyle, useSharedValue, withDelay, withSpring } from "react-native-reanimated";
-import { Card, H1, H2, H3, Paragraph, Square, XStack } from "tamagui";
+import { Button, Card, H1, H2, H3, Paragraph, Square, XStack } from "tamagui";
 import { LinearGradient } from "tamagui/linear-gradient";
+import { useAudioPlayer } from "expo-audio";
 
 const PAGE_WIDTH = window.width;
 const colorOptions = ["blue", "orange", "green", "red", "yellow", "purple", "pink"];
@@ -32,22 +33,6 @@ const availableAnswers = [
   { value: "minor7", option_text: "min7" },
   { value: "dim", option_text: "dim" },
 ];
-
-// Static imports for audio files
-// const noteToFile = {
-//   c3: require("@/assets/audio/piano_c3.mp3"),
-//   cs3: require("@/assets/audio/piano_cs3.mp3"),
-//   d3: require("@/assets/audio/piano_d3.mp3"),
-//   ds3: require("@/assets/audio/piano_ds3.mp3"),
-//   e3: require("@/assets/audio/piano_e3.mp3"),
-//   f3: require("@/assets/audio/piano_f3.mp3"),
-//   fs3: require("@/assets/audio/piano_fs3.mp3"),
-//   g3: require("@/assets/audio/piano_g3.mp3"),
-//   gs3: require("@/assets/audio/piano_gs3.mp3"),
-//   a3: require("@/assets/audio/piano_a3.mp3"),
-//   as3: require("@/assets/audio/piano_as3.mp3"),
-//   b3: require("@/assets/audio/piano_b3.mp3"),
-// };
 
 const correctSFX = require("@/assets/audio/correct_sfx.mp3");
 const incorrectSFX = require("@/assets/audio/incorrect_sfx.mp3");

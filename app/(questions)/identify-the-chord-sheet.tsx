@@ -45,7 +45,7 @@ export default function Page() {
                 elevate
                 borderRadius="$8"
                 pressStyle={{ scale: 0.95 }}
-                animation="bouncy"
+                // animation="bouncy"
                 flex={1}
                 borderWidth={"$1"}
                 onPress={() => setSelectedAnswer(item.id)}

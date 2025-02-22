@@ -151,7 +151,17 @@ function PosterImage({ sv, image, title }: { sv: SharedValue<number>; image: str
   );
 }
 
-export function StickyHeader({ image, title, children }: { image: string; title: string; children: JSX.Element }) {
+export function StickyHeader({
+  image,
+  title,
+  children,
+  onBackPress,
+}: {
+  image: string;
+  title: string;
+  children: JSX.Element;
+  onBackPress?: () => void;
+}) {
   const inset = useSafeAreaInsets();
   const sv = useSharedValue<number>(0);
   const scrollHandler = useAnimatedScrollHandler({
@@ -191,7 +201,7 @@ export function StickyHeader({ image, title, children }: { image: string; title:
       <PosterImage sv={sv} image={image} title={title} />
       <Animated.ScrollView onScroll={scrollHandler} scrollEventThrottle={16} style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
         <View position="absolute" top={inset.top} left="$4" zIndex={100}>
-          <Button circular theme={"alt1"} onPress={() => router.back()}>
+          <Button circular theme={"alt1"} onPress={() => (onBackPress ? onBackPress() : router.back())}>
             <ArrowLeft size="$3" />
           </Button>
         </View>

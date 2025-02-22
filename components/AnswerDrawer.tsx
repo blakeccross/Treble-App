@@ -1,11 +1,12 @@
 import { QuizContext } from "@/context/quiz-context";
-import { Link, useLocalSearchParams, useNavigation, useRouter } from "expo-router";
-import React, { RefAttributes, useContext, useEffect, useRef, useState } from "react";
-import { Animated } from "react-native";
-import { Button, H1, H2, H3, Paragraph, Sheet, View, YStack } from "tamagui";
 import { AVPlaybackSource, Audio } from "expo-av";
 import * as Haptics from "expo-haptics";
+import { useRouter } from "expo-router";
+import React, { useContext, useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Button, H3, Paragraph, View, YStack } from "tamagui";
+import BottomSheet from "./BottomSheet";
+import { useUser } from "@/context/user-context";
 
 const correctSFX = require("@/assets/audio/correct_sfx.mp3");
 
@@ -18,8 +19,8 @@ export default function AnswerDrawer({
   explanation?: string;
   enabled: boolean;
 }) {
-  const router = useRouter();
-  const { currentQuestionIndex, nextQuestion, lives, setLives } = useContext(QuizContext);
+  const { currentUser } = useUser();
+  const { nextQuestion, lives, setLives } = useContext(QuizContext);
   const [open, setOpen] = useState(false);
   const [answerIsCorrect, setAnswerIsCorrect] = useState<boolean>();
   const [sound, setSound] = useState<Audio.Sound>();
@@ -59,7 +60,7 @@ export default function AnswerDrawer({
     if (validateAnswer) {
       const validateFunction = validateAnswer();
       setAnswerIsCorrect(validateFunction);
-      if (validateFunction === false && lives !== undefined) setLives(lives - 1);
+      if (validateFunction === false && lives !== undefined && !currentUser?.is_subscribed) setLives(lives - 1);
       else {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         playSFX(correctSFX);
@@ -74,38 +75,22 @@ export default function AnswerDrawer({
 
   return (
     <>
-      <Sheet
-        forceRemoveScrollEnabled={open}
-        modal
-        open={open}
-        onOpenChange={setOpen}
-        //snapPoints={["fit", 110]}
-        snapPointsMode="fit"
-        position={0}
-        zIndex={100_000}
-        // animation="quick"
+      <BottomSheet
+        isOpen={open}
+        setIsOpen={setOpen}
+        height={250}
+        duration={300}
+        backgroundColor={answerIsCorrect ? "$green7" : "$red9"}
         dismissOnOverlayPress={false}
       >
-        <Sheet.Overlay
-          // animation="lazy"
-          enterStyle={{ opacity: 0 }}
-          exitStyle={{ opacity: 0 }}
-        />
-        <Sheet.Handle />
-        <Sheet.Frame
-          padding="$4"
-          justifyContent="space-between"
-          alignItems="center"
-          space="$5"
-          backgroundColor={answerIsCorrect ? "$green7" : "$red9"}
-        >
+        <View flex={1} justifyContent="space-between">
           <YStack minHeight={100}>
             <H3 fontWeight={600} textAlign="center" color={answerIsCorrect ? "$green12" : "$red5Dark"}>
               {answerIsCorrect ? "Correct!" : "Incorrect"}
             </H3>
             <Paragraph color={answerIsCorrect ? "$green12" : "$red5Dark"}>{explanation}</Paragraph>
           </YStack>
-          <View width={"100%"} paddingBottom="$4">
+          <View width={"100%"}>
             <Button
               onPress={handleContinue}
               textAlign="center"
@@ -118,15 +103,12 @@ export default function AnswerDrawer({
               Continue
             </Button>
           </View>
-        </Sheet.Frame>
-      </Sheet>
+        </View>
+      </BottomSheet>
+
       <View>
         <View
           style={{
-            // position: "absolute",
-            justifyContent: "flex-end",
-            //alignItems: "flex-start",
-            // flex: 1,
             width: "100%",
             bottom: 0,
           }}

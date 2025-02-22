@@ -1,23 +1,13 @@
-import { ArrowLeft, Check, ChevronRight, Lock, Play, RefreshCw, X } from "@tamagui/lucide-icons";
-import { Link, router, useLocalSearchParams } from "expo-router";
-import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
-import { SafeAreaView, useWindowDimensions, ScrollView, LayoutChangeEvent, FlatList, Pressable } from "react-native";
-import { useSharedValue } from "react-native-reanimated";
-import { Image } from "expo-image";
+import { X } from "@tamagui/lucide-icons";
+import { router, useLocalSearchParams } from "expo-router";
+import React, { useEffect, useState } from "react";
+import { FlatList, Pressable, SafeAreaView } from "react-native";
 
-import { Avatar, H1, H2, H3, H4, H5, ListItem, Paragraph, Separator, Spinner, View, XStack, YGroup, YStack } from "tamagui";
-import { window } from "@/utils";
-import { Dropdown } from "@/components/dropdown";
-import { ModuleContext } from "@/context/module-context";
-import { UserContext } from "@/context/user-context";
-import ParallaxScrollView from "@/components/ParallaxScrollView";
-import { blue, blueDark } from "@tamagui/themes";
-import { Button } from "@/components/button";
-import { supabase } from "@/utils/supabase";
 import { Leaderboard } from "@/types";
+import { supabase } from "@/utils/supabase";
+import { Avatar, H3, H4, H5, Separator, Spinner, View, XStack } from "tamagui";
 
 export default function LeaderBoard() {
-  const { currentUser } = useContext(UserContext);
   const { gameName } = useLocalSearchParams<{ gameName: string }>();
   const [leaderboard, setLeaderboard] = useState<Leaderboard[]>([]);
   const [isLoading, setIsLoading] = useState(false);
