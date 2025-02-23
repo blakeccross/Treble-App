@@ -11,10 +11,9 @@ const { width } = Dimensions.get("window");
 const TabBar = ({ state, descriptors, navigation }: BottomTabBarProps) => {
   const colorScheme = useColorScheme() ?? "light";
   return (
-    <BlurView style={styles.mainContainer} tint="regular">
+    <BlurView style={styles.mainContainer} tint="regular" experimentalBlurMethod="dimezisBlurView">
       {state.routes.map((route: any, index: number) => {
         const { options } = descriptors[route.key];
-        const label = options.tabBarLabel !== undefined ? options.tabBarLabel : options.title !== undefined ? options.title : route.name;
         const icon = options.tabBarIcon;
 
         const isFocused = state.index === index;
