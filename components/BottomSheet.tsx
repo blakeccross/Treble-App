@@ -1,7 +1,16 @@
 import React, { useEffect } from "react";
 import { StyleSheet, TouchableOpacity, useWindowDimensions } from "react-native";
 import { Gesture, GestureDetector, MouseButton } from "react-native-gesture-handler";
-import Animated, { ReduceMotion, useAnimatedStyle, Easing, useSharedValue, withDelay, withTiming, withSpring } from "react-native-reanimated";
+import Animated, {
+  ReduceMotion,
+  useAnimatedStyle,
+  Easing,
+  useSharedValue,
+  withDelay,
+  withTiming,
+  withSpring,
+  withDecay,
+} from "react-native-reanimated";
 import { window } from "../utils";
 import { GetThemeValueForKey, Paragraph, View } from "tamagui";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -11,7 +20,7 @@ export default function BottomSheet({
   setIsOpen,
   height,
   backgroundColor,
-  duration = 700,
+  duration = 500,
   dismissOnOverlayPress = true,
   children,
 }: {
@@ -42,7 +51,7 @@ export default function BottomSheet({
 
   useEffect(() => {
     if (isOpen) {
-      progress.value = withSpring(0, { duration, clamp: { max: 0 } });
+      progress.value = withTiming(0, { duration, easing: Easing.inOut(Easing.quad), reduceMotion: ReduceMotion.System });
       // progress.value = withTiming(0, { duration, easing: Easing.inOut(Easing.quad), reduceMotion: ReduceMotion.System });
     } else {
       progress.value = withTiming(1, { duration, easing: Easing.inOut(Easing.quad), reduceMotion: ReduceMotion.System });
@@ -56,7 +65,7 @@ export default function BottomSheet({
 
   const backdropStyle = useAnimatedStyle(() => ({
     opacity: 1 - progress.value,
-    zIndex: isOpen ? 1 : withDelay(duration, withTiming(-1, { duration: 0 })),
+    zIndex: isOpen ? 100_000 : withDelay(duration, withTiming(-1, { duration: 0 })),
   }));
 
   const panGesture = Gesture.Pan()
@@ -76,7 +85,7 @@ export default function BottomSheet({
 
   return (
     <>
-      <Animated.View style={[sheetStyles.backdrop, backdropStyle]}>
+      <Animated.View style={[sheetStyles.backdrop, backdropStyle]} pointerEvents={isOpen ? "auto" : "none"}>
         <TouchableOpacity style={{ flex: 1 }} onPress={() => dismissOnOverlayPress && setIsOpen(false)} />
       </Animated.View>
       <GestureDetector gesture={panGesture}>

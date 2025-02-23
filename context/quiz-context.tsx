@@ -46,8 +46,7 @@ export default function QuizProvider({ children }: { children: JSX.Element[] }) 
   }, [currentSectionQuestions]);
 
   useEffect(() => {
-    console.log("LIVES", sortedQuestions[currentQuestionIndex]?.type);
-    if (lives && lives <= 0 && sortedQuestions[currentQuestionIndex] && sortedQuestions[currentQuestionIndex]?.type !== "reading") {
+    if (lives !== undefined && lives <= 0 && sortedQuestions[currentQuestionIndex] && sortedQuestions[currentQuestionIndex]?.type !== "reading") {
       router.replace(`/out-of-lives`);
     }
   }, [lives, currentQuestionIndex]);

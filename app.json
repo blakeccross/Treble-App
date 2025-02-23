@@ -2,7 +2,7 @@
   "expo": {
     "name": "Treble",
     "slug": "notate",
-    "version": "1.0.6",
+    "version": "1.0.9",
     "orientation": "portrait",
     "icon": "./assets/images/treble-icon.png",
     "scheme": "myapp",
@@ -39,7 +39,6 @@
         "expo-asset",
         {
           "assets": [
-            "./assets/images/blue_shapes.jpg",
             "./assets/audio/piano_fs2.mp3",
             "./assets/audio/piano_c3.mp3",
             "./assets/audio/piano_fs3.mp3",

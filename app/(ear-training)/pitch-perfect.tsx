@@ -182,15 +182,16 @@ export default function PitchPerfect() {
   }
 
   function handlePressPlay() {
-    if (userLives !== undefined && userLives <= 0) {
+    if (!currentUser?.is_subscribed && userLives !== undefined && userLives <= 0) {
       router.push("/out-of-lives");
       return;
-    } else {
-      updatedLives(-1);
     }
     if (lives >= 1) {
       if (!isRunning) {
-        if (!gameHasStarted) setGameHasStarted(true);
+        if (!gameHasStarted) {
+          setGameHasStarted(true);
+          updatedLives(-1);
+        }
         setSelectedAnswer("");
         setTapEnabled(true);
         newQuestion();

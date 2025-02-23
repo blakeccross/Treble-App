@@ -93,14 +93,14 @@ export default function App() {
   }
 
   const playProgression = (progression: ChordProgression) => {
-    stopSong();
+    // stopSong();
     const convertedNotes = progression?.midi.map((note) => ({
       duration: note.end - note.start,
       note: note.name as PianoKey,
       time: note.start,
       // velocity: note.velocity * 128,
     }));
-    playSong(convertedNotes || [], 3);
+    playSong(convertedNotes || []);
   };
 
   function getRandomProgression() {

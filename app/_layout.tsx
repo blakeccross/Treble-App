@@ -41,17 +41,15 @@ export default function RootLayout() {
   }, [loaded]);
 
   useEffect(() => {
-    if (networkState.isConnected) {
-      Purchases.setLogLevel(Purchases.LOG_LEVEL.DEBUG);
-      if (Platform.OS === "ios") {
-        try {
-          Purchases.configure({ apiKey: "appl_zZGUxbBzchveUkWXlMPDeuztdeD" });
-        } catch (e) {
-          console.log(e);
-        }
-      } else if (Platform.OS === "android") {
-        // ANDROID LOGIC
+    Purchases.setLogLevel(Purchases.LOG_LEVEL.DEBUG);
+    if (Platform.OS === "ios") {
+      try {
+        Purchases.configure({ apiKey: "appl_zZGUxbBzchveUkWXlMPDeuztdeD" });
+      } catch (e) {
+        console.log(e);
       }
+    } else if (Platform.OS === "android") {
+      // ANDROID LOGIC
     }
   }, []);
 

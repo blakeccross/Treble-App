@@ -20,6 +20,8 @@ import { LinearGradient } from "tamagui/linear-gradient";
 import * as Network from "expo-network";
 import * as FileSystem from "expo-file-system";
 import { window } from "@/utils";
+import XPHistoryModal from "@/components/XPHistory.modal";
+import HeartModal from "@/components/Heart.modal";
 
 export default function HomeScreen() {
   const { modules } = useContext(ModuleContext);
@@ -29,6 +31,7 @@ export default function HomeScreen() {
   const screenWidth = Dimensions.get("window").width;
   const [openPaywall, setOpenPaywall] = useState(false);
   const [openXPHistory, setOpenXPHistory] = useState(false);
+  const [openHeartModal, setOpenHeartModal] = useState(false);
   const [xpHistory, setXPHistory] = useMMKVObject<XPHistory[]>("xp_history");
   const networkState = Network.useNetworkState();
   console.log(FileSystem.documentDirectory + "C3.mp3");
@@ -55,7 +58,7 @@ export default function HomeScreen() {
               </Link>
             </View>
 
-            <XStack gap="$3">
+            <XStack gap="$3" onPress={() => setOpenHeartModal(true)}>
               {!currentUser?.is_subscribed && (
                 <XStack gap="$1.5" alignItems="center">
                   <Heart size="$1.5" color={"$red10"} fill={red.red10} />
@@ -75,41 +78,8 @@ export default function HomeScreen() {
           </XStack>
         </View>
 
-        <BottomSheet isOpen={openXPHistory} setIsOpen={setOpenXPHistory} height={"80%"}>
-          <YStack flex={1}>
-            <H3 fontWeight={600} marginBottom="$2">
-              XP History
-            </H3>
-
-            <FlatList
-              data={xpHistory?.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())} // Sort by date descending
-              keyExtractor={(item) => String(item.date)}
-              style={{ flex: 1 }}
-              ListEmptyComponent={() => (
-                <View>
-                  <Paragraph>As you gain experience, it will show up here</Paragraph>
-                </View>
-              )}
-              showsVerticalScrollIndicator={false}
-              renderItem={({ item }) => (
-                <>
-                  <XStack key={item.date} alignItems="center" justifyContent="space-between" width={"100%"} marginBottom="$2">
-                    <YStack>
-                      <XStack alignItems="center" gap="$2">
-                        <H5 fontWeight={600}>{item.title + " • " + item.description}</H5>
-                      </XStack>
-                      <Paragraph fontSize={"$2"} color={"$gray10"}>
-                        {moment(item.date).format("MMM D, YYYY hh:mm a")}
-                      </Paragraph>
-                    </YStack>
-                    <H5 fontWeight={600}>{item.xp_earned}</H5>
-                  </XStack>
-                  <Separator />
-                </>
-              )}
-            />
-          </YStack>
-        </BottomSheet>
+        <HeartModal openHeartModal={openHeartModal} setOpenHeartModal={setOpenHeartModal} />
+        <XPHistoryModal openXPHistory={openXPHistory} setOpenXPHistory={setOpenXPHistory} xpHistory={xpHistory} />
 
         <ScrollView
           // backgroundColor={"$background"}

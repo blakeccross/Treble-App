@@ -19,23 +19,34 @@ export default function usePlayMidi() {
   const activeSoundsRef = useRef<{ envelope: GainNode; endTime: number }[]>([]);
 
   async function loadAssets() {
-    const pianoFs2 = await Asset.loadAsync(require("../assets/audio/piano_fs2.mp3"));
-    const pianoC3 = await Asset.loadAsync(require("../assets/audio/piano_c3.mp3"));
-    const pianoFs3 = await Asset.loadAsync(require("../assets/audio/piano_fs3.mp3"));
-    const pianoC4 = await Asset.loadAsync(require("../assets/audio/piano_c4.mp3"));
-    const pianoFs4 = await Asset.loadAsync(require("../assets/audio/piano_fs4.mp3"));
-
+    // const pianoFs2 = await Asset.loadAsync(require("../assets/audio/piano_fs2.mp3"));
+    // const pianoC3 = await Asset.loadAsync(require("../assets/audio/piano_c3.mp3"));
+    // const pianoFs3 = await Asset.loadAsync(require("../assets/audio/piano_fs3.mp3"));
+    // const pianoC4 = await Asset.loadAsync(require("../assets/audio/piano_c4.mp3"));
+    // const pianoFs4 = await Asset.loadAsync(require("../assets/audio/piano_fs4.mp3"));
     loadBuffers({
-      "F#2": pianoFs2[0].localUri,
-      C3: pianoC3[0].localUri,
-      "F#3": pianoFs3[0].localUri,
-      C4: pianoC4[0].localUri,
-      "F#4": pianoFs4[0].localUri,
+      "F#2": FileSystem.bundleDirectory + "piano_fs2.mp3",
+      C3: FileSystem.bundleDirectory + "piano_c3.mp3",
+      "F#3": FileSystem.bundleDirectory + "piano_fs3.mp3",
+      C4: FileSystem.bundleDirectory + "piano_c4.mp3",
+      "F#4": FileSystem.bundleDirectory + "piano_fs4.mp3",
+      // C4: "https://software-mansion-labs.github.io/react-native-audio-api/audio/sounds/C4.mp3",
+      // "F#4": "https://software-mansion-labs.github.io/react-native-audio-api/audio/sounds/Fs4.mp3",
     });
+    // loadBuffers({
+    //   "F#2": pianoFs2[0].localUri,
+    //   C3: pianoC3[0].localUri,
+    //   "F#3": pianoFs3[0].localUri,
+    //   C4: pianoC4[0].localUri,
+    //   "F#4": pianoFs4[0].localUri,
+    // });
   }
 
   useEffect(() => {
     loadAssets();
+    return () => {
+      audioContextRef.current?.close();
+    };
   }, []);
 
   // const sourceList = {
@@ -54,9 +65,9 @@ export default function usePlayMidi() {
   // };
 
   const bufferListRef = useRef<Record<string, AudioBuffer | null>>({
-    "F#2": null,
-    C3: null,
-    "F#3": null,
+    // "F#2": null,
+    // C3: null,
+    // "F#3": null,
     C4: null,
     "F#4": null,
   });
@@ -136,22 +147,23 @@ export default function usePlayMidi() {
     return frequency;
   }
 
-  useEffect(() => {
-    // if (Object.entries(sourceList)?.every((asset) => asset[1])) {
-    //   loadBuffers();
-    // }
-    // return () => {
-    //   if (audioContextRef.current) audioContextRef.current?.close();
-    // };
-  }, []);
+  // useEffect(() => {
+  // if (Object.entries(sourceList)?.every((asset) => asset[1])) {
+  //   loadBuffers();
+  // }
+  // return () => {
+  //   if (audioContextRef.current) audioContextRef.current?.close();
+  // };
+  // }, []);
 
-  async function loadBuffers(sourceList: Record<string, string | null>) {
+  async function loadBuffers(sourceList: Record<string, string>) {
     audioContextRef.current = new AudioContext();
     try {
       await Promise.all(
         Object.entries(sourceList).map(async ([key, url]) => {
+          console.log("BAM", url);
           if (audioContextRef?.current && audioContextRef.current?.decodeAudioDataSource) {
-            bufferListRef.current[key] = await audioContextRef.current?.decodeAudioDataSource(url as string);
+            bufferListRef.current[key] = await audioContextRef.current?.decodeAudioDataSource(url);
           } else {
             bufferListRef.current[key] = null;
             console.log("FAILED TO LOAD BUFFER");
@@ -166,29 +178,29 @@ export default function usePlayMidi() {
     }
   }
 
-  // async function loadBuffers() {
+  // async function loadBuffers(sourceList: Record<string, string | null>) {
   //   audioContextRef.current = new AudioContext();
-  // try {
-  //   await Promise.all(
-  //     Object.entries(sourceList).map(async ([key, url]) => {
-  //       bufferListRef.current[key] = await FileSystem.downloadAsync(
-  //         url as string,
-  //         `${FileSystem.documentDirectory}/${key.replace("#", "s")}.mp3`
-  //       ).then(({ uri }) => {
-  //         if (audioContextRef?.current && audioContextRef.current?.decodeAudioDataSource) {
-  //           return audioContextRef.current?.decodeAudioDataSource(uri);
-  //         } else {
-  //           console.log("FAILED TO LOAD BUFFER");
-  //           return null;
-  //         }
-  //       });
-  //     })
-  //   );
-  //   validateBuffers();
-  // } catch (error) {
-  //   console.error("Error loading buffers:", error);
-  //   setBuffersLoaded(false);
-  // }
+  //   try {
+  //     await Promise.all(
+  //       Object.entries(sourceList).map(async ([key, url]) => {
+  //         bufferListRef.current[key] = await FileSystem.downloadAsync(
+  //           url as string,
+  //           `${FileSystem.documentDirectory}/${key.replace("#", "s")}.mp3`
+  //         ).then(({ uri }) => {
+  //           if (audioContextRef?.current && audioContextRef.current?.decodeAudioDataSource) {
+  //             return audioContextRef.current?.decodeAudioDataSource(uri);
+  //           } else {
+  //             console.log("FAILED TO LOAD BUFFER");
+  //             return null;
+  //           }
+  //         });
+  //       })
+  //     );
+  //     validateBuffers();
+  //   } catch (error) {
+  //     console.error("Error loading buffers:", error);
+  //     setBuffersLoaded(false);
+  //   }
   // }
 
   const onKeyPressIn = (which: PianoKey, time: number, duration?: number, volume: number = 1) => {
@@ -251,6 +263,7 @@ export default function usePlayMidi() {
       console.warn("Cannot play song - buffers not fully loaded");
       return;
     }
+    stopSong();
 
     song.forEach(({ note, time, duration }) => {
       onKeyPressIn(note as PianoKey, time, duration, volume);

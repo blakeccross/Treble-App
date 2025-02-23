@@ -39,22 +39,23 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
   }, []);
 
   useEffect(() => {
-    if (!currentUser?.is_subscribed) {
-      if (lives === undefined) {
-        setLives(5);
-      } else if (lives < 5 && livesRefreshTime && moment().isAfter(moment(livesRefreshTime))) {
-        setLives(5);
-        setLivesRefreshTime(moment().add(1, "hour").format());
-      } else {
-        const interval = setInterval(() => {
+    const checkLivesRefresh = () => {
+      if (!currentUser?.is_subscribed) {
+        if (lives === undefined) {
+          setLives(5);
+        } else if (lives < 5 && livesRefreshTime && moment().isAfter(moment(livesRefreshTime))) {
           setLives(5);
           setLivesRefreshTime(moment().add(1, "hour").format());
-        }, 3600000); // 1 hour in milliseconds
-
-        return () => clearInterval(interval);
+        }
       }
-    }
-  }, [lives, livesRefreshTime]);
+    };
+
+    checkLivesRefresh();
+
+    const interval = setInterval(checkLivesRefresh, 60000); // Check every minute
+
+    return () => clearInterval(interval);
+  }, [lives, livesRefreshTime, currentUser]);
 
   async function getUser() {
     const { data, error } = await supabase.auth.getSession();
