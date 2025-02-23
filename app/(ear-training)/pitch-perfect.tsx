@@ -1,6 +1,7 @@
 import GradientCircle from "@/components/gradient-circle";
 import { useUser } from "@/context/user-context";
-import usePlayMidi from "@/hooks/usePlayMidi2";
+import usePlayMidi from "@/hooks/usePlayMidi";
+import { usePlaySFX } from "@/hooks/usePlaySFX";
 import { PianoKey } from "@/types/pianoKeys";
 import { window } from "@/utils";
 import { BarChart2, Heart, X } from "@tamagui/lucide-icons";
@@ -25,6 +26,8 @@ const incorrectSFX = require("@/assets/audio/incorrect_sfx.mp3");
 
 export default function PitchPerfect() {
   const { currentUser, updatedLives, lives: userLives } = useUser();
+  const { playSong, stopSong } = usePlayMidi();
+  const { playSFX } = usePlaySFX();
   const [gameHasStarted, setGameHasStarted] = useState(false);
   const [sound, setSound] = useState<Audio.Sound>();
   const [currentScore, setCurrentScore] = useState<number>(0);
@@ -41,7 +44,6 @@ export default function PitchPerfect() {
     { value: "F4", option_text: "F" },
   ]);
   const [playEnabled, setTapEnabled] = useState(true);
-  const { playSong, stopSong } = usePlayMidi();
 
   const correctAnswer = useRef("");
   // Shared values for scale animations
@@ -99,7 +101,8 @@ export default function PitchPerfect() {
       router.push({ pathname: "/game-over", params: { score: currentScore, gameName: "pitch_perfect" } });
     }
     setAnswerIsCorrect(false);
-    playSFX(incorrectSFX, true);
+    playSFX(incorrectSFX);
+    stopSong();
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
   }
 
@@ -160,22 +163,22 @@ export default function PitchPerfect() {
     setAvailableAnswers(options.map((item) => ({ value: item, option_text: item })));
   }
 
-  async function playSFX(sfx: AVPlaybackSource, interrupt?: boolean) {
-    try {
-      const { sound } = await Audio.Sound.createAsync(sfx);
-      await Audio.setAudioModeAsync({
-        playsInSilentModeIOS: true,
-      });
+  // async function playSFX(sfx: AVPlaybackSource, interrupt?: boolean) {
+  //   try {
+  //     const { sound } = await Audio.Sound.createAsync(sfx);
+  //     await Audio.setAudioModeAsync({
+  //       playsInSilentModeIOS: true,
+  //     });
 
-      if (interrupt) {
-        setSound(sound);
-      }
+  //     if (interrupt) {
+  //       setSound(sound);
+  //     }
 
-      await sound.playAsync();
-    } catch (error) {
-      console.error("Error playing SFX:", error);
-    }
-  }
+  //     await sound.playAsync();
+  //   } catch (error) {
+  //     console.error("Error playing SFX:", error);
+  //   }
+  // }
 
   async function playAudio() {
     playSong([{ note: correctAnswer.current as PianoKey, time: 0, duration: 5 }], 7);
@@ -304,7 +307,13 @@ export default function PitchPerfect() {
     springOut();
   }
 
-  const tapGesture = Gesture.Tap().onTouchesUp(handlePressPlay).runOnJS(true);
+  const tapGesture = Gesture.Tap()
+    .onTouchesUp(() => {
+      if (playEnabled) {
+        handlePressPlay();
+      }
+    })
+    .runOnJS(true);
 
   return (
     <View style={{ flex: 1 }}>

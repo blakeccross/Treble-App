@@ -1,27 +1,24 @@
-import BottomSheet from "@/components/BottomSheet";
+import HeartModal from "@/components/Heart.modal";
 import Paywall from "@/components/paywall.modal";
 import { SkeletonLoader } from "@/components/SkeletonLoader";
+import XPHistoryModal from "@/components/XPHistory.modal";
 import { ModuleContext } from "@/context/module-context";
 import { UserContext } from "@/context/user-context";
 import { XPHistory } from "@/types";
+import { window } from "@/utils";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { ChevronRight, Heart, StarFull } from "@tamagui/lucide-icons";
 import { blue, grayA, red, yellow, yellowA } from "@tamagui/themes";
 import { Image } from "expo-image";
+import * as Network from "expo-network";
 import { Link } from "expo-router";
-import moment from "moment";
 import React, { useContext, useState } from "react";
 import { Dimensions, FlatList, useColorScheme } from "react-native";
 import { useMMKVObject } from "react-native-mmkv";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Avatar, Card, H3, H5, Paragraph, Progress, ScrollView, Separator, View, XStack, YStack } from "tamagui";
+import { Avatar, Card, H3, H5, Paragraph, Progress, ScrollView, View, XStack, YStack } from "tamagui";
 import { LinearGradient } from "tamagui/linear-gradient";
-import * as Network from "expo-network";
-import * as FileSystem from "expo-file-system";
-import { window } from "@/utils";
-import XPHistoryModal from "@/components/XPHistory.modal";
-import HeartModal from "@/components/Heart.modal";
 
 export default function HomeScreen() {
   const { modules } = useContext(ModuleContext);
@@ -34,7 +31,7 @@ export default function HomeScreen() {
   const [openHeartModal, setOpenHeartModal] = useState(false);
   const [xpHistory, setXPHistory] = useMMKVObject<XPHistory[]>("xp_history");
   const networkState = Network.useNetworkState();
-  console.log(FileSystem.documentDirectory + "C3.mp3");
+
   return (
     <>
       <LinearGradient

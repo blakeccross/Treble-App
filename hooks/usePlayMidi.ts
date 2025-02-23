@@ -1,45 +1,24 @@
 import { PianoKey } from "@/types/pianoKeys";
-import { Asset, useAssets } from "expo-asset";
 import * as FileSystem from "expo-file-system";
-import { useEffect, useRef, useState } from "react";
+import { useFocusEffect } from "expo-router";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Platform } from "react-native";
 import { AudioBuffer, AudioContext, GainNode } from "react-native-audio-api";
-import { Image } from "react-native";
+import { useMMKVNumber } from "react-native-mmkv";
 
 export default function usePlayMidi() {
-  // const [assets] = useAssets([
-  //   require("../assets/audio/piano_fs2.mp3"),
-  //   require("../assets/audio/piano_c3.mp3"),
-  //   require("../assets/audio/piano_fs3.mp3"),
-  //   require("../assets/audio/piano_c4.mp3"),
-  //   require("../assets/audio/piano_fs4.mp3"),
-  // ]);
-
   const [buffersLoaded, setBuffersLoaded] = useState(false);
-  // const [sourceList, setSourceList] = useState<Record<string, string | null>>({});
+  const [pianoVolume, setPianoVolume] = useMMKVNumber("pianoVolume");
   const activeSoundsRef = useRef<{ envelope: GainNode; endTime: number }[]>([]);
 
   async function loadAssets() {
-    // const pianoFs2 = await Asset.loadAsync(require("../assets/audio/piano_fs2.mp3"));
-    // const pianoC3 = await Asset.loadAsync(require("../assets/audio/piano_c3.mp3"));
-    // const pianoFs3 = await Asset.loadAsync(require("../assets/audio/piano_fs3.mp3"));
-    // const pianoC4 = await Asset.loadAsync(require("../assets/audio/piano_c4.mp3"));
-    // const pianoFs4 = await Asset.loadAsync(require("../assets/audio/piano_fs4.mp3"));
     loadBuffers({
       "F#2": FileSystem.bundleDirectory + "piano_fs2.mp3",
       C3: FileSystem.bundleDirectory + "piano_c3.mp3",
       "F#3": FileSystem.bundleDirectory + "piano_fs3.mp3",
       C4: FileSystem.bundleDirectory + "piano_c4.mp3",
       "F#4": FileSystem.bundleDirectory + "piano_fs4.mp3",
-      // C4: "https://software-mansion-labs.github.io/react-native-audio-api/audio/sounds/C4.mp3",
-      // "F#4": "https://software-mansion-labs.github.io/react-native-audio-api/audio/sounds/Fs4.mp3",
     });
-    // loadBuffers({
-    //   "F#2": pianoFs2[0].localUri,
-    //   C3: pianoC3[0].localUri,
-    //   "F#3": pianoFs3[0].localUri,
-    //   C4: pianoC4[0].localUri,
-    //   "F#4": pianoFs4[0].localUri,
-    // });
   }
 
   useEffect(() => {
@@ -49,25 +28,18 @@ export default function usePlayMidi() {
     };
   }, []);
 
-  // const sourceList = {
-  //   "F#2": FileSystem.documentDirectory + "Fs2.mp3",
-  //   C3: FileSystem.documentDirectory + "C3.mp3",
-  //   "F#3": FileSystem.documentDirectory + "Fs3.mp3",
-  //   C4: FileSystem.documentDirectory + "C4.mp3",
-  //   "F#4": FileSystem.documentDirectory + "Fs4.mp3",
-  // };
-  // const sourceList = {
-  //   "F#2": assets && assets[0].uri,
-  //   C3: assets && assets[1].uri,
-  //   "F#3": assets && assets[2].uri,
-  //   C4: assets && assets[3].uri,
-  //   "F#4": assets && assets[4].uri,
-  // };
+  useFocusEffect(
+    useCallback(() => {
+      return () => {
+        stopSong();
+        audioContextRef.current?.close();
+        activeSoundsRef.current = [];
+        console.log("Play Audio is unfocused");
+      };
+    }, [])
+  );
 
   const bufferListRef = useRef<Record<string, AudioBuffer | null>>({
-    // "F#2": null,
-    // C3: null,
-    // "F#3": null,
     C4: null,
     "F#4": null,
   });
@@ -161,7 +133,6 @@ export default function usePlayMidi() {
     try {
       await Promise.all(
         Object.entries(sourceList).map(async ([key, url]) => {
-          console.log("BAM", url);
           if (audioContextRef?.current && audioContextRef.current?.decodeAudioDataSource) {
             bufferListRef.current[key] = await audioContextRef.current?.decodeAudioDataSource(url);
           } else {
@@ -178,32 +149,22 @@ export default function usePlayMidi() {
     }
   }
 
-  // async function loadBuffers(sourceList: Record<string, string | null>) {
-  //   audioContextRef.current = new AudioContext();
-  //   try {
-  //     await Promise.all(
-  //       Object.entries(sourceList).map(async ([key, url]) => {
-  //         bufferListRef.current[key] = await FileSystem.downloadAsync(
-  //           url as string,
-  //           `${FileSystem.documentDirectory}/${key.replace("#", "s")}.mp3`
-  //         ).then(({ uri }) => {
-  //           if (audioContextRef?.current && audioContextRef.current?.decodeAudioDataSource) {
-  //             return audioContextRef.current?.decodeAudioDataSource(uri);
-  //           } else {
-  //             console.log("FAILED TO LOAD BUFFER");
-  //             return null;
-  //           }
-  //         });
-  //       })
-  //     );
-  //     validateBuffers();
-  //   } catch (error) {
-  //     console.error("Error loading buffers:", error);
-  //     setBuffersLoaded(false);
-  //   }
-  // }
+  const handleConvertSong = (
+    song: {
+      name: string;
+      start: number;
+      end: number;
+      velocity: number;
+    }[]
+  ) => {
+    return song.map((note) => ({
+      duration: note.end - note.start,
+      note: note.name as any,
+      time: note.start,
+    }));
+  };
 
-  const onKeyPressIn = (which: PianoKey, time: number, duration?: number, volume: number = 1) => {
+  const onKeyPressIn = (which: PianoKey, time: number, duration: number = 1, volume: number = 1) => {
     if (!buffersLoaded) {
       console.warn("Buffers not fully loaded yet");
       return;
@@ -233,7 +194,7 @@ export default function usePlayMidi() {
     source.playbackRate.value = playbackRate;
 
     const tNow = aCtx.currentTime;
-    const endTime = tNow + time + (duration ?? 5) + 0.5;
+    const endTime = tNow + time + duration + 0.5;
 
     // Store the active sound
     activeSoundsRef.current.push({ envelope: envelope as any, endTime });
@@ -241,9 +202,9 @@ export default function usePlayMidi() {
     // Attack (fade-in)
 
     envelope.gain.setValueAtTime(0.001, tNow + time);
-    envelope.gain.exponentialRampToValueAtTime(volume, tNow + time + 0.01);
+    envelope.gain.exponentialRampToValueAtTime(pianoVolume !== undefined ? pianoVolume : 1, tNow + time + 0.01);
     // Decay (fade-out) before stopping
-    //envelope.gain.exponentialRampToValueAtTime(0.001, endTime);
+    envelope.gain.exponentialRampToValueAtTime(0.001, 10);
     envelope.gain.setValueAtTime(0, endTime - 0.05);
 
     source.connect(envelope);
@@ -270,5 +231,5 @@ export default function usePlayMidi() {
     });
   };
 
-  return { playSong, stopSong, buffersLoaded };
+  return { playSong, stopSong, buffersLoaded, handleConvertSong };
 }

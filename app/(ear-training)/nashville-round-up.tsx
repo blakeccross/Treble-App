@@ -1,27 +1,26 @@
-import PokerChip from "@/assets/icons/PokerChip";
+import GradientCircle from "@/components/gradient-circle";
 import AnswerFeedback from "@/components/nashville-round-up/AnswerFeedback";
 import CardAnswerOptions from "@/components/nashville-round-up/CardAnswerOptions";
 import QuestionCardOption from "@/components/nashville-round-up/QuestionCardOption";
-import useAudioPlayer from "@/hooks/useAudioPlayer";
+import { CHORDS } from "@/constants/chords";
+import { progressions } from "@/constants/progressions/easyProgressions";
+import { useUser } from "@/context/user-context";
 import usePlayMidi from "@/hooks/usePlayMidi";
+import { usePlaySFX } from "@/hooks/usePlaySFX";
 import { ChordProgression } from "@/types/chordProgression";
 import { PianoKey } from "@/types/pianoKeys";
 import { window } from "@/utils";
 import { delay } from "@/utils/delay";
-import { BarChart2, Heart, Play, X } from "@tamagui/lucide-icons";
-import { lightColors, red } from "@tamagui/themes";
-import { Link, router } from "expo-router";
-import React, { useEffect, useRef, useState } from "react";
-import { Pressable, SafeAreaView, StyleSheet } from "react-native";
-import Animated, { BounceIn, BounceOut, useSharedValue } from "react-native-reanimated";
-import { Button, H1, H2, Paragraph, View, XStack } from "tamagui";
-import { CHORDS } from "@/constants/chords";
-import { progressions } from "@/constants/progressions/easyProgressions";
 import { shuffle } from "@/utils/shuffle";
-import { LinearGradient } from "tamagui/linear-gradient";
+import { BarChart2, Heart, X } from "@tamagui/lucide-icons";
+import { red } from "@tamagui/themes";
 import * as Haptics from "expo-haptics";
-import { useUser } from "@/context/user-context";
-import GradientCircle from "@/components/gradient-circle";
+import { router } from "expo-router";
+import React, { useEffect, useRef, useState } from "react";
+import { Pressable, SafeAreaView } from "react-native";
+import Animated, { BounceIn, BounceOut, useSharedValue } from "react-native-reanimated";
+import { H1, Paragraph, View, XStack } from "tamagui";
+import { LinearGradient } from "tamagui/linear-gradient";
 
 const correctSFX = require("@/assets/audio/correct_sfx.mp3");
 const incorrectSFX = require("@/assets/audio/incorrect_sfx.mp3");
@@ -29,6 +28,8 @@ const shuffleAudio = require("@/assets/audio/fx/shuffle.mp3");
 
 export default function App() {
   const { currentUser, updatedLives, lives: userLives } = useUser();
+  const { playSong, stopSong } = usePlayMidi();
+  const { playSFX } = usePlaySFX();
   const isFlippedArray = [useSharedValue(false), useSharedValue(false), useSharedValue(false), useSharedValue(false), useSharedValue(false)];
   const correctAnswer = useRef("");
   const cardAnswerOptionsRef = useRef<any>(null);
@@ -37,8 +38,6 @@ export default function App() {
   const [lives, setLives] = useState(3);
   const [gameHasStarted, setGameHasStarted] = useState(false);
   const [nashvilleNumbersSolutionSet, setNashvilleNumbersSolutionSet] = useState<ChordProgression>();
-  const { playSong, stopSong } = usePlayMidi();
-  const { playAudio } = useAudioPlayer();
   const [isRunning, setIsRunning] = useState(false);
   const [selectedAnswer, setSelectedAnswer] = useState<string>("");
   const [answerIsCorrect, setAnswerIsCorrect] = useState<boolean>();
@@ -120,7 +119,7 @@ export default function App() {
       return;
     } else {
       updatedLives(-1);
-      playAudio(shuffleAudio);
+      playSFX(shuffleAudio);
       setGameHasStarted(true);
       handleFlip();
     }
@@ -159,8 +158,9 @@ export default function App() {
     setAnswerIsCorrect(isCorrect);
 
     if (isCorrect) {
-      playAudio(correctSFX, 0.3);
+      playSFX(correctSFX, 0.3);
       setCurrentScore(currentScore + 1);
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     } else {
       handleIncorrect();
     }
@@ -190,7 +190,7 @@ export default function App() {
     if (lives <= 1) {
       router.push({ pathname: "/game-over", params: { score: currentScore, gameName: "nashville_round_up" } });
     }
-    playAudio(incorrectSFX);
+    playSFX(incorrectSFX);
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
   }
 
@@ -245,7 +245,7 @@ export default function App() {
             setIsRunning={setIsRunning}
           />
           <View
-            onPress={gameHasStarted ? () => playProgression(nashvilleNumbersSolutionSet) : handleStartGame}
+            onPress={gameHasStarted ? () => nashvilleNumbersSolutionSet && playProgression(nashvilleNumbersSolutionSet) : handleStartGame}
             style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, justifyContent: "center", alignItems: "center" }}
           >
             <Paragraph fontWeight={800} color={"white"}>
@@ -269,24 +269,3 @@ export default function App() {
     </LinearGradient>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    alignItems: "center",
-    justifyContent: "flex-start",
-  },
-  buttonContainer: {
-    marginTop: 16,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  toggleButton: {
-    backgroundColor: "#b58df1",
-    padding: 12,
-    borderRadius: 48,
-  },
-  toggleButtonText: {
-    color: "#fff",
-    textAlign: "center",
-  },
-});

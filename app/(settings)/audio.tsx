@@ -1,44 +1,41 @@
-import { X } from "@tamagui/lucide-icons";
+import { Pause, Play, X } from "@tamagui/lucide-icons";
 import { router } from "expo-router";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Pressable, SafeAreaView } from "react-native";
-import { Button, H5, Paragraph, View, XStack, YStack } from "tamagui";
+import { Button, H5, Label, Slider, SliderProps, View, XStack, YStack } from "tamagui";
+import { clairdelune, hedwigTheme, flyingTheme } from "../../constants/demoSongs";
 import usePlayMidi from "../../hooks/usePlayMidi";
-import { clairdelune } from "../../constants/progressions/clairdelune";
-import { Asset } from "expo-asset";
-import { useUser } from "../../context/user-context";
+import { useMMKVNumber } from "react-native-mmkv";
 
 export default function AudioSettings() {
-  const [buffersLoaded, setBuffersLoaded] = useState<Record<string, string | null>>({});
-  const { playSong, stopSong } = usePlayMidi();
-  const { setLives } = useUser();
+  const { playSong, stopSong, handleConvertSong } = usePlayMidi();
+  const [pianoVolume, setPianoVolume] = useMMKVNumber("pianoVolume");
+  const [sfxVolume, setSfxVolume] = useMMKVNumber("sfxVolume");
+  const [isPlaying, setIsPlaying] = useState(false);
+
   function handleTestAudio() {
-    const convertedNotes = clairdelune.map((note) => ({
-      duration: note.end - note.start,
-      note: note.name as any,
-      time: note.start,
-    }));
-    playSong(convertedNotes.slice(0, 20));
+    const songs = [clairdelune, hedwigTheme, flyingTheme];
+    const randomSong = songs[Math.floor(Math.random() * songs.length)];
+    playSong(handleConvertSong(randomSong).slice(0, 100));
+    setIsPlaying(true);
   }
-  // async function loadAssets() {
-  //   const pianoFs2 = await Asset.loadAsync(require("../../assets/audio/piano_fs2.mp3"));
-  //   const pianoC3 = await Asset.loadAsync(require("../../assets/audio/piano_c3.mp3"));
-  //   const pianoFs3 = await Asset.loadAsync(require("../../assets/audio/piano_fs3.mp3"));
-  //   const pianoC4 = await Asset.loadAsync(require("../../assets/audio/piano_c4.mp3"));
-  //   const pianoFs4 = await Asset.loadAsync(require("../../assets/audio/piano_fs4.mp3"));
 
-  //   setBuffersLoaded({
-  //     "F#2": pianoFs2[0].localUri,
-  //     C3: pianoC3[0].localUri,
-  //     "F#3": pianoFs3[0].localUri,
-  //     C4: pianoC4[0].localUri,
-  //     "F#4": pianoFs4[0].localUri,
-  //   });
-  // }
+  function handleStopAudio() {
+    stopSong();
+    setIsPlaying(false);
+  }
 
-  // useEffect(() => {
-  //   loadAssets();
-  // }, []);
+  function SimpleSlider({ children, ...props }: SliderProps) {
+    return (
+      <Slider defaultValue={[50]} max={100} {...props}>
+        <Slider.Track backgroundColor="$gray5">
+          <Slider.TrackActive backgroundColor="$blue10" />
+        </Slider.Track>
+        <Slider.Thumb size="$2" index={0} circular />
+        {children}
+      </Slider>
+    );
+  }
 
   return (
     <SafeAreaView>
@@ -51,10 +48,35 @@ export default function AudioSettings() {
           <View width={"$3"} />
         </XStack>
       </YStack>
-      <View padding="$4">
-        <Button onPress={handleTestAudio}>Test Audio</Button>
-        <Button onPress={() => setLives(5)}>Add 5 Hearts</Button>
-        <YStack gap="$1"></YStack>
+      <View padding="$4" gap="$4">
+        <View>
+          <Label>Test Audio</Label>
+          <Button fontWeight={800} onPress={isPlaying ? handleStopAudio : handleTestAudio}>
+            {isPlaying ? <Pause /> : <Play />}
+          </Button>
+        </View>
+        <View>
+          <Label>Piano Volume</Label>
+          <SimpleSlider
+            defaultValue={[pianoVolume !== undefined ? pianoVolume : 1]}
+            min={0.5}
+            max={2.5}
+            step={0.2}
+            width={"100%"}
+            onValueChange={(value) => setPianoVolume(value[0])}
+          />
+        </View>
+        <View>
+          <Label>SFX Volume</Label>
+          <SimpleSlider
+            defaultValue={[sfxVolume !== undefined ? sfxVolume : 0.75]}
+            min={0.2}
+            max={1}
+            step={0.2}
+            width={"100%"}
+            onValueChange={(value) => setSfxVolume(value[0])}
+          />
+        </View>
       </View>
     </SafeAreaView>
   );

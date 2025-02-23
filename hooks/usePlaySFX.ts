@@ -1,25 +1,15 @@
-import { AVPlaybackSource, Audio } from "expo-av";
-import { useEffect, useState } from "react";
+import { useAudioPlayer } from "expo-audio";
+import { useMMKVNumber } from "react-native-mmkv";
 
-export async function usePlaySFX(audioFile: AVPlaybackSource, interrupt?: boolean) {
-  const [sound, setSound] = useState<Audio.Sound>();
-  const { sound: sfx } = await Audio.Sound.createAsync(audioFile);
+export function usePlaySFX() {
+  const [sfxVolume, setSfxVolume] = useMMKVNumber("sfxVolume");
+  const audioPlayer = useAudioPlayer();
 
-  useEffect(() => {
-    return sound
-      ? () => {
-          sound.unloadAsync();
-        }
-      : undefined;
-  }, [sound]);
-
-  await Audio.setAudioModeAsync({
-    playsInSilentModeIOS: true,
-  });
-
-  if (interrupt) {
-    setSound(sfx);
-  }
-
-  await sfx.playAsync();
+  const playSFX = (audioFile: number, volume: number = 0.5) => {
+    audioPlayer.volume = sfxVolume !== undefined ? sfxVolume : 0.75;
+    audioPlayer.replace(audioFile);
+    audioPlayer.seekTo(0);
+    audioPlayer.play();
+  };
+  return { playSFX };
 }
