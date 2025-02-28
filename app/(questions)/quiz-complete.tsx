@@ -1,11 +1,9 @@
 import { QuizContext } from "@/context/quiz-context";
-import { NavigationContainer } from "@react-navigation/native";
 import { Check, Star } from "@tamagui/lucide-icons";
-import { BlurView } from "expo-blur";
-import { Link, Stack, useLocalSearchParams, useRouter } from "expo-router";
-import React, { useContext, useEffect } from "react";
-import { SafeAreaView, ScrollView, useWindowDimensions } from "react-native";
-import { Button, Card, H1, H3, H4, ListItem, Paragraph, Progress, Spinner, View, XStack, YGroup, YStack } from "tamagui";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import React, { useContext } from "react";
+import { SafeAreaView } from "react-native";
+import { Button, H1, H4, ListItem, Paragraph, View, XStack, YGroup, YStack } from "tamagui";
 import { LinearGradient } from "tamagui/linear-gradient";
 
 export default function Index() {
@@ -39,7 +37,7 @@ export default function Index() {
           opacity={1}
           scale={1}
           y={0}
-          animation="lazy"
+          // animation="lazy"
         >
           Nice work!
         </H1>

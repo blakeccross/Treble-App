@@ -2,7 +2,7 @@ import React, { useRef, useState, useContext } from "react";
 import { FlatList, SafeAreaView, useWindowDimensions } from "react-native";
 import SheetMusic from "@/components/sheet-music";
 import { Card, H3, Paragraph, View } from "tamagui";
-import AnswerDrawer from "@/components/AnswerDrawer";
+import AnswerDrawer from "@/components/questions/AnswerDrawer";
 import { QuizContext } from "@/context/quiz-context";
 
 export default function Page() {

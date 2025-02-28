@@ -1,4 +1,4 @@
-import AnswerDrawer from "@/components/AnswerDrawer";
+import AnswerDrawer from "@/components/questions/AnswerDrawer";
 import { QuizContext } from "@/context/quiz-context";
 import useMarkdown from "@/hooks/parseSymbolsFromText";
 import React, { useContext, useRef } from "react";

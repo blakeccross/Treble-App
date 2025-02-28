@@ -1,11 +1,9 @@
-import React, { useRef, useState, useContext, useEffect } from "react";
-import { FlatList, SafeAreaView, useWindowDimensions } from "react-native";
-import SheetMusic from "@/components/sheet-music";
-import { Card, H1, H2, H3, H5, Paragraph, View } from "tamagui";
-import { Stack } from "expo-router";
-import AnswerDrawer from "@/components/AnswerDrawer";
+import AnswerDrawer from "@/components/questions/AnswerDrawer";
 import { QuizContext } from "@/context/quiz-context";
 import { Image } from "expo-image";
+import React, { useContext, useRef, useState } from "react";
+import { FlatList, SafeAreaView } from "react-native";
+import { Card, Paragraph, View } from "tamagui";
 
 export default function MultipleCHoice() {
   const { currentQuestionIndex, questions } = useContext(QuizContext);

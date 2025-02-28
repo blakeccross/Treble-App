@@ -1,15 +1,17 @@
 import React from "react";
-import { QuizContext } from "@/context/quiz-context";
+import { QuizContext } from "../../context/quiz-context";
 import { Heart, X } from "@tamagui/lucide-icons";
 import { red } from "@tamagui/themes";
-import { Link, usePathname, useRouter } from "expo-router";
+import { usePathname, useRouter } from "expo-router";
 import { useContext, useState } from "react";
 import { Pressable, SafeAreaView } from "react-native";
 import { Button, H3, H5, Paragraph, Progress, View, XStack, YStack } from "tamagui";
-import BottomSheet from "./BottomSheet";
+import BottomSheet from "../BottomSheet";
+import { useUser } from "../../context/user-context";
 
 export default function ProgressHeader() {
   const route = useRouter();
+  const { currentUser } = useUser();
   const { currentQuestionIndex, questions, section, currentModule, lives } = useContext(QuizContext);
   const currentRoute = usePathname();
   const [open, setOpen] = useState(false);
@@ -27,7 +29,7 @@ export default function ProgressHeader() {
             <H5 fontWeight={500}>{section.title}</H5>
 
             <XStack gap="$1" width={"$3"}>
-              {currentRoute !== "/reading" && (
+              {currentRoute !== "/reading" && !currentUser?.is_subscribed && (
                 <>
                   <Heart size="$2" color={"$red10"} fill={red.red10} />
                   <Paragraph fontWeight={600}>{lives}</Paragraph>

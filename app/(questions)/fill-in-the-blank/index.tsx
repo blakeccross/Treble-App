@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { SafeAreaView } from "react-native";
 
-import AnswerDrawer from "@/components/AnswerDrawer";
+import AnswerDrawer from "@/components/questions/AnswerDrawer";
 import { QuizContext } from "@/context/quiz-context";
 import { SectionItem } from "@/types";
 import { Paragraph, View, YStack } from "tamagui";

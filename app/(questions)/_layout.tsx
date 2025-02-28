@@ -1,6 +1,6 @@
 import { Stack, Tabs, usePathname } from "expo-router";
 import React from "react";
-import ProgressHeader from "@/components/progress-header";
+import ProgressHeader from "@/components/questions/progress-header";
 import QuizProvider from "@/context/quiz-context";
 
 export default function TabLayout() {
