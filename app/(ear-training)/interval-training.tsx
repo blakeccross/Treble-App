@@ -1,9 +1,9 @@
 import usePlayMidi from "@/hooks/usePlayMidi";
+import { usePlaySFX } from "@/hooks/usePlaySFX";
 import { window } from "@/utils";
 import { Canvas, Circle, SweepGradient, vec } from "@shopify/react-native-skia";
 import { Heart, X } from "@tamagui/lucide-icons";
 import { blueDark, red } from "@tamagui/themes";
-import { AVPlaybackSource, Audio } from "expo-av";
 import * as Haptics from "expo-haptics";
 import { useFocusEffect, useRouter } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -32,7 +32,6 @@ const incorrectSFX = require("@/assets/audio/incorrect_sfx.mp3");
 export default function Page() {
   const circleWidth = PAGE_WIDTH * 0.55;
   const router = useRouter();
-  const [sound, setSound] = useState<Audio.Sound>();
   const [currentScore, setCurrentScore] = useState<number>(0);
   const [lives, setLives] = useState(3);
   const [selectedAnswer, setSelectedAnswer] = useState<string>("");
@@ -47,6 +46,7 @@ export default function Page() {
     { value: "f4", option_text: "F" },
   ]);
 
+  const { playSFX } = usePlaySFX();
   const { playSong, stopSong } = usePlayMidi();
 
   const correctAnswer = useRef("");
@@ -104,7 +104,7 @@ export default function Page() {
       setLives(lives - 1);
     }
     setAnswerIsCorrect(false);
-    playSFX(incorrectSFX, true);
+    playSFX(incorrectSFX);
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
   }
 
@@ -165,49 +165,27 @@ export default function Page() {
     setAvailableAnswers(options.map((item) => ({ value: item, option_text: item })));
   }
 
-  async function playSFX(sfx: AVPlaybackSource, interrupt?: boolean) {
-    const { sound } = await Audio.Sound.createAsync(sfx);
-    await Audio.setAudioModeAsync({
-      playsInSilentModeIOS: true,
-    });
-
-    if (interrupt) {
-      setSound(sound);
-    }
-
-    await sound.playAsync();
-  }
-
-  async function playAudio() {
-    // const { sound } = await Audio.Sound.createAsync(noteToFile[correctAnswer.current]);
-    // await Audio.setAudioModeAsync({
-    //   playsInSilentModeIOS: true,
-    // });
-    // setSound(sound);
-    // await sound.playAsync();
-  }
-
   function handlePressPlay() {
     if (!isRunning) {
       setSelectedAnswer("");
       newQuestion();
       changeColor();
       bounce();
-      playAudio();
+      // playSong();
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     } else {
       bounce();
-      playAudio();
+      // playSong();
     }
   }
 
-  useEffect(() => {
-    return sound
-      ? () => {
-          sound.unloadAsync();
-        }
-      : undefined;
-  }, [sound]);
+  // useEffect(() => {
+  //   return sound
+  //     ? () => {
+  //         sound.unloadAsync();
+  //       }
+  //     : undefined;
+  // }, [sound]);
 
   function changeColor() {
     const randomColorOption = colorOptions[Math.floor(Math.random() * colorOptions.length)];

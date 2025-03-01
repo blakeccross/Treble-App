@@ -123,7 +123,6 @@ export default function TabTwoScreen() {
               </Button>
             </Link>
           </XStack>
-
           {!currentUser?.is_subscribed && (
             <Card
               width={"100%"}

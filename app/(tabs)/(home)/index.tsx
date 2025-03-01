@@ -1,4 +1,5 @@
 import HeartModal from "@/components/Heart.modal";
+import LoadingIndicator from "@/components/loading";
 import Paywall from "@/components/paywall.modal";
 import { SkeletonLoader } from "@/components/SkeletonLoader";
 import XPHistoryModal from "@/components/XPHistory.modal";
@@ -14,14 +15,14 @@ import { Image } from "expo-image";
 import * as Network from "expo-network";
 import { Link } from "expo-router";
 import React, { useContext, useState } from "react";
-import { Dimensions, FlatList, useColorScheme } from "react-native";
+import { Dimensions, FlatList, RefreshControl, useColorScheme } from "react-native";
 import { useMMKVObject } from "react-native-mmkv";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Avatar, Card, H3, H5, Paragraph, Progress, ScrollView, View, XStack, YStack } from "tamagui";
 import { LinearGradient } from "tamagui/linear-gradient";
 
 export default function HomeScreen() {
-  const { modules } = useContext(ModuleContext);
+  const { modules, refreshModules } = useContext(ModuleContext);
   const { currentUser, lives } = useContext(UserContext);
   const blurhash =
     "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
@@ -79,15 +80,21 @@ export default function HomeScreen() {
         <XPHistoryModal openXPHistory={openXPHistory} setOpenXPHistory={setOpenXPHistory} xpHistory={xpHistory} />
 
         <ScrollView
-          // backgroundColor={"$background"}
           showsVerticalScrollIndicator={false}
           flex={1}
           borderTopLeftRadius={"$8"}
           borderTopRightRadius={"$8"}
           zIndex={1}
+          // refreshControl={<RefreshControl refreshing={modules?.loading || false} onRefresh={refreshModules} tintColor="transparent" />}
+          onScroll={({ nativeEvent }) => {
+            if (nativeEvent.contentOffset.y < -200 && !modules?.loading) {
+              // Adjust threshold as needed
+              refreshModules();
+            }
+          }}
+          scrollEventThrottle={16}
         >
           <View backgroundColor={"$background"} flex={1} overflow="hidden" borderTopLeftRadius={"$8"} borderTopRightRadius={"$8"}>
-            {/* <ScrollView showsVerticalScrollIndicator={false} flex={1}> */}
             {!networkState.isConnected && (
               <View>
                 <Paragraph textAlign="center" marginTop={"$2"}>
@@ -95,80 +102,63 @@ export default function HomeScreen() {
                 </Paragraph>
               </View>
             )}
-            <XStack $sm={{ flexDirection: "column" }} padding="$3" gap="$3">
-              {modules && modules.loading
-                ? [...Array(6)].map((item, index) => (
-                    <Card
-                      key={index}
-                      elevate
-                      borderRadius="$8"
-                      pressStyle={{ scale: 0.95 }}
-                      // animation="bouncy"
-                      height={"$10"}
-                    >
-                      <Card.Background borderRadius="$8">
-                        <SkeletonLoader width={"100%"} height={"100%"} backgroundColor={grayA.grayA3} />
-                      </Card.Background>
-                    </Card>
-                  ))
-                : modules &&
-                  modules.data && (
-                    <FlatList
-                      data={modules.data}
-                      scrollEnabled={false}
-                      contentContainerStyle={{ gap: 15, paddingBottom: 100 }}
-                      renderItem={({ item: module }) => (
-                        <Link href={`/module-overview/${module?.id}`} asChild key={module.id}>
-                          <Card
-                            borderRadius="$8"
-                            pressStyle={{ scale: 0.95 }}
-                            // animation="bouncy"
-                            backgroundColor={"$blue1"}
-                          >
-                            <Card.Header padding="$4">
-                              <XStack gap="$4" flex={1}>
-                                <View position="relative">
-                                  <Image
-                                    style={{ width: screenWidth * 0.2, height: screenWidth * 0.2, borderRadius: 10 }}
-                                    source={module.local_poster_uri}
-                                    placeholder={{ blurhash }}
-                                    contentFit="cover"
-                                    transition={1000}
-                                  />
-                                  {module.completed && (
-                                    <View position="absolute" right={"$-2"} top={"$-2"}>
-                                      <StarFull fill={yellowA.yellowA10} color={"$yellow10"} />
-                                    </View>
-                                  )}
-                                </View>
+            <XStack $sm={{ flexDirection: "column" }} flex={1} padding="$3" gap="$3">
+              {modules && modules.loading ? (
+                <View height={500} justifyContent="center" alignItems="center">
+                  <LoadingIndicator />
+                </View>
+              ) : (
+                modules &&
+                modules.data && (
+                  <FlatList
+                    data={modules.data}
+                    scrollEnabled={false}
+                    contentContainerStyle={{ gap: 15, paddingBottom: 100 }}
+                    renderItem={({ item: module }) => (
+                      <Link href={`/module-overview/${module?.id}`} asChild key={module.id}>
+                        <Card borderRadius="$8" pressStyle={{ scale: 0.95 }} backgroundColor={"$blue1"}>
+                          <Card.Header padding="$4">
+                            <XStack gap="$4" flex={1}>
+                              <View position="relative">
+                                <Image
+                                  style={{ width: screenWidth * 0.2, height: screenWidth * 0.2, borderRadius: 10 }}
+                                  source={module.local_poster_uri}
+                                  placeholder={{ blurhash }}
+                                  contentFit="cover"
+                                  transition={1000}
+                                />
+                                {module.completed && (
+                                  <View position="absolute" right={"$-2"} top={"$-2"}>
+                                    <StarFull fill={yellowA.yellowA10} color={"$yellow10"} />
+                                  </View>
+                                )}
+                              </View>
 
-                                <YStack gap="$4" flex={1}>
-                                  <XStack justifyContent="space-between">
-                                    <XStack gap="$4" flex={1}>
-                                      <YStack>
-                                        <Paragraph size={"$2"}>{"Chapter " + module.id}</Paragraph>
-                                        <H3 fontWeight={600}>{module.title}</H3>
-                                        {module.completed && <Paragraph color={"$blue10"}>Completed</Paragraph>}
-                                      </YStack>
-                                    </XStack>
-                                    {module.progress !== 0 && <ChevronRight color={"$blue10"} />}
+                              <YStack gap="$4" flex={1}>
+                                <XStack justifyContent="space-between">
+                                  <XStack gap="$4" flex={1}>
+                                    <YStack>
+                                      <Paragraph size={"$2"}>{"Chapter " + module.id}</Paragraph>
+                                      <H3 fontWeight={600}>{module.title}</H3>
+                                      {module.completed && <Paragraph color={"$blue10"}>Completed</Paragraph>}
+                                    </YStack>
                                   </XStack>
-                                  {module.progress !== 0 && !module.completed && (
-                                    <Progress value={module.progress} backgroundColor={"$gray3"}>
-                                      <Progress.Indicator
-                                        // animation="lazy"
-                                        backgroundColor={"$blue10"}
-                                      />
-                                    </Progress>
-                                  )}
-                                </YStack>
-                              </XStack>
-                            </Card.Header>
-                          </Card>
-                        </Link>
-                      )}
-                    />
-                  )}
+                                  {module.progress !== 0 && <ChevronRight color={"$blue10"} />}
+                                </XStack>
+                                {module.progress !== 0 && !module.completed && (
+                                  <Progress value={module.progress} backgroundColor={"$gray3"}>
+                                    <Progress.Indicator backgroundColor={"$blue10"} />
+                                  </Progress>
+                                )}
+                              </YStack>
+                            </XStack>
+                          </Card.Header>
+                        </Card>
+                      </Link>
+                    )}
+                  />
+                )
+              )}
             </XStack>
             <Paywall openPaywall={openPaywall} setOpenPaywall={setOpenPaywall} />
           </View>

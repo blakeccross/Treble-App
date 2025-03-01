@@ -10,37 +10,32 @@ import NotoSerifItalic from "./fonts/NotoSerif-Italic.ttf.js";
 import NotoSerifBold from "./fonts/NotoSerif-Bold.ttf.js";
 import NotoSerifBoldItalic from "./fonts/NotoSerif-BoldItalic.ttf.js";
 
-function load(base64Font) {
-  return opentype.parse(decode(base64Font));
-}
+const loadFont = (base64Font) => opentype.parse(decode(base64Font));
 
-const NotoFontPack = {
+const fonts = {
   NotoSans: {
-    regular: load(NotoSansRegular),
-    italic: load(NotoSansItalic),
-    bold: load(NotoSansBold),
-    bolditalic: load(NotoSansBoldItalic),
+    regular: loadFont(NotoSansRegular),
+    italic: loadFont(NotoSansItalic),
+    bold: loadFont(NotoSansBold),
+    bolditalic: loadFont(NotoSansBoldItalic),
   },
   NotoSerif: {
-    regular: load(NotoSerifRegular),
-    italic: load(NotoSerifItalic),
-    bold: load(NotoSerifBold),
-    bolditalic: load(NotoSerifBoldItalic),
+    regular: loadFont(NotoSerifRegular),
+    italic: loadFont(NotoSerifItalic),
+    bold: loadFont(NotoSerifBold),
+    bolditalic: loadFont(NotoSerifBoldItalic),
   },
+};
 
-  getFont: function (style) {
-    /*
-      times, Times, Times New Roman, serif, Serif => Noto Serif
-      Arial, sans-serif... default => Noto Sans
-    */
+const NotoFontPack = {
+  ...fonts,
+  getFont: (style) => {
     const fontName = /(times|serif)+/i.test(style["font-family"]) ? "NotoSerif" : "NotoSans";
+    const weight = style["font-weight"] === "bold" ? "bold" : "";
+    const italic = style["font-style"] === "italic" ? "italic" : "";
+    const fontStyle = weight + italic || "regular";
 
-    let fontStyle = "";
-    if (style["font-weight"] === "bold") fontStyle = "bold";
-    if (style["font-style"] === "italic") fontStyle += "italic";
-    if (fontStyle.length === 0) fontStyle = "regular";
-
-    return this[fontName][fontStyle];
+    return fonts[fontName][fontStyle];
   },
 };
 

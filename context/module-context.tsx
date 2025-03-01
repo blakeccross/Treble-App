@@ -5,7 +5,7 @@ import { UserContext } from "./user-context";
 import * as FileSystem from "expo-file-system";
 import { useMMKVObject } from "react-native-mmkv";
 
-type ModuleContextProps = { modules: { data: Module[] | null; loading: boolean; error: boolean } | undefined };
+type ModuleContextProps = { modules: { data: Module[] | null; loading: boolean; error: boolean } | undefined; refreshModules: () => void };
 
 export const ModuleContext = createContext<ModuleContextProps>({} as ModuleContextProps);
 
@@ -149,5 +149,5 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
     return updatedModules;
   }
 
-  return <ModuleContext.Provider value={{ modules }}>{children}</ModuleContext.Provider>;
+  return <ModuleContext.Provider value={{ modules, refreshModules: getModuleData }}>{children}</ModuleContext.Provider>;
 }

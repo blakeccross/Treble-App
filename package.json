@@ -34,7 +34,6 @@
     "expo": "^52.0.31",
     "expo-asset": "~11.0.3",
     "expo-audio": "~0.3.4",
-    "expo-av": "~15.0.2",
     "expo-blur": "~14.0.3",
     "expo-constants": "~17.0.5",
     "expo-dev-client": "~5.0.11",
@@ -73,7 +72,8 @@
     "react-native-webview": "13.12.5",
     "supabase": "^1.187.10",
     "tamagui": "^1.124.4",
-    "vexflow": "^4.2.4"
+    "vexflow": "^4.2.4",
+    "lottie-react-native": "7.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

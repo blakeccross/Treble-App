@@ -1,11 +1,11 @@
 import { QuizContext } from "../../context/quiz-context";
-import { AVPlaybackSource, Audio } from "expo-av";
 import * as Haptics from "expo-haptics";
 import React, { useContext, useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button, H3, Paragraph, View, YStack } from "tamagui";
 import BottomSheet from "../BottomSheet";
 import { useUser } from "../../context/user-context";
+import { usePlaySFX } from "@/hooks/usePlaySFX";
 
 const correctSFX = require("@/assets/audio/correct_sfx.mp3");
 
@@ -22,34 +22,13 @@ export default function AnswerDrawer({
   const { nextQuestion, lives, setLives } = useContext(QuizContext);
   const [open, setOpen] = useState(false);
   const [answerIsCorrect, setAnswerIsCorrect] = useState<boolean>();
-  const [sound, setSound] = useState<Audio.Sound>();
+  const { playSFX } = usePlaySFX();
 
   useEffect(() => {
     if (answerIsCorrect !== undefined) {
       startAnimation();
     }
   }, [answerIsCorrect]);
-
-  useEffect(() => {
-    return sound
-      ? () => {
-          sound.unloadAsync();
-        }
-      : undefined;
-  }, [sound]);
-
-  async function playSFX(sfx: AVPlaybackSource, interrupt?: boolean) {
-    const { sound } = await Audio.Sound.createAsync(sfx);
-    await Audio.setAudioModeAsync({
-      playsInSilentModeIOS: true,
-    });
-
-    if (interrupt) {
-      setSound(sound);
-    }
-
-    await sound.playAsync();
-  }
 
   const startAnimation = () => {
     setOpen(true);

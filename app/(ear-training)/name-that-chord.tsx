@@ -4,7 +4,7 @@ import { PianoKey } from "@/types/pianoKeys";
 import { window } from "@/utils";
 import { Heart, X } from "@tamagui/lucide-icons";
 import { red } from "@tamagui/themes";
-import { AVPlaybackSource, Audio } from "expo-av";
+// import { AVPlaybackSource, Audio } from "expo-av";
 import * as Haptics from "expo-haptics";
 import { useFocusEffect, useNavigation, useRouter } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -14,6 +14,7 @@ import Animated, { useAnimatedStyle, useSharedValue, withDelay, withSpring } fro
 import { Button, Card, H1, H2, H3, Paragraph, Square, XStack } from "tamagui";
 import { LinearGradient } from "tamagui/linear-gradient";
 import { useAudioPlayer } from "expo-audio";
+import { usePlaySFX } from "@/hooks/usePlaySFX";
 
 const PAGE_WIDTH = window.width;
 const colorOptions = ["blue", "orange", "green", "red", "yellow", "purple", "pink"];
@@ -40,7 +41,8 @@ const incorrectSFX = require("@/assets/audio/incorrect_sfx.mp3");
 export default function Page() {
   const navigation = useNavigation();
   const router = useRouter();
-  const [sound, setSound] = useState<Audio.Sound>();
+  const { playSFX } = usePlaySFX();
+  // const [sound, setSound] = useState<Audio.Sound>();
   const [currentScore, setCurrentScore] = useState<number>(0);
   const [lives, setLives] = useState(3);
   const [selectedAnswer, setSelectedAnswer] = useState<string>("");
@@ -111,7 +113,7 @@ export default function Page() {
       setLives(lives - 1);
     }
     setAnswerIsCorrect(false);
-    playSFX(incorrectSFX, true);
+    playSFX(incorrectSFX);
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
   }
 
@@ -177,18 +179,18 @@ export default function Page() {
     // setAvailableAnswers(options.map((item) => ({ value: item, option_text: item })));
   }
 
-  async function playSFX(sfx: AVPlaybackSource, interrupt?: boolean) {
-    const { sound } = await Audio.Sound.createAsync(sfx);
-    await Audio.setAudioModeAsync({
-      playsInSilentModeIOS: true,
-    });
+  // async function playSFX(sfx: AVPlaybackSource, interrupt?: boolean) {
+  //   const { sound } = await Audio.Sound.createAsync(sfx);
+  //   await Audio.setAudioModeAsync({
+  //     playsInSilentModeIOS: true,
+  //   });
 
-    if (interrupt) {
-      setSound(sound);
-    }
+  //   if (interrupt) {
+  //     setSound(sound);
+  //   }
 
-    await sound.playAsync();
-  }
+  //   await sound.playAsync();
+  // }
 
   async function playAudio() {
     const chord = correctAnswer.current?.chord.map((note) => ({ note: note as PianoKey, time: 0, duration: 5 }));
@@ -209,13 +211,13 @@ export default function Page() {
     }
   }
 
-  useEffect(() => {
-    return sound
-      ? () => {
-          sound.unloadAsync();
-        }
-      : undefined;
-  }, [sound]);
+  // useEffect(() => {
+  //   return sound
+  //     ? () => {
+  //         sound.unloadAsync();
+  //       }
+  //     : undefined;
+  // }, [sound]);
 
   function changeColor() {
     const randomColorOption = colorOptions[Math.floor(Math.random() * colorOptions.length)];

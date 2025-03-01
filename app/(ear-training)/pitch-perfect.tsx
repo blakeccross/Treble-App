@@ -6,7 +6,6 @@ import { PianoKey } from "@/types/pianoKeys";
 import { window } from "@/utils";
 import { BarChart2, Heart, X } from "@tamagui/lucide-icons";
 import { darkColors, red } from "@tamagui/themes";
-import { AVPlaybackSource, Audio } from "expo-av";
 import * as Haptics from "expo-haptics";
 import { Link, router, useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -29,7 +28,6 @@ export default function PitchPerfect() {
   const { playSong, stopSong } = usePlayMidi();
   const { playSFX } = usePlaySFX();
   const [gameHasStarted, setGameHasStarted] = useState(false);
-  const [sound, setSound] = useState<Audio.Sound>();
   const [currentScore, setCurrentScore] = useState<number>(0);
   const [lives, setLives] = useState(3);
   const [selectedAnswer, setSelectedAnswer] = useState<string>("");
@@ -163,23 +161,6 @@ export default function PitchPerfect() {
     setAvailableAnswers(options.map((item) => ({ value: item, option_text: item })));
   }
 
-  // async function playSFX(sfx: AVPlaybackSource, interrupt?: boolean) {
-  //   try {
-  //     const { sound } = await Audio.Sound.createAsync(sfx);
-  //     await Audio.setAudioModeAsync({
-  //       playsInSilentModeIOS: true,
-  //     });
-
-  //     if (interrupt) {
-  //       setSound(sound);
-  //     }
-
-  //     await sound.playAsync();
-  //   } catch (error) {
-  //     console.error("Error playing SFX:", error);
-  //   }
-  // }
-
   async function playAudio() {
     playSong([{ note: correctAnswer.current as PianoKey, time: 0, duration: 5 }], 7);
   }
@@ -208,14 +189,6 @@ export default function PitchPerfect() {
       }
     }
   }
-
-  useEffect(() => {
-    return sound
-      ? () => {
-          sound.unloadAsync();
-        }
-      : undefined;
-  }, [sound]);
 
   function changeColor() {
     const randomColorOption = colorOptions[Math.floor(Math.random() * colorOptions.length)];

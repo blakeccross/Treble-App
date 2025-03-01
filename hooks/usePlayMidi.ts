@@ -2,7 +2,6 @@ import { PianoKey } from "@/types/pianoKeys";
 import * as FileSystem from "expo-file-system";
 import { useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Platform } from "react-native";
 import { AudioBuffer, AudioContext, GainNode } from "react-native-audio-api";
 import { useMMKVNumber } from "react-native-mmkv";
 

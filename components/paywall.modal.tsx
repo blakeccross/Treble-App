@@ -1,11 +1,15 @@
 import { UserContext } from "@/context/user-context";
-import { Check, Star } from "@tamagui/lucide-icons";
+import { Check, Gamepad, Heart, Star } from "@tamagui/lucide-icons";
+import { blue } from "@tamagui/themes";
+import { BlurView } from "expo-blur";
 import { Image } from "expo-image";
+import LottieView from "lottie-react-native";
 import React, { useContext, useEffect, useState } from "react";
-import { Modal, SafeAreaView } from "react-native";
+import { Modal, SafeAreaView, ScrollView } from "react-native";
 import Purchases from "react-native-purchases";
-import { Button, H1, H2, H3, H4, ListItem, Paragraph, Separator, View, XStack, YGroup, YStack } from "tamagui";
+import { Button, H1, H2, H3, H4, ListItem, Paragraph, Separator, SizableText, Theme, View, XStack, YGroup, YStack } from "tamagui";
 import { LinearGradient } from "tamagui/linear-gradient";
+import TrebleLogo from "@/assets/trebleLogo";
 
 export default function Paywall({ openPaywall, setOpenPaywall }: { openPaywall: boolean; setOpenPaywall: (open: boolean) => void }) {
   const { currentUser, handleUpdateUserInfo } = useContext(UserContext);
@@ -39,32 +43,55 @@ export default function Paywall({ openPaywall, setOpenPaywall }: { openPaywall: 
       }}
     >
       {!currentUser?.is_subscribed ? (
-        <View backgroundColor="$background" flex={1}>
-          <Image source={require("@/assets/images/gold_subscription.jpg")} style={{ width: "100%", aspectRatio: "1/1", backgroundColor: "grey" }} />
-          <View padding="$4" flex={1} height={"100%"} justifyContent="space-between">
+        <LinearGradient flex={1} colors={[blue.blue11, blue.blue12]} start={[0.5, 1]} end={[0, 0]}>
+          <View justifyContent="flex-start" alignItems="center">
+            <LottieView
+              autoPlay
+              loop={false}
+              style={{
+                width: "100%",
+                aspectRatio: 2.5 / 2,
+              }}
+              source={require("@/assets/lottie/gopro.json")}
+            />
+          </View>
+          {/* <Image source={require("@/assets/images/gold_subscription.jpg")} style={{ width: "100%", aspectRatio: "1/1", backgroundColor: "grey" }} /> */}
+          <View paddingHorizontal="$4" flex={1} height={"100%"} justifyContent="space-between">
+            <ScrollView>
+              <XStack gap="$2" justifyContent="center" alignItems="center">
+                <TrebleLogo width={100} height={50} />
+                <LinearGradient colors={["$blue10", "$purple7"]} start={[0.3, 1]} end={[0, 0]} paddingHorizontal="$3" borderRadius="$10">
+                  <SizableText color={"$background"}>Pro</SizableText>
+                </LinearGradient>
+              </XStack>
+              <H4 marginBottom={"$4"} color={"white"} fontWeight={800} textAlign="center">
+                Unlock your learning potential
+              </H4>
+
+              <Theme name="dark">
+                <BlurView intensity={100} style={{ borderRadius: 20, overflow: "hidden" }}>
+                  <ListItem
+                    backgroundColor={"transparent"}
+                    icon={Heart}
+                    title="Unlimited Hearts"
+                    subTitle="Never have to stop and wait to continue learning"
+                  />
+                  <ListItem backgroundColor={"transparent"} icon={Star} title="Unlock All Modules" subTitle="Begin learning beyond the basics" />
+
+                  <ListItem backgroundColor={"transparent"} icon={Gamepad} title="Unlock All Games" subTitle="Train your ear with fun games" />
+                </BlurView>
+              </Theme>
+            </ScrollView>
             <View>
-              <View>
-                <H3 fontWeight={800} textAlign="center">
-                  Unlock your learning potential
-                </H3>
-              </View>
-              <YGroup alignSelf="center" bordered size="$4" separator={<Separator />}>
-                <YGroup.Item>
-                  <ListItem hoverTheme icon={Star} title="Unlock All Modules" subTitle="Begin learning beyond the basics" />
-                </YGroup.Item>
-                <YGroup.Item>
-                  <ListItem hoverTheme icon={Star} title="All Games" subTitle="Train your ear with fun games" />
-                </YGroup.Item>
-              </YGroup>
-            </View>
-            <View>
-              <Button onPress={handleTryForFree}>Try for $0.00</Button>
-              <Button unstyled color={"$gray12"} textAlign="center" padding="$4" onPress={() => setOpenPaywall(false)}>
+              <Button borderWidth={1} borderColor={"white"} backgroundColor={"transparent"} fontWeight={800} onPress={handleTryForFree}>
+                Try for $0.00
+              </Button>
+              <Button unstyled color={"$gray12Dark"} textAlign="center" padding="$4" onPress={() => setOpenPaywall(false)}>
                 No Thanks
               </Button>
             </View>
           </View>
-        </View>
+        </LinearGradient>
       ) : (
         <LinearGradient width="100%" height="100%" colors={["$blue10", "$blue8"]} start={[0.5, 1]} end={[0, 0]} paddingHorizontal={"$4"}>
           <YStack alignItems="center" justifyContent="center" flex={1} padding="$4">
