@@ -1,6 +1,6 @@
 import DoubleSharp from "@/assets/icons/doubleSharp";
 import React, { useEffect, useState } from "react";
-import { Dimensions, Image, Modal, Text as RNText, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Dimensions, Image, Modal, Text as RNText, StyleSheet, TouchableOpacity, View, Linking } from "react-native";
 import { useColorScheme } from "./useColorScheme";
 
 // Add window dimensions
@@ -140,28 +140,54 @@ const renderImage = (line: string, index: number, setSelectedImage: (url: string
 // Main function to parse Unicode symbols and italic text
 const parseUnicodeSymbols = (text: string, colorScheme: "light" | "dark"): JSX.Element[] => {
   const italicRegex = /(\*|_)(.*?)\1/g;
+  const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
   const elements: JSX.Element[] = [];
   let lastIndex = 0;
   let match;
 
-  while ((match = italicRegex.exec(text)) !== null) {
+  while ((match = linkRegex.exec(text)) !== null) {
     if (lastIndex < match.index) {
       const plainText = text.slice(lastIndex, match.index);
       elements.push(...parsePlainTextAndUnicode(plainText, `text-${elements.length}`, colorScheme));
     }
 
+    const linkText = match[1];
+    const url = match[2];
     elements.push(
-      <RNText style={{ ...styles.plainText, fontStyle: "italic", color: colorScheme === "light" ? "black" : "white" }}>
-        {parseUnicodeSymbols(match[2], colorScheme)}
-      </RNText>
+      <TouchableOpacity key={`link-${elements.length}`} onPress={() => Linking.openURL(url)}>
+        <RNText style={{ ...styles.link, color: colorScheme === "light" ? "#0066cc" : "#66b3ff" }}>{linkText}</RNText>
+      </TouchableOpacity>
     );
 
     lastIndex = match.index + match[0].length;
   }
 
-  if (lastIndex < text.length) {
-    const remainingText = text.slice(lastIndex);
-    elements.push(...parsePlainTextAndUnicode(remainingText, `remaining-${elements.length}`, colorScheme));
+  // Then parse italics in remaining text
+  const remainingText = text.slice(lastIndex);
+  if (remainingText) {
+    let italicLastIndex = 0;
+    while ((match = italicRegex.exec(remainingText)) !== null) {
+      if (italicLastIndex < match.index) {
+        const plainText = remainingText.slice(italicLastIndex, match.index);
+        elements.push(...parsePlainTextAndUnicode(plainText, `text-${elements.length}`, colorScheme));
+      }
+
+      elements.push(
+        <RNText
+          key={`italic-${elements.length}`}
+          style={{ ...styles.plainText, fontStyle: "italic", color: colorScheme === "light" ? "black" : "white" }}
+        >
+          {parseUnicodeSymbols(match[2], colorScheme)}
+        </RNText>
+      );
+
+      italicLastIndex = match.index + match[0].length;
+    }
+
+    if (italicLastIndex < remainingText.length) {
+      const finalText = remainingText.slice(italicLastIndex);
+      elements.push(...parsePlainTextAndUnicode(finalText, `remaining-${elements.length}`, colorScheme));
+    }
   }
 
   return elements;
@@ -259,6 +285,11 @@ const styles = StyleSheet.create({
   modalImage: {
     width: windowWidth * 0.9,
     height: windowHeight * 0.7,
+  },
+  link: {
+    textDecorationLine: "underline",
+    fontSize: 20,
+    lineHeight: 28,
   },
 });
 

@@ -1,6 +1,7 @@
 import { UserContext } from "@/context/user-context";
 import { supabase } from "@/utils/supabase";
 import { Music, X } from "@tamagui/lucide-icons";
+import { ImageManipulator, SaveFormat } from "expo-image-manipulator";
 import * as ImagePicker from "expo-image-picker";
 import { router } from "expo-router";
 import React, { useContext, useEffect, useState } from "react";
@@ -56,7 +57,7 @@ export default function ProfileSettings() {
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      mediaTypes: ["images"],
       allowsEditing: true,
       allowsMultipleSelection: false,
       aspect: [1, 1],
@@ -65,10 +66,13 @@ export default function ProfileSettings() {
     if (!result.canceled) {
       const image = result.assets[0];
 
-      const fileExt = image.uri?.split(".").pop()?.toLowerCase() ?? "jpeg";
+      const content = ImageManipulator.manipulate(image.uri).resize({ width: 500, height: 500 });
+      const { uri } = await (await content.renderAsync()).saveAsync({ format: SaveFormat.JPEG });
+
+      const fileExt = uri?.split(".").pop()?.toLowerCase() ?? "jpeg";
       const path = `${Date.now()}.${fileExt}`;
 
-      const arraybuffer = await fetch(image.uri).then((res) => res.arrayBuffer());
+      const arraybuffer = await fetch(uri).then((res) => res.arrayBuffer());
 
       const { data, error } = await supabase.storage.from("avatars").upload(path, arraybuffer, {
         cacheControl: "3600",

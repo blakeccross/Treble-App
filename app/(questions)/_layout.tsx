@@ -18,7 +18,7 @@ export default function TabLayout() {
           <></>
         )}
         <Stack screenOptions={{ gestureEnabled: false }}>
-          <Stack.Screen name="loading" options={{ headerShown: false, presentation: "fullScreenModal" }} />
+          {/* <Stack.Screen name="loading" options={{ headerShown: false, presentation: "fullScreenModal" }} /> */}
           <Stack.Screen name="reading" options={{ headerShown: false }} getId={({ params }) => String(Date.now())} />
           <Stack.Screen name="identify-the-chord-sheet" options={{ headerShown: false }} getId={({ params }) => String(Date.now())} />
           <Stack.Screen name="fill-in-the-blank/index" options={{ headerShown: false }} getId={({ params }) => String(Date.now())} />

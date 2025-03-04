@@ -73,7 +73,8 @@
     "supabase": "^1.187.10",
     "tamagui": "^1.124.4",
     "vexflow": "^4.2.4",
-    "lottie-react-native": "7.1.0"
+    "lottie-react-native": "7.1.0",
+    "expo-image-manipulator": "~13.0.6"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

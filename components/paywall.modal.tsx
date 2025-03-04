@@ -16,6 +16,7 @@ export default function Paywall({ openPaywall, setOpenPaywall }: { openPaywall: 
   const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
+    // console.log(currentUser?.is_subscribed);
     if (currentUser?.is_subscribed === false) {
       setModalVisible(openPaywall);
     }
@@ -89,6 +90,7 @@ export default function Paywall({ openPaywall, setOpenPaywall }: { openPaywall: 
               <Button unstyled color={"$gray12Dark"} textAlign="center" padding="$4" onPress={() => setOpenPaywall(false)}>
                 No Thanks
               </Button>
+              <SafeAreaView />
             </View>
           </View>
         </LinearGradient>

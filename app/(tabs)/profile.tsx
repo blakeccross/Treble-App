@@ -15,7 +15,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 import { Button, Card, H2, H3, H4, H5, Paragraph, ScrollView, SizableText, View, XStack, YStack } from "tamagui";
 import { LinearGradient } from "tamagui/linear-gradient";
-// import { Image as ImageComp } from "react-native-compressor";
+import { SaveFormat, ImageManipulator } from "expo-image-manipulator";
 import getStreak from "@/hooks/getStreak";
 import Paywall from "@/components/paywall.modal";
 
@@ -44,9 +44,8 @@ export default function TabTwoScreen() {
   const { month, year, days } = calendars[0];
 
   const pickImage = async () => {
-    // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      mediaTypes: ["images"],
       allowsEditing: true,
       allowsMultipleSelection: false,
       aspect: [1, 1],
@@ -55,10 +54,13 @@ export default function TabTwoScreen() {
     if (!result.canceled) {
       const image = result.assets[0];
 
-      const fileExt = image.uri?.split(".").pop()?.toLowerCase() ?? "jpeg";
+      const content = ImageManipulator.manipulate(image.uri).resize({ width: 500, height: 500 });
+      const { uri } = await (await content.renderAsync()).saveAsync({ format: SaveFormat.JPEG });
+
+      const fileExt = uri?.split(".").pop()?.toLowerCase() ?? "jpeg";
       const path = `${Date.now()}.${fileExt}`;
 
-      const arraybuffer = await fetch(image.uri).then((res) => res.arrayBuffer());
+      const arraybuffer = await fetch(uri).then((res) => res.arrayBuffer());
 
       const { data, error } = await supabase.storage.from("avatars").upload(path, arraybuffer, {
         cacheControl: "3600",

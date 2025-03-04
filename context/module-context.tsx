@@ -5,12 +5,12 @@ import { UserContext } from "./user-context";
 import * as FileSystem from "expo-file-system";
 import { useMMKVObject } from "react-native-mmkv";
 
-type ModuleContextProps = { modules: { data: Module[] | null; loading: boolean; error: boolean } | undefined; refreshModules: () => void };
+type ModuleContextProps = { modules: { data?: Module[] | null; loading: boolean; error?: boolean } | undefined; refreshModules: () => void };
 
 export const ModuleContext = createContext<ModuleContextProps>({} as ModuleContextProps);
 
 export default function ModuleProvider({ children }: { children: JSX.Element }) {
-  const [modules, setModules] = useMMKVObject<{ data: Module[] | null; loading: boolean; error: boolean }>("modules");
+  const [modules, setModules] = useMMKVObject<{ data?: Module[] | null; loading: boolean; error?: boolean }>("modules");
   const { currentUser, handleUpdateUserInfo } = useContext(UserContext);
 
   useEffect(() => {
@@ -46,13 +46,15 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
         );
 
         setModules({ ...modules, data: updateCompletedModules(updateCompletedSections(sortedQuestions)), loading: false, error: false });
+      } else {
+        setModules({ ...modules, loading: false, error: true });
       }
     } catch (error) {
+      console.log("Error fetching module data", error);
+      setModules({ ...modules, loading: false, error: true });
       // if (error instanceof Error) {
       //   Alert.alert(error.message)
       // }
-    } finally {
-      // setLoading(false)
     }
   }
 

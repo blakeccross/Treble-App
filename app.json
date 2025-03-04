@@ -2,7 +2,7 @@
   "expo": {
     "name": "Treble",
     "slug": "notate",
-    "version": "1.0.9",
+    "version": "1.0.11",
     "orientation": "portrait",
     "icon": "./assets/images/treble-icon.png",
     "scheme": "myapp",
@@ -31,7 +31,23 @@
       "output": "single",
       "favicon": "./assets/images/favicon.png"
     },
-    "plugins": ["expo-router", "expo-font", "expo-audio"],
+    "plugins": [
+      "expo-router",
+      "expo-font",
+      "expo-audio",
+      [
+        "expo-asset",
+        {
+          "assets": [
+            "./assets/audio/piano_fs2.mp3",
+            "./assets/audio/piano_c3.mp3",
+            "./assets/audio/piano_fs3.mp3",
+            "./assets/audio/piano_c4.mp3",
+            "./assets/audio/piano_fs4.mp3"
+          ]
+        }
+      ]
+    ],
     "experiments": {
       "typedRoutes": true
     },
@@ -43,7 +59,7 @@
         "projectId": "7d583fc1-e363-4166-999e-4cd74d9cd386"
       }
     },
-    "runtimeVersion": "1.0.4",
+    "runtimeVersion": "1.0.11",
     "updates": {
       "url": "https://u.expo.dev/7d583fc1-e363-4166-999e-4cd74d9cd386"
     }

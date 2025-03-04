@@ -1,7 +1,6 @@
 import HeartModal from "@/components/Heart.modal";
 import LoadingIndicator from "@/components/loading";
 import Paywall from "@/components/paywall.modal";
-import { SkeletonLoader } from "@/components/SkeletonLoader";
 import XPHistoryModal from "@/components/XPHistory.modal";
 import { ModuleContext } from "@/context/module-context";
 import { UserContext } from "@/context/user-context";
@@ -15,10 +14,10 @@ import { Image } from "expo-image";
 import * as Network from "expo-network";
 import { Link } from "expo-router";
 import React, { useContext, useState } from "react";
-import { Dimensions, FlatList, RefreshControl, useColorScheme } from "react-native";
+import { Dimensions, FlatList, useColorScheme } from "react-native";
 import { useMMKVObject } from "react-native-mmkv";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Avatar, Card, H3, H5, Paragraph, Progress, ScrollView, View, XStack, YStack } from "tamagui";
+import { Avatar, Button, Card, H3, H5, Paragraph, Progress, ScrollView, View, XStack, YStack } from "tamagui";
 import { LinearGradient } from "tamagui/linear-gradient";
 
 export default function HomeScreen() {
@@ -85,7 +84,6 @@ export default function HomeScreen() {
           borderTopLeftRadius={"$8"}
           borderTopRightRadius={"$8"}
           zIndex={1}
-          // refreshControl={<RefreshControl refreshing={modules?.loading || false} onRefresh={refreshModules} tintColor="transparent" />}
           onScroll={({ nativeEvent }) => {
             if (nativeEvent.contentOffset.y < -200 && !modules?.loading) {
               // Adjust threshold as needed
@@ -106,6 +104,13 @@ export default function HomeScreen() {
               {modules && modules.loading ? (
                 <View height={500} justifyContent="center" alignItems="center">
                   <LoadingIndicator />
+                </View>
+              ) : modules?.error ? (
+                <View height={500} justifyContent="center" alignItems="center">
+                  <Paragraph textAlign="center" marginTop={"$2"}>
+                    Error loading modules
+                  </Paragraph>
+                  <Button onPress={refreshModules}>Try again</Button>
                 </View>
               ) : (
                 modules &&
