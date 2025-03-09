@@ -8,20 +8,26 @@ import { Paragraph, View, YStack } from "tamagui";
 import Word from "./components/word";
 import WordList from "./components/word-list";
 
-const data = {
-  question: "Place the notes in the correct order",
-  explanation: "The notes go up alphabetically but stop at G",
-  options: [
-    { id: 1, word: "C" },
-    { id: 2, word: "D" },
-    { id: 3, word: "E" },
-    { id: 4, word: "F" },
-    { id: 5, word: "G" },
-    { id: 6, word: "A" },
-    { id: 7, word: "B" },
-    { id: 8, word: "CDFF" },
-    { id: 9, word: "DEAGSGS" },
+const testData = {
+  answer_explanation: null,
+  answer_id: null,
+  created_at: "2025-01-12T01:23:10.932408+00:00",
+  id: 1189,
+  image: null,
+  local_image_uri: "",
+  question: "Arrange these notes in order from shortest duration to longest duration.",
+  question_options: [
+    { id: 1, option_text: "Sixteenth" },
+    { id: 2, option_text: "Eighth" },
+    { id: 3, option_text: "Quarter" },
+    { id: 4, option_text: "Half" },
+    { id: 5, option_text: "Whole" },
+    { id: 6, option_text: "Breve" },
   ],
+  reading_text: "NULL",
+  section: 47,
+  sheet_music: null,
+  type: "fill-in-the-blank",
 };
 
 const Duolingo = () => {

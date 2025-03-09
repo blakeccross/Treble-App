@@ -23,6 +23,7 @@ export default function AnswerDrawer({
   const [open, setOpen] = useState(false);
   const [answerIsCorrect, setAnswerIsCorrect] = useState<boolean>();
   const { playSFX } = usePlaySFX();
+  console.log("answerIsCorrect", open);
 
   useEffect(() => {
     if (answerIsCorrect !== undefined) {

@@ -1,17 +1,17 @@
+import React, { useContext } from "react";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ModuleContext } from "@/context/module-context";
 import { ArrowLeft } from "@tamagui/lucide-icons";
 import { blue, blueDark } from "@tamagui/themes";
 import { Image } from "expo-image";
 import { Link, router, useLocalSearchParams } from "expo-router";
-import { useContext } from "react";
 import { SafeAreaView, View } from "react-native";
 import { Button, H2, Paragraph, ScrollView, XStack } from "tamagui";
 
 export default function ModuleStartScreen() {
   const { id } = useLocalSearchParams();
   const { modules } = useContext(ModuleContext);
-  const module = modules.data && modules.data.find((item) => item.id === Number(id));
+  const module = modules?.data && modules.data.find((item) => item.id === Number(id));
 
   return (
     <ParallaxScrollView

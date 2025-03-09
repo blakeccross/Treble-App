@@ -24,19 +24,21 @@ export default function usePlayMidi() {
     loadAssets();
     return () => {
       audioContextRef.current?.close();
+      activeSoundsRef.current = [];
+      stopSong();
     };
   }, []);
 
-  useFocusEffect(
-    useCallback(() => {
-      return () => {
-        stopSong();
-        audioContextRef.current?.close();
-        activeSoundsRef.current = [];
-        console.log("Play Audio is unfocused");
-      };
-    }, [])
-  );
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     return () => {
+  //       stopSong();
+  //       audioContextRef.current?.close();
+  //       activeSoundsRef.current = [];
+  //       console.log("Play Audio is unfocused");
+  //     };
+  //   }, [])
+  // );
 
   const bufferListRef = useRef<Record<string, AudioBuffer | null>>({
     C4: null,
@@ -198,12 +200,12 @@ export default function usePlayMidi() {
     // Store the active sound
     activeSoundsRef.current.push({ envelope: envelope as any, endTime });
 
+    envelope.gain.setValueAtTime(pianoVolume !== undefined ? pianoVolume : 1, tNow + time);
     // Attack (fade-in)
+    // envelope.gain.setValueAtTime(0.001, tNow + time);
+    // envelope.gain.exponentialRampToValueAtTime(pianoVolume !== undefined ? pianoVolume : 1, tNow + time + 0.01);
 
-    envelope.gain.setValueAtTime(0.001, tNow + time);
-    envelope.gain.exponentialRampToValueAtTime(pianoVolume !== undefined ? pianoVolume : 1, tNow + time + 0.01);
     // Decay (fade-out) before stopping
-    envelope.gain.exponentialRampToValueAtTime(0.001, 10);
     envelope.gain.setValueAtTime(0, endTime - 0.05);
 
     source.connect(envelope);

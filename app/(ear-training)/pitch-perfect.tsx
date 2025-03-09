@@ -94,8 +94,13 @@ export default function PitchPerfect() {
   }
 
   function handleIncorrect() {
-    setLives(lives - 1);
-    if (lives <= 1) {
+    const updatedLives = lives - 1;
+    setLives(updatedLives);
+    if (updatedLives <= 0) {
+      // Allow the user to play again
+      setTapEnabled(true);
+      setIsRunning(false);
+      setGameHasStarted(false);
       router.push({ pathname: "/game-over", params: { score: currentScore, gameName: "pitch_perfect" } });
     }
     setAnswerIsCorrect(false);
@@ -170,11 +175,14 @@ export default function PitchPerfect() {
       router.push("/out-of-lives");
       return;
     }
+
     if (lives >= 1) {
       if (!isRunning) {
         if (!gameHasStarted) {
           setGameHasStarted(true);
-          updatedLives(-1);
+          if (!currentUser?.is_subscribed) {
+            updatedLives(-1);
+          }
         }
         setSelectedAnswer("");
         setTapEnabled(true);

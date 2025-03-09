@@ -1,9 +1,8 @@
-import AnswerDrawer from "@/components/questions/AnswerDrawer";
 import { QuizContext } from "@/context/quiz-context";
 import useMarkdown from "@/hooks/parseSymbolsFromText";
-import React, { useContext, useRef } from "react";
-import { SafeAreaView } from "react-native";
-import { ScrollView, View } from "tamagui";
+import React, { useContext } from "react";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Button, ScrollView, View } from "tamagui";
 
 export default function Index() {
   const { currentQuestionIndex, questions, nextQuestion } = useContext(QuizContext);
@@ -11,10 +10,20 @@ export default function Index() {
 
   return (
     <>
-      <SafeAreaView />
       <ScrollView backgroundColor={"$background"}>
         <View padding="$4">{markdownElement}</View>
-        <AnswerDrawer enabled />
+        <View
+          style={{
+            width: "100%",
+            bottom: 0,
+          }}
+          padding="$4"
+        >
+          <Button onPress={nextQuestion} width={"100%"} fontWeight={600} fontSize={"$7"} height={"$5"}>
+            Continue
+          </Button>
+        </View>
+        <SafeAreaView edges={["bottom"]} />
       </ScrollView>
     </>
   );

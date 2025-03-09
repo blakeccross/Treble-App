@@ -19,7 +19,7 @@ export default function ModuleStartScreen() {
   const { id } = useLocalSearchParams();
   const { modules } = useContext(ModuleContext);
   const [openPaywall, setOpenPaywall] = useState(false);
-  const currentModule = modules.data && modules.data.find((item) => item.id === Number(id));
+  const currentModule = modules?.data && modules.data.find((item) => item.id === Number(id));
 
   useEffect(() => {
     if (!currentModule) router.dismissAll();
