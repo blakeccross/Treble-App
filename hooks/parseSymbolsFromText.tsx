@@ -140,11 +140,13 @@ const renderImage = (line: string, index: number, setSelectedImage: (url: string
 // Main function to parse Unicode symbols and italic text
 const parseUnicodeSymbols = (text: string, colorScheme: "light" | "dark"): JSX.Element[] => {
   const italicRegex = /(\*|_)(.*?)\1/g;
+  const boldRegex = /(\*\*|__)(.*?)\1/g; // Add regex for bold text
   const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
   const elements: JSX.Element[] = [];
   let lastIndex = 0;
   let match;
 
+  // First parse links
   while ((match = linkRegex.exec(text)) !== null) {
     if (lastIndex < match.index) {
       const plainText = text.slice(lastIndex, match.index);
@@ -162,13 +164,37 @@ const parseUnicodeSymbols = (text: string, colorScheme: "light" | "dark"): JSX.E
     lastIndex = match.index + match[0].length;
   }
 
-  // Then parse italics in remaining text
+  // Then parse bold and italics in remaining text
   const remainingText = text.slice(lastIndex);
   if (remainingText) {
+    let formatLastIndex = 0;
+
+    // Parse bold text first
+    while ((match = boldRegex.exec(remainingText)) !== null) {
+      if (formatLastIndex < match.index) {
+        const plainText = remainingText.slice(formatLastIndex, match.index);
+        elements.push(...parsePlainTextAndUnicode(plainText, `text-${elements.length}`, colorScheme));
+      }
+
+      elements.push(
+        <RNText
+          key={`bold-${elements.length}`}
+          style={{ ...styles.plainText, fontWeight: "bold", color: colorScheme === "light" ? "black" : "white" }}
+        >
+          {parseUnicodeSymbols(match[2], colorScheme)}
+        </RNText>
+      );
+
+      formatLastIndex = match.index + match[0].length;
+    }
+
+    // Then parse italics in the remaining text
+    let italicText = remainingText.slice(formatLastIndex);
     let italicLastIndex = 0;
-    while ((match = italicRegex.exec(remainingText)) !== null) {
+
+    while ((match = italicRegex.exec(italicText)) !== null) {
       if (italicLastIndex < match.index) {
-        const plainText = remainingText.slice(italicLastIndex, match.index);
+        const plainText = italicText.slice(italicLastIndex, match.index);
         elements.push(...parsePlainTextAndUnicode(plainText, `text-${elements.length}`, colorScheme));
       }
 
@@ -184,8 +210,8 @@ const parseUnicodeSymbols = (text: string, colorScheme: "light" | "dark"): JSX.E
       italicLastIndex = match.index + match[0].length;
     }
 
-    if (italicLastIndex < remainingText.length) {
-      const finalText = remainingText.slice(italicLastIndex);
+    if (italicLastIndex < italicText.length) {
+      const finalText = italicText.slice(italicLastIndex);
       elements.push(...parsePlainTextAndUnicode(finalText, `remaining-${elements.length}`, colorScheme));
     }
   }

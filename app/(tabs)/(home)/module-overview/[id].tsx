@@ -7,7 +7,7 @@ import { StickyHeader } from "@/components/StickyHeader";
 import { ModuleContext } from "@/context/module-context";
 import { UserContext } from "@/context/user-context";
 import { window } from "@/utils";
-import { H4, Paragraph, ScrollView, View, XStack, YStack } from "tamagui";
+import { H4, Paragraph, ScrollView, Separator, View, XStack, YStack } from "tamagui";
 import Paywall from "@/components/paywall.modal";
 
 const PAGE_WIDTH = window.width;
@@ -64,9 +64,10 @@ export default function ModuleStartScreen() {
               <YStack flex={1}>
                 <H4 fontWeight={600}>{section.title}</H4>
                 <Paragraph>
-                  {section.section_item.length} minutes{" "}
+                  {section.section_item.length <= 10 ? Math.round(section.section_item.length * 0.5) + " minutes" : "10 minutes"}
                   {currentUser?.completed_sections?.includes(section.id) && (
                     <>
+                      {" "}
                       •{" "}
                       <Paragraph color={"$blue10"} fontWeight={600}>
                         Completed

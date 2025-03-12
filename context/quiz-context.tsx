@@ -42,7 +42,7 @@ export default function QuizProvider({ children }: { children: JSX.Element[] }) 
         return Math.random() - 0.5; // Randomize the rest
       });
 
-      setSortedQuestions(sorted);
+      setSortedQuestions(sorted.slice(0, 20));
     }
   }, [currentSectionQuestions]);
 
@@ -131,11 +131,6 @@ export default function QuizProvider({ children }: { children: JSX.Element[] }) 
       params: { numOfCorrectAnswers: XPGained, moduleComplete: String(moduleComplete) },
     });
   }
-
-  console.log(
-    "sortedQuestions",
-    sortedQuestions.find((item) => item.type === "fill-in-the-blank")
-  );
 
   return (
     <QuizContext.Provider

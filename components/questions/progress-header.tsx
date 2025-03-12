@@ -61,7 +61,7 @@ export default function ProgressHeader() {
           onPress={() => route.dismissTo({ pathname: "/module-overview/[id]", params: { id: currentModule.id } })}
           fontWeight={600}
           theme={"alt1"}
-          marginBottom="$4"
+          // marginBottom="$4"
           fontSize={"$7"}
           height={"$5"}
         >
