@@ -41,11 +41,17 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
   useEffect(() => {
     const checkLivesRefresh = () => {
       if (!currentUser?.is_subscribed) {
+        console.log("lives", lives);
         if (lives === undefined) {
           setLives(5);
+          setLivesRefreshTime("");
+        } else if (lives >= 5) {
+          setLivesRefreshTime("");
+        } else if (lives < 5 && !livesRefreshTime) {
+          setLivesRefreshTime(moment().add(1, "hour").format());
         } else if (lives < 5 && livesRefreshTime && moment().isAfter(moment(livesRefreshTime))) {
           setLives(5);
-          setLivesRefreshTime(moment().add(1, "hour").format());
+          setLivesRefreshTime("");
         }
       }
     };

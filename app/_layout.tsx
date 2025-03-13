@@ -76,6 +76,7 @@ export default function RootLayout() {
                 <Stack.Screen name="(ear-training)" options={{ headerShown: false }} />
                 <Stack.Screen name="(settings)" options={{ headerShown: false }} />
                 <Stack.Screen name="out-of-lives" options={{ headerShown: false, presentation: "modal" }} />
+                <Stack.Screen name="paywall" options={{ headerShown: false, presentation: "modal" }} />
                 <Stack.Screen name="+not-found" />
               </Stack>
               <Toast config={toastConfig} topOffset={60} />

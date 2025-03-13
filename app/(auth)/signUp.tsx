@@ -52,8 +52,8 @@ export default function SignUp() {
 
     if (auth.user) {
       // await getUser();
-      // router.dismissAll();
-      // router.push("/(tabs)/(home)/");
+      router.dismissAll();
+      router.push("/(tabs)/(home)/");
     }
   }
 
@@ -84,7 +84,7 @@ export default function SignUp() {
                     onChangeText={onChange}
                     value={value}
                     returnKeyType="next"
-                    onSubmitEditing={() => passwordRef?.current?.focus()} 
+                    onSubmitEditing={() => passwordRef?.current?.focus()}
                   />
                 </Theme>
               </View>

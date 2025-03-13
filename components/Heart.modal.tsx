@@ -6,6 +6,7 @@ import moment from "moment";
 import { XPHistory } from "../types";
 import { useUser } from "../context/user-context";
 import { Heart, HeartCrack, LockOpen } from "@tamagui/lucide-icons";
+import BottomCard from "./BottomCard";
 
 export default function HeartModal({ openHeartModal, setOpenHeartModal }: { openHeartModal: boolean; setOpenHeartModal: (open: boolean) => void }) {
   const { lives, livesRefreshTime } = useUser();
@@ -24,7 +25,8 @@ export default function HeartModal({ openHeartModal, setOpenHeartModal }: { open
   }, [livesRefreshTime]);
 
   return (
-    <BottomSheet isOpen={openHeartModal} setIsOpen={setOpenHeartModal}>
+    // <BottomCard isOpen={openHeartModal} setIsOpen={setOpenHeartModal}>
+    <View>
       <YStack flex={1} gap="$4" paddingBottom={"$8"}>
         <View marginTop={"$4"} alignItems="center">
           {lives !== undefined && lives <= 0 ? <HeartCrack color={"$red10"} size={"$10"} /> : <Heart color={"$red10"} size={"$10"} />}
@@ -42,6 +44,7 @@ export default function HeartModal({ openHeartModal, setOpenHeartModal }: { open
         </Button>
       </YStack>
       <SafeAreaView />
-    </BottomSheet>
+    </View>
+    // </BottomCard>
   );
 }

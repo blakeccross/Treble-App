@@ -9,7 +9,7 @@ import { Award, ChevronLeft, ChevronRight, Settings, Sparkle } from "@tamagui/lu
 import { blueA, purpleA, redA, size, yellow } from "@tamagui/themes";
 import { Image } from "expo-image";
 import * as ImagePicker from "expo-image-picker";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import { FlatList, Pressable } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
@@ -132,7 +132,7 @@ export default function TabTwoScreen() {
               borderRadius="$8"
               overflow="hidden"
               marginBottom="$6"
-              onPress={() => setOpenPaywall(true)}
+              onPress={() => router.push("/paywall")}
               pressStyle={{ scale: 0.95 }}
               // animation="bouncy"
             >
@@ -250,7 +250,7 @@ export default function TabTwoScreen() {
             </Card>
           )}
         </YStack>
-        <Paywall openPaywall={openPaywall} setOpenPaywall={setOpenPaywall} />
+        {/* <Paywall openPaywall={openPaywall} setOpenPaywall={setOpenPaywall} /> */}
       </ScrollView>
     </>
   );

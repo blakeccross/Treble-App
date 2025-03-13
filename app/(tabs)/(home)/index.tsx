@@ -12,7 +12,7 @@ import { ChevronRight, Heart, StarFull } from "@tamagui/lucide-icons";
 import { blue, grayA, red, yellow, yellowA } from "@tamagui/themes";
 import { Image } from "expo-image";
 import * as Network from "expo-network";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import React, { useContext, useState } from "react";
 import { Dimensions, FlatList, useColorScheme } from "react-native";
 import { useMMKVObject } from "react-native-mmkv";
@@ -55,7 +55,7 @@ export default function HomeScreen() {
               </Link>
             </View>
 
-            <XStack gap="$3" onPress={() => setOpenHeartModal(true)}>
+            <XStack gap="$3" onPress={() => router.push("/(tabs)/(home)/hearts")}>
               {!currentUser?.is_subscribed && (
                 <XStack gap="$1.5" alignItems="center">
                   <Heart size="$1.5" color={"$red10"} fill={red.red10} />
@@ -75,7 +75,7 @@ export default function HomeScreen() {
           </XStack>
         </View>
 
-        <HeartModal openHeartModal={openHeartModal} setOpenHeartModal={setOpenHeartModal} />
+        {/* <HeartModal openHeartModal={openHeartModal} setOpenHeartModal={setOpenHeartModal} /> */}
         <XPHistoryModal openXPHistory={openXPHistory} setOpenXPHistory={setOpenXPHistory} xpHistory={xpHistory} />
 
         <ScrollView

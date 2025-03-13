@@ -1,4 +1,5 @@
 import { supabase } from "@/utils/supabase";
+import { router } from "expo-router";
 import React, { useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { ActivityIndicator, KeyboardAvoidingView, Platform, TextInput } from "react-native";
@@ -41,8 +42,8 @@ export default function Login() {
     }
 
     if (auth.session) {
-      // router.dismissAll();
-      // router.push("/(tabs)/(home)/");
+      router.dismissAll();
+      router.push("/(tabs)/(home)/");
     }
   }
 

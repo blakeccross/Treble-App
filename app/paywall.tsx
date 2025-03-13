@@ -1,25 +1,18 @@
-import { UserContext } from "@/context/user-context";
 import { Check, Gamepad, Heart, Star } from "@tamagui/lucide-icons";
 import { blue } from "@tamagui/themes";
 import { BlurView } from "expo-blur";
-import { Image } from "expo-image";
+import { router } from "expo-router";
 import LottieView from "lottie-react-native";
-import React, { useContext, useEffect, useState } from "react";
-import { Modal, SafeAreaView, ScrollView } from "react-native";
+import React, { useContext } from "react";
+import { SafeAreaView, ScrollView } from "react-native";
 import Purchases from "react-native-purchases";
-import { Button, H1, H2, H3, H4, ListItem, Paragraph, Separator, SizableText, Theme, View, XStack, YGroup, YStack } from "tamagui";
+import { Button, H2, H4, ListItem, Paragraph, SizableText, Theme, View, XStack, YStack } from "tamagui";
 import { LinearGradient } from "tamagui/linear-gradient";
-import TrebleLogo from "@/assets/trebleLogo";
+import TrebleLogo from "../assets/trebleLogo";
+import { UserContext } from "../context/user-context";
 
-export default function Paywall({ openPaywall, setOpenPaywall }: { openPaywall: boolean; setOpenPaywall: (open: boolean) => void }) {
+export default function Paywall() {
   const { currentUser, handleUpdateUserInfo } = useContext(UserContext);
-  const [modalVisible, setModalVisible] = useState(false);
-
-  useEffect(() => {
-    if (!currentUser?.is_subscribed) {
-      setModalVisible(openPaywall);
-    }
-  }, [openPaywall]);
 
   async function handleTryForFree() {
     if (await Purchases.isConfigured()) {
@@ -27,21 +20,14 @@ export default function Paywall({ openPaywall, setOpenPaywall }: { openPaywall: 
       const { customerInfo } = await Purchases.purchasePackage(offerings.all.monthly_test.availablePackages[0]);
       if (typeof customerInfo.entitlements.active["pro"] !== "undefined") {
         await handleUpdateUserInfo({ is_subscribed: true });
-        setOpenPaywall(false);
+        router.dismiss();
+        // setOpenPaywall(false);
       }
     }
   }
 
   return (
-    <Modal
-      animationType="slide"
-      presentationStyle="pageSheet"
-      visible={modalVisible}
-      onRequestClose={() => {
-        setOpenPaywall(false);
-        setModalVisible(false);
-      }}
-    >
+    <>
       {!currentUser?.is_subscribed ? (
         <LinearGradient flex={1} colors={[blue.blue11, blue.blue12]} start={[0.5, 1]} end={[0, 0]}>
           <View justifyContent="flex-start" alignItems="center">
@@ -86,7 +72,7 @@ export default function Paywall({ openPaywall, setOpenPaywall }: { openPaywall: 
               <Button borderWidth={1} borderColor={"white"} backgroundColor={"transparent"} fontWeight={800} onPress={handleTryForFree}>
                 Try for $0.00
               </Button>
-              <Button unstyled color={"$gray12Dark"} textAlign="center" padding="$4" onPress={() => setOpenPaywall(false)}>
+              <Button unstyled color={"$gray12Dark"} textAlign="center" padding="$4" onPress={() => router.dismissAll()}>
                 No Thanks
               </Button>
               <SafeAreaView />
@@ -118,13 +104,13 @@ export default function Paywall({ openPaywall, setOpenPaywall }: { openPaywall: 
               Welcome to the Treble Pro!
             </H2>
           </YStack>
-          <Button onPress={() => setModalVisible(false)} fontWeight={600} fontSize={"$7"} height={"$5"} width={"100%"} themeInverse>
+          <Button onPress={() => router.dismiss()} fontWeight={600} fontSize={"$7"} height={"$5"} width={"100%"} themeInverse>
             Continue
           </Button>
 
           <SafeAreaView />
         </LinearGradient>
       )}
-    </Modal>
+    </>
   );
 }
