@@ -44,22 +44,26 @@ export default function Hearts() {
         entering={SlideInDown.duration(500).easing(Easing.ease)}
         exiting={SlideOutDown.duration(500).easing(Easing.ease)}
       >
-        <Card flex={0} width={"100%"} elevation={10} borderRadius={"$10"} padding={"$6"}>
+        <Card flex={0} width={"100%"} elevation={10} borderRadius={"$8"} padding={"$4"}>
           <YStack gap="$4">
             <View alignItems="center">
-              {lives !== undefined && lives <= 0 ? <HeartCrack color={"$red10"} size={"$10"} /> : <Heart color={"$red10"} size={"$10"} />}
-              <H2>{lives !== undefined && lives <= 0 ? "You are out of lives!" : "You have " + lives + " hearts"}</H2>
-              {livesRefreshTime ? (
-                <>
-                  <Paragraph>Hearts will not reset until</Paragraph>
-                  {countdown ? <H2>{countdown}</H2> : <H2>-</H2>}
-                </>
-              ) : (
-                <Paragraph>Subscribe to unlock unlimited hearts</Paragraph>
-              )}
+              <View marginBottom={"$4"}>
+                {lives !== undefined && lives <= 0 ? <HeartCrack color={"$red10"} size={"$10"} /> : <Heart color={"$red10"} size={"$10"} />}
+              </View>
+              <View marginBottom={"$4"} alignItems="center">
+                <H3 fontWeight={800}>{lives !== undefined && lives <= 0 ? "You are out of lives!" : "You have " + lives + " hearts"}</H3>
+                {livesRefreshTime ? (
+                  <>
+                    <Paragraph>Hearts will not reset until</Paragraph>
+                    {countdown ? <H2>{countdown}</H2> : <H2>-</H2>}
+                  </>
+                ) : (
+                  <Paragraph>Subscribe to unlock unlimited hearts</Paragraph>
+                )}
+              </View>
             </View>
-            <Button onPress={() => router.push("/paywall")}>
-              <LockOpen />
+            <Button onPress={() => router.push("/paywall")} fontWeight={800}>
+              <LockOpen size={"$1"} />
               Unlock unlimited hearts
             </Button>
           </YStack>
