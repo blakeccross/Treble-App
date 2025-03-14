@@ -41,8 +41,8 @@ export default function Hearts() {
 
       <Animated.View
         style={{ width: "100%" }}
-        entering={SlideInDown.duration(750).easing(Easing.out(Easing.quad))}
-        exiting={SlideOutDown.duration(750).easing(Easing.out(Easing.quad))}
+        entering={SlideInDown.duration(750).easing(Easing.quad)}
+        exiting={SlideOutDown.duration(750).easing(Easing.quad)}
       >
         <Card flex={0} width={"100%"} elevation={10} borderRadius={"$8"} padding={"$4"}>
           <YStack gap="$4">

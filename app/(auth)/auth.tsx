@@ -49,7 +49,7 @@ export default function Auth() {
           <View width={"$3"} height={"$3"} themeInverse alignItems="center" justifyContent="center" onPress={() => router.back()}>
             <ChevronLeft size={"$2"} color={"white"} />
           </View>
-          <Paragraph color={"white"} fontWeight={800}>
+          <Paragraph fontSize={"$6"} color={"white"} fontWeight={800}>
             Log in
           </Paragraph>
           <View width={"$3"} height={"$3"}></View>
