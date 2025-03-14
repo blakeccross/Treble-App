@@ -41,8 +41,8 @@ export default function Hearts() {
 
       <Animated.View
         style={{ width: "100%" }}
-        entering={SlideInDown.duration(500).easing(Easing.ease)}
-        exiting={SlideOutDown.duration(500).easing(Easing.ease)}
+        entering={SlideInDown.duration(750).easing(Easing.out(Easing.quad))}
+        exiting={SlideOutDown.duration(750).easing(Easing.out(Easing.quad))}
       >
         <Card flex={0} width={"100%"} elevation={10} borderRadius={"$8"} padding={"$4"}>
           <YStack gap="$4">
@@ -62,7 +62,7 @@ export default function Hearts() {
                 )}
               </View>
             </View>
-            <Button onPress={() => router.push("/paywall")} fontWeight={800}>
+            <Button onPress={() => router.push("/paywall")} fontWeight={800} fontSize={"$6"} height={"$4"}>
               <LockOpen size={"$1"} />
               Unlock unlimited hearts
             </Button>

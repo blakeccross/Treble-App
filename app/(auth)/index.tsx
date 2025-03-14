@@ -31,7 +31,7 @@ export default function WelcomePage() {
               The best way to learn music theory from anywhere
             </Paragraph>
           </YStack>
-          <Link asChild href={{ pathname: "/(auth)/auth", params: { type: "signup" } }}>
+          <Link asChild href={{ pathname: "/(auth)/(sign-up)", params: { type: "signup" } }}>
             <Button>Sign Up</Button>
           </Link>
           <Link asChild href={{ pathname: "/(auth)/auth", params: { type: "login" } }}>

@@ -4,10 +4,11 @@ import { ChevronLeft } from "@tamagui/lucide-icons";
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useContext, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { SafeAreaView } from "react-native";
-import { Button, Input, Label, Paragraph, Theme, ToggleGroup, View, YStack } from "tamagui";
+import { Button, Input, Label, Paragraph, Theme, ToggleGroup, View, XStack, YStack } from "tamagui";
 import Login from "./logIn";
 import SignUp from "./signUp";
+import LottieView from "lottie-react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 type FormInput = {
   email: string;
@@ -42,32 +43,21 @@ export default function Auth() {
 
   return (
     <>
-      <YStack padding="$4" backgroundColor={"$blue10"}>
-        <SafeAreaView />
-        <View width={"$3"} height={"$3"} themeInverse alignItems="center" justifyContent="center" onPress={() => router.back()}>
-          <ChevronLeft size={"$2"} />
-        </View>
+      <YStack backgroundColor={"$blue10"}>
+        <SafeAreaView edges={["top"]} />
+        <XStack position="relative" justifyContent="space-between" alignItems="center" padding="$4">
+          <View width={"$3"} height={"$3"} themeInverse alignItems="center" justifyContent="center" onPress={() => router.back()}>
+            <ChevronLeft size={"$2"} color={"white"} />
+          </View>
+          <Paragraph color={"white"} fontWeight={800}>
+            Log in
+          </Paragraph>
+          <View width={"$3"} height={"$3"}></View>
+        </XStack>
       </YStack>
-
-      <YStack padding="$4" flex={1}>
-        <ToggleGroup type="single" value={toggle}>
-          <ToggleGroup.Item
-            borderWidth={1}
-            borderColor={toggle === "login" ? "$blue10" : undefined}
-            value="login"
-            flex={1}
-            onPress={() => setToggle("login")}
-          >
-            <Paragraph fontWeight={toggle === "login" ? 800 : 300}>Login</Paragraph>
-          </ToggleGroup.Item>
-          <ToggleGroup.Item borderColor={toggle === "signup" ? "$blue10" : undefined} value="signup" flex={1} onPress={() => setToggle("signup")}>
-            <Paragraph fontWeight={toggle === "signup" ? 800 : 300}>Sign Up</Paragraph>
-          </ToggleGroup.Item>
-        </ToggleGroup>
-        {toggle === "login" && <Login />}
-
-        {toggle === "signup" && <SignUp />}
-      </YStack>
+      <View flex={1} padding="$4">
+        <Login />
+      </View>
     </>
   );
 }

@@ -4,6 +4,7 @@ import { useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AudioBuffer, AudioContext, GainNode } from "react-native-audio-api";
 import { useMMKVNumber } from "react-native-mmkv";
+import { Asset } from "expo-asset";
 
 export default function usePlayMidi() {
   const [buffersLoaded, setBuffersLoaded] = useState(false);
@@ -12,11 +13,11 @@ export default function usePlayMidi() {
 
   async function loadAssets() {
     loadBuffers({
-      "F#2": FileSystem.bundleDirectory + "piano_fs2.mp3",
-      C3: FileSystem.bundleDirectory + "piano_c3.mp3",
-      "F#3": FileSystem.bundleDirectory + "piano_fs3.mp3",
-      C4: FileSystem.bundleDirectory + "piano_c4.mp3",
-      "F#4": FileSystem.bundleDirectory + "piano_fs4.mp3",
+      "F#2": require("@/assets/audio/piano_fs2.mp3"),
+      C3: require("@/assets/audio/piano_c3.mp3"),
+      "F#3": require("@/assets/audio/piano_fs3.mp3"),
+      C4: require("@/assets/audio/piano_c4.mp3"),
+      "F#4": require("@/assets/audio/piano_fs4.mp3"),
     });
   }
 
@@ -120,26 +121,45 @@ export default function usePlayMidi() {
     return frequency;
   }
 
-  // useEffect(() => {
-  // if (Object.entries(sourceList)?.every((asset) => asset[1])) {
-  //   loadBuffers();
-  // }
-  // return () => {
-  //   if (audioContextRef.current) audioContextRef.current?.close();
-  // };
-  // }, []);
-
-  async function loadBuffers(sourceList: Record<string, string>) {
+  async function loadBuffers(sourceList: Record<string, number>) {
     audioContextRef.current = new AudioContext();
     try {
       await Promise.all(
-        Object.entries(sourceList).map(async ([key, url]) => {
-          if (audioContextRef?.current && audioContextRef.current?.decodeAudioDataSource) {
-            bufferListRef.current[key] = await audioContextRef.current?.decodeAudioDataSource(url);
+        Object.entries(sourceList).map(async ([key, moduleId]) => {
+          console.log("LOADING BUFFER", key, moduleId);
+          if (audioContextRef?.current) {
+            try {
+              // Get the URI for the asset
+              const asset = await FileSystem.getInfoAsync(FileSystem.documentDirectory + `audio_${moduleId}`);
+
+              if (!asset.exists) {
+                // If the file doesn't exist in document directory, copy it from the module
+                await FileSystem.downloadAsync(Asset.fromModule(moduleId).uri, FileSystem.documentDirectory + `audio_${moduleId}`);
+              }
+
+              // Read the file content as base64
+              const fileContent = await FileSystem.readAsStringAsync(FileSystem.documentDirectory + `audio_${moduleId}`, {
+                encoding: FileSystem.EncodingType.Base64,
+              });
+
+              // Convert base64 to ArrayBuffer
+              const binaryString = atob(fileContent);
+              const len = binaryString.length;
+              const bytes = new Uint8Array(len);
+              for (let i = 0; i < len; i++) {
+                bytes[i] = binaryString.charCodeAt(i);
+              }
+              const arrayBuffer = bytes.buffer;
+
+              // Decode the audio data
+              bufferListRef.current[key] = await audioContextRef.current.decodeAudioData(arrayBuffer);
+            } catch (error) {
+              console.error("Error loading buffer for", key, ":", error);
+              bufferListRef.current[key] = null;
+            }
           } else {
             bufferListRef.current[key] = null;
-            console.log("FAILED TO LOAD BUFFER");
-            return null;
+            console.log("FAILED TO LOAD BUFFER - No audio context");
           }
         })
       );

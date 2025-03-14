@@ -16,7 +16,8 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.blakecross.trebleapp",
       "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "UIBackgroundModes": ["remote-notification"]
       }
     },
     "android": {
@@ -24,7 +25,8 @@
         "foregroundImage": "./assets/images/treble-icon.png",
         "backgroundColor": "#3D7ABE"
       },
-      "package": "com.blakecross.trebleapp"
+      "package": "com.blakecross.trebleapp",
+      "permissions": ["NOTIFICATIONS"]
     },
     "web": {
       "bundler": "metro",
@@ -35,6 +37,13 @@
       "expo-router",
       "expo-font",
       "expo-audio",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/treble-icon.png",
+          "color": "#3D7ABE"
+        }
+      ],
       [
         "expo-asset",
         {

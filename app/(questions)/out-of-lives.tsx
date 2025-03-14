@@ -1,6 +1,7 @@
 import { QuizContext } from "@/context/quiz-context";
 import { useUser } from "@/context/user-context";
-import { Check, HeartCrack, Star } from "@tamagui/lucide-icons";
+import { Check, Heart, HeartCrack, Star, Gamepad } from "@tamagui/lucide-icons";
+import { BlurView } from "expo-blur";
 import { useRouter } from "expo-router";
 import moment from "moment";
 import React, { useContext } from "react";
@@ -27,6 +28,7 @@ export default function Index() {
       if (typeof customerInfo.entitlements.active["pro"] !== "undefined") {
         await handleUpdateUserInfo({ is_subscribed: true });
         router.dismiss();
+        // setOpenPaywall(false);
       }
     }
   }
@@ -52,17 +54,22 @@ export default function Index() {
                   Unlock your learning potential
                 </H3>
               </View>
-              <YGroup alignSelf="center" bordered size="$4" separator={<Separator />}>
-                <YGroup.Item>
-                  <ListItem hoverTheme icon={Star} title="Unlock All Modules" subTitle="Begin learning beyond the basics" />
-                </YGroup.Item>
-                <YGroup.Item>
-                  <ListItem hoverTheme icon={Star} title="All Games" subTitle="Train your ear with fun games" />
-                </YGroup.Item>
-              </YGroup>
+              <BlurView intensity={100} style={{ borderRadius: 20, overflow: "hidden" }}>
+                <ListItem
+                  backgroundColor={"transparent"}
+                  icon={Heart}
+                  title="Unlimited Hearts"
+                  subTitle="Never have to stop and wait to continue learning"
+                />
+                <ListItem backgroundColor={"transparent"} icon={Star} title="Unlock All Modules" subTitle="Begin learning beyond the basics" />
+
+                <ListItem backgroundColor={"transparent"} icon={Gamepad} title="Unlock All Games" subTitle="Train your ear with fun games" />
+              </BlurView>
             </View>
             <View>
-              <Button onPress={handleTryForFree}>Try for $0.00</Button>
+              <Button onPress={handleTryForFree} fontWeight={800}>
+                Try for $0.00
+              </Button>
               <Button unstyled color={"$gray12"} textAlign="center" padding="$4" onPress={handleExitSection}>
                 No Thanks
               </Button>

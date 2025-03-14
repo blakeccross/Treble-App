@@ -34,14 +34,12 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
   const pathname = usePathname();
 
   useEffect(() => {
-    // setLives(2);
     getUser();
   }, []);
 
   useEffect(() => {
     const checkLivesRefresh = () => {
       if (!currentUser?.is_subscribed) {
-        console.log("lives", lives);
         if (lives === undefined) {
           setLives(5);
           setLivesRefreshTime("");
@@ -91,7 +89,7 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
         } else if (event === "SIGNED_IN" && session) {
           console.log("USER SIGNED IN");
           await handleGetUserData(session.user.id);
-          await handleCheckUserSubscription(session.user.id);
+          // await handleCheckUserSubscription(session.user.id);
           router.dismissAll();
           router.push("/(tabs)/(home)");
         } else if (session) {
@@ -107,9 +105,7 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
   }, []);
 
   async function handleGetUserData(id: string) {
-    if (await Purchases.isConfigured()) {
-      Purchases.logIn(id);
-    }
+    await handleCheckUserSubscription(id);
     let { data: profile, error } = await supabase.from("profiles").select("*").eq("id", id).single();
 
     if (profile) {
@@ -121,6 +117,7 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
     if (await Purchases.isConfigured()) {
       await Purchases.logIn(id);
       const customerInfo = await Purchases.getCustomerInfo();
+
       const is_subscribed = customerInfo.entitlements.active["pro"].isActive;
       if (currentUser) {
         setCurrentUser({ ...currentUser, is_subscribed: is_subscribed });
