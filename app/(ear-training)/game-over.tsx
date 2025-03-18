@@ -45,8 +45,7 @@ export default function Index() {
         <XStack>
           <Pressable
             onPress={() => {
-              router.push("/ear-training");
-              router.dismissAll();
+              router.dismissTo("/ear-training");
             }}
           >
             <X size="$3" color={"white"} />

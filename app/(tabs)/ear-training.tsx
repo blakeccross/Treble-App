@@ -14,8 +14,7 @@ import Animated, {
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { Button, Card, H2, H5, Paragraph, View, XStack, YStack } from "tamagui";
 
-const blurhash =
-  "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
+const blurhash = "A5Pj0^nN_Nt7";
 
 const AnimatedView = Animated.createAnimatedComponent(View);
 const AnimatedImage = Animated.createAnimatedComponent(Image);
@@ -89,18 +88,18 @@ const games = [
     disabled: false,
   },
   {
-    title: "Chord Detective",
-    description: `Identify the chord`,
-    backgroundImage: require("@/assets/images/hassaan-here-bKfkhVRAJTQ-unsplash.jpg"),
-    route: "/name-that-chord",
-    disabled: true,
-  },
-  {
     title: "Interval Training",
     description: `Test your ear in a\nfast pace matching game`,
     backgroundImage: require("@/assets/images/blue_shapes.jpg"),
     route: "/interval-training",
     disabled: false,
+  },
+  {
+    title: "Chord Detective",
+    description: `Identify the chord`,
+    backgroundImage: require("@/assets/images/hassaan-here-bKfkhVRAJTQ-unsplash.jpg"),
+    route: "/name-that-chord",
+    disabled: true,
   },
 ];
 

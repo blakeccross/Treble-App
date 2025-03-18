@@ -3,7 +3,7 @@ import { usePlaySFX } from "@/hooks/usePlaySFX";
 import { window } from "@/utils";
 import { Canvas, Circle, SweepGradient, vec } from "@shopify/react-native-skia";
 import { Heart, X } from "@tamagui/lucide-icons";
-import { blueDark, red } from "@tamagui/themes";
+import { blueDark, darkColors, red } from "@tamagui/themes";
 import * as Haptics from "expo-haptics";
 import { useFocusEffect, useRouter } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -23,8 +23,52 @@ import { Card, H1, H2, Paragraph, XStack, YStack } from "tamagui";
 
 const PAGE_WIDTH = window.width;
 const colorOptions = ["blue", "orange", "green", "red", "yellow", "purple", "pink"];
-const notes = ["c3", "d3", "e3", "f3", "g3", "a3", "b3"];
-const notesHard = ["c3", "cs3", "d3", "ds3", "e3", "f3", "fs3", "g3", "gs3", "a3", "as3", "b3"];
+
+// Define all notes from C2 to C4
+const notes = [
+  "c2",
+  "c#2",
+  "d2",
+  "d#2",
+  "e2",
+  "f2",
+  "f#2",
+  "g2",
+  "gs2",
+  "a2",
+  "as2",
+  "b2",
+  "c3",
+  "c#3",
+  "d3",
+  "d#3",
+  "e3",
+  "f3",
+  "f#3",
+  "g3",
+  "g#3",
+  "a3",
+  "a#3",
+  "b3",
+  "c4",
+];
+
+// Define intervals and their semitone distances
+const intervals = [
+  { name: "Perfect Unison", semitones: 0, display: "P1" },
+  { name: "Minor Second", semitones: 1, display: "m2" },
+  { name: "Major Second", semitones: 2, display: "M2" },
+  { name: "Minor Third", semitones: 3, display: "m3" },
+  { name: "Major Third", semitones: 4, display: "M3" },
+  { name: "Perfect Fourth", semitones: 5, display: "P4" },
+  { name: "Tritone", semitones: 6, display: "TT" },
+  { name: "Perfect Fifth", semitones: 7, display: "P5" },
+  { name: "Minor Sixth", semitones: 8, display: "m6" },
+  { name: "Major Sixth", semitones: 9, display: "M6" },
+  { name: "Minor Seventh", semitones: 10, display: "m7" },
+  { name: "Major Seventh", semitones: 11, display: "M7" },
+  { name: "Perfect Octave", semitones: 12, display: "P8" },
+];
 
 const correctSFX = require("@/assets/audio/correct_sfx.mp3");
 const incorrectSFX = require("@/assets/audio/incorrect_sfx.mp3");
@@ -39,17 +83,24 @@ export default function Page() {
   const [answerIsCorrect, setAnswerIsCorrect] = useState<boolean>();
   const [totalTime, setTotalTime] = useState<number>(15);
   const [colorSceme, setColorSceme] = useState<string>("blue");
-  const [availableAnswers, setAvailableAnswers] = useState([
-    { value: "c4", option_text: "C" },
-    { value: "d4", option_text: "D" },
-    { value: "e4", option_text: "Eb" },
-    { value: "f4", option_text: "F" },
-  ]);
+  const [playEnabled, setTapEnabled] = useState(true);
+  const [availableAnswers, setAvailableAnswers] = useState(
+    intervals.slice(0, 4).map((interval) => ({
+      value: interval.semitones.toString(),
+      option_text: interval.display,
+    }))
+  );
 
   const { playSFX } = usePlaySFX();
   const { playSong, stopSong } = usePlayMidi();
 
   const correctAnswer = useRef("");
+  const currentInterval = useRef<{ firstNote: string; secondNote: string; interval: number }>({
+    firstNote: "",
+    secondNote: "",
+    interval: 0,
+  });
+
   // Shared values for scale animations
   const rotate1 = useSharedValue(2 * Math.PI);
   const scale1 = useSharedValue(1);
@@ -80,29 +131,86 @@ export default function Page() {
     // height: translationY.value,
   }));
 
+  const [showAnswer, setShowAnswer] = useState(false);
+  const [gameHasStarted, setGameHasStarted] = useState(false);
+
+  function calculateInterval(note1: string, note2: string): number {
+    // Convert notes to their base note and octave
+    const [base1, octave1] = [note1.replace(/[0-9]/g, ""), parseInt(note1.match(/\d+/)?.[0] || "0")];
+    const [base2, octave2] = [note2.replace(/[0-9]/g, ""), parseInt(note2.match(/\d+/)?.[0] || "0")];
+
+    // Define the chromatic scale
+    const chromaticScale = ["c", "c#", "d", "d#", "e", "f", "f#", "g", "g#", "a", "a#", "b"];
+
+    // Get positions in chromatic scale
+    const pos1 = chromaticScale.indexOf(base1.toLowerCase());
+    const pos2 = chromaticScale.indexOf(base2.toLowerCase());
+
+    // Calculate total semitones considering octaves
+    let semitones = pos2 - pos1 + (octave2 - octave1) * 12;
+
+    // Ensure positive interval by adding octaves if necessary
+    while (semitones < 0) {
+      semitones += 12;
+    }
+
+    // Keep within one octave
+    return semitones % 12;
+  }
+
+  function getRandomInterval(minSemitones: number = 1, maxSemitones: number = 12): [string, string] {
+    // Get a random starting note that allows for the interval range
+    const startingNoteIndex = Math.floor(Math.random() * (notes.length - maxSemitones));
+    const firstNote = notes[startingNoteIndex];
+
+    // Calculate possible second notes based on the interval range
+    const possibleSecondNotes = notes.slice(startingNoteIndex + minSemitones, startingNoteIndex + maxSemitones + 1);
+
+    const secondNote = possibleSecondNotes[Math.floor(Math.random() * possibleSecondNotes.length)];
+    return [firstNote, secondNote];
+  }
+
+  function getIntervalOptions(correctInterval: number): typeof intervals {
+    // Get 3 random incorrect intervals
+    const incorrectOptions = intervals
+      .filter((int) => int.semitones !== correctInterval)
+      .sort(() => Math.random() - 0.5)
+      .slice(0, 3);
+
+    // Add the correct interval and shuffle
+    const allOptions = [...incorrectOptions, intervals.find((int) => int.semitones === correctInterval)!];
+    return allOptions.sort(() => Math.random() - 0.5);
+  }
+
   function validateAnswer(selectedId: string) {
     setSelectedAnswer(selectedId);
-    // Replace with real value
-    if (selectedId === correctAnswer.current) {
+    const isCorrect = selectedId === correctAnswer.current;
+    setShowAnswer(true);
+
+    if (isCorrect) {
       setAnswerIsCorrect(true);
       setCurrentScore(currentScore + 1);
       playSFX(correctSFX);
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      setIsRunning(false);
     } else {
       handleIncorrect();
     }
-    // correctAnswer.current = "";
     setIsRunning(false);
-
     springOut();
   }
 
   function handleIncorrect() {
-    if (lives <= 1) {
-      router.push({ pathname: "/game-over", params: { score: currentScore, gameName: "interval-training" } });
-    } else {
-      setLives(lives - 1);
+    const updatedLives = lives - 1;
+    setLives(updatedLives);
+    if (updatedLives <= 0) {
+      setTapEnabled(true);
+      setIsRunning(false);
+      setGameHasStarted(false);
+      router.push({ pathname: "/game-over", params: { score: currentScore, gameName: "interval_training" } });
     }
+    stopSong();
+
     setAnswerIsCorrect(false);
     playSFX(incorrectSFX);
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
@@ -120,72 +228,69 @@ export default function Page() {
     }, [])
   );
 
-  function shuffle(array: string[]) {
-    for (let i = array.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [array[i], array[j]] = [array[j], array[i]];
-    }
-    return array;
-  }
-
-  function getRandomNotes(excludeNote: string, notesArray: string[]): string[] {
-    // Filter out the excludeNote from the notesArray
-    const filteredNotes = notesArray.filter((note) => note !== excludeNote);
-
-    // Shuffle the array
-    const shuffledOptions = shuffle(filteredNotes).slice(0, 3); // Shuffle and take first 3
-    const quizOptions = shuffledOptions.slice(0, 3).concat(excludeNote);
-
-    // Return the first three elements
-    return shuffle(quizOptions);
-  }
-
   function newQuestion() {
-    let answerOptions = notes;
-
+    // Adjust difficulty based on score
     if (currentScore <= 10) {
       setTotalTime(10);
     } else if (currentScore <= 25) {
       setTotalTime(5);
-      answerOptions = notesHard;
     } else if (currentScore <= 50) {
       setTotalTime(3);
     }
-    correctAnswer.current = "";
+
+    // Generate random interval
+    const [firstNote, secondNote] = getRandomInterval();
+    const intervalDistance = calculateInterval(firstNote, secondNote);
+
+    console.log(firstNote, secondNote, "intervalDistance", intervalDistance);
+    currentInterval.current = {
+      firstNote,
+      secondNote,
+      interval: intervalDistance,
+    };
+
+    correctAnswer.current = intervalDistance.toString();
+
+    // Get interval options and update state
+    const intervalOptions = getIntervalOptions(intervalDistance);
+    setAvailableAnswers(
+      intervalOptions.map((interval) => ({
+        value: interval.semitones.toString(),
+        option_text: interval.display,
+      }))
+    );
+
     startAnimation();
-    let randomNote = "c3";
-
-    if (currentScore > 0) {
-      randomNote = answerOptions[Math.floor(Math.random() * notes.length)];
-    }
-
-    correctAnswer.current = randomNote;
-    console.log(randomNote);
-    const options = getRandomNotes(randomNote, answerOptions);
-    setAvailableAnswers(options.map((item) => ({ value: item, option_text: item })));
   }
 
   function handlePressPlay() {
+    if (!gameHasStarted) {
+      setGameHasStarted(true);
+    }
+
     if (!isRunning) {
       setSelectedAnswer("");
+      setTapEnabled(true);
+      setShowAnswer(false);
       newQuestion();
       changeColor();
       bounce();
-      // playSong();
+      playInterval();
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     } else {
       bounce();
-      // playSong();
+      playInterval();
     }
   }
 
-  // useEffect(() => {
-  //   return sound
-  //     ? () => {
-  //         sound.unloadAsync();
-  //       }
-  //     : undefined;
-  // }, [sound]);
+  function playInterval() {
+    if (currentInterval.current.firstNote && currentInterval.current.secondNote) {
+      playSong([
+        { note: currentInterval.current.firstNote as any, time: 0, duration: 1 },
+        { note: currentInterval.current.secondNote as any, time: 1, duration: 1 },
+      ]);
+    }
+  }
 
   function changeColor() {
     const randomColorOption = colorOptions[Math.floor(Math.random() * colorOptions.length)];
@@ -204,12 +309,12 @@ export default function Page() {
       })
     );
 
-    // scale2.value = withDelay(
-    //   0.5,
-    //   withSpring(1.2, { duration: 300, dampingRatio: 0.5, stiffness: 400 }, () => {
-    //     scale1.value = withSpring(1);
-    //   })
-    // );
+    scale2.value = withDelay(
+      1000, // Add 300ms delay for the second circle
+      withSpring(1.2, { duration: 300, dampingRatio: 0.5, stiffness: 400 }, () => {
+        scale2.value = withSpring(1);
+      })
+    );
   }
 
   function animateRotation() {
@@ -245,9 +350,14 @@ export default function Page() {
       }
     }, totalTime * 1000);
 
-    // Cleanup function to clear the timeout if the component unmounts
+    if (!isRunning && lives >= 1 && gameHasStarted) {
+      setTimeout(() => {
+        handlePressPlay();
+      }, 1000);
+    }
+
     return () => clearTimeout(timeoutId);
-  }, [isRunning]); // Empty dependency array ensures the effect runs only once
+  }, [isRunning]);
 
   const startAnimation = () => {
     setIsRunning(true);
@@ -261,7 +371,13 @@ export default function Page() {
     springOut();
   }
 
-  const tapGesture = Gesture.Tap().onTouchesUp(handlePressPlay).runOnJS(true);
+  const tapGesture = Gesture.Tap()
+    .onTouchesUp(() => {
+      if (playEnabled) {
+        handlePressPlay();
+      }
+    })
+    .runOnJS(true);
 
   return (
     <View style={{ flex: 1 }}>
@@ -277,26 +393,44 @@ export default function Page() {
           <Paragraph fontWeight={600}>{lives}</Paragraph>
         </XStack>
       </XStack>
-      <YStack justifyContent="center" alignItems="center" marginTop="$8">
-        {/* <TapGestureHandler onActivated={handlePressPlay}> */}
+
+      <YStack justifyContent="center" alignItems="center" marginTop="$4">
         <GestureDetector gesture={tapGesture}>
           <Animated.View style={[{ width: circleWidth, height: circleWidth }, animatedStyleRotate1]}>
             <Canvas style={{ flex: 1 }}>
               <Circle cx={circleWidth / 2} cy={circleWidth / 2} r={circleWidth / 2}>
-                <SweepGradient c={vec(circleWidth / 2, circleWidth / 2)} colors={[blueDark.blue9, blueDark.blue8]} />
+                <SweepGradient
+                  c={vec(circleWidth / 2, circleWidth / 2)}
+                  colors={[darkColors[`${colorSceme}9` as keyof typeof darkColors], darkColors[`${colorSceme}8` as keyof typeof darkColors]]}
+                />
               </Circle>
             </Canvas>
           </Animated.View>
         </GestureDetector>
-
-        <Animated.View style={[{ width: circleWidth, height: circleWidth }, animatedStyleRotate2]}>
-          <Canvas style={[{ flex: 1 }]}>
-            <Circle cx={circleWidth / 2} cy={circleWidth / 2} r={circleWidth / 2} origin={{ x: circleWidth / 2, y: circleWidth / 2 }}>
-              <SweepGradient c={vec(circleWidth / 2, circleWidth / 2)} colors={[blueDark.blue8, blueDark.blue9]} />
-            </Circle>
-          </Canvas>
-        </Animated.View>
+        <GestureDetector gesture={tapGesture}>
+          <Animated.View style={[{ width: circleWidth, height: circleWidth }, animatedStyleRotate2]}>
+            <Canvas style={[{ flex: 1 }]}>
+              <Circle cx={circleWidth / 2} cy={circleWidth / 2} r={circleWidth / 2} origin={{ x: circleWidth / 2, y: circleWidth / 2 }}>
+                <SweepGradient
+                  c={vec(circleWidth / 2, circleWidth / 2)}
+                  colors={[darkColors[`${colorSceme}8` as keyof typeof darkColors], darkColors[`${colorSceme}9` as keyof typeof darkColors]]}
+                />
+              </Circle>
+            </Canvas>
+          </Animated.View>
+        </GestureDetector>
       </YStack>
+
+      {/* {showAnswer && (
+        <YStack alignItems="center" marginTop="$4">
+          <H2 color={answerIsCorrect ? "$green10" : "$red10"}>{intervals.find((int) => int.semitones.toString() === correctAnswer.current)?.name}</H2>
+          {!answerIsCorrect && (
+            <Paragraph color="$gray11" marginTop="$2">
+              {currentInterval.current.firstNote.toUpperCase()} to {currentInterval.current.secondNote.toUpperCase()}
+            </Paragraph>
+          )}
+        </YStack>
+      )} */}
 
       <Animated.View style={[{ padding: 10 }, animatedStyleFlatList]}>
         <FlatList
@@ -312,7 +446,6 @@ export default function Page() {
               disabled={!isRunning}
               borderRadius="$8"
               pressStyle={{ scale: 0.95 }}
-              // animation="bouncy"
               flex={1}
               onPress={() => validateAnswer(item.value)}
               borderWidth={"$1"}
@@ -340,10 +473,8 @@ export default function Page() {
               }
             >
               <Card.Header alignItems="center">
-                <H2 fontWeight={600} paddingVertical={"$3"}>
-                  {item.option_text.charAt(0).toUpperCase()}
-                  {item.option_text.charAt(1) === "s" && "#"}
-                </H2>
+                <H2 fontWeight={600}>{item.option_text}</H2>
+                <Paragraph color="$gray11">{intervals.find((int) => int.semitones.toString() === item.value)?.name}</Paragraph>
               </Card.Header>
             </Card>
           )}
