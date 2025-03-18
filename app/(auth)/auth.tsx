@@ -1,46 +1,11 @@
-import { UserContext } from "@/context/user-context";
-import { supabase } from "@/utils/supabase";
 import { ChevronLeft } from "@tamagui/lucide-icons";
-import { router, useLocalSearchParams } from "expo-router";
-import React, { useContext, useEffect, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
-import { Button, Input, Label, Paragraph, Theme, ToggleGroup, View, XStack, YStack } from "tamagui";
-import Login from "./logIn";
-import SignUp from "./signUp";
-import LottieView from "lottie-react-native";
+import { router } from "expo-router";
+import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-
-type FormInput = {
-  email: string;
-  password: string;
-  confirmPassword: string;
-};
+import { Paragraph, View, XStack, YStack } from "tamagui";
+import Login from "./logIn";
 
 export default function Auth() {
-  const { type } = useLocalSearchParams();
-  const { currentUser, handleUpdateUserInfo } = useContext(UserContext);
-  const [open, setOpen] = React.useState(false);
-  const timerRef = React.useRef(0);
-  const [toggle, setToggle] = useState("login");
-
-  useEffect(() => {
-    setToggle(type as string);
-  }, [type]);
-
-  const {
-    control,
-    handleSubmit,
-    setError,
-    formState: { errors },
-    getValues,
-  } = useForm({
-    defaultValues: {
-      email: "",
-      password: "",
-      confirmPassword: "",
-    },
-  });
-
   return (
     <>
       <YStack backgroundColor={"$blue10"}>

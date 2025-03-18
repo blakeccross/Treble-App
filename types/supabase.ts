@@ -12,22 +12,22 @@ export type Database = {
       leaderboard: {
         Row: {
           created_at: string
-          id: number
           interval_training: number | null
+          nashville_round_up: number | null
           pitch_perfect: number | null
           profile: string
         }
         Insert: {
           created_at?: string
-          id?: number
           interval_training?: number | null
+          nashville_round_up?: number | null
           pitch_perfect?: number | null
           profile: string
         }
         Update: {
           created_at?: string
-          id?: number
           interval_training?: number | null
+          nashville_round_up?: number | null
           pitch_perfect?: number | null
           profile?: string
         }
@@ -35,7 +35,7 @@ export type Database = {
           {
             foreignKeyName: "leaderboard_profile_fkey"
             columns: ["profile"]
-            isOneToOne: false
+            isOneToOne: true
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -73,9 +73,10 @@ export type Database = {
           completed_sections: Json[] | null
           full_name: string | null
           id: string
-          premium: boolean | null
+          instrument: string | null
           total_xp: number
           updated_at: string | null
+          xp_history: Json | null
         }
         Insert: {
           active_days?: Json[] | null
@@ -84,9 +85,10 @@ export type Database = {
           completed_sections?: Json[] | null
           full_name?: string | null
           id: string
-          premium?: boolean | null
+          instrument?: string | null
           total_xp?: number
           updated_at?: string | null
+          xp_history?: Json | null
         }
         Update: {
           active_days?: Json[] | null
@@ -95,9 +97,10 @@ export type Database = {
           completed_sections?: Json[] | null
           full_name?: string | null
           id?: string
-          premium?: boolean | null
+          instrument?: string | null
           total_xp?: number
           updated_at?: string | null
+          xp_history?: Json | null
         }
         Relationships: []
       }

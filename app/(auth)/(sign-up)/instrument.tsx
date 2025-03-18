@@ -1,22 +1,19 @@
 import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { Alert, KeyboardAvoidingView, Platform, ScrollView, ActivityIndicator } from "react-native";
-import { Button, Label, Theme, View, YStack, XStack, H1 } from "tamagui";
-import { useSignUpForm } from "../../../context/sign-up-context";
+import { KeyboardAvoidingView, Platform, ScrollView, ActivityIndicator } from "react-native";
+import { Button, Label, View, YStack, XStack, H1 } from "tamagui";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
-import { supabase } from "../../../utils/supabase";
 
-import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
-import { useUser } from "@/context/user-context";
+import Animated, { FadeInDown } from "react-native-reanimated";
+import { useUser } from "../../../context/user-context";
 
 type FormInput = {
   instrument: string;
 };
 
 export default function SignUpInstrument() {
-  const { updateUser } = useUser();
-  const { form, updateForm } = useSignUpForm();
+  const { handleUpdateUserInfo } = useUser();
   const [isLoading, setIsLoading] = useState(false);
   const instruments = ["🎸", "🎹", "🎻", "🎤", "🎷", "🥁", "🎺", "💻", "🪈", "🪗", "🪕", "🎛️"];
 
@@ -34,7 +31,7 @@ export default function SignUpInstrument() {
     setIsLoading(true);
     try {
       //   updateForm({ instrument: data.instrument });
-      await updateUser({ instrument: data.instrument });
+      await handleUpdateUserInfo({ instrument: data.instrument });
       router.push("/(auth)/(sign-up)/notifications");
     } finally {
       setIsLoading(false);

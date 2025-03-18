@@ -10,12 +10,7 @@ import * as Network from "expo-network";
 
 type UserContextProps = {
   currentUser: Profile | undefined;
-  handleUpdateUserInfo: (info: Partial<Profile>) =>
-    | Promise<any[]>
-    | {
-        data: {};
-        status: string;
-      };
+  handleUpdateUserInfo: (info: Partial<Profile>) => Promise<any>;
   getUser: () => Promise<void>;
   handleSignOut: () => void;
   lives?: number;
@@ -105,37 +100,31 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
   }, []);
 
   async function handleGetUserData(id: string) {
-    await handleCheckUserSubscription(id);
+    const isSubscribed = await handleCheckUserSubscription(id);
     let { data: profile, error } = await supabase.from("profiles").select("*").eq("id", id).single();
 
     if (profile) {
-      setCurrentUser({ ...(currentUser || {}), ...profile });
+      setCurrentUser({ ...(currentUser || {}), ...profile, is_subscribed: isSubscribed });
     }
   }
 
   async function handleCheckUserSubscription(id: string) {
-    if (await Purchases.isConfigured()) {
+    const isConfigured = await Purchases.isConfigured();
+    if (isConfigured) {
       await Purchases.logIn(id);
       const customerInfo = await Purchases.getCustomerInfo();
 
-      const is_subscribed = customerInfo.entitlements.active["pro"].isActive;
-      if (currentUser) {
-        setCurrentUser({ ...currentUser, is_subscribed: is_subscribed });
-      }
+      return customerInfo.activeSubscriptions.length > 0;
     }
+    return false;
   }
 
   async function handleUpdateUserInfo(info: Partial<Profile>) {
     console.log("updating user", info);
     const updatedUser = { ...(currentUser || {}), ...info } as Profile;
     setCurrentUser(updatedUser);
-    if (networkState.isConnected) {
-      return await supabase.from("profiles").update(info).eq("id", currentUser?.id).select();
-      // if (data) {
-      //   setCurrentUser(updatedUser);
-      // }
-    }
-    return { data: {}, status: "" };
+
+    return await supabase.from("profiles").update(info).eq("id", currentUser?.id).select();
   }
 
   async function handleSignOut() {
