@@ -20,6 +20,7 @@ export default function TabLayout() {
           <Stack.Screen name="index" options={{ headerShown: false }} />
           <Stack.Screen name="email" options={{ headerShown: false, animation: "simple_push" }} />
           <Stack.Screen name="password" options={{ headerShown: false, animation: "simple_push" }} />
+          <Stack.Screen name="instrument" options={{ headerShown: false, animation: "simple_push" }} />
           <Stack.Screen name="notifications" options={{ headerShown: false, animation: "simple_push" }} />
           <Stack.Screen name="paywall" options={{ headerShown: false, animation: "slide_from_bottom" }} />
         </Stack>

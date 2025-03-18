@@ -38,7 +38,7 @@ export default function SignUpPassword() {
       }
 
       if (signUpData.user) {
-        router.push("/(auth)/(sign-up)/notifications");
+        router.push("/(auth)/(sign-up)/instrument");
       }
     } finally {
       setIsLoading(false);

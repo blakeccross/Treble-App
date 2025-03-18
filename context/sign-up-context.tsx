@@ -5,6 +5,7 @@ type SignUpForm = {
   fullName: string;
   email: string;
   password: string;
+  instrument: string;
 };
 
 type SignUpContextProps = {
@@ -19,6 +20,7 @@ export default function SignUpProvider({ children }: { children: JSX.Element[] }
     fullName: "",
     email: "",
     password: "",
+    instrument: "",
   });
 
   function updateForm(data: Partial<SignUpForm>) {

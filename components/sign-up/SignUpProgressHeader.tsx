@@ -20,10 +20,13 @@ export default function SignUpProgressHeader() {
         setProgress(25);
         break;
       case "/email":
-        setProgress(50);
+        setProgress(40);
         break;
       case "/password":
-        setProgress(75);
+        setProgress(60);
+        break;
+      case "/instrument":
+        setProgress(80);
         break;
     }
   }, [currentRoute]);
