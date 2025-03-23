@@ -1,11 +1,12 @@
 import { X } from "@tamagui/lucide-icons";
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { FlatList, Pressable, SafeAreaView } from "react-native";
+import { FlatList, Pressable } from "react-native";
 
 import { Leaderboard } from "@/types";
 import { supabase } from "@/utils/supabase";
 import { Avatar, H3, H4, H5, Separator, Spinner, View, XStack } from "tamagui";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function LeaderBoard() {
   const { gameName } = useLocalSearchParams<{ gameName: string }>();
@@ -22,7 +23,6 @@ export default function LeaderBoard() {
         .order(gameName, { ascending: false })
         .limit(100);
       if (leaderboardRes) {
-        console.log(leaderboardRes);
         const leaderboardFormatted = leaderboardRes.filter((item) => item.profile.full_name);
         setLeaderboard(leaderboardFormatted);
       }
@@ -33,45 +33,49 @@ export default function LeaderBoard() {
 
   return (
     <View backgroundColor={"$background"} flex={1}>
-      <SafeAreaView style={{ marginBottom: 200, flex: 1 }}>
+      <View backgroundColor={"$blue10"}>
+        <SafeAreaView edges={["top"]} />
+
         <XStack padding="$3" alignItems="center" justifyContent="space-between">
           <Pressable onPress={() => router.dismiss()}>
-            <X size="$3" />
+            <X size="$3" color={"white"} />
           </Pressable>
-          <H3 fontWeight={600}>Leaderboard</H3>
+          <H3 fontWeight={600} color={"white"}>
+            Leaderboard
+          </H3>
           <XStack gap="$1" width={"$3"} />
         </XStack>
-        {isLoading ? (
-          <Spinner />
-        ) : (
-          <FlatList
-            data={leaderboard}
-            keyExtractor={(item) => String(item.created_at)}
-            style={{ flex: 1 }}
-            renderItem={({ item }) => (
-              <>
-                <XStack
-                  key={item.id}
-                  padding="$4"
-                  justifyContent="space-between"
-                  alignItems="center"
-                  pressStyle={{ scale: 0.99, backgroundColor: "$backgroundPress" }}
-                >
-                  <XStack alignItems="center" gap="$2">
-                    <Avatar circular>
-                      <Avatar.Image accessibilityLabel={item.profile.full_name} src={item.profile.avatar_url} />
-                      <Avatar.Fallback backgroundColor="$blue10" />
-                    </Avatar>
-                    <H4 fontWeight={600}>{item.profile.full_name}</H4>
-                  </XStack>
-                  <H5 fontWeight={600}>{item[gameName as keyof Leaderboard]}</H5>
+      </View>
+      {isLoading ? (
+        <Spinner />
+      ) : (
+        <FlatList
+          data={leaderboard}
+          keyExtractor={(item) => String(item.created_at)}
+          style={{ flex: 1 }}
+          renderItem={({ item }) => (
+            <>
+              <XStack
+                key={item.created_at}
+                padding="$4"
+                justifyContent="space-between"
+                alignItems="center"
+                pressStyle={{ scale: 0.99, backgroundColor: "$backgroundPress" }}
+              >
+                <XStack alignItems="center" gap="$2">
+                  <Avatar circular>
+                    <Avatar.Image accessibilityLabel={item.profile.full_name} src={item.profile.avatar_url} />
+                    <Avatar.Fallback backgroundColor="$blue10" />
+                  </Avatar>
+                  <H4 fontWeight={600}>{item.profile.full_name}</H4>
                 </XStack>
-                <Separator />
-              </>
-            )}
-          />
-        )}
-      </SafeAreaView>
+                <H5 fontWeight={600}>{item[gameName as keyof Leaderboard]}</H5>
+              </XStack>
+              <Separator />
+            </>
+          )}
+        />
+      )}
     </View>
   );
 }

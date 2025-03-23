@@ -1,5 +1,5 @@
 import { UserContext } from "@/context/user-context";
-import { ArrowLeft, ChevronRight, Lock, Moon, User, Volume, Volume1, Volume2 } from "@tamagui/lucide-icons";
+import { ArrowLeft, ChevronRight, HelpCircle, Lock, Moon, User, Volume, Volume1, Volume2 } from "@tamagui/lucide-icons";
 import { Href, Link, RelativePathString, router } from "expo-router";
 import React, { useContext } from "react";
 import { Alert, FlatList, Pressable, SafeAreaView } from "react-native";
@@ -11,6 +11,7 @@ export default function ProfileSettings() {
     { name: "Profile", href: "/(settings)/profile", icon: <User size="$2" /> },
     { name: "Appearance", href: "/(settings)/appearance", icon: <Moon size="$1.5" /> },
     { name: "Audio", href: "/(settings)/audio", icon: <Volume2 /> },
+    { name: "Help", href: "/(settings)/help", icon: <HelpCircle size="$1.5" /> },
     // { name: "Notifications", href: "/(settings)/notifications", icon: <Bell size="$1.5" /> },
   ];
 

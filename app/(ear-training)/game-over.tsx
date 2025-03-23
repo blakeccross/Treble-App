@@ -1,19 +1,28 @@
-import { QuizContext } from "@/context/quiz-context";
-import { NavigationContainer } from "@react-navigation/native";
-import { RefreshCw, Share, Trophy, X } from "@tamagui/lucide-icons";
-import { Link, Stack, useLocalSearchParams, useRouter } from "expo-router";
-import React, { useContext, useEffect, useState } from "react";
-import { Pressable, SafeAreaView, ScrollView, View, useWindowDimensions } from "react-native";
-import { Button, Card, H1, H2, H3, Theme, XStack, YStack } from "tamagui";
-import { LinearGradient } from "tamagui/linear-gradient";
-import { useMMKVNumber } from "react-native-mmkv";
-import { supabase } from "@/utils/supabase";
+import React, { useContext, useEffect } from "react";
+import { Pressable, SafeAreaView, Share as RNShare } from "react-native";
 import { UserContext } from "@/context/user-context";
+import { supabase } from "@/utils/supabase";
+import { RefreshCw, Share, Trophy, X } from "@tamagui/lucide-icons";
+import { Link, useLocalSearchParams, useRouter } from "expo-router";
+import { useMMKVNumber } from "react-native-mmkv";
+import { Button, H1, H3, Theme, XStack, YStack } from "tamagui";
+import { LinearGradient } from "tamagui/linear-gradient";
+
+const Games: Record<string, { name: string; shareImage: string }> = {
+  pitch_perfect: {
+    name: "Pitch Perfect",
+    shareImage: require("@/assets/images/pitch_perfect.png"),
+  },
+  nashville_round_up: {
+    name: "Nashville Round Up",
+    shareImage: require("@/assets/images/nashville_round_up_poster.png"),
+  },
+};
 
 export default function Index() {
   const router = useRouter();
   const { score, gameName } = useLocalSearchParams();
-  const { currentUser, handleUpdateUserInfo } = useContext(UserContext);
+  const { currentUser } = useContext(UserContext);
   const [highScore, setHighScore] = useMMKVNumber(String(gameName));
 
   useEffect(() => {
@@ -36,6 +45,17 @@ export default function Index() {
       if (error) {
         console.error(error);
       }
+    }
+  }
+
+  async function shareScore() {
+    try {
+      await RNShare.share({
+        message: `I just scored ${score} in ${Games[gameName as keyof typeof Games].name} on Treble! Can you beat my score?`,
+        title: `Treble - ${Games[gameName as keyof typeof Games].name}`,
+      });
+    } catch (error) {
+      console.error(error);
     }
   }
 
@@ -68,12 +88,19 @@ export default function Index() {
           </YStack>
           <YStack gap="$4" width={"100%"}>
             <XStack gap="$4">
-              <Button fontWeight={600} size={"$6"} themeInverse elevate icon={<Share />}></Button>
-              <Link asChild href={{ pathname: "/(ear-training)/leaderboard", params: { gameName: gameName } }}>
-                <Button fontWeight={600} size={"$6"} themeInverse flex={1} elevate icon={<Trophy />}>
-                  Leaderboard
-                </Button>
-              </Link>
+              {/* <Button fontWeight={600} size={"$6"} themeInverse elevate icon={<Share />} onPress={shareScore}></Button> */}
+              <Button
+                onPress={() => router.push({ pathname: "/(ear-training)/leaderboard", params: { gameName } })}
+                fontWeight={600}
+                size={"$6"}
+                variant="outlined"
+                // themeInverse
+                flex={1}
+                elevate
+                icon={<Trophy />}
+              >
+                Leaderboard
+              </Button>
             </XStack>
             <Theme name={"alt1_Button" as any}>
               <Button onPress={() => router.back()} fontWeight={600} size={"$6"} width={"100%"} elevate icon={<RefreshCw />}>

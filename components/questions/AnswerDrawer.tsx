@@ -67,7 +67,9 @@ export default function AnswerDrawer({
             <H3 fontWeight={600} textAlign="center" color={answerIsCorrect ? "$green12" : "$red5Dark"}>
               {answerIsCorrect ? "Correct!" : "Incorrect"}
             </H3>
-            <Paragraph color={answerIsCorrect ? "$green12" : "$red5Dark"}>{explanation}</Paragraph>
+            <Paragraph fontSize={"$6"} color={answerIsCorrect ? "$green12" : "$red5Dark"}>
+              {explanation}
+            </Paragraph>
           </YStack>
           <View width={"100%"}>
             <Button

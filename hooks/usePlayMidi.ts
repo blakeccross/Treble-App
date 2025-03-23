@@ -4,11 +4,10 @@ import { useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AudioBuffer, AudioContext, GainNode } from "react-native-audio-api";
 import { useMMKVNumber } from "react-native-mmkv";
-import { Asset } from "expo-asset";
 
 export default function usePlayMidi() {
   const [buffersLoaded, setBuffersLoaded] = useState(false);
-  const [pianoVolume, setPianoVolume] = useMMKVNumber("pianoVolume");
+  const [pianoVolume] = useMMKVNumber("pianoVolume");
   const activeSoundsRef = useRef<{ envelope: GainNode; endTime: number }[]>([]);
 
   async function loadAssets() {
@@ -30,16 +29,20 @@ export default function usePlayMidi() {
     };
   }, []);
 
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     return () => {
-  //       stopSong();
-  //       audioContextRef.current?.close();
-  //       activeSoundsRef.current = [];
-  //       console.log("Play Audio is unfocused");
-  //     };
-  //   }, [])
-  // );
+  useFocusEffect(
+    useCallback(() => {
+      return () => {
+        stopSong();
+        cleanupAudioResources();
+        if (audioContextRef.current) {
+          audioContextRef.current.close();
+          audioContextRef.current = undefined;
+        }
+        activeSoundsRef.current = [];
+        console.log("Play Audio is unfocused");
+      };
+    }, [])
+  );
 
   const bufferListRef = useRef<Record<string, AudioBuffer | null>>({
     C4: null,
@@ -54,10 +57,19 @@ export default function usePlayMidi() {
   };
 
   const stopSong = () => {
-    console.log("STOPPING SONG");
-    activeSoundsRef.current.forEach((envelope) => {
-      envelope.envelope.disconnect();
+    // activeSoundsRef.current.forEach((envelope) => {
+    //   envelope.envelope.disconnect();
+    // });
+    activeSoundsRef.current.forEach((sound) => {
+      try {
+        // sound.envelope.gain.cancelScheduledValues(audioContextRef.current?.currentTime || 0);
+        sound.envelope.gain.setValueAtTime(0, audioContextRef.current?.currentTime || 0);
+        sound.envelope.disconnect();
+      } catch (error) {
+        console.warn("Error cleaning up audio node:", error);
+      }
     });
+    activeSoundsRef.current = [];
   };
 
   const getClosestNote = (note: PianoKey): PianoKey | null => {
@@ -177,11 +189,24 @@ export default function usePlayMidi() {
     }));
   };
 
+  const cleanupAudioResources = () => {
+    const currentTime = audioContextRef.current?.currentTime || 0;
+    activeSoundsRef.current.forEach((sound) => {
+      if (sound.endTime <= currentTime) {
+        sound.envelope.disconnect();
+      }
+    });
+    activeSoundsRef.current = activeSoundsRef.current.filter((sound) => sound.endTime > currentTime);
+  };
+
   const onKeyPressIn = (which: PianoKey, time: number, duration: number = 1, volume: number = 1) => {
     if (!buffersLoaded) {
       console.warn("Buffers not fully loaded yet");
       return;
     }
+
+    // Clean up any finished sounds before creating new ones
+    cleanupAudioResources();
 
     let buffer = bufferListRef.current[which];
     const aCtx = audioContextRef.current;
@@ -221,14 +246,14 @@ export default function usePlayMidi() {
     envelope.gain.setValueAtTime(0, endTime - 0.05);
 
     source.connect(envelope);
-    // source.connect(gainRef.current!);
+
     envelope.connect(aCtx.destination);
     source.start(tNow + time);
     source.stop(endTime);
 
     // Remove the sound from the active list after its end time
     setTimeout(() => {
-      activeSoundsRef.current = activeSoundsRef.current.filter((sound) => sound.endTime > aCtx.currentTime);
+      cleanupAudioResources();
     }, (endTime - tNow) * 1000);
   };
 
