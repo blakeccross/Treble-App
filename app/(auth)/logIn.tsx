@@ -43,7 +43,7 @@ export default function Login() {
 
     if (auth.session) {
       router.dismissAll();
-      router.push("/(tabs)/(home)/");
+      router.push("/(tabs)/(home)");
     }
   }
 

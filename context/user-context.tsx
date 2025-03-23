@@ -3,10 +3,12 @@ import { supabase } from "@/utils/supabase";
 import { router, usePathname } from "expo-router";
 import moment from "moment";
 import { createContext, useContext, useEffect } from "react";
-import { useMMKVNumber, useMMKVObject, useMMKVString } from "react-native-mmkv";
+import { MMKV, useMMKVNumber, useMMKVObject, useMMKVString } from "react-native-mmkv";
 import Purchases from "react-native-purchases";
 import Toast from "react-native-toast-message";
 import * as Network from "expo-network";
+
+const storage = new MMKV();
 
 type UserContextProps = {
   currentUser: Profile | undefined;
@@ -33,6 +35,7 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
   }, []);
 
   useEffect(() => {
+    console.log("HEY LOOK HERE", currentUser?.is_subscribed, lives, livesRefreshTime);
     const checkLivesRefresh = () => {
       if (!currentUser?.is_subscribed) {
         if (lives === undefined) {
@@ -80,13 +83,12 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
       const handleAuthChange = async () => {
         if (event === "SIGNED_OUT") {
           console.log("USER SIGNED OUT");
-          // setSession(null)
         } else if (event === "SIGNED_IN" && session) {
           console.log("USER SIGNED IN");
           await handleGetUserData(session.user.id);
-          // await handleCheckUserSubscription(session.user.id);
-          router.dismissAll();
-          router.push("/(tabs)/(home)");
+
+          // router.dismissAll();
+          // router.push("/(tabs)/(home)");
         } else if (session) {
           console.log(event);
         }
@@ -137,7 +139,10 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
         text1: "Error trying to sign user out",
       });
     } else {
-      setCurrentUser(undefined);
+      storage.clearAll();
+      // setLives(undefined);
+      // setLivesRefreshTime(undefined);
+      // setCurrentUser(undefined);
       router.replace("/(auth)");
     }
   }

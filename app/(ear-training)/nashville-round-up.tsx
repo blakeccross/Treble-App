@@ -208,9 +208,9 @@ export default function App() {
         </H1>
         <View width={"$3"} alignItems="flex-end">
           {gameHasStarted ? (
-            <XStack gap="$1">
+            <XStack gap="$1" alignItems="center">
               <Heart size="$2" color={"$red10"} fill={red.red10} />
-              <Paragraph fontWeight={600} color={"white"}>
+              <Paragraph fontSize={"$5"} fontWeight={600} color={"white"}>
                 {lives}
               </Paragraph>
             </XStack>

@@ -121,7 +121,7 @@ export default function HomeScreen() {
                     contentContainerStyle={{ gap: 15, paddingBottom: 100 }}
                     renderItem={({ item: module }) => (
                       <Link href={`/module-overview/${module?.id}`} asChild key={module.id}>
-                        <Card borderRadius="$8" pressStyle={{ scale: 0.95 }} backgroundColor={"$blue1"}>
+                        <Card borderRadius="$8" pressStyle={{ scale: 0.95 }} backgroundColor={"$blue1"} animation="bouncy">
                           <Card.Header padding="$4">
                             <XStack gap="$4" flex={1}>
                               <View position="relative">

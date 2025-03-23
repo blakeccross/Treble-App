@@ -296,7 +296,7 @@ const styles = StyleSheet.create({
   tableCell: { flex: 1, padding: 5, borderWidth: 1, borderColor: "#ddd" },
   tableHeaderCell: { fontWeight: "bold", color: "black" },
   imageContainer: { marginVertical: 10, alignItems: "center" },
-  image: { width: 200, height: 200, resizeMode: "contain" },
+  image: { width: windowWidth * 0.7, height: windowWidth * 0.7, resizeMode: "contain" },
   imageCaption: { marginTop: 5, fontStyle: "italic", fontSize: 12, textAlign: "center" },
   plainText: { fontStyle: "normal", lineHeight: 28, fontSize: 20 },
   heading1: { fontWeight: "bold", fontSize: 40, marginBottom: 10 },

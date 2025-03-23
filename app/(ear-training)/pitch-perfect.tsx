@@ -309,9 +309,11 @@ export default function PitchPerfect() {
         <H1 fontWeight={600}>{currentScore}</H1>
         <View style={{ width: 50, alignItems: "flex-end" }}>
           {gameHasStarted ? (
-            <XStack gap="$1">
+            <XStack gap="$1" alignItems="center">
               <Heart size="$2" color={"$red10"} fill={red.red10} />
-              <Paragraph fontWeight={600}>{lives}</Paragraph>
+              <Paragraph fontSize={"$5"} fontWeight={600}>
+                {lives}
+              </Paragraph>
             </XStack>
           ) : (
             <Link asChild href={{ pathname: "/leaderboard", params: { gameName: "pitch_perfect" } }}>

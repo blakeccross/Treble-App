@@ -2,7 +2,7 @@ import usePlayMidi from "@/hooks/usePlayMidi";
 import { usePlaySFX } from "@/hooks/usePlaySFX";
 import { window } from "@/utils";
 import { Canvas, Circle, SweepGradient, vec } from "@shopify/react-native-skia";
-import { Heart, X } from "@tamagui/lucide-icons";
+import { BarChart2, Heart, X } from "@tamagui/lucide-icons";
 import { blueDark, darkColors, red } from "@tamagui/themes";
 import * as Haptics from "expo-haptics";
 import { useFocusEffect, useRouter } from "expo-router";
@@ -388,10 +388,18 @@ export default function Page() {
           <X size="$3" />
         </Pressable>
         <H1 fontWeight={600}>{currentScore}</H1>
-        <XStack gap="$1">
-          <Heart size="$2" color={"$red10"} fill={red.red10} />
-          <Paragraph fontWeight={600}>{lives}</Paragraph>
-        </XStack>
+        {gameHasStarted ? (
+          <XStack gap="$1" alignItems="center">
+            <Heart size="$2" color={"$red10"} fill={red.red10} />
+            <Paragraph fontSize={"$5"} fontWeight={600}>
+              {lives}
+            </Paragraph>
+          </XStack>
+        ) : (
+          <Pressable onPress={() => router.push(`/leaderboard?gameName=interval_training`)}>
+            <BarChart2 size="$2" />
+          </Pressable>
+        )}
       </XStack>
 
       <YStack justifyContent="center" alignItems="center" marginTop="$4">

@@ -128,7 +128,7 @@ export default function TabTwoScreen() {
               elevate
               // bordered
               pressStyle={{ scale: 0.95 }}
-              // animation="bouncy"
+              animation="bouncy"
               borderRadius={"$8"}
               overflow="hidden"
               height={400}

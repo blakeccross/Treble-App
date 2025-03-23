@@ -27,11 +27,15 @@ SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   const networkState = Network.useNetworkState();
+
   const [loaded] = useFonts({
     Inter: require("@tamagui/font-inter/otf/Inter-Medium.otf"),
     InterBold: require("@tamagui/font-inter/otf/Inter-Bold.otf"),
     InterItalic: require("@tamagui/font-inter/otf/Inter-Italic.otf"),
     Bravura: require("../assets/fonts/BravuraText.otf"),
+    VAG: require("../assets/fonts/VAG-Regular.otf"),
+    VAGMedium: require("../assets/fonts/VAG-Medium.otf"),
+    VAGBold: require("../assets/fonts/VAG-Bold.otf"),
   });
 
   useEffect(() => {

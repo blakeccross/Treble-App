@@ -3,7 +3,7 @@ import { createInterFont } from "@tamagui/font-inter";
 import { createMedia } from "@tamagui/react-native-media-driver";
 import { shorthands } from "@tamagui/shorthands";
 import { blue, blueDark, themes, whiteA } from "@tamagui/themes";
-import { createTamagui } from "tamagui";
+import { createFont, createTamagui } from "tamagui";
 import { tokens } from "./theme";
 
 const animations = createAnimations({
@@ -25,19 +25,60 @@ const animations = createAnimations({
     stiffness: 250,
   },
 });
-
 const headingFont = createInterFont();
-const bodyFont = createInterFont();
+const systemFont = createFont({
+  family: "VAG",
+  size: {
+    1: 12,
+    2: 13,
+    3: 14,
+    4: 15,
+    5: 16,
+    6: 18,
+    7: 20,
+    8: 23,
+    9: 30,
+    10: 46,
+    11: 55,
+    12: 62,
+    13: 72,
+    14: 92,
+    15: 114,
+    16: 134,
+  },
+  lineHeight: headingFont.lineHeight,
+  // weight: {
+  //   1: "300",
+  //   // 2 will be 300
+  //   3: "600",
+  // },
+  letterSpacing: {
+    1: 0.7,
+    // 2: 1,
+    // 3 will be -1
+  },
+  // (native only) swaps out fonts by face/style
+  face: {
+    100: { normal: "VAG", italic: "VAG" },
+    200: { normal: "VAG", italic: "VAG" },
+    300: { normal: "VAG", italic: "VAG" },
+    600: { normal: "VAGMedium", italic: "VAGMedium" },
+    800: { normal: "VAGBold", italic: "VAGBold" },
+  },
+});
+
+// const headingFont = createInterFont();
+// const bodyFont = createInterFont();
 
 const config = createTamagui({
-  // animations,
-  defaultTheme: "dark",
+  animations,
+  // defaultTheme: "dark",
   shouldAddPrefersColorThemes: false,
   themeClassNameOnRoot: false,
   shorthands,
   fonts: {
-    heading: headingFont,
-    body: bodyFont,
+    heading: systemFont,
+    body: systemFont,
   },
   themes: {
     ...themes,

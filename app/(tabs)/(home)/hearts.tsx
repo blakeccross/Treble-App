@@ -34,17 +34,28 @@ export default function Hearts() {
         padding: 20,
         justifyContent: "flex-end",
         alignItems: "center",
-        backgroundColor: "#00000030",
+        // backgroundColor: "#00000030",
       }}
     >
       <Pressable onPress={() => router.dismiss()} style={StyleSheet.absoluteFill} />
 
       <Animated.View
         style={{ width: "100%" }}
-        entering={SlideInDown.duration(750).easing(Easing.quad)}
-        exiting={SlideOutDown.duration(750).easing(Easing.quad)}
+        // entering={SlideInDown.duration(750).easing(Easing.quad)}
+        // exiting={SlideOutDown.duration(750).easing(Easing.quad)}
       >
-        <Card flex={0} width={"100%"} elevation={10} borderRadius={"$8"} padding={"$4"}>
+        <Card
+          flex={0}
+          width={"100%"}
+          borderRadius={"$8"}
+          padding={"$4"}
+          elevation="$4"
+          backgroundColor="$background"
+          shadowColor={"#000000"}
+          shadowOpacity={0.2}
+          shadowRadius={30}
+          shadowOffset={{ width: 0, height: 10 }}
+        >
           <YStack gap="$4">
             <View alignItems="center">
               <View marginBottom={"$4"}>

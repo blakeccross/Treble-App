@@ -30,7 +30,7 @@ export default function SignUpName() {
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={{ flex: 1 }}
-      keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 80 : 0}
     >
       <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled" bounces={false}>
         <YStack flex={1} padding="$3" space="$4">
@@ -53,6 +53,7 @@ export default function SignUpName() {
                     onChangeText={onChange}
                     value={value}
                     returnKeyType="next"
+                    onSubmitEditing={() => handleSubmit(onSubmit)()}
                   />
                 </Theme>
               </View>

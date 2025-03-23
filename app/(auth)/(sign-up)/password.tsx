@@ -25,31 +25,15 @@ export default function SignUpPassword() {
 
   async function onSubmit(data: FormInput) {
     setIsLoading(true);
-    try {
-      updateForm(data);
-
-      const { data: signUpData, error } = await supabase.auth.signUp({
-        email: form.email,
-        password: data.password,
-      });
-
-      if (error) {
-        Alert.alert("Something went wrong", error.message);
-      }
-
-      if (signUpData.user) {
-        router.push("/(auth)/(sign-up)/instrument");
-      }
-    } finally {
-      setIsLoading(false);
-    }
+    updateForm(data);
+    router.push("/(auth)/(sign-up)/instrument");
   }
 
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={{ flex: 1 }}
-      keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 80 : 0}
     >
       <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled" bounces={false}>
         <YStack flex={1} padding="$3" space="$4">
@@ -73,7 +57,8 @@ export default function SignUpPassword() {
                     onBlur={onBlur}
                     onChangeText={onChange}
                     value={value}
-                    returnKeyType="next"
+                    returnKeyType="done"
+                    onSubmitEditing={() => handleSubmit(onSubmit)()}
                   />
                 </Theme>
               </View>
@@ -91,7 +76,7 @@ export default function SignUpPassword() {
               disabled={isLoading}
               opacity={isLoading ? 0.7 : 1}
             >
-              {isLoading ? <ActivityIndicator color="white" /> : "Create profile"}
+              {isLoading ? <ActivityIndicator color="white" /> : "Continue"}
             </Button>
           </View>
           <SafeAreaView edges={["bottom"]} />

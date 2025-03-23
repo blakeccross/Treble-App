@@ -1,19 +1,22 @@
 import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { KeyboardAvoidingView, Platform, ScrollView, ActivityIndicator } from "react-native";
+import { KeyboardAvoidingView, Platform, ScrollView, ActivityIndicator, Alert } from "react-native";
 import { Button, Label, View, YStack, XStack, H1 } from "tamagui";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
 
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { useUser } from "../../../context/user-context";
+import { supabase } from "@/utils/supabase";
+import { useSignUpForm } from "@/context/sign-up-context";
 
 type FormInput = {
   instrument: string;
 };
 
 export default function SignUpInstrument() {
-  const { handleUpdateUserInfo } = useUser();
+  const { handleUpdateUserInfo, setLives } = useUser();
+  const { form } = useSignUpForm();
   const [isLoading, setIsLoading] = useState(false);
   const instruments = ["🎸", "🎹", "🎻", "🎤", "🎷", "🥁", "🎺", "💻", "🪈", "🪗", "🪕", "🎛️"];
 
@@ -30,9 +33,26 @@ export default function SignUpInstrument() {
   async function onSubmit(data: FormInput) {
     setIsLoading(true);
     try {
-      //   updateForm({ instrument: data.instrument });
-      await handleUpdateUserInfo({ instrument: data.instrument });
-      router.push("/(auth)/(sign-up)/notifications");
+      const { data: signUpData, error } = await supabase.auth.signUp({
+        email: form.email,
+        password: form.password,
+        options: {
+          data: {
+            full_name: form.fullName,
+            instrument: form.instrument,
+          },
+        },
+      });
+
+      if (error) {
+        Alert.alert("Something went wrong", error.message);
+      }
+
+      if (signUpData.user) {
+        router.push("/(auth)/(sign-up)/notifications");
+      }
+      // //   updateForm({ instrument: data.instrument });
+      // await handleUpdateUserInfo({ instrument: data.instrument });
     } finally {
       setIsLoading(false);
     }
@@ -96,7 +116,7 @@ export default function SignUpInstrument() {
               disabled={isLoading || !selectedInstrument}
               opacity={isLoading ? 0.7 : 1}
             >
-              {isLoading ? <ActivityIndicator color="white" /> : "Continue"}
+              {isLoading ? <ActivityIndicator color="white" /> : "Create profile"}
             </Button>
           </View>
           <SafeAreaView edges={["bottom"]} />

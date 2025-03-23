@@ -134,7 +134,7 @@ export default function TabTwoScreen() {
               marginBottom="$6"
               onPress={() => router.push("/paywall")}
               pressStyle={{ scale: 0.95 }}
-              // animation="bouncy"
+              animation="bouncy"
             >
               <Card.Header>
                 <XStack alignItems="center" gap="$2">
@@ -162,7 +162,9 @@ export default function TabTwoScreen() {
             </Card>
           )}
 
-          <H5 fontWeight={600}>Overview</H5>
+          <H5 fontWeight={600} marginBottom={"$2"}>
+            Overview
+          </H5>
           <YStack alignItems="flex-start" gap="$3" marginBottom={"$6"}>
             <Card width={"100%"} padding="$2.5">
               <XStack gap="$2">
@@ -193,7 +195,9 @@ export default function TabTwoScreen() {
               </XStack>
             </Card>
           </YStack>
-          <H5 fontWeight={600}>Streak</H5>
+          <H5 fontWeight={600} marginBottom={"$2"}>
+            Streak
+          </H5>
           {weekDays && days && (
             <Card width={"100%"}>
               <XStack alignItems="center" justifyContent="space-between" width={"100%"} marginBottom="$2" paddingHorizontal="$2.5" paddingTop="$2.5">

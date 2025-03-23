@@ -10,6 +10,7 @@
     "test": "jest --watchAll",
     "lint": "expo lint",
     "update-types": "npx supabase gen types typescript --project-id \"pueoumkuxzosxrzqoefw\" > types/supabase.ts",
+    "generate-themes": "tamagui generate-themes ./tamagui.config.ts ./theme/index.ts",
     "build:eas-sim": "eas build --profile development-simulator --platform ios",
     "build:sim": "npx expo prebuild -p ios",
     "build-ios": "eas build --profile production --platform ios",

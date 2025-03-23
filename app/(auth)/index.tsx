@@ -11,7 +11,7 @@ import { LinearGradient } from "tamagui/linear-gradient";
 
 export default function WelcomePage() {
   const { currentUser, handleUpdateUserInfo } = useContext(UserContext);
-  if (currentUser) return <Redirect href={"/(tabs)"} />;
+  if (currentUser) return <Redirect href={"/(tabs)/(home)"} />;
   // else return <Redirect href={"/(tabs)"} />;
   return (
     <LinearGradient width="100%" height="100%" colors={["$blue10", "$blue8"]} start={[0.5, 1]} end={[0, 0]}>

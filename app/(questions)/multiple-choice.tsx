@@ -49,7 +49,7 @@ export default function MultipleCHoice() {
                   bordered
                   borderRadius="$8"
                   pressStyle={{ scale: 0.95 }}
-                  // animation="bouncy"
+                  animation="bouncy"
                   flex={1}
                   onPress={() => {
                     if (question.current?.answer_id) {
