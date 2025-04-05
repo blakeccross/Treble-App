@@ -35,7 +35,6 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
   }, []);
 
   useEffect(() => {
-    console.log("HEY LOOK HERE", currentUser?.is_subscribed, lives, livesRefreshTime);
     const checkLivesRefresh = () => {
       if (!currentUser?.is_subscribed) {
         if (lives === undefined) {

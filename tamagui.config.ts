@@ -25,9 +25,21 @@ const animations = createAnimations({
     stiffness: 250,
   },
 });
-const headingFont = createInterFont();
+const baseFont = createInterFont();
+const headingFont = createFont({
+  ...baseFont,
+  family: "Melody",
+  // (native only) swaps out fonts by face/style
+  face: {
+    100: { normal: "MelodyBold", italic: "MelodyBold" },
+    200: { normal: "MelodyBold", italic: "MelodyBold" },
+    300: { normal: "MelodyBold", italic: "MelodyBold" },
+    600: { normal: "MelodyBold", italic: "MelodyBold" },
+    800: { normal: "MelodyBold", italic: "MelodyBold" },
+  },
+});
 const systemFont = createFont({
-  family: "VAG",
+  family: "Ubuntu",
   size: {
     1: 12,
     2: 13,
@@ -46,24 +58,18 @@ const systemFont = createFont({
     15: 114,
     16: 134,
   },
-  lineHeight: headingFont.lineHeight,
-  // weight: {
-  //   1: "300",
-  //   // 2 will be 300
-  //   3: "600",
-  // },
+  lineHeight: baseFont.lineHeight,
+
   letterSpacing: {
-    1: 0.7,
-    // 2: 1,
-    // 3 will be -1
+    1: 1,
   },
   // (native only) swaps out fonts by face/style
   face: {
-    100: { normal: "VAG", italic: "VAG" },
-    200: { normal: "VAG", italic: "VAG" },
-    300: { normal: "VAG", italic: "VAG" },
-    600: { normal: "VAGMedium", italic: "VAGMedium" },
-    800: { normal: "VAGBold", italic: "VAGBold" },
+    100: { normal: "Karmina", italic: "Karmina" },
+    200: { normal: "Karmina", italic: "Karmina" },
+    300: { normal: "Karmina", italic: "Karmina" },
+    600: { normal: "KarminaMedium", italic: "KarminaMedium" },
+    800: { normal: "KarminaBold", italic: "KarminaBold" },
   },
 });
 
@@ -77,7 +83,7 @@ const config = createTamagui({
   themeClassNameOnRoot: false,
   shorthands,
   fonts: {
-    heading: systemFont,
+    heading: headingFont,
     body: systemFont,
   },
   themes: {
@@ -85,40 +91,13 @@ const config = createTamagui({
     light_Button: {
       background: blue.blue10,
       fontWeight: 600,
-      // backgroundFocus: "#424242",
-      // backgroundHover: "#282828",
       backgroundPress: blueDark.blue9,
-      // backgroundStrong: "#191919",
-      // backgroundTransparent: "#151515",
-      // borderColor: "red",
-      // borderColorFocus: "red",
-      // borderColorHover: "transparent",
-      // borderColorPress: "red",
       color: "#fff",
-      // colorFocus: "#a5a5a5",
-      // colorHover: "#a5a5a5",
-      // colorPress: "#fff",
-      // colorTransparent: "#a5a5a5",
-      // placeholderColor: "#424242",
     },
     white_button: {
       background: "#fff",
       fontWeight: 600,
-      // backgroundFocus: "#424242",
-      // backgroundHover: "#282828",
       backgroundPress: blueDark.blue9,
-      // backgroundStrong: "#191919",
-      // backgroundTransparent: "#151515",
-      // borderColor: "red",
-      // borderColorFocus: "red",
-      // borderColorHover: "transparent",
-      // borderColorPress: "red",
-      // color: "#fff",
-      // colorFocus: "#a5a5a5",
-      // colorHover: "#a5a5a5",
-      // colorPress: "#fff",
-      // colorTransparent: "#a5a5a5",
-      // placeholderColor: "#424242",
     },
   },
   tokens,

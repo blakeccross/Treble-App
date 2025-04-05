@@ -33,9 +33,10 @@ export default function RootLayout() {
     InterBold: require("@tamagui/font-inter/otf/Inter-Bold.otf"),
     InterItalic: require("@tamagui/font-inter/otf/Inter-Italic.otf"),
     Bravura: require("../assets/fonts/BravuraText.otf"),
-    VAG: require("../assets/fonts/VAG-Regular.otf"),
-    VAGMedium: require("../assets/fonts/VAG-Medium.otf"),
-    VAGBold: require("../assets/fonts/VAG-Bold.otf"),
+    MelodyBold: require("../assets/fonts/Melody-Bold.otf"),
+    Karmina: require("../assets/fonts/Karmina-Regular.otf"),
+    KarminaMedium: require("../assets/fonts/Karmina-Medium.otf"),
+    KarminaBold: require("../assets/fonts/Karmina-Bold.otf"),
   });
 
   useEffect(() => {

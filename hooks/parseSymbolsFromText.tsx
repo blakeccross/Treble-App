@@ -21,7 +21,7 @@ const useMarkdown = (markdownText: string) => {
       setMarkdownElement(
         <View>
           {parsedElements}
-          <Modal visible={!!selectedImage} transparent={true} onRequestClose={() => setSelectedImage(null)}>
+          <Modal animationType="fade" visible={!!selectedImage} transparent={true} onRequestClose={() => setSelectedImage(null)}>
             <TouchableOpacity style={styles.modalOverlay} activeOpacity={1} onPress={() => setSelectedImage(null)}>
               <Image source={{ uri: selectedImage || "" }} style={styles.modalImage} resizeMode="contain" />
             </TouchableOpacity>

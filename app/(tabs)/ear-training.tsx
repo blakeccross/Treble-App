@@ -77,28 +77,28 @@ const games = [
     title: "Pitch Perfect",
     description: `Identify the pitch before the timer ends`,
     backgroundImage: require("@/assets/images/pitch_perfect.png"),
-    route: "/pitch-perfect",
+    route: "/pitch-perfect" as const,
     disabled: false,
   },
   {
     title: "Nashville Roundup",
     description: `Test your ear in this\nfast paced matching game`,
     backgroundImage: require("@/assets/images/nashville_round_up_poster.png"),
-    route: "/nashville-round-up",
+    route: "/nashville-round-up" as const,
     disabled: false,
   },
   {
     title: "Interval Training",
     description: `Test your ear in a\nfast pace matching game`,
-    backgroundImage: require("@/assets/images/blue_shapes.jpg"),
-    route: "/interval-training",
+    backgroundImage: require("@/assets/images/interval_training.png"),
+    route: "/interval-training" as const,
     disabled: false,
   },
   {
     title: "Chord Detective",
     description: `Identify the chord`,
     backgroundImage: require("@/assets/images/hassaan-here-bKfkhVRAJTQ-unsplash.jpg"),
-    route: "/name-that-chord",
+    route: "/name-that-chord" as const,
     disabled: true,
   },
 ];
@@ -134,7 +134,9 @@ export default function TabTwoScreen() {
               height={400}
               flex={1}
               onPress={() => {
-                game.disabled ? null : router.push(game.route as Href<string>);
+                if (!game.disabled) {
+                  router.push(game.route);
+                }
               }}
             >
               <Card.Background>

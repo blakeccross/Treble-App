@@ -26,7 +26,7 @@ export default function ProgressHeader() {
             <Pressable onPress={() => setOpen(true)}>
               <X size="$3" />
             </Pressable>
-            <H5 fontWeight={500}>{section.title}</H5>
+            <H5 fontWeight={600}>{section.title}</H5>
 
             <XStack gap="$1" width={"$3"}>
               {currentRoute !== "/reading" && !currentUser?.is_subscribed && (

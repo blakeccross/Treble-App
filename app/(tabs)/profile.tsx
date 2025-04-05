@@ -113,8 +113,15 @@ export default function TabTwoScreen() {
                 {currentUser?.full_name ? currentUser?.full_name : "Guest User"}
               </H3>
               {currentUser?.is_subscribed && (
-                <LinearGradient colors={["$blue10", "$purple7"]} start={[0.3, 1]} end={[0, 0]} paddingHorizontal="$3" borderRadius="$10">
-                  <SizableText color={"$background"}>Pro</SizableText>
+                <LinearGradient
+                  colors={["$blue10", "$purple7"]}
+                  start={[0.3, 1]}
+                  end={[0, 0]}
+                  paddingHorizontal="$3"
+                  paddingVertical="$1"
+                  borderRadius="$10"
+                >
+                  <Paragraph color={"$background"}>Pro</Paragraph>
                 </LinearGradient>
               )}
             </XStack>
@@ -170,7 +177,9 @@ export default function TabTwoScreen() {
               <XStack gap="$2">
                 <Award color={"$purple10"} fill={purpleA.purpleA10} marginTop={4} />
                 <YStack>
-                  <Paragraph fontWeight="800">{currentUser?.completed_modules ? currentUser?.completed_modules.length : 0}</Paragraph>
+                  <Paragraph fontSize={"$7"} lineHeight={"$1"} fontWeight="800">
+                    {currentUser?.completed_modules ? currentUser?.completed_modules.length : 0}
+                  </Paragraph>
                   <Paragraph fontSize={"$1"}>Modules Completed</Paragraph>
                 </YStack>
               </XStack>
@@ -179,7 +188,9 @@ export default function TabTwoScreen() {
               <XStack gap="$2">
                 <AntDesign name="star" size={24} color={yellow.yellow10} marginTop={4} />
                 <YStack>
-                  <Paragraph fontWeight="800">{currentUser?.total_xp ? currentUser?.total_xp : 0}</Paragraph>
+                  <Paragraph fontSize={"$7"} lineHeight={"$1"} fontWeight="800">
+                    {currentUser?.total_xp ? currentUser?.total_xp : 0}
+                  </Paragraph>
                   <Paragraph fontSize={"$1"}>Total XP</Paragraph>
                 </YStack>
               </XStack>
@@ -189,7 +200,9 @@ export default function TabTwoScreen() {
               <XStack gap="$2">
                 <Ionicons name="flame-sharp" size={24} color={redA.redA10} marginTop={4} />
                 <YStack>
-                  <Paragraph fontWeight="800">{currentUser?.active_days ? getStreak(currentUser?.active_days) : 0}</Paragraph>
+                  <Paragraph fontSize={"$7"} lineHeight={"$1"} fontWeight="800">
+                    {currentUser?.active_days ? getStreak(currentUser?.active_days) : 0}
+                  </Paragraph>
                   <Paragraph fontSize={"$1"}>Day Streak</Paragraph>
                 </YStack>
               </XStack>

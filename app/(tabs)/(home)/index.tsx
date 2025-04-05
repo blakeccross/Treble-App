@@ -92,7 +92,7 @@ export default function HomeScreen() {
           }}
           scrollEventThrottle={16}
         >
-          <View backgroundColor={"$background"} flex={1} overflow="hidden" borderTopLeftRadius={"$8"} borderTopRightRadius={"$8"}>
+          <View backgroundColor={"$background"} flex={1} overflow="hidden" borderTopLeftRadius={"$10"} borderTopRightRadius={"$10"} paddingTop={"$1"}>
             {!networkState.isConnected && (
               <View>
                 <Paragraph textAlign="center" marginTop={"$2"}>

@@ -2,7 +2,7 @@
   "expo": {
     "name": "Treble",
     "slug": "notate",
-    "version": "1.0.12",
+    "version": "1.0.14",
     "orientation": "portrait",
     "icon": "./assets/images/treble-icon.png",
     "scheme": "myapp",
@@ -10,7 +10,7 @@
     "splash": {
       "image": "./assets/images/treble-splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#3D7ABE"
+      "backgroundColor": "#52A9FF"
     },
     "ios": {
       "supportsTablet": true,
@@ -23,7 +23,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/treble-icon.png",
-        "backgroundColor": "#3D7ABE"
+        "backgroundColor": "#52A9FF"
       },
       "package": "com.blakecross.trebleapp",
       "permissions": ["NOTIFICATIONS"]
@@ -41,7 +41,7 @@
         "expo-notifications",
         {
           "icon": "./assets/images/treble-icon.png",
-          "color": "#3D7ABE"
+          "color": "#52A9FF"
         }
       ],
       [
@@ -68,7 +68,7 @@
         "projectId": "7d583fc1-e363-4166-999e-4cd74d9cd386"
       }
     },
-    "runtimeVersion": "1.0.12",
+    "runtimeVersion": "1.0.14",
     "updates": {
       "url": "https://u.expo.dev/7d583fc1-e363-4166-999e-4cd74d9cd386"
     }

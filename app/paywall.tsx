@@ -3,8 +3,8 @@ import { blue } from "@tamagui/themes";
 import { BlurView } from "expo-blur";
 import { router } from "expo-router";
 import LottieView from "lottie-react-native";
-import React, { useContext } from "react";
-import { SafeAreaView, ScrollView } from "react-native";
+import React, { useContext, useState } from "react";
+import { ActivityIndicator, SafeAreaView, ScrollView } from "react-native";
 import Purchases from "react-native-purchases";
 import { Button, H2, H4, ListItem, Paragraph, SizableText, Theme, View, XStack, YStack } from "tamagui";
 import { LinearGradient } from "tamagui/linear-gradient";
@@ -13,16 +13,24 @@ import { UserContext } from "../context/user-context";
 
 export default function Paywall() {
   const { currentUser, handleUpdateUserInfo } = useContext(UserContext);
+  const [isLoading, setIsLoading] = useState(false);
 
   async function handleTryForFree() {
-    if (await Purchases.isConfigured()) {
-      const offerings = await Purchases.getOfferings();
-      const { customerInfo } = await Purchases.purchasePackage(offerings.all.monthly_test.availablePackages[0]);
-      if (typeof customerInfo.entitlements.active["pro"] !== "undefined") {
-        await handleUpdateUserInfo({ is_subscribed: true });
-        router.dismiss();
-        // setOpenPaywall(false);
+    setIsLoading(true);
+    try {
+      if (await Purchases.isConfigured()) {
+        const offerings = await Purchases.getOfferings();
+        const { customerInfo } = await Purchases.purchasePackage(offerings.all.monthly_test.availablePackages[0]);
+        if (typeof customerInfo.entitlements.active["pro"] !== "undefined") {
+          await handleUpdateUserInfo({ is_subscribed: true });
+          router.dismiss();
+        }
       }
+    } catch (error) {
+      // Handle purchase cancellation or other errors
+      console.log("Purchase cancelled or failed:", error);
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -30,54 +38,76 @@ export default function Paywall() {
     <>
       {!currentUser?.is_subscribed ? (
         <LinearGradient flex={1} colors={[blue.blue11, blue.blue12]} start={[0.5, 1]} end={[0, 0]}>
-          <View justifyContent="flex-start" alignItems="center">
-            <LottieView
-              autoPlay
-              loop={false}
-              style={{
-                width: "100%",
-                aspectRatio: 2.5 / 2,
-              }}
-              source={require("@/assets/lottie/gopro.json")}
-            />
-          </View>
-          {/* <Image source={require("@/assets/images/gold_subscription.jpg")} style={{ width: "100%", aspectRatio: "1/1", backgroundColor: "grey" }} /> */}
-          <View paddingHorizontal="$4" flex={1} height={"100%"} justifyContent="space-between">
-            <ScrollView>
-              <XStack gap="$2" justifyContent="center" alignItems="center">
-                <TrebleLogo width={100} height={50} />
-                <LinearGradient colors={["$blue10", "$purple7"]} start={[0.3, 1]} end={[0, 0]} paddingHorizontal="$3" borderRadius="$10">
-                  <SizableText color={"$background"}>Pro</SizableText>
-                </LinearGradient>
-              </XStack>
-              <H4 marginBottom={"$4"} color={"white"} fontWeight={800} textAlign="center">
-                Unlock your learning potential
-              </H4>
-
-              <Theme name="dark">
-                <BlurView intensity={100} style={{ borderRadius: 20, overflow: "hidden" }}>
-                  <ListItem
-                    backgroundColor={"transparent"}
-                    icon={Heart}
-                    title="Unlimited Hearts"
-                    subTitle="Never have to stop and wait to continue learning"
-                  />
-                  <ListItem backgroundColor={"transparent"} icon={Star} title="Unlock All Modules" subTitle="Begin learning beyond the basics" />
-
-                  <ListItem backgroundColor={"transparent"} icon={Gamepad} title="Unlock All Games" subTitle="Train your ear with fun games" />
-                </BlurView>
-              </Theme>
-            </ScrollView>
-            <View>
-              <Button borderWidth={1} borderColor={"white"} backgroundColor={"transparent"} fontWeight={800} onPress={handleTryForFree}>
-                Try for $0.00
-              </Button>
-              <Button unstyled color={"$gray12Dark"} textAlign="center" padding="$4" onPress={() => router.dismissAll()}>
-                No Thanks
-              </Button>
-              <SafeAreaView />
+          {isLoading ? (
+            <View flex={1} justifyContent="center" alignItems="center">
+              <ActivityIndicator size="large" />
             </View>
-          </View>
+          ) : (
+            <View paddingHorizontal="$4" flex={1} height={"100%"} justifyContent="space-between">
+              <ScrollView>
+                <View justifyContent="flex-start" alignItems="center">
+                  <LottieView
+                    autoPlay
+                    loop={false}
+                    style={{
+                      width: "100%",
+                      aspectRatio: 2.5 / 2,
+                    }}
+                    source={require("@/assets/lottie/gopro.json")}
+                  />
+                </View>
+                <XStack gap="$2" justifyContent="center" alignItems="center">
+                  <TrebleLogo width={100} height={50} />
+                  <LinearGradient colors={["$blue10", "$purple7"]} start={[0.3, 1]} end={[0, 0]} paddingHorizontal="$3" borderRadius="$10">
+                    <SizableText color={"$background"}>Pro</SizableText>
+                  </LinearGradient>
+                </XStack>
+                <H4 marginBottom={"$4"} color={"white"} fontWeight={800} textAlign="center">
+                  Unlock your learning potential
+                </H4>
+
+                <Theme name="dark">
+                  <BlurView intensity={100} style={{ borderRadius: 20, overflow: "hidden" }}>
+                    <ListItem
+                      backgroundColor={"transparent"}
+                      icon={Heart}
+                      title="Unlimited Hearts"
+                      subTitle={<Paragraph opacity={0.6}>Never have to stop and wait to continue learning</Paragraph>}
+                    />
+                    <ListItem
+                      backgroundColor={"transparent"}
+                      icon={Star}
+                      title="Unlock All Modules"
+                      subTitle={<Paragraph opacity={0.6}>Begin learning beyond the basics</Paragraph>}
+                    />
+
+                    <ListItem
+                      backgroundColor={"transparent"}
+                      icon={Gamepad}
+                      title="Unlock All Games"
+                      subTitle={<Paragraph opacity={0.6}>Train your ear with fun games</Paragraph>}
+                    />
+                  </BlurView>
+                </Theme>
+              </ScrollView>
+              <View>
+                <Button
+                  borderWidth={1}
+                  borderColor={"white"}
+                  backgroundColor={"transparent"}
+                  fontWeight={800}
+                  fontSize={"$6"}
+                  onPress={handleTryForFree}
+                >
+                  Try for $0.00
+                </Button>
+                <Button unstyled color={"$gray12Dark"} textAlign="center" padding="$4" onPress={() => router.dismissAll()}>
+                  No Thanks
+                </Button>
+                <SafeAreaView />
+              </View>
+            </View>
+          )}
         </LinearGradient>
       ) : (
         <LinearGradient width="100%" height="100%" colors={["$blue10", "$blue8"]} start={[0.5, 1]} end={[0, 0]} paddingHorizontal={"$4"}>
