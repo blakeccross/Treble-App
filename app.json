@@ -2,7 +2,7 @@
   "expo": {
     "name": "Treble",
     "slug": "notate",
-    "version": "1.0.14",
+    "version": "1.0.15",
     "orientation": "portrait",
     "icon": "./assets/images/treble-icon.png",
     "scheme": "myapp",
