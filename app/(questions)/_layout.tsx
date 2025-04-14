@@ -12,7 +12,8 @@ export default function TabLayout() {
         {currentRoute !== "/loading" &&
         currentRoute !== "/out-of-lives" &&
         currentRoute !== "/quiz-complete" &&
-        currentRoute !== "module-complete" ? (
+        currentRoute !== "module-complete" &&
+        !currentRoute.includes("module-overview") ? (
           <ProgressHeader />
         ) : (
           <></>

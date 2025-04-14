@@ -46,7 +46,6 @@ export default function ProfileSettings() {
   });
 
   function handleUpdate(formInputs: FormInput) {
-    console.log("DIRTY", isDirty);
     handleUpdateUserInfo({ full_name: formInputs.fullName });
     Toast.show({
       type: "success",

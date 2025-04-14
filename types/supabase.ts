@@ -46,6 +46,7 @@ export type Database = {
           created_at: string
           description: string
           id: number
+          is_available: boolean
           poster_url: string
           title: string
         }
@@ -53,6 +54,7 @@ export type Database = {
           created_at?: string
           description: string
           id?: number
+          is_available?: boolean
           poster_url?: string
           title?: string
         }
@@ -60,6 +62,7 @@ export type Database = {
           created_at?: string
           description?: string
           id?: number
+          is_available?: boolean
           poster_url?: string
           title?: string
         }

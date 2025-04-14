@@ -223,7 +223,7 @@ export default function Page() {
       setCurrentScore(0);
 
       return () => {
-        console.log("This route is now unfocused.");
+        // console.log("This route is now unfocused.");
       };
     }, [])
   );
@@ -242,7 +242,7 @@ export default function Page() {
     const [firstNote, secondNote] = getRandomInterval();
     const intervalDistance = calculateInterval(firstNote, secondNote);
 
-    console.log(firstNote, secondNote, "intervalDistance", intervalDistance);
+    // (firstNote, secondNote, "intervalDistance", intervalDistance);
     currentInterval.current = {
       firstNote,
       secondNote,

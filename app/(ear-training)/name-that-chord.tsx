@@ -124,7 +124,7 @@ export default function Page() {
       setCurrentScore(0);
 
       return () => {
-        console.log("This route is now unfocused.");
+        // console.log("This route is now unfocused.");
       };
     }, [])
   );

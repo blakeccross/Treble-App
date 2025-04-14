@@ -40,7 +40,7 @@ export default function Index() {
         .select();
 
       if (data) {
-        console.log("UPDATED HIGH SCORE", data);
+        // console.log("UPDATED HIGH SCORE", data);
       }
       if (error) {
         console.error(error);

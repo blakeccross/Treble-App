@@ -70,7 +70,7 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
     } else {
       setCurrentUser(undefined);
       if (pathname !== "/welcome" && pathname !== "/") {
-        router.replace("/(auth)/welcome");
+        router.replace("/(auth)");
       }
     }
   }
@@ -81,15 +81,15 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
     } = supabase.auth.onAuthStateChange((event, session) => {
       const handleAuthChange = async () => {
         if (event === "SIGNED_OUT") {
-          console.log("USER SIGNED OUT");
+          //("USER SIGNED OUT");
         } else if (event === "SIGNED_IN" && session) {
-          console.log("USER SIGNED IN");
+          // console.log("USER SIGNED IN");
           await handleGetUserData(session.user.id);
 
           // router.dismissAll();
           // router.push("/(tabs)/(home)");
         } else if (session) {
-          console.log(event);
+          // console.log(event);
         }
       };
       handleAuthChange();

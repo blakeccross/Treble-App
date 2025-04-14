@@ -1,12 +1,9 @@
-import { UserContext } from "@/context/user-context";
 import { supabase } from "@/utils/supabase";
-import { ChevronLeft } from "@tamagui/lucide-icons";
-import { router, useLocalSearchParams } from "expo-router";
-import React, { useContext, useEffect, useRef, useState } from "react";
+import { router } from "expo-router";
+import React, { useRef } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { KeyboardAvoidingView, Platform, ScrollView, TextInput } from "react-native";
-import { Button, Input, Label, Paragraph, Theme, ToggleGroup, View, YStack } from "tamagui";
-import Login from "./logIn";
+import { Button, Input, Label, Theme, View, YStack } from "tamagui";
 
 type FormInput = {
   email: string;
@@ -53,7 +50,7 @@ export default function SignUp() {
     if (auth.user) {
       // await getUser();
       router.dismissAll();
-      router.push("/(tabs)/(home)/");
+      router.push("/(tabs)/(home)");
     }
   }
 

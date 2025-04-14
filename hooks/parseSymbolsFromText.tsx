@@ -1,5 +1,5 @@
 import DoubleSharp from "@/assets/icons/doubleSharp";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { Dimensions, Image, Modal, Text as RNText, StyleSheet, TouchableOpacity, View, Linking } from "react-native";
 import { useColorScheme } from "./useColorScheme";
 
@@ -10,26 +10,36 @@ const windowHeight = Dimensions.get("window").height;
 // Hook that converts markdown text to React Native elements without dependencies
 const useMarkdown = (markdownText: string) => {
   const colorScheme = useColorScheme() || "light";
-  const [markdownElement, setMarkdownElement] = useState<JSX.Element | null>(null);
-  // Add state for modal
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (markdownText) {
-      // Pass setSelectedImage to parseMarkdown
-      const parsedElements = parseMarkdown(markdownText, colorScheme, setSelectedImage);
-      setMarkdownElement(
-        <View>
-          {parsedElements}
-          <Modal animationType="fade" visible={!!selectedImage} transparent={true} onRequestClose={() => setSelectedImage(null)}>
-            <TouchableOpacity style={styles.modalOverlay} activeOpacity={1} onPress={() => setSelectedImage(null)}>
-              <Image source={{ uri: selectedImage || "" }} style={styles.modalImage} resizeMode="contain" />
-            </TouchableOpacity>
-          </Modal>
-        </View>
-      );
-    }
-  }, [markdownText, colorScheme, selectedImage]);
+  // Memoize the parsed elements
+  const parsedElements = useMemo(() => {
+    if (!markdownText) return null;
+    return parseMarkdown(markdownText, colorScheme, setSelectedImage);
+  }, [markdownText, colorScheme]);
+
+  // Memoize the modal component
+  const modalComponent = useMemo(() => {
+    if (!selectedImage) return null;
+    return (
+      <Modal animationType="fade" visible={!!selectedImage} transparent={true} onRequestClose={() => setSelectedImage(null)}>
+        <TouchableOpacity style={styles.modalOverlay} activeOpacity={1} onPress={() => setSelectedImage(null)}>
+          <Image source={{ uri: selectedImage }} style={styles.modalImage} resizeMode="contain" />
+        </TouchableOpacity>
+      </Modal>
+    );
+  }, [selectedImage]);
+
+  // Memoize the final component
+  const markdownElement = useMemo(() => {
+    if (!parsedElements) return null;
+    return (
+      <View>
+        {parsedElements}
+        {modalComponent}
+      </View>
+    );
+  }, [parsedElements, modalComponent]);
 
   return markdownElement;
 };
@@ -140,7 +150,8 @@ const renderImage = (line: string, index: number, setSelectedImage: (url: string
 // Main function to parse Unicode symbols and italic text
 const parseUnicodeSymbols = (text: string, colorScheme: "light" | "dark"): JSX.Element[] => {
   const italicRegex = /(\*|_)(.*?)\1/g;
-  const boldRegex = /(\*\*|__)(.*?)\1/g; // Add regex for bold text
+  const boldRegex = /(\*\*|__)(.*?)\1/g;
+  const superscriptRegex = /\^([^\^]+)\^/g;
   const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
   const elements: JSX.Element[] = [];
   let lastIndex = 0;
@@ -164,7 +175,7 @@ const parseUnicodeSymbols = (text: string, colorScheme: "light" | "dark"): JSX.E
     lastIndex = match.index + match[0].length;
   }
 
-  // Then parse bold and italics in remaining text
+  // Then parse bold, italics, and superscript in remaining text
   const remainingText = text.slice(lastIndex);
   if (remainingText) {
     let formatLastIndex = 0;
@@ -210,8 +221,30 @@ const parseUnicodeSymbols = (text: string, colorScheme: "light" | "dark"): JSX.E
       italicLastIndex = match.index + match[0].length;
     }
 
-    if (italicLastIndex < italicText.length) {
-      const finalText = italicText.slice(italicLastIndex);
+    // Then parse superscript in the remaining text
+    let superscriptText = italicText.slice(italicLastIndex);
+    let superscriptLastIndex = 0;
+
+    while ((match = superscriptRegex.exec(superscriptText)) !== null) {
+      if (superscriptLastIndex < match.index) {
+        const plainText = superscriptText.slice(superscriptLastIndex, match.index);
+        elements.push(...parsePlainTextAndUnicode(plainText, `text-${elements.length}`, colorScheme));
+      }
+
+      elements.push(
+        <RNText
+          key={`superscript-${elements.length}`}
+          style={{ ...styles.plainText, ...styles.superscript, color: colorScheme === "light" ? "black" : "white" }}
+        >
+          {parseUnicodeSymbols(match[1], colorScheme)}
+        </RNText>
+      );
+
+      superscriptLastIndex = match.index + match[0].length;
+    }
+
+    if (superscriptLastIndex < superscriptText.length) {
+      const finalText = superscriptText.slice(superscriptLastIndex);
       elements.push(...parsePlainTextAndUnicode(finalText, `remaining-${elements.length}`, colorScheme));
     }
   }
@@ -316,6 +349,11 @@ const styles = StyleSheet.create({
     textDecorationLine: "underline",
     fontSize: 20,
     lineHeight: 28,
+  },
+  superscript: {
+    fontSize: 14,
+    lineHeight: 20,
+    textAlignVertical: "top",
   },
 });
 

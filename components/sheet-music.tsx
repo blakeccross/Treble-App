@@ -17,7 +17,6 @@ export default function SheetMusic({
   };
   maxWidth: number;
 }) {
-  console.log("DATA", data);
   const screenWidth = Dimensions.get("window").width;
   const staveWidth = Math.min(screenWidth - 20, data.notes.length * 100);
   const colorScheme = useColorScheme() || "light";

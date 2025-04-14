@@ -39,10 +39,7 @@ export default function ProgressHeader() {
           </XStack>
           <XStack>
             <Progress value={quizPercentage} flex={1} backgroundColor={"$gray1"}>
-              <Progress.Indicator
-                // animation="bouncy"
-                backgroundColor={"$blue10"}
-              />
+              {quizPercentage > 0 && <Progress.Indicator animation="quick" backgroundColor={"$blue10"} />}
             </Progress>
           </XStack>
         </YStack>

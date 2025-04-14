@@ -27,8 +27,7 @@ export default function Paywall() {
         }
       }
     } catch (error) {
-      // Handle purchase cancellation or other errors
-      console.log("Purchase cancelled or failed:", error);
+      
     } finally {
       setIsLoading(false);
     }

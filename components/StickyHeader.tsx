@@ -25,7 +25,7 @@ const AnimatedImage = Animated.createAnimatedComponent(Image);
 const posterSize = Dimensions.get("screen").height / 2;
 const headerTop = 44 - 16;
 
-function ScreenHeader({ sv, title }: { sv: SharedValue<number>; title: string }) {
+function ScreenHeader({ sv, title, onBackPress }: { sv: SharedValue<number>; title: string; onBackPress?: () => void }) {
   const inset = useSafeAreaInsets();
   const opacityAnim = useAnimatedStyle(() => {
     const visibilityThreshold = posterSize - (headerTop + inset.top);
@@ -73,7 +73,7 @@ function ScreenHeader({ sv, title }: { sv: SharedValue<number>; title: string })
       borderBottomWidth={1}
       borderBottomColor={"$gray5"}
     >
-      <View width={"$3"} height={"$3"} alignItems="center" justifyContent="center" onPress={() => router.back()}>
+      <View width={"$3"} height={"$3"} alignItems="center" justifyContent="center" onPress={() => (onBackPress ? onBackPress() : router.back())}>
         <ChevronLeft size={"$2"} />
       </View>
 
@@ -179,25 +179,9 @@ export function StickyHeader({
     };
   });
 
-  const layoutY = useSharedValue(0);
-
-  const stickyElement = useAnimatedStyle(() => {
-    return {
-      backgroundColor: "black",
-      transform: [
-        {
-          translateY: interpolate(
-            sv.value,
-            [layoutY.value - (headerTop + inset.top) - 1, layoutY.value - (headerTop + inset.top), layoutY.value - (headerTop + inset.top) + 1],
-            [0, 0, 1]
-          ),
-        },
-      ],
-    };
-  });
   return (
     <YStack flex={1} backgroundColor="$background">
-      <ScreenHeader sv={sv} title={title} />
+      <ScreenHeader sv={sv} title={title} onBackPress={onBackPress} />
       <PosterImage sv={sv} image={image} title={title} />
       <Animated.ScrollView onScroll={scrollHandler} scrollEventThrottle={16} style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
         <View position="absolute" top={inset.top} left="$4" zIndex={100}>

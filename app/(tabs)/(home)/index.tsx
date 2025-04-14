@@ -81,8 +81,8 @@ export default function HomeScreen() {
         <ScrollView
           showsVerticalScrollIndicator={false}
           flex={1}
-          borderTopLeftRadius={"$8"}
-          borderTopRightRadius={"$8"}
+          borderTopLeftRadius={"$10"}
+          borderTopRightRadius={"$10"}
           zIndex={1}
           onScroll={({ nativeEvent }) => {
             if (nativeEvent.contentOffset.y < -200 && !modules?.loading) {
@@ -118,10 +118,17 @@ export default function HomeScreen() {
                   <FlatList
                     data={modules.data}
                     scrollEnabled={false}
+                    keyExtractor={(item) => item.id.toString()}
                     contentContainerStyle={{ gap: 15, paddingBottom: 100 }}
                     renderItem={({ item: module }) => (
-                      <Link href={`/module-overview/${module?.id}`} asChild key={module.id}>
-                        <Card borderRadius="$8" pressStyle={{ scale: 0.95 }} backgroundColor={"$blue1"} animation="bouncy">
+                      <Link href={`/module-overview/${module?.id}`} disabled={!module.is_available} asChild key={module.id}>
+                        <Card
+                          borderRadius="$8"
+                          pressStyle={{ scale: 0.95 }}
+                          backgroundColor={"$blue1"}
+                          animation="bouncy"
+                          opacity={module.is_available ? 1 : 0.5}
+                        >
                           <Card.Header padding="$4">
                             <XStack gap="$4" flex={1}>
                               <View position="relative">
@@ -146,10 +153,17 @@ export default function HomeScreen() {
                                       <Paragraph size={"$2"}>{"Chapter " + module.id}</Paragraph>
                                       <H3 fontWeight={600}>{module.title}</H3>
                                       {module.completed && <Paragraph color={"$blue10"}>Completed</Paragraph>}
+                                      {!module.is_available && (
+                                        <Paragraph marginTop={"$2"} color={"$red9"} fontWeight={600}>
+                                          Coming soon
+                                        </Paragraph>
+                                      )}
                                     </YStack>
                                   </XStack>
-                                  {module.progress !== 0 && <ChevronRight color={"$blue10"} />}
+
+                                  {module.is_available && module.progress !== 0 && <ChevronRight color={"$blue10"} />}
                                 </XStack>
+
                                 {module.progress !== 0 && !module.completed && (
                                   <Progress value={module.progress} backgroundColor={"$gray3"}>
                                     <Progress.Indicator backgroundColor={"$blue10"} />
