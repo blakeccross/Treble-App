@@ -92,7 +92,7 @@ export default function Page() {
   );
 
   const { playSFX } = usePlaySFX();
-  const { playSong, stopSong } = usePlayMidi();
+  const { playSong, stopSong, loading: audioLoading } = usePlayMidi();
 
   const correctAnswer = useRef("");
   const currentInterval = useRef<{ firstNote: string; secondNote: string; interval: number }>({
@@ -373,7 +373,7 @@ export default function Page() {
 
   const tapGesture = Gesture.Tap()
     .onTouchesUp(() => {
-      if (playEnabled) {
+      if (playEnabled && !audioLoading) {
         handlePressPlay();
       }
     })

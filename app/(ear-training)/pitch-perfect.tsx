@@ -9,7 +9,7 @@ import { darkColors, red } from "@tamagui/themes";
 import * as Haptics from "expo-haptics";
 import { Link, router, useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { FlatList, Pressable, SafeAreaView, View } from "react-native";
+import { ActivityIndicator, FlatList, Pressable, SafeAreaView, View } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, { useAnimatedStyle, useSharedValue, withDelay, withSpring } from "react-native-reanimated";
 import { Card, Circle, H1, H2, H3, Paragraph, XStack } from "tamagui";
@@ -25,7 +25,7 @@ const incorrectSFX = require("@/assets/audio/incorrect_sfx.mp3");
 
 export default function PitchPerfect() {
   const { currentUser, updatedLives, lives: userLives } = useUser();
-  const { playSong, stopSong } = usePlayMidi();
+  const { playSong, stopSong, loading: audioLoading } = usePlayMidi();
   const { playSFX } = usePlaySFX();
   const [gameHasStarted, setGameHasStarted] = useState(false);
   const [currentScore, setCurrentScore] = useState<number>(0);
@@ -290,7 +290,7 @@ export default function PitchPerfect() {
 
   const tapGesture = Gesture.Tap()
     .onTouchesUp(() => {
-      if (playEnabled) {
+      if (playEnabled && !audioLoading) {
         handlePressPlay();
       }
     })
@@ -370,7 +370,7 @@ export default function PitchPerfect() {
                   justifyContent="center"
                   alignItems="center"
                 >
-                  <H3 color="white">Play</H3>
+                  {audioLoading ? <ActivityIndicator color="white" /> : <H3 color="white">Play</H3>}
                 </LinearGradient>
               </Circle>
             </Animated.View>

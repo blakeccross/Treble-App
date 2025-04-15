@@ -17,7 +17,7 @@ import { red } from "@tamagui/themes";
 import * as Haptics from "expo-haptics";
 import { router } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
-import { Pressable, SafeAreaView } from "react-native";
+import { ActivityIndicator, Pressable, SafeAreaView } from "react-native";
 import Animated, { BounceIn, BounceOut, useSharedValue } from "react-native-reanimated";
 import { H1, Paragraph, View, XStack } from "tamagui";
 import { LinearGradient } from "tamagui/linear-gradient";
@@ -28,7 +28,7 @@ const shuffleAudio = require("@/assets/audio/fx/shuffle.mp3");
 
 export default function App() {
   const { currentUser, updatedLives, lives: userLives } = useUser();
-  const { playSong, stopSong } = usePlayMidi();
+  const { playSong, stopSong, loading: audioLoading } = usePlayMidi();
   const { playSFX } = usePlaySFX();
   const isFlippedArray = [useSharedValue(false), useSharedValue(false), useSharedValue(false), useSharedValue(false), useSharedValue(false)];
   const correctAnswer = useRef("");
@@ -245,11 +245,12 @@ export default function App() {
             setIsRunning={setIsRunning}
           />
           <View
+            disabled={audioLoading}
             onPress={gameHasStarted ? () => nashvilleNumbersSolutionSet && playProgression(nashvilleNumbersSolutionSet) : handleStartGame}
             style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, justifyContent: "center", alignItems: "center" }}
           >
             <Paragraph fontWeight={800} color={"white"}>
-              Play
+              {audioLoading ? <ActivityIndicator /> : "Play"}
             </Paragraph>
           </View>
         </View>

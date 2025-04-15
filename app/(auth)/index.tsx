@@ -4,13 +4,13 @@ import { UserContext } from "@/context/user-context";
 import { BlurView } from "expo-blur";
 import { Link, Redirect } from "expo-router";
 import LottieView from "lottie-react-native";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext } from "react";
 import { SafeAreaView } from "react-native";
-import { H1, H3, Paragraph, View, YStack } from "tamagui";
+import { H3, Paragraph, View, YStack } from "tamagui";
 import { LinearGradient } from "tamagui/linear-gradient";
 
 export default function WelcomePage() {
-  const { currentUser, handleUpdateUserInfo } = useContext(UserContext);
+  const { currentUser } = useContext(UserContext);
   if (currentUser) return <Redirect href={"/(tabs)/(home)"} />;
   // else return <Redirect href={"/(tabs)"} />;
   return (

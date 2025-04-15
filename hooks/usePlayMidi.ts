@@ -7,17 +7,21 @@ import { useMMKVNumber } from "react-native-mmkv";
 
 export default function usePlayMidi() {
   const [buffersLoaded, setBuffersLoaded] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [pianoVolume] = useMMKVNumber("pianoVolume");
   const activeSoundsRef = useRef<{ envelope: GainNode; endTime: number }[]>([]);
 
   async function loadAssets() {
-    loadBuffers({
+    setLoading(true);
+    await loadBuffers({
       "F#2": FileSystem.bundleDirectory + "piano_fs2.mp3",
       C3: FileSystem.bundleDirectory + "piano_c3.mp3",
       "F#3": FileSystem.bundleDirectory + "piano_fs3.mp3",
       C4: FileSystem.bundleDirectory + "piano_c4.mp3",
       "F#4": FileSystem.bundleDirectory + "piano_fs4.mp3",
     });
+    validateBuffers();
+    setLoading(false);
   }
 
   useEffect(() => {
@@ -167,7 +171,7 @@ export default function usePlayMidi() {
           }
         })
       );
-      validateBuffers();
+      // validateBuffers();
     } catch (error) {
       console.error("Error loading buffers:", error);
       setBuffersLoaded(false);
@@ -269,5 +273,5 @@ export default function usePlayMidi() {
     });
   };
 
-  return { playSong, stopSong, buffersLoaded, handleConvertSong };
+  return { playSong, stopSong, buffersLoaded, handleConvertSong, loading };
 }
