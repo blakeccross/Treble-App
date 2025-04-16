@@ -130,6 +130,7 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
 
   async function handleSignOut() {
     const { error } = await supabase.auth.signOut();
+
     try {
       await Purchases.logOut();
     } catch (error) {
@@ -150,8 +151,6 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
   function updatedLives(value: number) {
     if (lives) setLives(lives + value);
   }
-
-  // if (!currentUser) throw Error();
 
   return (
     <UserContext.Provider value={{ currentUser, handleUpdateUserInfo, getUser, handleSignOut, lives, setLives, updatedLives, livesRefreshTime }}>
