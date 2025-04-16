@@ -153,17 +153,19 @@ export default function PitchPerfect() {
       setTotalTime(3);
     }
     correctAnswer.current = "";
-    startAnimation();
+
     let randomNote = "C3";
 
     if (currentScore > 0) {
       randomNote = answerOptions[Math.floor(Math.random() * notes.length)];
     }
-
     correctAnswer.current = randomNote;
+
     console.log(randomNote);
     const options = getRandomNotes(randomNote, answerOptions);
     setAvailableAnswers(options.map((item) => ({ value: item, option_text: item })));
+
+    startAnimation();
   }
 
   async function playAudio() {

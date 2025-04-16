@@ -74,7 +74,7 @@ const correctSFX = require("@/assets/audio/correct_sfx.mp3");
 const incorrectSFX = require("@/assets/audio/incorrect_sfx.mp3");
 
 export default function Page() {
-  const circleWidth = PAGE_HEIGHT * 0.3;
+  const circleWidth = PAGE_HEIGHT * 0.27;
   const router = useRouter();
   const [currentScore, setCurrentScore] = useState<number>(0);
   const [lives, setLives] = useState(3);
