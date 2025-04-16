@@ -58,7 +58,7 @@ export default function Login() {
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={{ flex: 1 }}
-      keyboardVerticalOffset={Platform.OS === "ios" ? 120 : 0}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0}
     >
       <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="never" bounces={false}>
         <YStack flex={1}>
@@ -82,7 +82,7 @@ export default function Login() {
                     size={"$6"}
                     onBlur={onBlur}
                     onChangeText={onChange}
-                    value={value}
+                    // value={value}
                     returnKeyType="next"
                     onSubmitEditing={() => passwordRef?.current?.focus()}
                   />
