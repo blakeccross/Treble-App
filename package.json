@@ -72,8 +72,6 @@
     "react-native-svg": "15.8.0",
     "react-native-toast-message": "^2.2.0",
     "react-native-url-polyfill": "^2.0.0",
-    "react-native-web": "~0.19.13",
-    "react-native-webview": "13.12.5",
     "supabase": "^2.19.7",
     "tamagui": "^1.125.25",
     "vexflow": "4.2.4"

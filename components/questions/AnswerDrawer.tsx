@@ -1,4 +1,4 @@
-import { QuizContext } from "../../context/quiz-context";
+import { QuizContext, useQuiz } from "../../context/quiz-context";
 import * as Haptics from "expo-haptics";
 import React, { useContext, useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -19,7 +19,7 @@ export default function AnswerDrawer({
   enabled: boolean;
 }) {
   const { currentUser } = useUser();
-  const { nextQuestion, lives, setLives } = useContext(QuizContext);
+  const { nextQuestion, lives, setLives, correctAnswers, incorrectAnswers } = useQuiz();
   const [open, setOpen] = useState(false);
   const [answerIsCorrect, setAnswerIsCorrect] = useState<boolean>();
   const { playSFX } = usePlaySFX();
@@ -39,10 +39,14 @@ export default function AnswerDrawer({
       const validateFunction = validateAnswer();
       setAnswerIsCorrect(validateFunction);
       if (validateFunction === true) {
+        correctAnswers.current = correctAnswers.current + 1;
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         playSFX(correctSFX);
       }
-      if (validateFunction === false && lives !== undefined && !currentUser?.is_subscribed) setLives(lives - 1);
+      if (validateFunction === false && lives !== undefined && !currentUser?.is_subscribed) {
+        incorrectAnswers.current = incorrectAnswers.current + 1;
+        setLives(lives - 1);
+      }
     }
   }
 
@@ -53,14 +57,6 @@ export default function AnswerDrawer({
 
   return (
     <>
-      {/* <BottomSheet
-        isOpen={open}
-        setIsOpen={setOpen}
-        height={350}
-        duration={300}
-        backgroundColor={answerIsCorrect ? "$green7" : "$red9"}
-        dismissOnOverlayPress={false}
-      > */}
       <Sheet snapPointsMode="fit" dismissOnOverlayPress={false} zIndex={100_000} animation="quick" open={open} onOpenChange={setOpen}>
         <Sheet.Overlay animation="lazy" backgroundColor="$shadow6" enterStyle={{ opacity: 0 }} exitStyle={{ opacity: 0 }} />
 

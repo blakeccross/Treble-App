@@ -28,9 +28,9 @@ export default function MultipleCHoice() {
           <Paragraph marginBottom="$2" fontSize={"$7"}>
             {question.current?.question}
           </Paragraph>
-          {(question.current?.local_image_uri || question.current?.image) && (
+          {question.current?.image && (
             <Image
-              source={question.current?.local_image_uri || question.current?.image}
+              source={question.current?.image}
               style={{ borderRadius: 20, aspectRatio: "16/9", maxWidth: "100%", backgroundColor: "white" }}
               contentFit="contain"
             />

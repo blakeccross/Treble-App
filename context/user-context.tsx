@@ -24,7 +24,6 @@ type UserContextProps = {
 export const UserContext = createContext<UserContextProps>({} as UserContextProps);
 
 export default function ModuleProvider({ children }: { children: JSX.Element }) {
-  const networkState = Network.useNetworkState();
   const [currentUser, setCurrentUser] = useMMKVObject<Profile>("user");
   const [lives, setLives] = useMMKVNumber("lives");
   const [livesRefreshTime, setLivesRefreshTime] = useMMKVString("livesRefreshTime");
@@ -69,6 +68,7 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
       router.push("/(tabs)/(home)");
     } else {
       setCurrentUser(undefined);
+
       if (pathname !== "/welcome" && pathname !== "/") {
         router.replace("/(auth)");
       }
@@ -130,7 +130,11 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
 
   async function handleSignOut() {
     const { error } = await supabase.auth.signOut();
-    await Purchases.logOut();
+    try {
+      await Purchases.logOut();
+    } catch (error) {
+      console.error(error);
+    }
     if (error) {
       console.error(error);
       Toast.show({
@@ -139,9 +143,6 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
       });
     } else {
       storage.clearAll();
-      // setLives(undefined);
-      // setLivesRefreshTime(undefined);
-      // setCurrentUser(undefined);
       router.replace("/(auth)");
     }
   }

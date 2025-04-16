@@ -21,7 +21,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { Card, H1, H2, Paragraph, XStack, YStack } from "tamagui";
 
-const PAGE_WIDTH = window.width;
+const PAGE_HEIGHT = window.height;
 const colorOptions = ["blue", "orange", "green", "red", "yellow", "purple", "pink"];
 
 // Define all notes from C2 to C4
@@ -74,7 +74,7 @@ const correctSFX = require("@/assets/audio/correct_sfx.mp3");
 const incorrectSFX = require("@/assets/audio/incorrect_sfx.mp3");
 
 export default function Page() {
-  const circleWidth = PAGE_WIDTH * 0.55;
+  const circleWidth = PAGE_HEIGHT * 0.3;
   const router = useRouter();
   const [currentScore, setCurrentScore] = useState<number>(0);
   const [lives, setLives] = useState(3);
@@ -402,7 +402,7 @@ export default function Page() {
         )}
       </XStack>
 
-      <YStack justifyContent="center" alignItems="center" marginTop="$4">
+      <YStack flex={1} justifyContent="center" alignItems="center" marginTop="$4">
         <GestureDetector gesture={tapGesture}>
           <Animated.View style={[{ width: circleWidth, height: circleWidth }, animatedStyleRotate1]}>
             <Canvas style={{ flex: 1 }}>

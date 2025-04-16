@@ -17,12 +17,17 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
     if (!modules?.data) {
       getModuleData();
     } else {
-      setModules({ ...modules, data: modules.data ? updateCompletedModules(updateCompletedSections(modules.data)) : null });
+      setModules({
+        ...modules,
+        data: modules.data ? updateCompletedModules(updateCompletedSections(modules.data)) : null,
+        loading: false,
+        error: false,
+      });
     }
   }, [currentUser?.completed_sections]);
 
   async function getModuleData() {
-    setModules({ data: modules?.data ?? null, loading: true, error: false });
+    setModules({ loading: true, error: false });
     try {
       // if (!session?.user) throw new Error('No user on the session!')
       const { data, error, status } = await supabase.from("module").select(`*, section(*, section_item(*))`).order("id", { ascending: true });
@@ -33,17 +38,12 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
 
       if (data) {
         const addedLocalImage = (await downloadEachPoster(data)) as Module[];
-        const sortedQuestions = await Promise.all(
-          addedLocalImage.map(async (module) => ({
-            ...module,
-            section: await Promise.all(
-              module.section.map(async (section) => {
-                const sectionItems = await downloadEachSectionImage(section.section_item);
-                return { ...section, section_item: sortQuestions(sectionItems) };
-              })
-            ),
-          }))
-        );
+        const sortedQuestions = addedLocalImage.map((module) => ({
+          ...module,
+          section: module.section.map((section) => {
+            return { ...section, section_item: sortQuestions(section.section_item) };
+          }),
+        }));
 
         setModules({ ...modules, data: updateCompletedModules(updateCompletedSections(sortedQuestions)), loading: false, error: false });
       } else {
@@ -52,9 +52,6 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
     } catch (error) {
       console.log("Error fetching module data", error);
       setModules({ ...modules, loading: false, error: true });
-      // if (error instanceof Error) {
-      //   Alert.alert(error.message)
-      // }
     }
   }
 
@@ -97,53 +94,30 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
   async function downloadEachPoster(modules: Module[]): Promise<Module[]> {
     const updatedModules = await Promise.all(
       modules.map(async (module) => {
-        const localUri = FileSystem.documentDirectory + module.poster_url;
-
-        // Check if the file already exists
-        const fileInfo = await FileSystem.getInfoAsync(localUri);
-        if (fileInfo.exists) {
-          // console.log("File already exists at ", localUri);
-          return { ...module, local_poster_uri: localUri };
-        }
-
-        // File does not exist, proceed to download
-        const downloadResumable = FileSystem.createDownloadResumable(
-          "https://pueoumkuxzosxrzqoefw.supabase.co/storage/v1/object/public/module-icons/" + module.poster_url,
-          localUri,
-          {}
-        );
-
-        const { uri }: any = await downloadResumable.downloadAsync();
-        // console.log("Finished downloading to ", uri);
-        return { ...module, local_poster_uri: uri };
-      })
-    );
-
-    return updatedModules;
-  }
-
-  async function downloadEachSectionImage(sectionItems: SectionItem[]): Promise<SectionItem[]> {
-    console.log("Downloading section images");
-    const updatedModules = await Promise.all(
-      sectionItems.map(async (sectionItem) => {
         try {
-          if (!sectionItem.image) return { ...sectionItem, local_image_uri: "" };
-          const localUri = FileSystem.documentDirectory ? FileSystem.documentDirectory + sectionItem.id : "";
+          const localUri = FileSystem.documentDirectory + module.poster_url;
 
           // Check if the file already exists
           const fileInfo = await FileSystem.getInfoAsync(localUri);
           if (fileInfo.exists) {
-            return { ...sectionItem, local_image_uri: localUri };
+            // console.log("File already exists at ", localUri);
+            return { ...module, local_poster_uri: localUri };
           }
 
           // File does not exist, proceed to download
-          const downloadResumable = FileSystem.createDownloadResumable(sectionItem.image, localUri, {});
+          const downloadResumable = FileSystem.createDownloadResumable(
+            "https://pueoumkuxzosxrzqoefw.supabase.co/storage/v1/object/public/module-icons/" + module.poster_url,
+            localUri,
+            {}
+          );
+
           const { uri }: any = await downloadResumable.downloadAsync();
-          console.log("Finished downloading to ", uri);
-          return { ...sectionItem, local_image_uri: uri };
+
+          return { ...module, local_poster_uri: uri };
         } catch (error) {
-          console.error(`Error downloading image for section item ${sectionItem.id}:`, error);
-          return { ...sectionItem, local_image_uri: "" };
+          console.error(`Error downloading poster for module ${module.id}:`, error);
+          // Return the module with the original poster URL if download fails
+          return { ...module, local_poster_uri: "" };
         }
       })
     );

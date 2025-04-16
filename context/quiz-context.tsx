@@ -1,7 +1,7 @@
 import { Module, Section, SectionItem, XPHistory } from "@/types";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import moment from "moment";
-import { createContext, useContext, useEffect, useMemo, useCallback, useState } from "react";
+import { createContext, useContext, useEffect, useMemo, useCallback, useState, useRef, MutableRefObject } from "react";
 import { useMMKVObject } from "react-native-mmkv";
 import { ModuleContext } from "./module-context";
 import { UserContext } from "./user-context";
@@ -14,6 +14,8 @@ type Quiz = {
   nextQuestion: () => void;
   lives?: number;
   setLives: (lives: number) => void;
+  correctAnswers: MutableRefObject<number>;
+  incorrectAnswers: MutableRefObject<number>;
 };
 
 export const QuizContext = createContext<Quiz>({} as Quiz);
@@ -26,6 +28,9 @@ export default function QuizProvider({ children }: { children: JSX.Element[] }) 
   const [xpHistory, setXPHistory] = useMMKVObject<XPHistory[]>("xp_history");
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
   const [sortedQuestions, setSortedQuestions] = useState<SectionItem[]>([]);
+
+  const correctAnswers = useRef<number>(0);
+  const incorrectAnswers = useRef<number>(0);
 
   // Memoize computed values
   const sections = useMemo(() => modules?.data?.flatMap((item) => item.section) || [], [modules?.data]);
@@ -115,7 +120,6 @@ export default function QuizProvider({ children }: { children: JSX.Element[] }) 
     }
   }, [currentSection, currentQuestionIndex, currentModule, currentUser, router, sortedQuestions, finishedSection]);
 
-  // Memoize the sorting effect
   useEffect(() => {
     if (currentSectionQuestions) {
       const sorted = [...currentSectionQuestions].sort((a, b) => {
@@ -141,17 +145,23 @@ export default function QuizProvider({ children }: { children: JSX.Element[] }) 
       nextQuestion,
       questions: sortedQuestions,
       section: currentSection,
-      currentModule: currentModule as Module, // Type assertion since we know it's not undefined at this point
+      currentModule: currentModule as Module,
+      correctAnswers,
+      incorrectAnswers,
       lives,
       setLives,
     }),
-    [currentQuestionIndex, nextQuestion, sortedQuestions, currentSection, currentModule, lives, setLives]
+    [currentQuestionIndex, nextQuestion, sortedQuestions, currentSection, currentModule, lives, setLives, correctAnswers, incorrectAnswers]
   );
 
   if (!currentSection || !currentModule) {
-    router.navigate("/(tabs)");
+    router.navigate("/(tabs)/(home)");
     return null;
   }
 
   return <QuizContext.Provider value={contextValue}>{children}</QuizContext.Provider>;
+}
+
+export function useQuiz() {
+  return useContext(QuizContext);
 }

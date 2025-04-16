@@ -1,8 +1,9 @@
+import { isSmallScreen } from "@/utils";
 import { AudioWaveform, Lock, Play } from "@tamagui/lucide-icons";
 import { BlurView } from "expo-blur";
 import { Image } from "expo-image";
-import { Href, useRouter } from "expo-router";
-import { Dimensions } from "react-native";
+import { useRouter } from "expo-router";
+import { Dimensions, FlatList } from "react-native";
 import Animated, {
   Extrapolation,
   interpolate,
@@ -17,7 +18,6 @@ import { Button, Card, H2, H5, Paragraph, View, XStack, YStack } from "tamagui";
 const blurhash = "A5Pj0^nN_Nt7";
 
 const AnimatedView = Animated.createAnimatedComponent(View);
-const AnimatedImage = Animated.createAnimatedComponent(Image);
 
 const posterSize = Dimensions.get("screen").height / 2;
 const headerTop = 44 - 16;
@@ -103,7 +103,7 @@ const games = [
   },
 ];
 
-export default function TabTwoScreen() {
+export default function EarTraining() {
   const router = useRouter();
   const sv = useSharedValue<number>(0);
   const scrollHandler = useAnimatedScrollHandler({
@@ -112,6 +112,73 @@ export default function TabTwoScreen() {
       sv.value = event.contentOffset.y;
     },
   });
+
+  const renderItem = ({ item: game }: { item: (typeof games)[0] }) => (
+    <Card
+      key={game.title}
+      elevate
+      pressStyle={{ scale: 0.95 }}
+      animation="bouncy"
+      borderRadius={"$8"}
+      overflow="hidden"
+      height={400}
+      flex={1}
+      marginHorizontal="$2"
+      marginBottom="$4"
+      onPress={() => {
+        if (!game.disabled) {
+          router.push(game.route);
+        }
+      }}
+    >
+      <Card.Background>
+        <Image style={{ flex: 1, width: "100%" }} source={game.backgroundImage} placeholder={{ blurhash }} contentFit="cover" transition={1000} />
+      </Card.Background>
+
+      <Card.Footer>
+        <BlurView style={{ flex: 1, padding: 20 }} tint="light">
+          <XStack justifyContent="space-between">
+            <YStack flex={1}>
+              <H5 fontWeight={600} color={"$gray1Dark"}>
+                {game.title}
+              </H5>
+              <Paragraph lineHeight={17} color={"$gray1Dark"}>
+                {game.description}
+              </Paragraph>
+            </YStack>
+            {game.disabled ? (
+              <Button
+                borderRadius={"$10"}
+                size={"$3"}
+                iconAfter={<Lock />}
+                themeInverse
+                backgroundColor={"white"}
+                color={"black"}
+                fontWeight={600}
+                disabled
+              >
+                Coming Soon
+              </Button>
+            ) : (
+              <Button
+                borderRadius={"$10"}
+                size={"$3"}
+                iconAfter={<Play />}
+                themeInverse
+                backgroundColor={"white"}
+                color={"black"}
+                fontWeight={600}
+                disabled
+              >
+                Play
+              </Button>
+            )}
+          </XStack>
+        </BlurView>
+      </Card.Footer>
+    </Card>
+  );
+
   return (
     <View flex={1} backgroundColor={"$background"}>
       <SafeAreaView edges={["top"]} />
@@ -121,78 +188,14 @@ export default function TabTwoScreen() {
           <AudioWaveform />
           <H2 fontWeight={800}>Ear Training</H2>
         </XStack>
-        <YStack gap={"$4"} marginBottom="$15">
-          {games.map((game) => (
-            <Card
-              key={game.title}
-              elevate
-              // bordered
-              pressStyle={{ scale: 0.95 }}
-              animation="bouncy"
-              borderRadius={"$8"}
-              overflow="hidden"
-              height={400}
-              flex={1}
-              onPress={() => {
-                if (!game.disabled) {
-                  router.push(game.route);
-                }
-              }}
-            >
-              <Card.Background>
-                <Image
-                  style={{ flex: 1, width: "100%" }}
-                  source={game.backgroundImage}
-                  placeholder={{ blurhash }}
-                  contentFit="cover"
-                  transition={1000}
-                />
-              </Card.Background>
-
-              <Card.Footer>
-                <BlurView style={{ flex: 1, padding: 20 }} tint="light">
-                  <XStack justifyContent="space-between">
-                    <YStack flex={1}>
-                      <H5 fontWeight={600} color={"$gray1Dark"}>
-                        {game.title}
-                      </H5>
-                      <Paragraph lineHeight={17} color={"$gray1Dark"}>
-                        {game.description}
-                      </Paragraph>
-                    </YStack>
-                    {game.disabled ? (
-                      <Button
-                        borderRadius={"$10"}
-                        size={"$3"}
-                        iconAfter={<Lock />}
-                        themeInverse
-                        backgroundColor={"white"}
-                        color={"black"}
-                        fontWeight={600}
-                        disabled
-                      >
-                        Coming Soon
-                      </Button>
-                    ) : (
-                      <Button
-                        borderRadius={"$10"}
-                        size={"$3"}
-                        iconAfter={<Play />}
-                        themeInverse
-                        backgroundColor={"white"}
-                        color={"black"}
-                        fontWeight={600}
-                        disabled
-                      >
-                        Play
-                      </Button>
-                    )}
-                  </XStack>
-                </BlurView>
-              </Card.Footer>
-            </Card>
-          ))}
-        </YStack>
+        <FlatList
+          data={games}
+          renderItem={renderItem}
+          numColumns={isSmallScreen ? 1 : 2}
+          scrollEnabled={false}
+          contentContainerStyle={{ paddingBottom: 60 }}
+          columnWrapperStyle={isSmallScreen ? undefined : { justifyContent: "space-between" }}
+        />
       </Animated.ScrollView>
     </View>
   );

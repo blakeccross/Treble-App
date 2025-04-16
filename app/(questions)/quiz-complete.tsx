@@ -1,14 +1,15 @@
 import { QuizContext } from "@/context/quiz-context";
 import { Check, Star } from "@tamagui/lucide-icons";
+import { BlurView } from "expo-blur";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useContext } from "react";
 import { SafeAreaView } from "react-native";
-import { Button, H1, H4, ListItem, Paragraph, View, XStack, YGroup, YStack } from "tamagui";
+import { Button, H1, H4, ListItem, Paragraph, Separator, Theme, View, XStack, YGroup, YStack } from "tamagui";
 import { LinearGradient } from "tamagui/linear-gradient";
 
 export default function Index() {
   const router = useRouter();
-  const { currentQuestionIndex, questions, currentModule } = useContext(QuizContext);
+  const { currentQuestionIndex, questions, currentModule, correctAnswers, incorrectAnswers } = useContext(QuizContext);
   const { numOfCorrectAnswers, moduleComplete } = useLocalSearchParams();
 
   function handle() {
@@ -43,33 +44,61 @@ export default function Index() {
         </H1>
       </YStack>
       <YStack padding="$4" gap="$5">
+        <Theme name="dark">
+          <View>
+            <Paragraph fontSize={"$5"}>Stats</Paragraph>
+            <BlurView intensity={100} style={{ borderRadius: 20, overflow: "hidden", padding: 10, gap: 10 }}>
+              <XStack justifyContent="space-between">
+                <Paragraph fontSize={"$6"} fontWeight={800}>
+                  Correct
+                </Paragraph>
+                <Paragraph fontSize={"$6"} fontWeight={800}>
+                  {correctAnswers.current}
+                </Paragraph>
+              </XStack>
+              <Separator themeInverse opacity={0.5} />
+              <XStack justifyContent="space-between">
+                <Paragraph fontSize={"$6"} fontWeight={800}>
+                  Incorrect
+                </Paragraph>
+
+                <Paragraph fontSize={"$6"} fontWeight={800}>
+                  {incorrectAnswers.current}
+                </Paragraph>
+              </XStack>
+            </BlurView>
+          </View>
+
+          <View>
+            <Paragraph fontSize={"$5"}>Rewards</Paragraph>
+            <BlurView intensity={100} style={{ borderRadius: 20, overflow: "hidden", padding: 10, gap: 10 }}>
+              {moduleComplete === "true" && (
+                <>
+                  <XStack justifyContent="space-between">
+                    <Paragraph fontSize={"$6"} fontWeight={800}>
+                      Completed an entire module Bonus
+                    </Paragraph>
+                    <Paragraph fontSize={"$6"} fontWeight={800}>
+                      10 XP
+                    </Paragraph>
+                  </XStack>
+                  <Separator themeInverse opacity={0.5} />
+                </>
+              )}
+              <XStack justifyContent="space-between">
+                <Paragraph fontSize={"$6"} fontWeight={800}>
+                  Earned XP
+                </Paragraph>
+                <Paragraph fontSize={"$6"} fontWeight={800}>
+                  {numOfCorrectAnswers}
+                </Paragraph>
+              </XStack>
+            </BlurView>
+          </View>
+        </Theme>
+
         <View>
-          <H4 color={"$background"} fontWeight={600}>
-            Your rewards
-          </H4>
-          <YGroup
-            alignSelf="center"
-            bordered
-            size="$4"
-            enterStyle={{
-              // scale: 3,
-              y: 100,
-              opacity: 0,
-            }}
-            // animation="lazy"
-          >
-            {moduleComplete === "true" && (
-              <YGroup.Item>
-                <ListItem hoverTheme icon={Star} title={`10 XP`} subTitle="Completed an entire module" color={"$blue10"} />
-              </YGroup.Item>
-            )}
-            <YGroup.Item>
-              <ListItem hoverTheme icon={Star} title={`${numOfCorrectAnswers} XP`} color={"$blue10"} />
-            </YGroup.Item>
-          </YGroup>
-        </View>
-        <View>
-          <Button onPress={handle} fontWeight={600} fontSize={"$7"} height={"$5"} width={"100%"} themeInverse>
+          <Button onPress={handle} fontWeight={600} fontSize={"$7"} height={"$5"} width={"100%"} backgroundColor={"$gray1"} color={"$gray12"}>
             Continue
           </Button>
         </View>

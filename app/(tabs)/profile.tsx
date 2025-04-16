@@ -18,6 +18,7 @@ import { LinearGradient } from "tamagui/linear-gradient";
 import { SaveFormat, ImageManipulator } from "expo-image-manipulator";
 import getStreak from "@/hooks/getStreak";
 import Paywall from "@/components/paywall.modal";
+import { isSmallScreen } from "@/utils";
 
 export default function TabTwoScreen() {
   const { currentUser, handleUpdateUserInfo } = useContext(UserContext);
@@ -169,103 +170,116 @@ export default function TabTwoScreen() {
             </Card>
           )}
 
-          <H5 fontWeight={600} marginBottom={"$2"}>
-            Overview
-          </H5>
-          <YStack alignItems="flex-start" gap="$3" marginBottom={"$6"}>
-            <Card width={"100%"} padding="$2.5">
-              <XStack gap="$2">
-                <Award color={"$purple10"} fill={purpleA.purpleA10} marginTop={4} />
-                <YStack>
-                  <Paragraph fontSize={"$7"} lineHeight={"$1"} fontWeight="800">
-                    {currentUser?.completed_modules ? currentUser?.completed_modules.length : 0}
-                  </Paragraph>
-                  <Paragraph fontSize={"$1"}>Modules Completed</Paragraph>
-                </YStack>
-              </XStack>
-            </Card>
-            <Card width={"100%"} padding="$2.5">
-              <XStack gap="$2">
-                <AntDesign name="star" size={24} color={yellow.yellow10} marginTop={4} />
-                <YStack>
-                  <Paragraph fontSize={"$7"} lineHeight={"$1"} fontWeight="800">
-                    {currentUser?.total_xp ? currentUser?.total_xp : 0}
-                  </Paragraph>
-                  <Paragraph fontSize={"$1"}>Total XP</Paragraph>
-                </YStack>
-              </XStack>
-            </Card>
-
-            <Card width={"100%"} padding="$2.5">
-              <XStack gap="$2">
-                <Ionicons name="flame-sharp" size={24} color={redA.redA10} marginTop={4} />
-                <YStack>
-                  <Paragraph fontSize={"$7"} lineHeight={"$1"} fontWeight="800">
-                    {currentUser?.active_days ? getStreak(currentUser?.active_days) : 0}
-                  </Paragraph>
-                  <Paragraph fontSize={"$1"}>Day Streak</Paragraph>
-                </YStack>
-              </XStack>
-            </Card>
-          </YStack>
-          <H5 fontWeight={600} marginBottom={"$2"}>
-            Streak
-          </H5>
-          {weekDays && days && (
-            <Card width={"100%"}>
-              <XStack alignItems="center" justifyContent="space-between" width={"100%"} marginBottom="$2" paddingHorizontal="$2.5" paddingTop="$2.5">
-                <H2 fontWeight={600}>{month}</H2>
-                <XStack gap="$3">
-                  <View
-                    onPress={(evt) => {
-                      const result = subtractOffset({ months: 1 });
-                      if (result && result.onClick) {
-                        result.onClick(evt as any);
-                      }
-                    }}
-                  >
-                    <ChevronLeft size={"2"} />
-                  </View>
-                  <View
-                    onPress={(evt) => {
-                      const result = addOffset({ months: 1 });
-                      if (result && result.onClick) {
-                        result.onClick(evt as any);
-                      }
-                    }}
-                  >
-                    <ChevronRight size={"2"} />
-                  </View>
-                </XStack>
-              </XStack>
-
-              <FlatList
-                data={weekDays}
-                numColumns={7}
-                contentContainerStyle={{ width: "100%" }}
-                scrollEnabled={false}
-                renderItem={({ item }) => (
-                  <Paragraph paddingVertical="$2" flex={1} textAlign="center">
-                    {item}
-                  </Paragraph>
-                )}
-              />
-              <FlatList
-                data={days}
-                numColumns={7}
-                contentContainerStyle={{ width: "100%", height: "auto" }}
-                scrollEnabled={false}
-                renderItem={({ item }) => (
-                  <YStack paddingVertical="$3" flex={1}>
-                    <Paragraph textAlign="center" opacity={item.inCurrentMonth ? 1 : 0}>
-                      {item.day}
+          <YStack flex={1} flexDirection={isSmallScreen ? "column" : "row"} alignItems="flex-start" gap="$3" marginBottom={"$6"}>
+            <YStack alignItems="flex-start" width={"100%"} flex={1} gap="$3" marginBottom={"$6"}>
+              <H5 fontWeight={600} marginBottom={"$2"}>
+                Overview
+              </H5>
+              <Card width={"100%"} padding="$2.5">
+                <XStack gap="$2">
+                  <Award color={"$purple10"} fill={purpleA.purpleA10} marginTop={4} />
+                  <YStack>
+                    <Paragraph fontSize={"$7"} lineHeight={"$1"} fontWeight="800">
+                      {currentUser?.completed_modules ? currentUser?.completed_modules.length : 0}
                     </Paragraph>
-                    {item.selected && <MaterialCommunityIcons name="music-note" size={24} color={blueA.blueA10} style={{ position: "absolute" }} />}
+                    <Paragraph fontSize={"$1"}>Modules Completed</Paragraph>
                   </YStack>
-                )}
-              />
-            </Card>
-          )}
+                </XStack>
+              </Card>
+              <Card width={"100%"} padding="$2.5">
+                <XStack gap="$2">
+                  <AntDesign name="star" size={24} color={yellow.yellow10} marginTop={4} />
+                  <YStack>
+                    <Paragraph fontSize={"$7"} lineHeight={"$1"} fontWeight="800">
+                      {currentUser?.total_xp ? currentUser?.total_xp : 0}
+                    </Paragraph>
+                    <Paragraph fontSize={"$1"}>Total XP</Paragraph>
+                  </YStack>
+                </XStack>
+              </Card>
+
+              <Card width={"100%"} padding="$2.5">
+                <XStack gap="$2">
+                  <Ionicons name="flame-sharp" size={24} color={redA.redA10} marginTop={4} />
+                  <YStack>
+                    <Paragraph fontSize={"$7"} lineHeight={"$1"} fontWeight="800">
+                      {currentUser?.active_days ? getStreak(currentUser?.active_days) : 0}
+                    </Paragraph>
+                    <Paragraph fontSize={"$1"}>Day Streak</Paragraph>
+                  </YStack>
+                </XStack>
+              </Card>
+            </YStack>
+            <YStack flex={1}>
+              <H5 fontWeight={600} marginBottom={"$2"}>
+                Streak
+              </H5>
+              {weekDays && days && (
+                <Card width={"100%"}>
+                  <XStack
+                    alignItems="center"
+                    justifyContent="space-between"
+                    width={"100%"}
+                    marginBottom="$2"
+                    paddingHorizontal="$2.5"
+                    paddingTop="$2.5"
+                  >
+                    <H2 fontWeight={600}>{month}</H2>
+                    <XStack gap="$3">
+                      <View
+                        onPress={(evt) => {
+                          const result = subtractOffset({ months: 1 });
+                          if (result && result.onClick) {
+                            result.onClick(evt as any);
+                          }
+                        }}
+                      >
+                        <ChevronLeft size={"2"} />
+                      </View>
+                      <View
+                        onPress={(evt) => {
+                          const result = addOffset({ months: 1 });
+                          if (result && result.onClick) {
+                            result.onClick(evt as any);
+                          }
+                        }}
+                      >
+                        <ChevronRight size={"2"} />
+                      </View>
+                    </XStack>
+                  </XStack>
+
+                  <FlatList
+                    data={weekDays}
+                    numColumns={7}
+                    contentContainerStyle={{ width: "100%" }}
+                    scrollEnabled={false}
+                    renderItem={({ item }) => (
+                      <Paragraph paddingVertical="$2" flex={1} textAlign="center">
+                        {item}
+                      </Paragraph>
+                    )}
+                  />
+                  <FlatList
+                    data={days}
+                    numColumns={7}
+                    contentContainerStyle={{ width: "100%", height: "auto" }}
+                    scrollEnabled={false}
+                    renderItem={({ item }) => (
+                      <YStack paddingVertical="$3" flex={1}>
+                        <Paragraph textAlign="center" opacity={item.inCurrentMonth ? 1 : 0}>
+                          {item.day}
+                        </Paragraph>
+                        {item.selected && (
+                          <MaterialCommunityIcons name="music-note" size={24} color={blueA.blueA10} style={{ position: "absolute" }} />
+                        )}
+                      </YStack>
+                    )}
+                  />
+                </Card>
+              )}
+            </YStack>
+          </YStack>
         </YStack>
         {/* <Paywall openPaywall={openPaywall} setOpenPaywall={setOpenPaywall} /> */}
       </ScrollView>

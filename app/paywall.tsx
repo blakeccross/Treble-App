@@ -4,7 +4,7 @@ import { BlurView } from "expo-blur";
 import { router } from "expo-router";
 import LottieView from "lottie-react-native";
 import React, { useContext, useState } from "react";
-import { ActivityIndicator, SafeAreaView, ScrollView } from "react-native";
+import { ActivityIndicator, Alert, SafeAreaView, ScrollView } from "react-native";
 import Purchases from "react-native-purchases";
 import { Button, H2, H4, ListItem, Paragraph, SizableText, Theme, View, XStack, YStack } from "tamagui";
 import { LinearGradient } from "tamagui/linear-gradient";
@@ -27,7 +27,18 @@ export default function Paywall() {
         }
       }
     } catch (error) {
-      
+      Alert.alert("Error purchasing", "Please try again later or contact support", [
+        {
+          text: "OK",
+          onPress: () => {},
+        },
+        {
+          text: "Help",
+          onPress: () => {
+            router.replace("/(settings)/help");
+          },
+        },
+      ]);
     } finally {
       setIsLoading(false);
     }

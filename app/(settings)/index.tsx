@@ -1,12 +1,12 @@
-import { UserContext } from "@/context/user-context";
-import { ArrowLeft, ChevronRight, HelpCircle, Lock, Moon, User, Volume, Volume1, Volume2 } from "@tamagui/lucide-icons";
-import { Href, Link, RelativePathString, router } from "expo-router";
-import React, { useContext } from "react";
+import { useUser } from "@/context/user-context";
+import { ArrowLeft, ChevronRight, HelpCircle, Lock, Moon, User, Volume2 } from "@tamagui/lucide-icons";
+import { Link, RelativePathString, router } from "expo-router";
+import React from "react";
 import { Alert, FlatList, Pressable, SafeAreaView } from "react-native";
 import { H4, H5, XStack, YStack } from "tamagui";
 
 export default function ProfileSettings() {
-  const { handleSignOut } = useContext(UserContext);
+  const { handleSignOut } = useUser();
   const menuItems = [
     { name: "Profile", href: "/(settings)/profile", icon: <User size="$2" /> },
     { name: "Appearance", href: "/(settings)/appearance", icon: <Moon size="$1.5" /> },

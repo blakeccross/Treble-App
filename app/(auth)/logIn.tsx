@@ -36,11 +36,11 @@ export default function Login() {
     });
 
     setLoading(false);
-    console.log("ERROR", error);
+    console.log("ERROR", error?.message);
 
     if (error) {
       Toast.show({
-        text1: "Invalid login credentials",
+        text1: error?.message,
         type: "error",
       });
       console.error(error);

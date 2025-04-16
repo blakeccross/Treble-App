@@ -145,22 +145,24 @@ export default function usePlayMidi() {
           console.log("LOADING BUFFER", key, filepath);
           if (audioContextRef?.current) {
             try {
-              // Read the file content as base64
-              const fileContent = await FileSystem.readAsStringAsync(filepath, {
-                encoding: FileSystem.EncodingType.Base64,
-              });
+              // // Read the file content as base64
+              // const fileContent = await FileSystem.readAsStringAsync(filepath, {
+              //   encoding: FileSystem.EncodingType.Base64,
+              // });
 
-              // Convert base64 to ArrayBuffer
-              const binaryString = atob(fileContent);
-              const len = binaryString.length;
-              const bytes = new Uint8Array(len);
-              for (let i = 0; i < len; i++) {
-                bytes[i] = binaryString.charCodeAt(i);
-              }
-              const arrayBuffer = bytes.buffer;
+              // // Convert base64 to ArrayBuffer
+              // const binaryString = atob(fileContent);
+              // const len = binaryString.length;
+              // const bytes = new Uint8Array(len);
+              // for (let i = 0; i < len; i++) {
+              //   bytes[i] = binaryString.charCodeAt(i);
+              // }
+              // const arrayBuffer = bytes.buffer;
 
-              // Decode the audio data
-              bufferListRef.current[key] = await audioContextRef.current.decodeAudioData(arrayBuffer);
+              // // Decode the audio data
+              // bufferListRef.current[key] = await audioContextRef.current.decodeAudioData(arrayBuffer);
+
+              bufferListRef.current[key] = await audioContextRef.current.decodeAudioDataSource(filepath);
             } catch (error) {
               console.error("Error loading buffer for", key, ":", error);
               bufferListRef.current[key] = null;
