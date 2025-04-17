@@ -1,11 +1,10 @@
-import { QuizContext, useQuiz } from "../../context/quiz-context";
-import * as Haptics from "expo-haptics";
-import React, { useContext, useEffect, useState } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Button, H3, Paragraph, ScrollView, Sheet, View, YStack } from "tamagui";
-import BottomSheet from "../BottomSheet";
-import { useUser } from "../../context/user-context";
 import { usePlaySFX } from "@/hooks/usePlaySFX";
+import * as Haptics from "expo-haptics";
+import React, { useEffect, useState } from "react";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Button, H3, Paragraph, Sheet, View, YStack } from "tamagui";
+import { useQuiz } from "../../context/quiz-context";
+import { useUser } from "../../context/user-context";
 
 const correctSFX = require("@/assets/audio/correct_sfx.mp3");
 

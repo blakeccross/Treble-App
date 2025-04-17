@@ -112,7 +112,7 @@ export default function Login() {
                     onChangeText={onChange}
                     value={value}
                     returnKeyType="send"
-                    onSubmitEditing={() => handleSubmit(onSubmit)}
+                    onSubmitEditing={handleSubmit(onSubmit)}
                   />
                 </Theme>
               </View>

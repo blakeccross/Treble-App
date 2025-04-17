@@ -33,11 +33,11 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
     getUser();
   }, []);
 
-  useEffect(() => {
-    if (!segments.find((segment) => segment === "(auth)") && !currentUser) {
-      router.replace("/(auth)");
-    }
-  }, [currentUser, segments]);
+  // useEffect(() => {
+  //   if (!segments.find((segment) => segment === "(auth)") && !currentUser) {
+  //     router.replace("/(auth)");
+  //   }
+  // }, [currentUser, segments]);
 
   useEffect(() => {
     const checkLivesRefresh = () => {

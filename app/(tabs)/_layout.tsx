@@ -1,11 +1,10 @@
 import { Tabs } from "expo-router";
 import React from "react";
 
-import { TabBarIcon } from "@/components/navigation/TabBarIcon";
+import TabBar from "@/components/tab-bar";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
-import TabBar from "@/components/tab-bar";
-import { Ear, Home, Smile, UserRound } from "@tamagui/lucide-icons";
+import { Ear, Home, Smile } from "@tamagui/lucide-icons";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
