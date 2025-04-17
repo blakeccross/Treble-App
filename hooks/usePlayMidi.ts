@@ -8,8 +8,28 @@ import { useMMKVNumber } from "react-native-mmkv";
 export default function usePlayMidi() {
   const [buffersLoaded, setBuffersLoaded] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
   const [pianoVolume] = useMMKVNumber("pianoVolume");
   const activeSoundsRef = useRef<{ envelope: GainNode; endTime: number }[]>([]);
+
+  function calculateInterval(note1: string, note2: string): number {
+    // Convert notes to their base note and octave
+    const [base1, octave1] = [note1.replace(/[0-9]/g, "").toLowerCase(), parseInt(note1.match(/\d+/)?.[0] || "0")];
+    const [base2, octave2] = [note2.replace(/[0-9]/g, "").toLowerCase(), parseInt(note2.match(/\d+/)?.[0] || "0")];
+
+    // Define the chromatic scale
+    const chromaticScale = ["c", "c#", "d", "d#", "e", "f", "f#", "g", "g#", "a", "a#", "b"];
+
+    // Get positions in chromatic scale
+    const pos1 = chromaticScale.indexOf(base1.toLowerCase());
+    const pos2 = chromaticScale.indexOf(base2.toLowerCase());
+
+    // Calculate total semitones considering octaves
+    const semitones = pos2 - pos1 + (octave2 - octave1) * 12;
+
+    // Return the absolute value of the interval
+    return semitones;
+  }
 
   async function loadAssets() {
     setLoading(true);
@@ -20,7 +40,11 @@ export default function usePlayMidi() {
       C4: FileSystem.bundleDirectory + "piano_c4.mp3",
       "F#4": FileSystem.bundleDirectory + "piano_fs4.mp3",
     });
-    validateBuffers();
+    const buffersLoaded = validateBuffers();
+    console.log("Buffers loaded", buffersLoaded);
+    if (!buffersLoaded) {
+      setError(true);
+    }
     setLoading(false);
   }
 
@@ -28,27 +52,30 @@ export default function usePlayMidi() {
     loadAssets();
     return () => {
       audioContextRef.current?.close();
-      activeSoundsRef.current = [];
-      stopSong();
+      // activeSoundsRef.current = [];
+      // stopSong();
     };
   }, []);
 
-  useFocusEffect(
-    useCallback(() => {
-      return () => {
-        stopSong();
-        cleanupAudioResources();
-        if (audioContextRef.current) {
-          audioContextRef.current.close();
-          audioContextRef.current = undefined;
-        }
-        activeSoundsRef.current = [];
-        console.log("Play Audio is unfocused");
-      };
-    }, [])
-  );
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     return () => {
+  //       stopSong();
+  //       cleanupAudioResources();
+  //       if (audioContextRef.current) {
+  //         audioContextRef.current.close();
+  //         audioContextRef.current = undefined;
+  //       }
+  //       activeSoundsRef.current = [];
+  //       console.log("Play Audio is unfocused");
+  //     };
+  //   }, [])
+  // );
 
   const bufferListRef = useRef<Record<string, AudioBuffer | null>>({
+    "F#2": null,
+    C3: null,
+    "F#3": null,
     C4: null,
     "F#4": null,
   });
@@ -142,32 +169,17 @@ export default function usePlayMidi() {
     try {
       await Promise.all(
         Object.entries(sourceList).map(async ([key, filepath]) => {
-          console.log("LOADING BUFFER", key, filepath);
+          // console.log("LOADING BUFFER", key, filepath);
           if (audioContextRef?.current) {
             try {
-              // // Read the file content as base64
-              // const fileContent = await FileSystem.readAsStringAsync(filepath, {
-              //   encoding: FileSystem.EncodingType.Base64,
-              // });
-
-              // // Convert base64 to ArrayBuffer
-              // const binaryString = atob(fileContent);
-              // const len = binaryString.length;
-              // const bytes = new Uint8Array(len);
-              // for (let i = 0; i < len; i++) {
-              //   bytes[i] = binaryString.charCodeAt(i);
-              // }
-              // const arrayBuffer = bytes.buffer;
-
-              // // Decode the audio data
-              // bufferListRef.current[key] = await audioContextRef.current.decodeAudioData(arrayBuffer);
-
               bufferListRef.current[key] = await audioContextRef.current.decodeAudioDataSource(filepath);
             } catch (error) {
+              setError(true);
               console.error("Error loading buffer for", key, ":", error);
               bufferListRef.current[key] = null;
             }
           } else {
+            setError(true);
             bufferListRef.current[key] = null;
             console.log("FAILED TO LOAD BUFFER - No audio context");
           }
@@ -206,42 +218,50 @@ export default function usePlayMidi() {
   };
 
   const onKeyPressIn = (which: PianoKey, time: number, duration: number = 1, volume: number = 1) => {
+    audioContextRef.current?.resume();
     if (!buffersLoaded) {
       console.warn("Buffers not fully loaded yet");
       return;
     }
 
     // Clean up any finished sounds before creating new ones
-    cleanupAudioResources();
+    // cleanupAudioResources();
 
-    let buffer = bufferListRef.current[which];
+    // let buffer = bufferListRef.current[which];
     const aCtx = audioContextRef.current;
-    let playbackRate = 1;
+    // let playbackRate = 1;
 
     if (!aCtx) {
+      console.warn("No audio context");
       return;
     }
 
-    if (!buffer) {
-      const closestKey = getClosestNote(which) || "C3";
-      buffer = bufferListRef.current[closestKey];
-      const frequencyWhich = getFrequency(which);
-      const frequencyClosestKey = getFrequency(closestKey);
-      if (frequencyWhich && frequencyClosestKey) {
-        playbackRate = frequencyWhich / frequencyClosestKey;
-      }
-    }
+    // if (!buffer) {
+    // const closestKey = getClosestNote(which) || "C3";
+    // buffer = bufferListRef.current[closestKey];
+    // const frequencyWhich = getFrequency(which);
+    // const frequencyClosestKey = getFrequency(closestKey);
+    // if (frequencyWhich && frequencyClosestKey) {
+    //   playbackRate = frequencyWhich / frequencyClosestKey;
+    // }
+    // }
+
+    const closestKey = getClosestNote(which) || "C3";
+    const buffer = bufferListRef.current[closestKey];
 
     const source = aCtx.createBufferSource();
     const envelope = aCtx.createGain();
     source.buffer = buffer;
-    source.playbackRate.value = playbackRate;
+
+    //source.playbackRate.value = playbackRate;
+
+    source.detune.value = calculateInterval(closestKey, which) * 100;
 
     const tNow = aCtx.currentTime;
     const endTime = tNow + time + duration + 0.5;
 
     // Store the active sound
-    activeSoundsRef.current.push({ envelope: envelope as any, endTime });
+    // activeSoundsRef.current.push({ envelope: envelope as any, endTime });
 
     envelope.gain.setValueAtTime(pianoVolume !== undefined ? pianoVolume : 1, tNow + time);
     // Attack (fade-in)
@@ -249,7 +269,7 @@ export default function usePlayMidi() {
     // envelope.gain.exponentialRampToValueAtTime(pianoVolume !== undefined ? pianoVolume : 1, tNow + time + 0.01);
 
     // Decay (fade-out) before stopping
-    envelope.gain.setValueAtTime(0, endTime - 0.05);
+    envelope.gain.setValueAtTime(0, endTime);
 
     source.connect(envelope);
 
@@ -258,13 +278,13 @@ export default function usePlayMidi() {
     source.stop(endTime);
 
     // Remove the sound from the active list after its end time
-    setTimeout(() => {
-      cleanupAudioResources();
-    }, (endTime - tNow) * 1000);
+    // setTimeout(() => {
+    //   cleanupAudioResources();
+    // }, (endTime - tNow) * 1000);
   };
 
   const playSong = (song: { note: PianoKey; time: number; duration?: number }[], volume: number = 1) => {
-    if (!buffersLoaded) {
+    if (loading) {
       console.warn("Cannot play song - buffers not fully loaded");
       return;
     }
