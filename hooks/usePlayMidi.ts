@@ -2,7 +2,7 @@ import { PianoKey } from "@/types/pianoKeys";
 import * as FileSystem from "expo-file-system";
 import { useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { AudioBuffer, AudioContext, GainNode } from "react-native-audio-api";
+import { AudioBuffer, AudioContext, GainNode, AudioBufferSourceNode } from "react-native-audio-api";
 import { useMMKVNumber } from "react-native-mmkv";
 
 export default function usePlayMidi() {
@@ -10,7 +10,7 @@ export default function usePlayMidi() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [pianoVolume] = useMMKVNumber("pianoVolume");
-  const activeSoundsRef = useRef<{ envelope: GainNode; endTime: number }[]>([]);
+  const activeSoundsRef = useRef<{ envelope: GainNode; endTime: number; source: AudioBufferSourceNode }[]>([]);
 
   function calculateInterval(note1: string, note2: string): number {
     // Convert notes to their base note and octave
@@ -57,20 +57,19 @@ export default function usePlayMidi() {
     };
   }, []);
 
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     return () => {
-  //       stopSong();
-  //       cleanupAudioResources();
-  //       if (audioContextRef.current) {
-  //         audioContextRef.current.close();
-  //         audioContextRef.current = undefined;
-  //       }
-  //       activeSoundsRef.current = [];
-  //       console.log("Play Audio is unfocused");
-  //     };
-  //   }, [])
-  // );
+  useFocusEffect(
+    useCallback(() => {
+      return () => {
+        stopSong();
+        cleanupAudioResources();
+        if (audioContextRef.current) {
+          audioContextRef.current.close();
+          audioContextRef.current = undefined;
+        }
+        activeSoundsRef.current = [];
+      };
+    }, [])
+  );
 
   const bufferListRef = useRef<Record<string, AudioBuffer | null>>({
     "F#2": null,
@@ -211,7 +210,12 @@ export default function usePlayMidi() {
     const currentTime = audioContextRef.current?.currentTime || 0;
     activeSoundsRef.current.forEach((sound) => {
       if (sound.endTime <= currentTime) {
-        sound.envelope.disconnect();
+        try {
+          sound.envelope.disconnect();
+          sound.source.disconnect();
+        } catch (error) {
+          console.warn("Error cleaning up audio node:", error);
+        }
       }
     });
     activeSoundsRef.current = activeSoundsRef.current.filter((sound) => sound.endTime > currentTime);
@@ -224,63 +228,37 @@ export default function usePlayMidi() {
       return;
     }
 
-    // Clean up any finished sounds before creating new ones
-    // cleanupAudioResources();
-
-    // let buffer = bufferListRef.current[which];
     const aCtx = audioContextRef.current;
-    // let playbackRate = 1;
 
     if (!aCtx) {
       console.warn("No audio context");
       return;
     }
 
-    // if (!buffer) {
-    // const closestKey = getClosestNote(which) || "C3";
-    // buffer = bufferListRef.current[closestKey];
-    // const frequencyWhich = getFrequency(which);
-    // const frequencyClosestKey = getFrequency(closestKey);
-    // if (frequencyWhich && frequencyClosestKey) {
-    //   playbackRate = frequencyWhich / frequencyClosestKey;
-    // }
-    // }
-
     const closestKey = getClosestNote(which) || "C3";
-    const buffer = bufferListRef.current[closestKey];
 
     const source = aCtx.createBufferSource();
     const envelope = aCtx.createGain();
-    source.buffer = buffer;
 
-    //source.playbackRate.value = playbackRate;
-
+    source.buffer = bufferListRef.current[closestKey];
     source.detune.value = calculateInterval(closestKey, which) * 100;
 
     const tNow = aCtx.currentTime;
     const endTime = tNow + time + duration + 0.5;
 
-    // Store the active sound
-    // activeSoundsRef.current.push({ envelope: envelope as any, endTime });
+    activeSoundsRef.current.push({ envelope, endTime, source });
 
     envelope.gain.setValueAtTime(pianoVolume !== undefined ? pianoVolume : 1, tNow + time);
-    // Attack (fade-in)
-    // envelope.gain.setValueAtTime(0.001, tNow + time);
-    // envelope.gain.exponentialRampToValueAtTime(pianoVolume !== undefined ? pianoVolume : 1, tNow + time + 0.01);
-
-    // Decay (fade-out) before stopping
     envelope.gain.setValueAtTime(0, endTime);
 
     source.connect(envelope);
-
     envelope.connect(aCtx.destination);
     source.start(tNow + time);
     source.stop(endTime);
 
-    // Remove the sound from the active list after its end time
-    // setTimeout(() => {
-    //   cleanupAudioResources();
-    // }, (endTime - tNow) * 1000);
+    setTimeout(() => {
+      cleanupAudioResources();
+    }, (endTime - tNow) * 1000);
   };
 
   const playSong = (song: { note: PianoKey; time: number; duration?: number }[], volume: number = 1) => {

@@ -42,9 +42,10 @@ export default function AnswerDrawer({
         correctAnswers.current = correctAnswers.current + 1;
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         playSFX(correctSFX);
+      } else {
+        incorrectAnswers.current = incorrectAnswers.current + 1;
       }
       if (validateFunction === false && lives !== undefined && !currentUser?.is_subscribed) {
-        incorrectAnswers.current = incorrectAnswers.current + 1;
         setLives(lives - 1);
       }
     }

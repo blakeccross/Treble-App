@@ -4,9 +4,8 @@ import UserProvider from "@/context/user-context";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { DarkTheme, DefaultTheme, ThemeProvider } from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import * as Network from "expo-network";
-import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
+import { Stack } from "expo-router";
 import React, { useEffect } from "react";
 import { Platform } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -19,14 +18,8 @@ import tamaguiConfig from "../tamagui.config";
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
-// export const unstable_settings = {
-//   // Ensure any route can link back to `/`
-//   initialRouteName: "/",
-// };
-
 export default function RootLayout() {
   const colorScheme = useColorScheme();
-  const networkState = Network.useNetworkState();
 
   const [loaded] = useFonts({
     Inter: require("@tamagui/font-inter/otf/Inter-Medium.otf"),
@@ -40,7 +33,7 @@ export default function RootLayout() {
   });
 
   useEffect(() => {
-    if (loaded) {
+    if (!loaded) {
       SplashScreen.hideAsync();
     }
   }, [loaded]);
@@ -58,10 +51,6 @@ export default function RootLayout() {
     }
   }, []);
 
-  if (!loaded) {
-    return null;
-  }
-
   return (
     <TamaguiProvider config={tamaguiConfig} defaultTheme={colorScheme || "light"}>
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
@@ -70,9 +59,7 @@ export default function RootLayout() {
             <GestureHandlerRootView>
               <Stack
                 screenOptions={{
-                  // header: (props) => <Header {...props} />,
                   headerTitle: (props) => <H4 fontWeight={600}>{props.children}</H4>,
-                  //headerBackTitleVisible: false,
                 }}
               >
                 <Stack.Screen name="(auth)" options={{ headerShown: false }} />

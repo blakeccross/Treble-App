@@ -1,12 +1,11 @@
 import { Profile } from "@/types";
 import { supabase } from "@/utils/supabase";
-import { router, usePathname } from "expo-router";
+import { router, usePathname, useSegments } from "expo-router";
 import moment from "moment";
 import { createContext, useContext, useEffect } from "react";
 import { MMKV, useMMKVNumber, useMMKVObject, useMMKVString } from "react-native-mmkv";
 import Purchases from "react-native-purchases";
 import Toast from "react-native-toast-message";
-import * as Network from "expo-network";
 
 const storage = new MMKV();
 
@@ -28,10 +27,17 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
   const [lives, setLives] = useMMKVNumber("lives");
   const [livesRefreshTime, setLivesRefreshTime] = useMMKVString("livesRefreshTime");
   const pathname = usePathname();
+  const segments = useSegments();
 
   useEffect(() => {
     getUser();
   }, []);
+
+  useEffect(() => {
+    if (!segments.find((segment) => segment === "(auth)") && !currentUser) {
+      router.replace("/(auth)");
+    }
+  }, [currentUser, segments]);
 
   useEffect(() => {
     const checkLivesRefresh = () => {
@@ -81,15 +87,8 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
     } = supabase.auth.onAuthStateChange((event, session) => {
       const handleAuthChange = async () => {
         if (event === "SIGNED_OUT") {
-          //("USER SIGNED OUT");
         } else if (event === "SIGNED_IN" && session) {
-          // console.log("USER SIGNED IN");
           await handleGetUserData(session.user.id);
-
-          // router.dismissAll();
-          // router.push("/(tabs)/(home)");
-        } else if (session) {
-          // console.log(event);
         }
       };
       handleAuthChange();
