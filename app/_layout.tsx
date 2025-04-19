@@ -20,8 +20,6 @@ import { useMMKVBoolean } from "react-native-mmkv";
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const { currentUser } = useUser();
-  const [hasSeenWelcomeScreen, setHasSeenWelcomeScreen] = useMMKVBoolean("hasSeenWelcomeScreen");
   const colorScheme = useColorScheme();
 
   const [loaded] = useFonts({
@@ -54,14 +52,6 @@ export default function RootLayout() {
     }
   }, []);
 
-  // useEffect(() => {
-  //   if (hasSeenWelcomeScreen) {
-  //     router.push("/welcome");
-  //   }
-  // }, []);
-
-  console.log(hasSeenWelcomeScreen, currentUser);
-
   return (
     <TamaguiProvider config={tamaguiConfig} defaultTheme={colorScheme || "light"}>
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
@@ -70,7 +60,7 @@ export default function RootLayout() {
             <GestureHandlerRootView>
               <Stack initialRouteName="welcome">
                 <Stack.Screen name="welcome" options={{ headerShown: false, animation: "fade" }} />
-                <Stack.Screen name="(tabs)" redirect={!hasSeenWelcomeScreen && !currentUser} options={{ headerShown: false }} />
+                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
                 <Stack.Screen name="(auth)" options={{ headerShown: false, presentation: "modal" }} />
                 <Stack.Screen name="(questions)" options={{ headerShown: false, gestureEnabled: false }} />
                 <Stack.Screen name="(ear-training)" options={{ headerShown: false }} />

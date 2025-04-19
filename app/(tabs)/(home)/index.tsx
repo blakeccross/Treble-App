@@ -11,7 +11,7 @@ import { ChevronRight, Heart, RefreshCw, StarFull } from "@tamagui/lucide-icons"
 import { blue, red, yellow, yellowA } from "@tamagui/themes";
 import { Image } from "expo-image";
 import * as Network from "expo-network";
-import { Link, router } from "expo-router";
+import { Link, Redirect, router } from "expo-router";
 import React, { useContext, useEffect, useState } from "react";
 import { Dimensions, FlatList, useColorScheme } from "react-native";
 import { useMMKVBoolean, useMMKVObject } from "react-native-mmkv";
@@ -21,6 +21,7 @@ import { LinearGradient } from "tamagui/linear-gradient";
 
 export default function HomeScreen() {
   const { modules, refreshModules } = useContext(ModuleContext);
+  const [hasSeenWelcomeScreen, setHasSeenWelcomeScreen] = useMMKVBoolean("hasSeenWelcomeScreen");
   const { currentUser, lives } = useUser();
   const blurhash =
     "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
@@ -29,6 +30,10 @@ export default function HomeScreen() {
   const [openXPHistory, setOpenXPHistory] = useState(false);
   const [xpHistory, setXPHistory] = useMMKVObject<XPHistory[]>("xp_history");
   const networkState = Network.useNetworkState();
+
+  if (!hasSeenWelcomeScreen && !currentUser) {
+    return <Redirect href={"/welcome"} />;
+  }
 
   return (
     <>
