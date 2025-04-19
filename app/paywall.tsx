@@ -10,6 +10,7 @@ import { Button, H2, H4, ListItem, Paragraph, SizableText, Theme, View, XStack, 
 import { LinearGradient } from "tamagui/linear-gradient";
 import TrebleLogo from "../assets/trebleLogo";
 import { UserContext } from "../context/user-context";
+import { isSmallScreen } from "@/utils";
 
 export default function Paywall() {
   const { currentUser, handleUpdateUserInfo } = useContext(UserContext);
@@ -23,7 +24,7 @@ export default function Paywall() {
         const { customerInfo } = await Purchases.purchasePackage(offerings.all.monthly_test.availablePackages[0]);
         if (typeof customerInfo.entitlements.active["pro"] !== "undefined") {
           await handleUpdateUserInfo({ is_subscribed: true });
-          router.dismiss();
+          router.dismissAll();
         }
       }
     } catch (error) {
@@ -60,7 +61,7 @@ export default function Paywall() {
                     autoPlay
                     loop={false}
                     style={{
-                      width: "100%",
+                      width: isSmallScreen ? "100%" : "50%",
                       aspectRatio: 2.5 / 2,
                     }}
                     source={require("@/assets/lottie/gopro.json")}

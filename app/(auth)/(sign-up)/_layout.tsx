@@ -17,7 +17,7 @@ export default function TabLayout() {
       <SignUpProvider>
         <ConditionalHeader />
         <Stack screenOptions={{ gestureEnabled: false }}>
-          <Stack.Screen name="index" options={{ headerShown: false }} />
+          <Stack.Screen name="name" options={{ headerShown: false }} />
           <Stack.Screen name="email" options={{ headerShown: false, animation: "simple_push" }} />
           <Stack.Screen name="password" options={{ headerShown: false, animation: "simple_push" }} />
           <Stack.Screen name="instrument" options={{ headerShown: false, animation: "simple_push" }} />

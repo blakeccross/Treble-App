@@ -73,11 +73,10 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
       }
       router.push("/(tabs)/(home)");
     } else {
-      setCurrentUser(undefined);
-
-      if (pathname !== "/welcome" && pathname !== "/") {
-        router.replace("/(auth)");
-      }
+      // setCurrentUser(undefined);
+      // if (pathname !== "/welcome" && pathname !== "/") {
+      //   router.replace("/(auth)");
+      // }
     }
   }
 
@@ -124,7 +123,12 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
     const updatedUser = { ...(currentUser || {}), ...info } as Profile;
     setCurrentUser(updatedUser);
 
-    return await supabase.from("profiles").update(info).eq("id", currentUser?.id).select();
+    // Only update user if they've created an account
+    if (currentUser?.id) {
+      return await supabase.from("profiles").update(info).eq("id", currentUser?.id).select();
+    } else {
+      return true;
+    }
   }
 
   async function handleSignOut() {
@@ -143,7 +147,7 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
       });
     } else {
       storage.clearAll();
-      router.replace("/(auth)");
+      // router.replace("/(auth)");
     }
   }
 

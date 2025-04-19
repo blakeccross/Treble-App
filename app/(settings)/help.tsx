@@ -44,7 +44,7 @@ export default function HelpSettings() {
     <SafeAreaView>
       <YStack padding="$3">
         <XStack alignItems="center" justifyContent="space-between">
-          <Pressable onPress={() => router.dismissTo("/(settings)")}>
+          <Pressable onPress={() => router.dismissTo("/(settings)/settings")}>
             <X size="$3" />
           </Pressable>
           <H5 fontWeight={500}>Help</H5>

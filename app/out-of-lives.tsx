@@ -1,17 +1,15 @@
 import { UserContext } from "@/context/user-context";
 import { Check, HeartCrack, Star } from "@tamagui/lucide-icons";
-import { Image } from "expo-image";
 import { router } from "expo-router";
 import moment from "moment";
-import React, { useContext, useEffect, useState } from "react";
-import { Modal, SafeAreaView } from "react-native";
+import React, { useContext } from "react";
+import { SafeAreaView } from "react-native";
 import Purchases from "react-native-purchases";
-import { Button, H1, H2, H3, H4, ListItem, Paragraph, Separator, View, XStack, YGroup, YStack } from "tamagui";
+import { Button, H2, H3, ListItem, Paragraph, Separator, View, XStack, YGroup, YStack } from "tamagui";
 import { LinearGradient } from "tamagui/linear-gradient";
 
 export default function OutOfLives() {
   const { currentUser, handleUpdateUserInfo, livesRefreshTime } = useContext(UserContext);
-  const [modalVisible, setModalVisible] = useState(false);
 
   async function handleTryForFree() {
     if (await Purchases.isConfigured()) {
@@ -23,7 +21,7 @@ export default function OutOfLives() {
       }
     }
   }
-  console.log(livesRefreshTime);
+
   return (
     <View backgroundColor="$background" flex={1}>
       {!currentUser?.is_subscribed ? (

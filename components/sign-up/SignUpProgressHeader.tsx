@@ -33,12 +33,20 @@ export default function SignUpProgressHeader() {
 
   return (
     <Animated.View entering={FadeIn} exiting={SlideOutUp}>
-      <SafeAreaView />
-      <YStack gap="$2" padding="$3">
+      <YStack backgroundColor={"$blue10"}>
+        {/* <SafeAreaView /> */}
+        <XStack position="relative" justifyContent="space-between" alignItems="center" padding="$4">
+          <View width={"$3"} height={"$3"} themeInverse alignItems="center" justifyContent="center" onPress={() => router.back()}>
+            <ChevronLeft size={"$2"} color={"white"} />
+          </View>
+          <Paragraph fontSize={"$6"} color={"white"} fontWeight={800}>
+            Sign Up
+          </Paragraph>
+          <View width={"$3"} height={"$3"}></View>
+        </XStack>
+      </YStack>
+      {/* <YStack gap="$2" padding="$3">
         <XStack alignItems="center" justifyContent="space-between" gap="$2">
-          <Pressable onPress={() => router.back()}>
-            <ChevronLeft size="$3" />
-          </Pressable>
           <Progress value={progress} flex={1} backgroundColor={"$gray1"}>
             <Progress.Indicator
               // animation="bouncy"
@@ -46,7 +54,7 @@ export default function SignUpProgressHeader() {
             />
           </Progress>
         </XStack>
-      </YStack>
+      </YStack> */}
     </Animated.View>
   );
 }

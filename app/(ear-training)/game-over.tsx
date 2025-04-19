@@ -28,7 +28,9 @@ export default function Index() {
   useEffect(() => {
     if (!highScore || +score > highScore) {
       setHighScore(+score);
-      updateLeaderboard();
+      if (currentUser?.id) {
+        updateLeaderboard();
+      }
     }
   }, []);
 

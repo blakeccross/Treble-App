@@ -1,34 +1,32 @@
-import HeartModal from "@/components/Heart.modal";
 import LoadingIndicator from "@/components/loading";
 import Paywall from "@/components/paywall.modal";
 import XPHistoryModal from "@/components/XPHistory.modal";
 import { ModuleContext } from "@/context/module-context";
-import { UserContext } from "@/context/user-context";
+import { useUser } from "@/context/user-context";
 import { XPHistory } from "@/types";
 import { window } from "@/utils";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
-import { ChevronRight, Heart, StarFull } from "@tamagui/lucide-icons";
-import { blue, grayA, red, yellow, yellowA } from "@tamagui/themes";
+import { ChevronRight, Heart, RefreshCw, StarFull } from "@tamagui/lucide-icons";
+import { blue, red, yellow, yellowA } from "@tamagui/themes";
 import { Image } from "expo-image";
 import * as Network from "expo-network";
 import { Link, router } from "expo-router";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Dimensions, FlatList, useColorScheme } from "react-native";
-import { useMMKVObject } from "react-native-mmkv";
+import { useMMKVBoolean, useMMKVObject } from "react-native-mmkv";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Avatar, Button, Card, H3, H5, Paragraph, Progress, ScrollView, View, XStack, YStack } from "tamagui";
 import { LinearGradient } from "tamagui/linear-gradient";
 
 export default function HomeScreen() {
   const { modules, refreshModules } = useContext(ModuleContext);
-  const { currentUser, lives } = useContext(UserContext);
+  const { currentUser, lives } = useUser();
   const blurhash =
     "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
   const screenWidth = Dimensions.get("window").width;
   const [openPaywall, setOpenPaywall] = useState(false);
   const [openXPHistory, setOpenXPHistory] = useState(false);
-  const [openHeartModal, setOpenHeartModal] = useState(false);
   const [xpHistory, setXPHistory] = useMMKVObject<XPHistory[]>("xp_history");
   const networkState = Network.useNetworkState();
 
@@ -41,21 +39,29 @@ export default function HomeScreen() {
         zIndex={1}
         flex={1}
       >
-        <View padding="$5" paddingTop={0}>
+        <View padding="$5" paddingTop={"$2"}>
           <SafeAreaView edges={["top"]} />
 
           <XStack gap="$2" justifyContent="space-between" alignItems="center">
             <View width={"$10"} alignItems="flex-start">
-              <Link asChild href={"/profile"}>
-                <Avatar circular size="$3.5" pressStyle={{ scale: 0.95 }}>
-                  {currentUser?.avatar_url && <Avatar.Image accessibilityLabel="Cam" src={currentUser?.avatar_url} />}
-                  <Avatar.Fallback backgroundColor="$blue2" />
-                  <FontAwesome6 name="user-large" size={20} color={blue.blue7} />
-                </Avatar>
-              </Link>
+              {currentUser?.id ? (
+                <Link asChild href={"/profile"}>
+                  <Avatar circular size="$3.5" pressStyle={{ scale: 0.95 }}>
+                    {currentUser?.avatar_url && <Avatar.Image accessibilityLabel="Cam" src={currentUser?.avatar_url} />}
+                    <Avatar.Fallback backgroundColor="$blue2" />
+                    <FontAwesome6 name="user-large" size={20} color={blue.blue7} />
+                  </Avatar>
+                </Link>
+              ) : (
+                <Link asChild href={"/(auth)/welcome"}>
+                  <Paragraph themeInverse textDecorationLine="underline">
+                    Log in / Sign up
+                  </Paragraph>
+                </Link>
+              )}
             </View>
 
-            <XStack gap="$3" onPress={() => router.push("/(tabs)/(home)/hearts")}>
+            <XStack gap="$3" onPress={() => router.push("/hearts")}>
               {!currentUser?.is_subscribed && (
                 <XStack gap="$1.5" alignItems="center">
                   <Heart size="$1.5" color={"$red10"} fill={red.red10} />
@@ -75,7 +81,6 @@ export default function HomeScreen() {
           </XStack>
         </View>
 
-        {/* <HeartModal openHeartModal={openHeartModal} setOpenHeartModal={setOpenHeartModal} /> */}
         <XPHistoryModal openXPHistory={openXPHistory} setOpenXPHistory={setOpenXPHistory} xpHistory={xpHistory} />
 
         <ScrollView
@@ -85,7 +90,7 @@ export default function HomeScreen() {
           borderTopRightRadius={"$10"}
           zIndex={1}
           onScroll={({ nativeEvent }) => {
-            if (nativeEvent.contentOffset.y < -200 && !modules?.loading) {
+            if (nativeEvent.contentOffset.y < -200 && !modules?.loading && networkState.isConnected) {
               // Adjust threshold as needed
               refreshModules();
             }
@@ -102,15 +107,17 @@ export default function HomeScreen() {
             )}
             <XStack $sm={{ flexDirection: "column" }} flex={1} padding="$3" gap="$3">
               {modules && modules.loading ? (
-                <View height={500} justifyContent="center" alignItems="center">
+                <View width={"100%"} height={500} justifyContent="center" alignItems="center">
                   <LoadingIndicator />
                 </View>
               ) : modules?.error ? (
-                <View height={500} justifyContent="center" alignItems="center">
-                  <Paragraph textAlign="center" marginTop={"$2"}>
+                <View width={"100%"} height={500} justifyContent="center" alignItems="center">
+                  <Paragraph textAlign="center" marginBottom={"$2"}>
                     Error loading modules
                   </Paragraph>
-                  <Button onPress={refreshModules}>Try again</Button>
+                  <Button icon={RefreshCw} onPress={refreshModules}>
+                    Try again
+                  </Button>
                 </View>
               ) : (
                 modules &&
@@ -184,7 +191,7 @@ export default function HomeScreen() {
         </ScrollView>
         <View
           backgroundColor={"$background"}
-          style={{ position: "absolute", zIndex: 0, bottom: 0, left: 0, right: 0, height: window.height * 0.5 }}
+          style={{ position: "absolute", zIndex: 0, bottom: 0, left: 0, right: 0, height: window.height * 0.6 }}
         />
       </LinearGradient>
     </>

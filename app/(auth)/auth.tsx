@@ -9,7 +9,7 @@ export default function Auth() {
   return (
     <>
       <YStack backgroundColor={"$blue10"}>
-        <SafeAreaView edges={["top"]} />
+        {/* <SafeAreaView edges={["top"]} /> */}
         <XStack position="relative" justifyContent="space-between" alignItems="center" padding="$4">
           <View width={"$3"} height={"$3"} themeInverse alignItems="center" justifyContent="center" onPress={() => router.back()}>
             <ChevronLeft size={"$2"} color={"white"} />

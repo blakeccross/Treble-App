@@ -5,31 +5,39 @@ import { FlatList, Pressable } from "react-native";
 
 import { Leaderboard } from "@/types";
 import { supabase } from "@/utils/supabase";
-import { Avatar, H3, H4, H5, Separator, Spinner, View, XStack } from "tamagui";
+import { Avatar, H3, H4, H5, Paragraph, Separator, Spinner, View, XStack } from "tamagui";
 import { SafeAreaView } from "react-native-safe-area-context";
+import * as Network from "expo-network";
 
 export default function LeaderBoard() {
   const { gameName } = useLocalSearchParams<{ gameName: string }>();
+  const networkState = Network.useNetworkState();
   const [leaderboard, setLeaderboard] = useState<Leaderboard[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isOffline, setIsOffline] = useState(true);
 
   useEffect(() => {
-    async function getLeaderboardData() {
-      setIsLoading(true);
-      let { data: leaderboardRes, error } = await supabase
-        .from("leaderboard")
-        .select("*, profile(full_name, avatar_url)")
-        .not(gameName, "is", null)
-        .order(gameName, { ascending: false })
-        .limit(100);
-      if (leaderboardRes) {
-        const leaderboardFormatted = leaderboardRes.filter((item) => item.profile.full_name);
-        setLeaderboard(leaderboardFormatted);
-      }
-      setIsLoading(false);
+    if (networkState.isConnected) {
+      getLeaderboardData();
+    } else {
+      setIsOffline(true);
     }
-    getLeaderboardData();
   }, []);
+
+  async function getLeaderboardData() {
+    setIsLoading(true);
+    let { data: leaderboardRes, error } = await supabase
+      .from("leaderboard")
+      .select("*, profile(full_name, avatar_url)")
+      .not(gameName, "is", null)
+      .order(gameName, { ascending: false })
+      .limit(100);
+    if (leaderboardRes) {
+      const leaderboardFormatted = leaderboardRes.filter((item) => item.profile.full_name);
+      setLeaderboard(leaderboardFormatted);
+    }
+    setIsLoading(false);
+  }
 
   return (
     <View backgroundColor={"$background"} flex={1}>
@@ -46,6 +54,11 @@ export default function LeaderBoard() {
           <XStack gap="$1" width={"$3"} />
         </XStack>
       </View>
+      {isOffline && (
+        <View flex={1} justifyContent="center" alignItems="center">
+          <Paragraph>Must be online to view leaderboard</Paragraph>
+        </View>
+      )}
       {isLoading ? (
         <Spinner />
       ) : (

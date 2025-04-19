@@ -1,15 +1,16 @@
-import React, { useEffect, useState } from "react";
-import { Button, Card, H2, H3, H4, H5, Paragraph, Separator, View, YStack } from "tamagui";
-import { StyleSheet, Pressable, TouchableOpacity } from "react-native";
-import moment from "moment";
-import { useUser } from "../../../context/user-context";
 import { Heart, HeartCrack, LockOpen } from "@tamagui/lucide-icons";
-import Animated, { Easing, FadeIn, SlideInDown, SlideOutDown } from "react-native-reanimated";
-import { Link, router } from "expo-router";
+import { router, usePathname } from "expo-router";
+import moment from "moment";
+import React, { useEffect, useState } from "react";
+import { Pressable, StyleSheet } from "react-native";
+import Animated, { FadeIn } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Button, Card, H2, H3, Paragraph, View, YStack } from "tamagui";
+import { useUser } from "@/context/user-context";
 
 export default function Hearts() {
   const { lives, livesRefreshTime } = useUser();
+  const pathname = usePathname();
   const [countdown, setCountdown] = useState<string>("");
 
   useEffect(() => {
@@ -39,11 +40,7 @@ export default function Hearts() {
     >
       <Pressable onPress={() => router.dismiss()} style={StyleSheet.absoluteFill} />
 
-      <Animated.View
-        style={{ width: "100%" }}
-        // entering={SlideInDown.duration(750).easing(Easing.quad)}
-        // exiting={SlideOutDown.duration(750).easing(Easing.quad)}
-      >
+      <View style={{ width: "100%" }}>
         <Card
           flex={0}
           width={"100%"}
@@ -73,13 +70,20 @@ export default function Hearts() {
                 )}
               </View>
             </View>
-            <Button onPress={() => router.push("/paywall")} fontWeight={800} fontSize={"$6"} height={"$4"}>
-              <LockOpen size={"$1"} />
+            <Button
+              icon={LockOpen}
+              onPress={() => {
+                router.navigate("/paywall");
+              }}
+              fontWeight={800}
+              fontSize={"$6"}
+              height={"$4"}
+            >
               Unlock unlimited hearts
             </Button>
           </YStack>
         </Card>
-      </Animated.View>
+      </View>
       <SafeAreaView edges={["bottom"]} />
     </Animated.View>
   );

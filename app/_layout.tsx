@@ -1,11 +1,11 @@
 import { toastConfig } from "@/components/toastConfig";
 import ModuleProvider from "@/context/module-context";
-import UserProvider from "@/context/user-context";
+import UserProvider, { useUser } from "@/context/user-context";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { DarkTheme, DefaultTheme, ThemeProvider } from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
-import { Stack } from "expo-router";
+import { router, Stack } from "expo-router";
 import React, { useEffect } from "react";
 import { Platform } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -14,11 +14,14 @@ import "react-native-reanimated";
 import Toast from "react-native-toast-message";
 import { H4, TamaguiProvider } from "tamagui";
 import tamaguiConfig from "../tamagui.config";
+import { useMMKVBoolean } from "react-native-mmkv";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
+  const { currentUser } = useUser();
+  const [hasSeenWelcomeScreen, setHasSeenWelcomeScreen] = useMMKVBoolean("hasSeenWelcomeScreen");
   const colorScheme = useColorScheme();
 
   const [loaded] = useFonts({
@@ -51,24 +54,30 @@ export default function RootLayout() {
     }
   }, []);
 
+  // useEffect(() => {
+  //   if (hasSeenWelcomeScreen) {
+  //     router.push("/welcome");
+  //   }
+  // }, []);
+
+  console.log(hasSeenWelcomeScreen, currentUser);
+
   return (
     <TamaguiProvider config={tamaguiConfig} defaultTheme={colorScheme || "light"}>
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
         <UserProvider>
           <ModuleProvider>
             <GestureHandlerRootView>
-              <Stack
-                screenOptions={{
-                  headerTitle: (props) => <H4 fontWeight={600}>{props.children}</H4>,
-                }}
-              >
-                <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+              <Stack initialRouteName="welcome">
+                <Stack.Screen name="welcome" options={{ headerShown: false, animation: "fade" }} />
+                <Stack.Screen name="(tabs)" redirect={!hasSeenWelcomeScreen && !currentUser} options={{ headerShown: false }} />
+                <Stack.Screen name="(auth)" options={{ headerShown: false, presentation: "modal" }} />
                 <Stack.Screen name="(questions)" options={{ headerShown: false, gestureEnabled: false }} />
                 <Stack.Screen name="(ear-training)" options={{ headerShown: false }} />
                 <Stack.Screen name="(settings)" options={{ headerShown: false }} />
                 <Stack.Screen name="out-of-lives" options={{ headerShown: false, presentation: "modal" }} />
                 <Stack.Screen name="paywall" options={{ headerShown: false, presentation: "modal" }} />
+                <Stack.Screen name="hearts" options={{ headerShown: false, presentation: "transparentModal", animation: "slide_from_bottom" }} />
                 <Stack.Screen name="+not-found" />
               </Stack>
               <Toast config={toastConfig} topOffset={60} />

@@ -6,9 +6,13 @@ import { Alert, FlatList, Pressable, SafeAreaView } from "react-native";
 import { H4, H5, XStack, YStack } from "tamagui";
 
 export default function ProfileSettings() {
-  const { handleSignOut } = useUser();
+  const { currentUser, handleSignOut } = useUser();
   const menuItems = [
-    { name: "Profile", href: "/(settings)/profile", icon: <User size="$2" /> },
+    {
+      name: currentUser?.id ? "Profile" : "Create Profile",
+      href: currentUser?.id ? "/(settings)/profile" : "(auth)/welcome",
+      icon: <User size="$2" />,
+    },
     { name: "Appearance", href: "/(settings)/appearance", icon: <Moon size="$1.5" /> },
     { name: "Audio", href: "/(settings)/audio", icon: <Volume2 /> },
     { name: "Help", href: "/(settings)/help", icon: <HelpCircle size="$1.5" /> },
@@ -16,8 +20,6 @@ export default function ProfileSettings() {
   ];
 
   async function handleLogout() {
-    // await supabase.auth.signOut();
-    // router.push("/(auth)/login");
     Alert.alert("Log Out", "Are you sure you want to log out?", [
       { text: "Cancel", style: "cancel" },
       {
@@ -57,14 +59,16 @@ export default function ProfileSettings() {
             </Link>
           )}
           ListFooterComponent={
-            <Pressable onPress={handleLogout}>
-              <XStack alignItems="center" justifyContent="space-between" paddingVertical="$3" borderBottomWidth={1} borderBottomColor="$gray7">
-                <XStack alignItems="center" gap="$2">
-                  <Lock size="$1.5" color="$red9" />
-                  <H4 color="$red9">Log out</H4>
+            currentUser?.id ? (
+              <Pressable onPress={handleLogout}>
+                <XStack alignItems="center" justifyContent="space-between" paddingVertical="$3" borderBottomWidth={1} borderBottomColor="$gray7">
+                  <XStack alignItems="center" gap="$2">
+                    <Lock size="$1.5" color="$red9" />
+                    <H4 color="$red9">Log out</H4>
+                  </XStack>
                 </XStack>
-              </XStack>
-            </Pressable>
+              </Pressable>
+            ) : null
           }
         />
 

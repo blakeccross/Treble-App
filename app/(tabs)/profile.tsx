@@ -83,28 +83,32 @@ export default function TabTwoScreen() {
   return (
     <>
       <ScrollView contentContainerStyle={{ paddingBottom: 200 }}>
-        {currentUser?.avatar_url ? (
-          <Pressable onPress={pickImage}>
-            <Image source={currentUser.avatar_url} style={{ width: "100%", height: size.$19 }}>
+        {currentUser?.id ? (
+          currentUser?.avatar_url ? (
+            <Pressable onPress={pickImage}>
+              <Image source={currentUser.avatar_url} style={{ width: "100%", height: size.$19 }}>
+                <SafeAreaView edges={["right", "left", "top"]} />
+              </Image>
+            </Pressable>
+          ) : (
+            <LinearGradient
+              colors={["$blue6", "$blue8"]}
+              start={[0.3, 1]}
+              end={[0, 0]}
+              width={"100%"}
+              height={"$19"}
+              justifyContent="center"
+              alignItems="center"
+            >
               <SafeAreaView edges={["right", "left", "top"]} />
-            </Image>
-          </Pressable>
-        ) : (
-          <LinearGradient
-            colors={["$blue6", "$blue8"]}
-            start={[0.3, 1]}
-            end={[0, 0]}
-            width={"100%"}
-            height={"$19"}
-            justifyContent="center"
-            alignItems="center"
-          >
-            <SafeAreaView edges={["right", "left", "top"]} />
 
-            <Button variant="outlined" chromeless width={"$15"} onPress={pickImage}>
-              + Add Profile Photo
-            </Button>
-          </LinearGradient>
+              <Button variant="outlined" chromeless width={"$15"} onPress={pickImage}>
+                + Add Profile Photo
+              </Button>
+            </LinearGradient>
+          )
+        ) : (
+          <SafeAreaView edges={["top"]} />
         )}
 
         <YStack marginHorizontal="$4">
@@ -126,7 +130,7 @@ export default function TabTwoScreen() {
                 </LinearGradient>
               )}
             </XStack>
-            <Link asChild href={{ pathname: "/(settings)" }}>
+            <Link asChild href={{ pathname: "/(settings)/settings" }}>
               <Button variant="outlined" color={"$gray10"} fontWeight={600} pressStyle={{ scale: 0.95 }}>
                 <Settings size={"$1"} color={"$gray10"} />
                 Settings
