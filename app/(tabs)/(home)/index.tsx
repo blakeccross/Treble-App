@@ -30,6 +30,7 @@ export default function HomeScreen() {
   const [openXPHistory, setOpenXPHistory] = useState(false);
   const [xpHistory, setXPHistory] = useMMKVObject<XPHistory[]>("xp_history");
   const networkState = Network.useNetworkState();
+  const colorScheme = useColorScheme();
 
   if (!hasSeenWelcomeScreen && !currentUser) {
     return <Redirect href={"/welcome"} />;
@@ -38,7 +39,7 @@ export default function HomeScreen() {
   return (
     <>
       <LinearGradient
-        colors={useColorScheme() === "light" ? ["$blue10", "$blue8"] : ["$blue3", "$blue5"]}
+        colors={colorScheme === "light" ? ["$blue10", "$blue8"] : ["$blue3", "$blue5"]}
         start={[0.3, 1]}
         end={[0, 0]}
         zIndex={1}
@@ -132,6 +133,7 @@ export default function HomeScreen() {
                     scrollEnabled={false}
                     keyExtractor={(item) => item.id.toString()}
                     contentContainerStyle={{ gap: 15, paddingBottom: 100 }}
+                    style={{ minHeight: 300 }}
                     renderItem={({ item: module }) => (
                       <Link href={`/module-overview/${module?.id}`} disabled={!module.is_available} asChild key={module.id}>
                         <Card

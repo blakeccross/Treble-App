@@ -3,10 +3,13 @@ import { ArrowLeft, ChevronRight, HelpCircle, Lock, Moon, User, Volume2 } from "
 import { Link, RelativePathString, router } from "expo-router";
 import React from "react";
 import { Alert, FlatList, Pressable, SafeAreaView } from "react-native";
+import { useMMKVBoolean } from "react-native-mmkv";
 import { H4, H5, XStack, YStack } from "tamagui";
 
 export default function ProfileSettings() {
   const { currentUser, handleSignOut } = useUser();
+  const [hasSeenWelcomeScreen, setHasSeenWelcomeScreen] = useMMKVBoolean("hasSeenWelcomeScreen");
+
   const menuItems = [
     {
       name: currentUser?.id ? "Profile" : "Create Profile",
@@ -24,7 +27,11 @@ export default function ProfileSettings() {
       { text: "Cancel", style: "cancel" },
       {
         text: "Log Out",
-        onPress: handleSignOut,
+        onPress: () => {
+          handleSignOut();
+          // setHasSeenWelcomeScreen(true);
+          router.replace("/(tabs)/(home)");
+        },
       },
     ]);
   }

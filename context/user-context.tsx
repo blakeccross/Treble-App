@@ -3,7 +3,7 @@ import { supabase } from "@/utils/supabase";
 import { router, usePathname, useSegments } from "expo-router";
 import moment from "moment";
 import { createContext, useContext, useEffect } from "react";
-import { MMKV, useMMKVNumber, useMMKVObject, useMMKVString } from "react-native-mmkv";
+import { MMKV, useMMKVBoolean, useMMKVNumber, useMMKVObject, useMMKVString } from "react-native-mmkv";
 import Purchases from "react-native-purchases";
 import Toast from "react-native-toast-message";
 
@@ -26,18 +26,11 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
   const [currentUser, setCurrentUser] = useMMKVObject<Profile>("user");
   const [lives, setLives] = useMMKVNumber("lives");
   const [livesRefreshTime, setLivesRefreshTime] = useMMKVString("livesRefreshTime");
-  const pathname = usePathname();
-  const segments = useSegments();
+  const [hasSeenWelcomeScreen, setHasSeenWelcomeScreen] = useMMKVBoolean("hasSeenWelcomeScreen");
 
   useEffect(() => {
     getUser();
   }, []);
-
-  // useEffect(() => {
-  //   if (!segments.find((segment) => segment === "(auth)") && !currentUser) {
-  //     router.replace("/(auth)");
-  //   }
-  // }, [currentUser, segments]);
 
   useEffect(() => {
     const checkLivesRefresh = () => {
@@ -146,9 +139,14 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
         text1: "Error trying to sign user out",
       });
     } else {
-      storage.clearAll();
-      // router.replace("/(auth)");
+      // Get all keys from storage
+      const allKeys = storage.getAllKeys();
+      // Filter out the keys we want to keep
+      const keysToClear = allKeys.filter((key) => key !== "hasSeenWelcomeScreen" && key !== "modules");
+      // Clear each key individually
+      keysToClear.forEach((key) => storage.delete(key));
     }
+    return Promise.resolve();
   }
 
   function updatedLives(value: number) {
