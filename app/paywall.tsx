@@ -1,12 +1,12 @@
-import { Check, Gamepad, Heart, Star } from "@tamagui/lucide-icons";
+import { Check, Gamepad, Heart, Star, X } from "@tamagui/lucide-icons";
 import { blue } from "@tamagui/themes";
 import { BlurView } from "expo-blur";
 import { router } from "expo-router";
 import LottieView from "lottie-react-native";
 import React, { useContext, useState } from "react";
-import { ActivityIndicator, Alert, SafeAreaView, ScrollView } from "react-native";
+import { ActivityIndicator, Alert, SafeAreaView, ScrollView, Linking } from "react-native";
 import Purchases from "react-native-purchases";
-import { Button, H2, H4, ListItem, Paragraph, SizableText, Theme, View, XStack, YStack } from "tamagui";
+import { Button, H2, H4, ListItem, Paragraph, Separator, SizableText, Theme, View, XStack, YStack } from "tamagui";
 import { LinearGradient } from "tamagui/linear-gradient";
 import TrebleLogo from "../assets/trebleLogo";
 import { UserContext } from "../context/user-context";
@@ -45,6 +45,14 @@ export default function Paywall() {
     }
   }
 
+  async function handleRestorePurchase() {
+    try {
+      await Purchases.restorePurchases();
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   return (
     <>
       {!currentUser?.is_subscribed ? (
@@ -55,6 +63,17 @@ export default function Paywall() {
             </View>
           ) : (
             <View paddingHorizontal="$4" flex={1} height={"100%"} justifyContent="space-between">
+              <View position="absolute" top="$4" right="$4" zIndex={1}>
+                <Button
+                  circular
+                  backgroundColor={"$gray1"}
+                  size={"$2"}
+                  pressStyle={{ backgroundColor: "$gray2" }}
+                  onPress={() => router.dismissAll()}
+                >
+                  <X size="$1" color={"$gray12"} />
+                </Button>
+              </View>
               <ScrollView>
                 <View justifyContent="flex-start" alignItems="center">
                   <LottieView
@@ -112,9 +131,37 @@ export default function Paywall() {
                 >
                   Try for $0.00
                 </Button>
-                <Button unstyled color={"$gray12Dark"} textAlign="center" padding="$4" onPress={() => router.dismissAll()}>
-                  No Thanks
+                <Paragraph fontSize={"$1"} marginTop="$2" themeInverse textAlign="center" opacity={0.6}>
+                  3 days for free, then $3.99/month
+                </Paragraph>
+                <Button marginTop="$2" unstyled color={"$gray12Dark"} textAlign="center" padding="$4" onPress={handleRestorePurchase}>
+                  Restore Purchase
                 </Button>
+                <XStack justifyContent="center" alignItems="center" gap="$4">
+                  <Paragraph
+                    marginTop="$2"
+                    themeInverse
+                    textAlign="center"
+                    opacity={0.6}
+                    onPress={() => Linking.openURL("https://treblemusictheory.vercel.app/privacy-policy")}
+                    style={{ textDecorationLine: "underline" }}
+                  >
+                    Privacy Policy
+                  </Paragraph>
+                  <Paragraph
+                    marginTop="$2"
+                    themeInverse
+                    textAlign="center"
+                    opacity={0.6}
+                    onPress={() => Linking.openURL("https://treblemusictheory.vercel.app/terms")}
+                    style={{ textDecorationLine: "underline" }}
+                  >
+                    Terms of Service
+                  </Paragraph>
+                </XStack>
+                {/* <Button unstyled color={"$gray12Dark"} textAlign="center" padding="$4" onPress={() => router.dismissAll()}>
+                  No Thanks
+                </Button> */}
                 <SafeAreaView />
               </View>
             </View>

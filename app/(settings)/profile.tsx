@@ -6,7 +6,7 @@ import * as ImagePicker from "expo-image-picker";
 import { router } from "expo-router";
 import React, { useContext, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { Pressable, SafeAreaView } from "react-native";
+import { Alert, Pressable, SafeAreaView } from "react-native";
 import Toast from "react-native-toast-message";
 import { Avatar, Button, H5, Input, Label, ScrollView, Theme, View, XStack, YStack } from "tamagui";
 
@@ -89,6 +89,19 @@ export default function ProfileSettings() {
       }
     }
   };
+
+  function handleRemoveAccount() {
+    Alert.alert("Remove Account", "Are you sure you want to remove your account?", [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Remove",
+        style: "destructive",
+        onPress: async () => {
+          const { data, error } = await supabase.auth.admin.deleteUser(currentUser?.id || "");
+        },
+      },
+    ]);
+  }
 
   return (
     <SafeAreaView>
@@ -178,14 +191,21 @@ export default function ProfileSettings() {
             name="password"
           />
 
+          <Button fontWeight={600} fontSize={"$7"} height={"$5"} marginBottom="$2" onPress={handleSubmit(handleUpdate)}>
+            Update
+          </Button>
+
           <Button
+            variant="outlined"
+            borderColor={"$red8"}
+            backgroundColor={"$red3"}
+            color={"$red9"}
             fontWeight={600}
             fontSize={"$7"}
             height={"$5"}
-            // onPress={handleUpdate}
-            onPress={handleSubmit(handleUpdate)}
+            onPress={handleRemoveAccount}
           >
-            Update
+            Delete Account
           </Button>
         </YStack>
       </ScrollView>
