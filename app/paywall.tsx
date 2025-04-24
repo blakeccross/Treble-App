@@ -28,28 +28,22 @@ export default function Paywall() {
         }
       }
     } catch (error) {
-      Alert.alert("Error purchasing", "Please try again later or contact support", [
-        {
-          text: "OK",
-          onPress: () => {},
-        },
-        {
-          text: "Help",
-          onPress: () => {
-            router.replace("/(settings)/help");
+      if (error instanceof Error && error.message !== "Purchase was cancelled.") {
+        Alert.alert("Error purchasing", "Please try again later or contact support", [
+          {
+            text: "OK",
+            onPress: () => {},
           },
-        },
-      ]);
+          {
+            text: "Help",
+            onPress: () => {
+              router.replace("/(settings)/help");
+            },
+          },
+        ]);
+      }
     } finally {
       setIsLoading(false);
-    }
-  }
-
-  async function handleRestorePurchase() {
-    try {
-      await Purchases.restorePurchases();
-    } catch (error) {
-      console.error(error);
     }
   }
 
@@ -129,15 +123,12 @@ export default function Paywall() {
                   fontSize={"$6"}
                   onPress={handleTryForFree}
                 >
-                  Try for $0.00
+                  Try for Free
                 </Button>
-                <Paragraph fontSize={"$1"} marginTop="$2" themeInverse textAlign="center" opacity={0.6}>
+                <Paragraph fontSize={"$1"} marginTop="$2" themeInverse textAlign="center">
                   3 days for free, then $3.99/month
                 </Paragraph>
-                <Button marginTop="$2" unstyled color={"$gray12Dark"} textAlign="center" padding="$4" onPress={handleRestorePurchase}>
-                  Restore Purchase
-                </Button>
-                <XStack justifyContent="center" alignItems="center" gap="$4">
+                <XStack justifyContent="center" alignItems="center" gap="$4" marginTop="$2">
                   <Paragraph
                     marginTop="$2"
                     themeInverse

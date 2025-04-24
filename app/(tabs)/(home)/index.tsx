@@ -165,7 +165,7 @@ export default function HomeScreen() {
                                   <XStack gap="$4" flex={1}>
                                     <YStack>
                                       <Paragraph size={"$2"}>{"Chapter " + module.id}</Paragraph>
-                                      <H3 fontWeight={600}>{module.title}</H3>
+                                      <H3 fontWeight={"bold"}>{module.title}</H3>
                                       {module.completed && <Paragraph color={"$blue10"}>Completed</Paragraph>}
                                       {!module.is_available && (
                                         <Paragraph marginTop={"$2"} color={"$red9"} fontWeight={600}>

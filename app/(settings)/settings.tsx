@@ -1,14 +1,13 @@
 import { useUser } from "@/context/user-context";
-import { ArrowLeft, ChevronRight, HelpCircle, Lock, Moon, User, Volume2 } from "@tamagui/lucide-icons";
+import { ArrowLeft, ChevronRight, CreditCard, HelpCircle, Lock, Moon, User, Volume2 } from "@tamagui/lucide-icons";
 import { Link, RelativePathString, router } from "expo-router";
 import React from "react";
 import { Alert, FlatList, Pressable, SafeAreaView } from "react-native";
-import { useMMKVBoolean } from "react-native-mmkv";
+import Purchases from "react-native-purchases";
 import { H4, H5, XStack, YStack } from "tamagui";
 
 export default function ProfileSettings() {
   const { currentUser, handleSignOut } = useUser();
-  const [hasSeenWelcomeScreen, setHasSeenWelcomeScreen] = useMMKVBoolean("hasSeenWelcomeScreen");
 
   const menuItems = [
     {
@@ -34,6 +33,29 @@ export default function ProfileSettings() {
         },
       },
     ]);
+  }
+
+  async function handleRestorePurchase() {
+    try {
+      if (await Purchases.isConfigured()) {
+        await Purchases.restorePurchases();
+      }
+    } catch (error) {
+      if (error instanceof Error && error.message !== "The receipt is not valid.") {
+        Alert.alert("Error restoring purchase", "Please try again later or contact support", [
+          {
+            text: "OK",
+            onPress: () => {},
+          },
+          {
+            text: "Help",
+            onPress: () => {
+              router.replace("/(settings)/help");
+            },
+          },
+        ]);
+      }
+    }
   }
 
   return (
@@ -66,16 +88,26 @@ export default function ProfileSettings() {
             </Link>
           )}
           ListFooterComponent={
-            currentUser?.id ? (
-              <Pressable onPress={handleLogout}>
+            <>
+              <Pressable onPress={handleRestorePurchase}>
                 <XStack alignItems="center" justifyContent="space-between" paddingVertical="$3" borderBottomWidth={1} borderBottomColor="$gray7">
                   <XStack alignItems="center" gap="$2">
-                    <Lock size="$1.5" color="$red9" />
-                    <H4 color="$red9">Log out</H4>
+                    <CreditCard />
+                    <H4>Restore Purchase</H4>
                   </XStack>
                 </XStack>
               </Pressable>
-            ) : null
+              {currentUser?.id ? (
+                <Pressable onPress={handleLogout}>
+                  <XStack alignItems="center" justifyContent="space-between" paddingVertical="$3" borderBottomWidth={1} borderBottomColor="$gray7">
+                    <XStack alignItems="center" gap="$2">
+                      <Lock size="$1.5" color="$red9" />
+                      <H4 color="$red9">Log out</H4>
+                    </XStack>
+                  </XStack>
+                </Pressable>
+              ) : null}
+            </>
           }
         />
 
