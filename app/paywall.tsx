@@ -123,7 +123,7 @@ export default function Paywall() {
                   fontSize={"$6"}
                   onPress={handleTryForFree}
                 >
-                  Try for Free
+                  Start my 3-day trial
                 </Button>
                 <Paragraph fontSize={"$1"} marginTop="$2" themeInverse textAlign="center">
                   3 days for free, then $3.99/month

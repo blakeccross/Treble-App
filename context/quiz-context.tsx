@@ -54,9 +54,9 @@ export default function QuizProvider({ children }: { children: JSX.Element[] }) 
         (id): id is number => id !== undefined
       );
 
-      const baseXP = currentSection.section_item.length;
-      const livesPenalty = 3 - (lives || 0);
-      let XPGained = Math.max(0, baseXP - livesPenalty);
+      // const baseXP = currentSection.section_item.length;
+      // const livesPenalty = 3 - (lives || 0);
+      let XPGained = correctAnswers.current;
 
       const updates: Partial<typeof currentUser> = {
         completed_sections: completedSections,
@@ -65,7 +65,7 @@ export default function QuizProvider({ children }: { children: JSX.Element[] }) 
 
       if (moduleComplete) {
         updates.completed_modules = completedModules;
-        XPGained += 10;
+        // XPGained += 10;
       }
 
       const today = moment().startOf("day");
@@ -100,8 +100,11 @@ export default function QuizProvider({ children }: { children: JSX.Element[] }) 
 
   // Memoize the nextQuestion callback
   const nextQuestion = useCallback(() => {
-    if (currentSection && currentQuestionIndex < currentSection.section_item.length - 1) {
-      const nextQuestion = sortedQuestions[currentQuestionIndex + 1];
+    const nextQuestion = sortedQuestions[currentQuestionIndex + 1];
+    console.log("nextQuestion", currentQuestionIndex, sortedQuestions.length - 1);
+
+    const totalQuestions = Math.min(sortedQuestions.length - 1, 19); // Ensure max of 20 questions (0-19 index)
+    if (currentSection && currentQuestionIndex < totalQuestions && nextQuestion) {
       setCurrentQuestionIndex((prev) => prev + 1);
 
       router.replace({

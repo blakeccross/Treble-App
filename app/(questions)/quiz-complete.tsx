@@ -80,7 +80,7 @@ export default function Index() {
                   <>
                     <XStack justifyContent="space-between">
                       <Paragraph fontSize={"$6"} fontWeight={800}>
-                        Completed an entire module Bonus
+                        Completed Module Bonus
                       </Paragraph>
                       <Paragraph fontSize={"$6"} fontWeight={800}>
                         10 XP
