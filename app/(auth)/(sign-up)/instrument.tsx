@@ -15,7 +15,7 @@ type FormInput = {
 };
 
 export default function SignUpInstrument() {
-  const { handleUpdateUserInfo, setLives } = useUser();
+  const { handleUpdateUserInfo, currentUser } = useUser();
   const { form } = useSignUpForm();
   const [isLoading, setIsLoading] = useState(false);
   const instruments = ["🎸", "🎹", "🎻", "🎤", "🎷", "🥁", "🎺", "💻", "🪈", "🪗", "🪕", "🎛️"];
@@ -31,6 +31,7 @@ export default function SignUpInstrument() {
   const selectedInstrument = watch("instrument");
 
   async function onSubmit(data: FormInput) {
+    console.log("Form data being submitted:", data);
     setIsLoading(true);
     try {
       const { data: signUpData, error } = await supabase.auth.signUp({
@@ -39,10 +40,16 @@ export default function SignUpInstrument() {
         options: {
           data: {
             full_name: form.fullName,
-            instrument: form.instrument,
+            instrument: selectedInstrument,
+            active_days: currentUser?.active_days ?? null,
+            completed_modules: currentUser?.completed_modules ?? null,
+            completed_sections: currentUser?.completed_sections ?? null,
+            total_xp: currentUser?.total_xp ?? null,
           },
         },
       });
+
+      console.log("signUpDataerror", error);
 
       if (error) {
         Alert.alert("Something went wrong", error.message);

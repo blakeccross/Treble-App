@@ -59,6 +59,7 @@ export default function SignUpPassword() {
                     value={value}
                     returnKeyType="done"
                     onSubmitEditing={() => handleSubmit(onSubmit)()}
+                    autoFocus
                   />
                 </Theme>
               </View>

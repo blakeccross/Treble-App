@@ -54,6 +54,7 @@ export default function SignUpName() {
                     value={value}
                     returnKeyType="next"
                     onSubmitEditing={() => handleSubmit(onSubmit)()}
+                    autoFocus
                   />
                 </Theme>
               </View>

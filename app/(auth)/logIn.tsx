@@ -85,6 +85,7 @@ export default function Login() {
                     // value={value}
                     returnKeyType="next"
                     onSubmitEditing={() => passwordRef?.current?.focus()}
+                    autoFocus
                   />
                 </Theme>
               </View>

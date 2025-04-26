@@ -1,3 +1,4 @@
+import { useUser } from "@/context/user-context";
 import { supabase } from "@/utils/supabase";
 import { router } from "expo-router";
 import React, { useRef } from "react";
@@ -12,6 +13,7 @@ type FormInput = {
 };
 
 export default function SignUp() {
+  const { currentUser, handleUpdateUserInfo } = useUser();
   const passwordRef = useRef<TextInput | null>(null);
   const confirmPasswordRef = useRef<TextInput | null>(null);
 
