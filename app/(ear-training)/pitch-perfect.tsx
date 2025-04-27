@@ -150,6 +150,7 @@ export default function PitchPerfect() {
       setTotalTime(5);
       answerOptions = notesHard;
     } else if (currentScore <= 50) {
+      answerOptions = notesHard;
       setTotalTime(3);
     }
     correctAnswer.current = "";
