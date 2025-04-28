@@ -9,7 +9,7 @@ import LottieView from "lottie-react-native";
 import React, { useState } from "react";
 import { ActivityIndicator, Alert, Linking, SafeAreaView, ScrollView } from "react-native";
 import Purchases from "react-native-purchases";
-import { Button, H2, H4, ListItem, Paragraph, SizableText, Theme, View, XStack, YStack } from "tamagui";
+import { Button, H2, H4, H5, ListItem, Paragraph, SizableText, Theme, View, XStack, YStack } from "tamagui";
 import { LinearGradient } from "tamagui/linear-gradient";
 
 export default function Paywall() {
@@ -122,13 +122,18 @@ export default function Paywall() {
                   fontWeight={800}
                   fontSize={"$6"}
                   onPress={handleTryForFree}
+                  unstyled
+                  padding="$2"
+                  borderRadius={"$4"}
                 >
-                  Start my 3-day trial
+                  <YStack>
+                    <H5 textAlign="center">Try for Free</H5>
+                    <Paragraph textAlign="center" fontSize={"$1"}>
+                      3 days for free, then $3.99/month
+                    </Paragraph>
+                  </YStack>
                 </Button>
-                <Paragraph fontSize={"$1"} marginTop="$2" themeInverse textAlign="center">
-                  3 days for free, then $3.99/month
-                </Paragraph>
-                <XStack justifyContent="center" alignItems="center" gap="$4" marginTop="$2">
+                <XStack justifyContent="center" alignItems="center" gap="$4" marginVertical="$2">
                   <Paragraph
                     marginTop="$2"
                     themeInverse

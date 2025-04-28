@@ -49,7 +49,6 @@ export default function SignUpInstrument() {
         },
       });
 
-      console.log("signUpDataerror", error);
 
       if (error) {
         Alert.alert("Something went wrong", error.message);
