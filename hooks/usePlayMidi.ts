@@ -20,9 +20,20 @@ export default function usePlayMidi() {
     // Define the chromatic scale
     const chromaticScale = ["c", "c#", "d", "d#", "e", "f", "f#", "g", "g#", "a", "a#", "b"];
 
+    const normalizeNote = (note: string) => {
+      const flatToSharp: Record<string, string> = {
+        db: "c#",
+        eb: "d#",
+        gb: "f#",
+        ab: "g#",
+        bb: "a#",
+      };
+      return flatToSharp[note] || note;
+    };
+
     // Get positions in chromatic scale
-    const pos1 = chromaticScale.indexOf(base1.toLowerCase());
-    const pos2 = chromaticScale.indexOf(base2.toLowerCase());
+    const pos1 = chromaticScale.indexOf(normalizeNote(base1.toLowerCase()));
+    const pos2 = chromaticScale.indexOf(normalizeNote(base2.toLowerCase()));
 
     // Calculate total semitones considering octaves
     const semitones = pos2 - pos1 + (octave2 - octave1) * 12;

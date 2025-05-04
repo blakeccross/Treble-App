@@ -14,7 +14,7 @@ export default function LeaderBoard() {
   const networkState = Network.useNetworkState();
   const [leaderboard, setLeaderboard] = useState<Leaderboard[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [isOffline, setIsOffline] = useState(true);
+  const [isOffline, setIsOffline] = useState(false);
 
   useEffect(() => {
     if (networkState.isConnected) {

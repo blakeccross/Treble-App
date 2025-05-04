@@ -19,6 +19,7 @@ const PAGE_WIDTH = window.width;
 const colorOptions = ["blue", "orange", "green", "red", "yellow", "purple", "pink"];
 const notes = ["C3", "D3", "E3", "F3", "G3", "A3", "B3"];
 const notesHard = ["C3", "C#3", "D3", "D#3", "E3", "F3", "F#3", "G3", "G#3", "A3", "A#3", "B3"];
+const notesHarder = ["C3", "C#3", "Db3", "D3", "D#3", "Eb3", "E3", "F3", "F#3", "Gb3", "G3", "G#3", "Ab3", "A3", "A#3", "Bb3", "B3"];
 
 const correctSFX = require("@/assets/audio/correct_sfx.mp3");
 const incorrectSFX = require("@/assets/audio/incorrect_sfx.mp3");
@@ -147,18 +148,19 @@ export default function PitchPerfect() {
     if (currentScore <= 10) {
       setTotalTime(10);
     } else if (currentScore <= 25) {
-      setTotalTime(5);
+      setTotalTime(6);
       answerOptions = notesHard;
     } else if (currentScore <= 50) {
-      answerOptions = notesHard;
-      setTotalTime(3);
+      answerOptions = notesHarder;
+      setTotalTime(4);
     }
-    correctAnswer.current = "";
 
     let randomNote = "C3";
-
     if (currentScore > 0) {
-      randomNote = answerOptions[Math.floor(Math.random() * notes.length)];
+      // Keep trying until we get a different note than the last one
+      do {
+        randomNote = answerOptions[Math.floor(Math.random() * answerOptions.length)];
+      } while (randomNote === correctAnswer.current);
     }
     correctAnswer.current = randomNote;
 
