@@ -1,17 +1,28 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import { supabase } from "@/utils/supabase";
 import { Module, SectionItem } from "@/types";
-import { UserContext } from "./user-context";
+import { useUser } from "./user-context";
 import * as FileSystem from "expo-file-system";
-import { useMMKVObject } from "react-native-mmkv";
+import { useMMKVNumber, useMMKVObject, useMMKVString } from "react-native-mmkv";
 
-type ModuleContextProps = { modules: { data?: Module[] | null; loading: boolean; error?: boolean } | undefined; refreshModules: () => void };
+type ModuleContextProps = {
+  modules: { data?: Module[] | null; loading: boolean; error?: boolean } | undefined;
+  refreshModules: () => void;
+  isModuleUpdateAvailable: boolean;
+};
 
 export const ModuleContext = createContext<ModuleContextProps>({} as ModuleContextProps);
 
 export default function ModuleProvider({ children }: { children: JSX.Element }) {
+  const { currentUser } = useUser();
   const [modules, setModules] = useMMKVObject<{ data?: Module[] | null; loading: boolean; error?: boolean }>("modules");
-  const { currentUser, handleUpdateUserInfo } = useContext(UserContext);
+  const [moduleVersion, setModuleVersion] = useMMKVNumber("module_versions");
+  const [latestModuleVersion, setLatestModuleVersion] = useState("");
+  const [isModuleUpdateAvailable, setIsModuleUpdateAvailable] = useState(false);
+
+  useEffect(() => {
+    getModuleVersions();
+  }, []);
 
   useEffect(() => {
     if (!modules?.data) {
@@ -26,11 +37,22 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
     }
   }, [currentUser?.completed_sections]);
 
+  async function getModuleVersions() {
+    const { data, error, status } = await supabase.from("module_update").select(`*`).order("created_at", { ascending: true }).limit(1);
+
+    if (data) {
+      if (moduleVersion !== data[0].version) {
+        setIsModuleUpdateAvailable(true);
+      }
+    }
+  }
+
   async function getModuleData() {
     setModules({ loading: true, error: false });
     try {
       // if (!session?.user) throw new Error('No user on the session!')
       const { data, error, status } = await supabase.from("module").select(`*, section(*, section_item(*))`).order("id", { ascending: true });
+      const { data: moduleUpdate } = await supabase.from("module_update").select(`*`).order("created_at", { ascending: true }).limit(1);
 
       if (error && status !== 406) {
         throw error;
@@ -46,6 +68,10 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
         }));
 
         setModules({ ...modules, data: updateCompletedModules(updateCompletedSections(sortedQuestions)), loading: false, error: false });
+        if (moduleUpdate) {
+          setModuleVersion(moduleUpdate[0].version);
+          setIsModuleUpdateAvailable(false);
+        }
       } else {
         setModules({ ...modules, loading: false, error: true });
       }
@@ -125,5 +151,5 @@ export default function ModuleProvider({ children }: { children: JSX.Element }) 
     return updatedModules;
   }
 
-  return <ModuleContext.Provider value={{ modules, refreshModules: getModuleData }}>{children}</ModuleContext.Provider>;
+  return <ModuleContext.Provider value={{ modules, refreshModules: getModuleData, isModuleUpdateAvailable }}>{children}</ModuleContext.Provider>;
 }

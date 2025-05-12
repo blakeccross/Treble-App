@@ -17,11 +17,12 @@ export default function LeaderBoard() {
   const [isOffline, setIsOffline] = useState(false);
 
   useEffect(() => {
-    if (networkState.isConnected) {
-      getLeaderboardData();
-    } else {
-      setIsOffline(true);
-    }
+    // if (networkState.isConnected) {
+    //   getLeaderboardData();
+    // } else {
+    //   setIsOffline(true);
+    // }
+    getLeaderboardData();
   }, []);
 
   async function getLeaderboardData() {
@@ -54,11 +55,11 @@ export default function LeaderBoard() {
           <XStack gap="$1" width={"$3"} />
         </XStack>
       </View>
-      {isOffline && (
+      {/* {isOffline && (
         <View flex={1} justifyContent="center" alignItems="center">
           <Paragraph>Must be online to view leaderboard</Paragraph>
         </View>
-      )}
+      )} */}
       {isLoading ? (
         <Spinner />
       ) : (

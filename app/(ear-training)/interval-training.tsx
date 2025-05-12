@@ -154,8 +154,8 @@ export default function Page() {
       semitones += 12;
     }
 
-    // Keep within one octave
-    return semitones % 12;
+    // Keep within one octave by wrapping around
+    return ((semitones - 1) % 12) + 1;
   }
 
   function getRandomInterval(minSemitones: number = 1, maxSemitones: number = 12): [string, string] {
@@ -167,6 +167,7 @@ export default function Page() {
     const possibleSecondNotes = notes.slice(startingNoteIndex + minSemitones, startingNoteIndex + maxSemitones + 1);
 
     const secondNote = possibleSecondNotes[Math.floor(Math.random() * possibleSecondNotes.length)];
+
     return [firstNote, secondNote];
   }
 
@@ -241,6 +242,7 @@ export default function Page() {
     // Generate random interval
     const [firstNote, secondNote] = getRandomInterval();
     const intervalDistance = calculateInterval(firstNote, secondNote);
+    console.log(firstNote, secondNote, intervalDistance);
 
     // (firstNote, secondNote, "intervalDistance", intervalDistance);
     currentInterval.current = {

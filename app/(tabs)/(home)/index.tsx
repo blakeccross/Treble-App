@@ -20,7 +20,7 @@ import { Avatar, Button, Card, H3, H5, Paragraph, Progress, ScrollView, View, XS
 import { LinearGradient } from "tamagui/linear-gradient";
 
 export default function HomeScreen() {
-  const { modules, refreshModules } = useContext(ModuleContext);
+  const { modules, refreshModules, isModuleUpdateAvailable } = useContext(ModuleContext);
   const [hasSeenWelcomeScreen, setHasSeenWelcomeScreen] = useMMKVBoolean("hasSeenWelcomeScreen");
   const { currentUser, lives } = useUser();
   const blurhash =
@@ -60,7 +60,7 @@ export default function HomeScreen() {
                 </Link>
               ) : (
                 <Link asChild href={"/(auth)/welcome"}>
-                  <Paragraph themeInverse textDecorationLine="underline">
+                  <Paragraph color={"white"} textDecorationLine="underline">
                     Log in / Sign up
                   </Paragraph>
                 </Link>
@@ -111,6 +111,7 @@ export default function HomeScreen() {
                 </Paragraph>
               </View>
             )}
+
             <XStack $sm={{ flexDirection: "column" }} flex={1} padding="$3" gap="$3">
               {modules && modules.loading ? (
                 <View width={"100%"} height={500} justifyContent="center" alignItems="center">
@@ -128,68 +129,82 @@ export default function HomeScreen() {
               ) : (
                 modules &&
                 modules.data && (
-                  <FlatList
-                    data={modules.data}
-                    scrollEnabled={false}
-                    keyExtractor={(item) => item.id.toString()}
-                    contentContainerStyle={{ gap: 15, paddingBottom: 100 }}
-                    style={{ minHeight: 300 }}
-                    renderItem={({ item: module }) => (
-                      <Link href={`/module-overview/${module?.id}`} disabled={!module.is_available} asChild key={module.id}>
-                        <Card
-                          borderRadius="$8"
-                          pressStyle={{ scale: 0.95 }}
-                          backgroundColor={"$blue1"}
-                          animation="bouncy"
-                          opacity={module.is_available ? 1 : 0.5}
-                        >
-                          <Card.Header padding="$4">
-                            <XStack gap="$4" flex={1}>
-                              <View position="relative">
-                                <Image
-                                  style={{ width: screenWidth * 0.2, height: screenWidth * 0.2, borderRadius: 10 }}
-                                  source={module.local_poster_uri}
-                                  placeholder={{ blurhash }}
-                                  contentFit="cover"
-                                  transition={1000}
-                                />
-                                {module.completed && (
-                                  <View position="absolute" right={"$-2"} top={"$-2"}>
-                                    <StarFull fill={yellowA.yellowA10} color={"$yellow10"} />
-                                  </View>
-                                )}
-                              </View>
+                  <>
+                    {isModuleUpdateAvailable && (
+                      <Button
+                        borderRadius={"$8"}
+                        marginHorizontal={"auto"}
+                        marginTop={"$2"}
+                        backgroundColor={"$blue10"}
+                        onPress={refreshModules}
+                        icon={RefreshCw}
+                      >
+                        Update available
+                      </Button>
+                    )}
+                    <FlatList
+                      data={modules.data}
+                      scrollEnabled={false}
+                      keyExtractor={(item) => item.id.toString()}
+                      contentContainerStyle={{ gap: 15, paddingBottom: 100 }}
+                      style={{ minHeight: 300 }}
+                      renderItem={({ item: module }) => (
+                        <Link href={`/module-overview/${module?.id}`} disabled={!module.is_available} asChild key={module.id}>
+                          <Card
+                            borderRadius="$8"
+                            pressStyle={{ scale: 0.95 }}
+                            backgroundColor={"$blue1"}
+                            animation="bouncy"
+                            opacity={module.is_available ? 1 : 0.5}
+                          >
+                            <Card.Header padding="$4">
+                              <XStack gap="$4" flex={1}>
+                                <View position="relative">
+                                  <Image
+                                    style={{ width: screenWidth * 0.2, height: screenWidth * 0.2, borderRadius: 10 }}
+                                    source={module.local_poster_uri}
+                                    placeholder={{ blurhash }}
+                                    contentFit="cover"
+                                    transition={1000}
+                                  />
+                                  {module.completed && (
+                                    <View position="absolute" right={"$-2"} top={"$-2"}>
+                                      <StarFull fill={yellowA.yellowA10} color={"$yellow10"} />
+                                    </View>
+                                  )}
+                                </View>
 
-                              <YStack gap="$4" flex={1}>
-                                <XStack justifyContent="space-between">
-                                  <XStack gap="$4" flex={1}>
-                                    <YStack>
-                                      <Paragraph size={"$2"}>{"Chapter " + module.id}</Paragraph>
-                                      <H3 fontWeight={"bold"}>{module.title}</H3>
-                                      {module.completed && <Paragraph color={"$blue10"}>Completed</Paragraph>}
-                                      {!module.is_available && (
-                                        <Paragraph marginTop={"$2"} color={"$red9"} fontWeight={600}>
-                                          Coming soon
-                                        </Paragraph>
-                                      )}
-                                    </YStack>
+                                <YStack gap="$4" flex={1}>
+                                  <XStack justifyContent="space-between">
+                                    <XStack gap="$4" flex={1}>
+                                      <YStack>
+                                        <Paragraph size={"$2"}>{"Chapter " + module.id}</Paragraph>
+                                        <H3 fontWeight={"bold"}>{module.title}</H3>
+                                        {module.completed && <Paragraph color={"$blue10"}>Completed</Paragraph>}
+                                        {!module.is_available && (
+                                          <Paragraph marginTop={"$2"} color={"$red9"} fontWeight={600}>
+                                            Coming soon
+                                          </Paragraph>
+                                        )}
+                                      </YStack>
+                                    </XStack>
+
+                                    {module.is_available && module.progress !== 0 && <ChevronRight color={"$blue10"} />}
                                   </XStack>
 
-                                  {module.is_available && module.progress !== 0 && <ChevronRight color={"$blue10"} />}
-                                </XStack>
-
-                                {module.progress !== 0 && !module.completed && (
-                                  <Progress value={module.progress} backgroundColor={"$gray3"}>
-                                    <Progress.Indicator backgroundColor={"$blue10"} />
-                                  </Progress>
-                                )}
-                              </YStack>
-                            </XStack>
-                          </Card.Header>
-                        </Card>
-                      </Link>
-                    )}
-                  />
+                                  {module.progress !== 0 && !module.completed && (
+                                    <Progress value={module.progress} backgroundColor={"$gray3"}>
+                                      <Progress.Indicator backgroundColor={"$blue10"} />
+                                    </Progress>
+                                  )}
+                                </YStack>
+                              </XStack>
+                            </Card.Header>
+                          </Card>
+                        </Link>
+                      )}
+                    />
+                  </>
                 )
               )}
             </XStack>

@@ -2,7 +2,7 @@
   "expo": {
     "name": "Treble",
     "slug": "notate",
-    "version": "1.0.17",
+    "version": "1.0.18",
     "orientation": "portrait",
     "icon": "./assets/images/treble-icon.png",
     "scheme": "myapp",
@@ -10,7 +10,8 @@
     "splash": {
       "image": "./assets/images/treble-splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#52A9FF"
+      "backgroundColor": "#52A9FF",
+      "imageWidth": 200
     },
     "ios": {
       "supportsTablet": true,
