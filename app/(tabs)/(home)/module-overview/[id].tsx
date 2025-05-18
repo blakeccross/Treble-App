@@ -42,17 +42,6 @@ export default function ModuleStartScreen() {
       <ScrollView backgroundColor={"$background"} minHeight={PAGE_HEIGHT - 118.6}>
         <View paddingBottom="$10">
           {currentModule?.section.map((section) => (
-            // <Link
-            //   asChild
-            //   href={{ pathname: `/${section.section_item[0]?.type}`, params: { module_id: currentModule?.id, section_id: section.id } }}
-            //   //disabled={(section.premium && !currentUser?.premium) || !section.section_item[0]?.type}
-            //   key={section.id}
-            //   onPress={() => {
-            //     if (section.premium && !currentUser?.premium) {
-            //       setOpenPaywall(true);
-            //     }
-            //   }}
-            // >
             <XStack
               key={section.id}
               padding="$4"
@@ -82,7 +71,6 @@ export default function ModuleStartScreen() {
                 <Button variant="outlined" theme={"alt1"} circular icon={section.completed ? RefreshCw : Play} />
               )}
             </XStack>
-            // </Link>
           ))}
         </View>
         <Paywall openPaywall={openPaywall} setOpenPaywall={setOpenPaywall} />

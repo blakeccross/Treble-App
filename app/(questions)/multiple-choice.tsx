@@ -2,7 +2,7 @@ import AnswerDrawer from "@/components/questions/AnswerDrawer";
 import { QuizContext } from "@/context/quiz-context";
 import { Image } from "expo-image";
 import React, { useContext, useRef, useState } from "react";
-import { FlatList, SafeAreaView } from "react-native";
+import { FlatList, SafeAreaView, Platform } from "react-native";
 import { Card, Paragraph, View } from "tamagui";
 
 export default function MultipleCHoice() {
@@ -42,7 +42,7 @@ export default function MultipleCHoice() {
             <FlatList
               data={question.current.question_options}
               contentContainerStyle={{ gap: 10 }}
-              style={{ overflow: "visible" }}
+              style={{ overflow: Platform.OS === "ios" ? "visible" : "scroll" }}
               renderItem={({ item }) => (
                 <Card
                   bordered

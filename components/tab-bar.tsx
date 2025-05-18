@@ -1,6 +1,6 @@
 import React from "react";
 
-import { View, Pressable, Dimensions, StyleSheet, useColorScheme } from "react-native";
+import { View, Pressable, Dimensions, StyleSheet, useColorScheme, Platform } from "react-native";
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { BlurView } from "expo-blur";
 import { blueDark, color, gray } from "@tamagui/themes";
@@ -11,7 +11,7 @@ const { width } = Dimensions.get("window");
 const TabBar = ({ state, descriptors, navigation }: BottomTabBarProps) => {
   const colorScheme = useColorScheme() ?? "light";
   return (
-    <BlurView style={styles.mainContainer} tint="regular" experimentalBlurMethod="dimezisBlurView">
+    <BlurView style={styles.mainContainer} tint="regular">
       {state.routes.map((route: any, index: number) => {
         const { options } = descriptors[route.key];
         const icon = options.tabBarIcon;
@@ -56,6 +56,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     borderRadius: 50,
     overflow: "hidden",
+    backgroundColor: Platform.OS === "android" ? "#ffffffcdf" : undefined,
   },
   mainItemContainer: {
     flex: 0,
