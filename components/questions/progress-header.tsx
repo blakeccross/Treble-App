@@ -4,10 +4,11 @@ import { Heart, X } from "@tamagui/lucide-icons";
 import { red } from "@tamagui/themes";
 import { usePathname, useRouter } from "expo-router";
 import { useContext, useState } from "react";
-import { Pressable, SafeAreaView } from "react-native";
+import { Pressable, StatusBar } from "react-native";
 import { Button, H3, H5, Paragraph, Progress, View, XStack, YStack } from "tamagui";
 import BottomSheet from "../BottomSheet";
 import { useUser } from "../../context/user-context";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function ProgressHeader() {
   const route = useRouter();
@@ -20,7 +21,8 @@ export default function ProgressHeader() {
   return (
     <>
       <View>
-        <SafeAreaView />
+        <SafeAreaView edges={["top"]} />
+        <StatusBar translucent={true} backgroundColor={"transparent"} />
         <YStack gap="$2" padding="$3">
           <XStack alignItems="center" justifyContent="space-between">
             <Pressable onPress={() => setOpen(true)}>

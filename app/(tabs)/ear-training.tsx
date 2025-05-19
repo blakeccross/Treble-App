@@ -103,17 +103,8 @@ const games = [
   },
 ];
 
-export default function EarTraining() {
-  const router = useRouter();
-  const sv = useSharedValue<number>(0);
-  const scrollHandler = useAnimatedScrollHandler({
-    onScroll: (event) => {
-      "worklet";
-      sv.value = event.contentOffset.y;
-    },
-  });
-
-  const renderItem = ({ item: game }: { item: (typeof games)[0] }) => (
+const renderItem = ({ item: game, router }: { item: (typeof games)[0]; router: ReturnType<typeof useRouter> }) => {
+  return (
     <Card
       key={game.title}
       elevate
@@ -178,22 +169,33 @@ export default function EarTraining() {
       </Card.Footer>
     </Card>
   );
+};
+
+export default function EarTraining() {
+  const router = useRouter();
+  const sv = useSharedValue<number>(0);
+  const scrollHandler = useAnimatedScrollHandler({
+    onScroll: (event) => {
+      "worklet";
+      sv.value = event.contentOffset.y;
+    },
+  });
 
   return (
     <View flex={1} backgroundColor={"$background"}>
       <SafeAreaView edges={["top"]} />
       <ScreenHeader sv={sv} title="Ear Training" />
-      <Animated.ScrollView onScroll={scrollHandler} scrollEventThrottle={16} style={{ padding: 15 }} showsVerticalScrollIndicator={false}>
-        <XStack alignItems="center" gap={"$2"} marginBottom="$4">
+      <Animated.ScrollView onScroll={scrollHandler} scrollEventThrottle={16} showsVerticalScrollIndicator={false}>
+        <XStack alignItems="center" gap={"$2"} marginBottom="$4" paddingHorizontal={15}>
           <AudioWaveform />
           <H2 fontWeight={800}>Ear Training</H2>
         </XStack>
         <FlatList
           data={games}
-          renderItem={renderItem}
+          renderItem={({ item }) => renderItem({ item, router })}
           numColumns={isSmallScreen ? 1 : 2}
           scrollEnabled={false}
-          contentContainerStyle={{ paddingBottom: 60 }}
+          contentContainerStyle={{ paddingBottom: 60, paddingHorizontal: 15 }}
           columnWrapperStyle={isSmallScreen ? undefined : { justifyContent: "space-between" }}
         />
       </Animated.ScrollView>

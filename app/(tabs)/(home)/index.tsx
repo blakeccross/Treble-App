@@ -13,7 +13,7 @@ import { Image } from "expo-image";
 import * as Network from "expo-network";
 import { Link, Redirect, router } from "expo-router";
 import React, { useContext, useEffect, useState } from "react";
-import { Dimensions, FlatList, useColorScheme } from "react-native";
+import { Dimensions, FlatList, StatusBar, useColorScheme } from "react-native";
 import { useMMKVBoolean, useMMKVObject } from "react-native-mmkv";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Avatar, Button, Card, H3, H5, Paragraph, Progress, ScrollView, View, XStack, YStack } from "tamagui";
@@ -45,6 +45,7 @@ export default function HomeScreen() {
         zIndex={1}
         flex={1}
       >
+        <StatusBar translucent={true} backgroundColor={"transparent"} />
         <View padding="$5" paddingTop={"$2"}>
           <SafeAreaView edges={["top"]} />
 
