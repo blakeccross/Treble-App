@@ -21,7 +21,7 @@ export default function MultipleCHoice() {
 
   return (
     <>
-      <SafeAreaView />
+      {/* <SafeAreaView /> */}
       <View padding="$4" paddingBottom={0} flex={1}>
         <View flex={1} style={{ width: "100%" }} paddingBottom="$4" justifyContent="flex-start">
           <Paragraph marginBottom="$2" fontSize={"$7"}>
@@ -42,7 +42,9 @@ export default function MultipleCHoice() {
             <FlatList
               data={question.current.question_options}
               contentContainerStyle={{ gap: 10 }}
-              style={{ overflow: Platform.OS === "ios" ? "visible" : "scroll" }}
+              scrollEnabled={false}
+              showsVerticalScrollIndicator={false}
+              // style={{ overflow: Platform.OS === "ios" ? "visible" : "scroll" }}
               renderItem={({ item }) => (
                 <Card
                   bordered

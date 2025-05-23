@@ -6,10 +6,11 @@ import { FlatList, Pressable } from "react-native";
 import { Leaderboard } from "@/types";
 import { supabase } from "@/utils/supabase";
 import { Avatar, H3, H4, H5, Paragraph, Separator, Spinner, View, XStack } from "tamagui";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import * as Network from "expo-network";
 
 export default function LeaderBoard() {
+  const { top } = useSafeAreaInsets();
   const { gameName } = useLocalSearchParams<{ gameName: string }>();
   const networkState = Network.useNetworkState();
   const [leaderboard, setLeaderboard] = useState<Leaderboard[]>([]);
@@ -42,9 +43,7 @@ export default function LeaderBoard() {
 
   return (
     <View backgroundColor={"$background"} flex={1}>
-      <View backgroundColor={"$blue10"}>
-        <SafeAreaView edges={["top"]} />
-
+      <View backgroundColor={"$blue10"} paddingTop={top}>
         <XStack padding="$3" alignItems="center" justifyContent="space-between">
           <Pressable onPress={() => router.dismiss()}>
             <X size="$3" color={"white"} />
@@ -79,7 +78,7 @@ export default function LeaderBoard() {
                 <XStack alignItems="center" gap="$2">
                   <Avatar circular>
                     <Avatar.Image accessibilityLabel={item.profile.full_name} src={item.profile.avatar_url} />
-                    <Avatar.Fallback backgroundColor="$blue10" />
+                    <Avatar.Fallback backgroundColor="$gray5" />
                   </Avatar>
                   <H4 fontWeight={600}>{item.profile.full_name}</H4>
                 </XStack>

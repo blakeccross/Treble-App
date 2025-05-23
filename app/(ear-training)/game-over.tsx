@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from "react";
-import { Pressable, SafeAreaView, Share as RNShare } from "react-native";
+import { Pressable, Share as RNShare, StatusBar } from "react-native";
 import { UserContext } from "@/context/user-context";
 import { supabase } from "@/utils/supabase";
 import { RefreshCw, Share, Trophy, X } from "@tamagui/lucide-icons";
@@ -7,6 +7,7 @@ import { Link, useLocalSearchParams, useRouter } from "expo-router";
 import { useMMKVNumber } from "react-native-mmkv";
 import { Button, H1, H3, Theme, XStack, YStack } from "tamagui";
 import { LinearGradient } from "tamagui/linear-gradient";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const Games: Record<string, { name: string; shareImage: string }> = {
   pitch_perfect: {
@@ -63,6 +64,7 @@ export default function Index() {
 
   return (
     <LinearGradient width="100%" height="100%" colors={["$blue10", "$blue8"]} start={[0.5, 1]} end={[0, 0]} paddingHorizontal={"$4"}>
+      <StatusBar translucent={true} backgroundColor={"transparent"} />
       <SafeAreaView style={{ flex: 1 }}>
         <XStack>
           <Pressable

@@ -2,7 +2,8 @@ import { UserContext } from "@/context/user-context";
 import { Check, Moon, Sun, SunMoon, X } from "@tamagui/lucide-icons";
 import { router } from "expo-router";
 import React, { useContext, useState } from "react";
-import { Appearance, Pressable, SafeAreaView, useColorScheme } from "react-native";
+import { Appearance, Pressable, useColorScheme } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { H4, H5, ScrollView, XStack, YStack } from "tamagui";
 
 type FormInput = {

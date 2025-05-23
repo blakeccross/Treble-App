@@ -172,6 +172,7 @@ const renderItem = ({ item: game, router }: { item: (typeof games)[0]; router: R
 };
 
 export default function EarTraining() {
+  const { top } = useSafeAreaInsets();
   const router = useRouter();
   const sv = useSharedValue<number>(0);
   const scrollHandler = useAnimatedScrollHandler({
@@ -182,8 +183,7 @@ export default function EarTraining() {
   });
 
   return (
-    <View flex={1} backgroundColor={"$background"}>
-      <SafeAreaView edges={["top"]} />
+    <View flex={1} backgroundColor={"$background"} paddingTop={top}>
       <ScreenHeader sv={sv} title="Ear Training" />
       <Animated.ScrollView onScroll={scrollHandler} scrollEventThrottle={16} showsVerticalScrollIndicator={false}>
         <XStack alignItems="center" gap={"$2"} marginBottom="$4" paddingHorizontal={15}>
@@ -196,6 +196,7 @@ export default function EarTraining() {
           numColumns={isSmallScreen ? 1 : 2}
           scrollEnabled={false}
           contentContainerStyle={{ paddingBottom: 60, paddingHorizontal: 15 }}
+          style={{ overflow: "visible" }}
           columnWrapperStyle={isSmallScreen ? undefined : { justifyContent: "space-between" }}
         />
       </Animated.ScrollView>

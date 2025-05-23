@@ -17,8 +17,9 @@ import { red } from "@tamagui/themes";
 import * as Haptics from "expo-haptics";
 import { router } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
-import { ActivityIndicator, Pressable, SafeAreaView } from "react-native";
+import { ActivityIndicator, Pressable, StatusBar } from "react-native";
 import Animated, { BounceIn, BounceOut, useSharedValue } from "react-native-reanimated";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { H1, Paragraph, View, XStack } from "tamagui";
 import { LinearGradient } from "tamagui/linear-gradient";
 
@@ -113,7 +114,7 @@ export default function App() {
   }
 
   function handleStartGame() {
-    if (userLives !== undefined && userLives <= 0 && !currentUser?.is_subscribed) {
+    if (!currentUser?.is_subscribed && userLives !== undefined && userLives <= 0 && !gameHasStarted) {
       stopSong();
       router.push("/out-of-lives");
       return;
@@ -196,7 +197,8 @@ export default function App() {
 
   return (
     <LinearGradient width="100%" height="100%" colors={["$green10", "$green8"]} start={[0.5, 1]} end={[0, 0]}>
-      <SafeAreaView style={{ flex: 0 }} />
+      <StatusBar translucent={true} backgroundColor={"transparent"} />
+      <SafeAreaView edges={["top"]} style={{ flex: 0 }} />
       <XStack justifyContent="space-between" alignItems="center" paddingHorizontal="$4">
         <View width={"$3"}>
           <Pressable onPress={() => router.back()}>

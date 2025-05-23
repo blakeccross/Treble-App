@@ -2,8 +2,9 @@ import { useUser } from "@/context/user-context";
 import { ArrowLeft, ChevronRight, CreditCard, HelpCircle, Lock, Moon, User, Volume2 } from "@tamagui/lucide-icons";
 import { Link, RelativePathString, router } from "expo-router";
 import React from "react";
-import { Alert, FlatList, Pressable, SafeAreaView } from "react-native";
+import { Alert, FlatList, Pressable, StatusBar } from "react-native";
 import Purchases from "react-native-purchases";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { H4, H5, XStack, YStack } from "tamagui";
 
 export default function ProfileSettings() {
@@ -60,7 +61,7 @@ export default function ProfileSettings() {
 
   return (
     <SafeAreaView>
-      <SafeAreaView />
+      <StatusBar translucent={true} backgroundColor={"transparent"} />
       <YStack gap="$2" padding="$3">
         <XStack alignItems="center" justifyContent="space-between">
           <Pressable onPress={() => router.dismissTo("/(tabs)/profile")}>

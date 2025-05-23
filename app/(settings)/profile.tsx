@@ -6,7 +6,8 @@ import * as ImagePicker from "expo-image-picker";
 import { router } from "expo-router";
 import React, { useContext, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { Alert, Pressable, SafeAreaView } from "react-native";
+import { Alert, Pressable } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 import { Avatar, Button, H5, Input, Label, ScrollView, Theme, View, XStack, YStack } from "tamagui";
 
@@ -105,7 +106,6 @@ export default function ProfileSettings() {
 
   return (
     <SafeAreaView>
-      <SafeAreaView />
       <YStack gap="$2" padding="$3">
         <XStack alignItems="center" justifyContent="space-between">
           <Pressable onPress={() => router.back()}>

@@ -1,12 +1,9 @@
 import React from "react";
-
-import { View, Pressable, Dimensions, StyleSheet, useColorScheme, Platform } from "react-native";
+import { View, Pressable, StyleSheet, useColorScheme, Platform } from "react-native";
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { BlurView } from "expo-blur";
-import { blueDark, color, gray } from "@tamagui/themes";
+import { blueDark } from "@tamagui/themes";
 import * as Haptics from "expo-haptics";
-
-const { width } = Dimensions.get("window");
 
 const TabBar = ({ state, descriptors, navigation }: BottomTabBarProps) => {
   const colorScheme = useColorScheme() ?? "light";
@@ -56,7 +53,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     borderRadius: 50,
     overflow: "hidden",
-    backgroundColor: Platform.OS === "android" ? "#ffffffcdf" : undefined,
+    backgroundColor: Platform.OS === "android" ? "#fcfcfc" : undefined,
   },
   mainItemContainer: {
     flex: 0,

@@ -2,24 +2,28 @@ import { QuizContext } from "@/context/quiz-context";
 import { useUser } from "@/context/user-context";
 import { Check, Heart, HeartCrack, Star, Gamepad } from "@tamagui/lucide-icons";
 import { BlurView } from "expo-blur";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import moment from "moment";
 import React, { useContext } from "react";
 import { SafeAreaView } from "react-native";
 import Purchases from "react-native-purchases";
-import { Button, H2, H3, ListItem, Paragraph, Separator, View, XStack, YGroup, YStack } from "tamagui";
+import { Button, H2, H3, H4, ListItem, Paragraph, Separator, Theme, View, XStack, YGroup, YStack } from "tamagui";
 import { LinearGradient } from "tamagui/linear-gradient";
 
 export default function Index() {
   const router = useRouter();
+  const { redirectPathname, redirectParams } = useLocalSearchParams<{ redirectPathname?: string; redirectParams?: string }>();
   const { currentUser, handleUpdateUserInfo, livesRefreshTime } = useUser();
-  const { currentModule } = useContext(QuizContext);
 
   function handleExitSection() {
-    router.dismissTo({
-      pathname: "/(tabs)/(home)/module-overview/[id]",
-      params: { id: currentModule.id },
-    });
+    if (redirectPathname && redirectParams) {
+      router.dismissTo({
+        pathname: redirectPathname as any,
+        params: JSON.parse(redirectParams as string),
+      });
+    } else {
+      router.dismiss();
+    }
   }
   async function handleTryForFree() {
     if (await Purchases.isConfigured()) {
@@ -28,7 +32,6 @@ export default function Index() {
       if (typeof customerInfo.entitlements.active["pro"] !== "undefined") {
         await handleUpdateUserInfo({ is_subscribed: true });
         router.dismiss();
-        // setOpenPaywall(false);
       }
     }
   }
@@ -48,24 +51,32 @@ export default function Index() {
           </View>
 
           <View padding="$4" flex={1} height={"100%"} justifyContent="space-between">
-            <View>
-              <View>
-                <H3 fontWeight={800} textAlign="center">
-                  Unlock your learning potential
-                </H3>
-              </View>
-              <BlurView intensity={100} style={{ borderRadius: 20, overflow: "hidden" }}>
-                <ListItem
-                  backgroundColor={"transparent"}
-                  icon={Heart}
-                  title="Unlimited Hearts"
-                  subTitle="Never have to stop and wait to continue learning"
-                />
-                <ListItem backgroundColor={"transparent"} icon={Star} title="Unlock All Modules" subTitle="Begin learning beyond the basics" />
+            <H4 marginBottom={"$4"} fontWeight={800} textAlign="center">
+              Unlock your learning potential
+            </H4>
 
-                <ListItem backgroundColor={"transparent"} icon={Gamepad} title="Unlock All Games" subTitle="Train your ear with fun games" />
-              </BlurView>
-            </View>
+            <BlurView intensity={100} style={{ borderRadius: 20, overflow: "hidden" }}>
+              <ListItem
+                backgroundColor={"transparent"}
+                icon={Heart}
+                title="Unlimited Hearts"
+                subTitle={<Paragraph opacity={0.6}>Never have to stop and wait to continue learning</Paragraph>}
+              />
+              <ListItem
+                backgroundColor={"transparent"}
+                icon={Star}
+                title="Unlock All Modules"
+                subTitle={<Paragraph opacity={0.6}>Begin learning beyond the basics</Paragraph>}
+              />
+
+              <ListItem
+                backgroundColor={"transparent"}
+                icon={Gamepad}
+                title="Unlock All Games"
+                subTitle={<Paragraph opacity={0.6}>Train your ear with fun games</Paragraph>}
+              />
+            </BlurView>
+
             <View>
               <Button onPress={handleTryForFree} fontWeight={800}>
                 Try for $0.00

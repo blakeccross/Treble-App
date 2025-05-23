@@ -1,20 +1,19 @@
 import { toastConfig } from "@/components/toastConfig";
 import ModuleProvider from "@/context/module-context";
-import UserProvider, { useUser } from "@/context/user-context";
+import UserProvider from "@/context/user-context";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { DarkTheme, DefaultTheme, ThemeProvider } from "@react-navigation/native";
 import { useFonts } from "expo-font";
+import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import { router, Stack } from "expo-router";
 import React, { useEffect } from "react";
 import { Platform } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import Purchases from "react-native-purchases";
 import "react-native-reanimated";
 import Toast from "react-native-toast-message";
-import { H4, TamaguiProvider } from "tamagui";
+import { TamaguiProvider } from "tamagui";
 import tamaguiConfig from "../tamagui.config";
-import { useMMKVBoolean } from "react-native-mmkv";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();

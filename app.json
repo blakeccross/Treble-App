@@ -7,12 +7,6 @@
     "icon": "./assets/images/treble-icon.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
-    "splash": {
-      "image": "./assets/images/treble-splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#52A9FF",
-      "imageWidth": 200
-    },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.blakecross.trebleapp",
@@ -29,6 +23,9 @@
       "package": "com.blakecross.trebleapp",
       "permissions": ["NOTIFICATIONS"]
     },
+    "androidNavigationBar": {
+      "visible": "immersive"
+    },
     "web": {
       "bundler": "metro",
       "output": "single",
@@ -38,6 +35,14 @@
       "expo-router",
       "expo-font",
       "expo-audio",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#52A9FF",
+          "image": "./assets/images/splash-icon.png",
+          "imageWidth": 200
+        }
+      ],
       [
         "expo-notifications",
         {

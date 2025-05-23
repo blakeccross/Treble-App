@@ -1,31 +1,12 @@
 import { Pause, Play, X } from "@tamagui/lucide-icons";
 import { router } from "expo-router";
 import React, { useState } from "react";
-import { Pressable, SafeAreaView, Linking } from "react-native";
+import { Pressable, Linking } from "react-native";
 import { Button, H5, Label, Slider, SliderProps, View, XStack, YStack, Input, Form, TextArea, Paragraph } from "tamagui";
-import { clairdelune, hedwigTheme, flyingTheme } from "../../constants/demoSongs";
-import usePlayMidi from "../../hooks/usePlayMidi";
-import { useMMKVNumber } from "react-native-mmkv";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function HelpSettings() {
-  const { playSong, stopSong, handleConvertSong } = usePlayMidi();
-  const [pianoVolume, setPianoVolume] = useMMKVNumber("pianoVolume");
-  const [sfxVolume, setSfxVolume] = useMMKVNumber("sfxVolume");
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
-
-  function handleTestAudio() {
-    const songs = [clairdelune, hedwigTheme, flyingTheme];
-    const randomSong = songs[Math.floor(Math.random() * songs.length)];
-    playSong(handleConvertSong(randomSong).slice(0, 100));
-    setIsPlaying(true);
-  }
-
-  function handleStopAudio() {
-    stopSong();
-    setIsPlaying(false);
-  }
 
   const handleSendEmail = () => {
     const email = "support@treble.app"; // Replace with your actual support email

@@ -45,9 +45,9 @@ const useMarkdown = (markdownText: string) => {
 };
 
 // Function to parse the markdown text and return corresponding React Native elements
-const parseMarkdown = (text: string, colorScheme: "light" | "dark", setSelectedImage: (url: string) => void): JSX.Element[] => {
+const parseMarkdown = (text: string, colorScheme: "light" | "dark", setSelectedImage: (url: string) => void): React.ReactNode[] => {
   const lines = text.split("\n");
-  const elements: JSX.Element[] = [];
+  const elements: React.ReactNode[] = [];
 
   let i = 0;
   while (i < lines.length) {
@@ -98,7 +98,7 @@ const parseMarkdown = (text: string, colorScheme: "light" | "dark", setSelectedI
 };
 
 // Function to render a table from a block of markdown
-const renderTable = (tableBlock: string[], key: number, colorScheme: "light" | "dark"): JSX.Element => {
+const renderTable = (tableBlock: string[], key: number, colorScheme: "light" | "dark"): React.ReactNode => {
   const rows = tableBlock.map((row, rowIndex) => {
     const cells = row.split("|").filter((cell) => cell.trim() !== "");
 
@@ -117,7 +117,7 @@ const renderTable = (tableBlock: string[], key: number, colorScheme: "light" | "
 };
 
 // Function to render a table row
-const renderTableRow = (cells: string[], isHeader: boolean, index: number, colorScheme: "light" | "dark"): JSX.Element => {
+const renderTableRow = (cells: string[], isHeader: boolean, index: number, colorScheme: "light" | "dark"): React.ReactNode => {
   return (
     <View key={index} style={[styles.tableRow, isHeader && { backgroundColor: colorScheme === "light" ? "#f0f0f0" : "#333" }]}>
       {cells.map((cell, cellIndex) => (
@@ -130,7 +130,7 @@ const renderTableRow = (cells: string[], isHeader: boolean, index: number, color
 };
 
 // Function to render images
-const renderImage = (line: string, index: number, setSelectedImage: (url: string) => void, colorScheme: "light" | "dark"): JSX.Element => {
+const renderImage = (line: string, index: number, setSelectedImage: (url: string) => void, colorScheme: "light" | "dark"): React.ReactNode => {
   const match = line.match(/!\[(.*?)\]\((.*?)\)/);
   if (match) {
     const altText = match[1];
@@ -148,12 +148,12 @@ const renderImage = (line: string, index: number, setSelectedImage: (url: string
 };
 
 // Main function to parse Unicode symbols and italic text
-const parseUnicodeSymbols = (text: string, colorScheme: "light" | "dark"): JSX.Element[] => {
+const parseUnicodeSymbols = (text: string, colorScheme: "light" | "dark"): React.ReactNode[] => {
   const italicRegex = /(\*|_)(.*?)\1/g;
   const boldRegex = /(\*\*|__)(.*?)\1/g;
   const superscriptRegex = /\^([^\^]+)\^/g;
   const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
-  const elements: JSX.Element[] = [];
+  const elements: React.ReactNode[] = [];
   let lastIndex = 0;
   let match;
 
@@ -253,10 +253,10 @@ const parseUnicodeSymbols = (text: string, colorScheme: "light" | "dark"): JSX.E
 };
 
 // Helper function to handle plain text and Unicode symbols
-const parsePlainTextAndUnicode = (text: string, keyPrefix: string, colorScheme: "light" | "dark"): JSX.Element[] => {
+const parsePlainTextAndUnicode = (text: string, keyPrefix: string, colorScheme: "light" | "dark"): React.ReactNode[] => {
   const unicodeRegex = /&#x([0-9A-Fa-f]+);/g;
   const parts = text.split(unicodeRegex);
-  const elements: JSX.Element[] = [];
+  const elements: React.ReactNode[] = [];
 
   parts.forEach((part, index) => {
     if (index % 2 === 0) {
@@ -282,7 +282,7 @@ const parsePlainTextAndUnicode = (text: string, keyPrefix: string, colorScheme: 
 };
 
 // Function to map Unicode symbols to their corresponding SVG paths
-const getSvgPathForUnicode = (unicode: number, colorScheme: "light" | "dark"): JSX.Element => {
+const getSvgPathForUnicode = (unicode: number, colorScheme: "light" | "dark"): React.ReactNode => {
   const fill = colorScheme === "dark" ? "white" : "black";
 
   // Log to see if the colorScheme is updated

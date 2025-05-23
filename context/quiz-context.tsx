@@ -20,7 +20,7 @@ type Quiz = {
 
 export const QuizContext = createContext<Quiz>({} as Quiz);
 
-export default function QuizProvider({ children }: { children: JSX.Element[] }) {
+export default function QuizProvider({ children }: { children: React.ReactNode[] }) {
   const router = useRouter();
   const { module_id, section_id } = useLocalSearchParams<{ module_id: string; section_id: string }>();
   const { currentUser, handleUpdateUserInfo, lives, setLives } = useContext(UserContext);
@@ -101,7 +101,22 @@ export default function QuizProvider({ children }: { children: JSX.Element[] }) 
   // Memoize the nextQuestion callback
   const nextQuestion = useCallback(() => {
     const nextQuestion = sortedQuestions[currentQuestionIndex + 1];
-    console.log("nextQuestion", currentQuestionIndex, sortedQuestions.length - 1);
+
+    if (!currentUser?.is_subscribed && lives !== undefined && lives <= 0 && nextQuestion?.type !== "reading") {
+      router.push({
+        pathname: "/out-of-lives",
+        params:
+          sortedQuestions && sortedQuestions[currentQuestionIndex].type !== "reading"
+            ? {
+                redirectPathname: "/(tabs)/(home)/module-overview/[id]",
+                redirectParams: JSON.stringify({
+                  id: currentModule?.id,
+                }),
+              }
+            : undefined,
+      });
+      return;
+    }
 
     const totalQuestions = Math.min(sortedQuestions.length - 1, 19); // Ensure max of 20 questions (0-19 index)
     if (currentSection && currentQuestionIndex < totalQuestions && nextQuestion) {
@@ -121,7 +136,7 @@ export default function QuizProvider({ children }: { children: JSX.Element[] }) 
         finishedSection(false);
       }
     }
-  }, [currentSection, currentQuestionIndex, currentModule, currentUser, router, sortedQuestions, finishedSection]);
+  }, [currentSection, currentQuestionIndex, currentModule, currentUser, router, sortedQuestions, finishedSection, lives]);
 
   useEffect(() => {
     if (currentSectionQuestions) {
@@ -133,13 +148,6 @@ export default function QuizProvider({ children }: { children: JSX.Element[] }) 
       setSortedQuestions(sorted.slice(0, 20));
     }
   }, [currentSectionQuestions]);
-
-  // Memoize the lives check effect
-  useEffect(() => {
-    if (!currentUser?.is_subscribed && lives !== undefined && lives <= 0 && sortedQuestions[currentQuestionIndex]?.type !== "reading") {
-      router.replace(`/out-of-lives`);
-    }
-  }, [lives, currentQuestionIndex, currentUser?.is_subscribed, router, sortedQuestions]);
 
   // Memoize the context value
   const contextValue = useMemo(

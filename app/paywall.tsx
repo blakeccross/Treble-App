@@ -4,13 +4,14 @@ import { BlurView } from "expo-blur";
 import { router } from "expo-router";
 import LottieView from "lottie-react-native";
 import React, { useContext, useState } from "react";
-import { ActivityIndicator, Alert, SafeAreaView, ScrollView, Linking } from "react-native";
+import { ActivityIndicator, Alert, ScrollView, Linking, StatusBar } from "react-native";
 import Purchases from "react-native-purchases";
 import { Button, H2, H3, H4, H5, ListItem, Paragraph, Separator, SizableText, Theme, View, XStack, YStack } from "tamagui";
 import { LinearGradient } from "tamagui/linear-gradient";
 import TrebleLogo from "../assets/trebleLogo";
 import { UserContext } from "../context/user-context";
 import { isSmallScreen } from "@/utils";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Paywall() {
   const { currentUser, handleUpdateUserInfo } = useContext(UserContext);
@@ -51,13 +52,15 @@ export default function Paywall() {
     <>
       {!currentUser?.is_subscribed ? (
         <LinearGradient flex={1} colors={[blue.blue11, blue.blue12]} start={[0.5, 1]} end={[0, 0]}>
+          {/* <StatusBar translucent={true} backgroundColor={"transparent"} /> */}
+          <SafeAreaView edges={["top"]} />
           {isLoading ? (
             <View flex={1} justifyContent="center" alignItems="center">
               <ActivityIndicator size="large" />
             </View>
           ) : (
             <View paddingHorizontal="$4" flex={1} height={"100%"} justifyContent="space-between">
-              <View position="absolute" top="$4" right="$4" zIndex={1}>
+              <View position="absolute" top="$0" right="$4" zIndex={1}>
                 <Button
                   circular
                   backgroundColor={"$gray1"}
@@ -68,7 +71,7 @@ export default function Paywall() {
                   <X size="$1" color={"$gray12"} />
                 </Button>
               </View>
-              <ScrollView>
+              <ScrollView style={{ flex: 1 }}>
                 <View justifyContent="flex-start" alignItems="center">
                   <LottieView
                     autoPlay
@@ -136,21 +139,21 @@ export default function Paywall() {
                 <XStack justifyContent="center" alignItems="center" gap="$4" marginVertical="$2">
                   <Paragraph
                     marginTop="$2"
-                    themeInverse
                     textAlign="center"
                     opacity={0.6}
                     onPress={() => Linking.openURL("https://treblemusictheory.vercel.app/privacy-policy")}
                     style={{ textDecorationLine: "underline" }}
+                    color={"white"}
                   >
                     Privacy Policy
                   </Paragraph>
                   <Paragraph
                     marginTop="$2"
-                    themeInverse
                     textAlign="center"
                     opacity={0.6}
                     onPress={() => Linking.openURL("https://treblemusictheory.vercel.app/terms")}
                     style={{ textDecorationLine: "underline" }}
+                    color={"white"}
                   >
                     Terms of Service
                   </Paragraph>
@@ -158,7 +161,7 @@ export default function Paywall() {
                 {/* <Button unstyled color={"$gray12Dark"} textAlign="center" padding="$4" onPress={() => router.dismissAll()}>
                   No Thanks
                 </Button> */}
-                <SafeAreaView />
+                <SafeAreaView edges={["bottom"]} />
               </View>
             </View>
           )}

@@ -1,3 +1,4 @@
+import { useUser } from "@/context/user-context";
 import usePlayMidi from "@/hooks/usePlayMidi";
 import { usePlaySFX } from "@/hooks/usePlaySFX";
 import { window } from "@/utils";
@@ -74,6 +75,7 @@ const correctSFX = require("@/assets/audio/correct_sfx.mp3");
 const incorrectSFX = require("@/assets/audio/incorrect_sfx.mp3");
 
 export default function Page() {
+  const { currentUser, updatedLives, lives: userLives } = useUser();
   const circleWidth = PAGE_HEIGHT * 0.27;
   const router = useRouter();
   const [currentScore, setCurrentScore] = useState<number>(0);
@@ -266,6 +268,11 @@ export default function Page() {
   }
 
   function handlePressPlay() {
+    if (!currentUser?.is_subscribed && userLives !== undefined && userLives <= 0 && !gameHasStarted) {
+      router.push("/out-of-lives");
+      return;
+    }
+
     if (!gameHasStarted) {
       setGameHasStarted(true);
     }
@@ -404,7 +411,7 @@ export default function Page() {
         )}
       </XStack>
 
-      <YStack flex={1} justifyContent="center" alignItems="center" marginTop="$4">
+      <YStack justifyContent="center" alignItems="center" marginTop="$4">
         <GestureDetector gesture={tapGesture}>
           <Animated.View style={[{ width: circleWidth, height: circleWidth }, animatedStyleRotate1]}>
             <Canvas style={{ flex: 1 }}>
@@ -431,18 +438,7 @@ export default function Page() {
         </GestureDetector>
       </YStack>
 
-      {/* {showAnswer && (
-        <YStack alignItems="center" marginTop="$4">
-          <H2 color={answerIsCorrect ? "$green10" : "$red10"}>{intervals.find((int) => int.semitones.toString() === correctAnswer.current)?.name}</H2>
-          {!answerIsCorrect && (
-            <Paragraph color="$gray11" marginTop="$2">
-              {currentInterval.current.firstNote.toUpperCase()} to {currentInterval.current.secondNote.toUpperCase()}
-            </Paragraph>
-          )}
-        </YStack>
-      )} */}
-
-      <Animated.View style={[{ padding: 10 }, animatedStyleFlatList]}>
+      <Animated.View style={[{ padding: 10, position: "absolute", bottom: 25, left: 0, right: 0 }, animatedStyleFlatList]}>
         <FlatList
           data={availableAnswers}
           columnWrapperStyle={{ gap: 10 }}

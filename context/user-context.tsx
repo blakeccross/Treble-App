@@ -1,6 +1,6 @@
 import { Profile } from "@/types";
 import { supabase } from "@/utils/supabase";
-import { router, usePathname, useSegments } from "expo-router";
+import { router } from "expo-router";
 import moment from "moment";
 import { createContext, useContext, useEffect } from "react";
 import { MMKV, useMMKVBoolean, useMMKVNumber, useMMKVObject, useMMKVString } from "react-native-mmkv";
@@ -22,11 +22,10 @@ type UserContextProps = {
 
 export const UserContext = createContext<UserContextProps>({} as UserContextProps);
 
-export default function ModuleProvider({ children }: { children: JSX.Element }) {
+export default function ModuleProvider({ children }: { children: React.ReactNode }) {
   const [currentUser, setCurrentUser] = useMMKVObject<Profile>("user");
   const [lives, setLives] = useMMKVNumber("lives");
   const [livesRefreshTime, setLivesRefreshTime] = useMMKVString("livesRefreshTime");
-  const [hasSeenWelcomeScreen, setHasSeenWelcomeScreen] = useMMKVBoolean("hasSeenWelcomeScreen");
 
   useEffect(() => {
     getUser();

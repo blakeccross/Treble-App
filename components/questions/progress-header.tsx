@@ -16,7 +16,7 @@ export default function ProgressHeader() {
   const { currentQuestionIndex, questions, section, currentModule, lives } = useContext(QuizContext);
   const currentRoute = usePathname();
   const [open, setOpen] = useState(false);
-  let quizPercentage = (currentQuestionIndex / (questions?.length || 0)) * 100;
+  let quizPercentage = Math.round((currentQuestionIndex / (questions?.length || 0)) * 100);
 
   return (
     <>

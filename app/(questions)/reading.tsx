@@ -1,12 +1,18 @@
-import { QuizContext } from "@/context/quiz-context";
+import { useQuiz } from "@/context/quiz-context";
 import useMarkdown from "@/hooks/parseSymbolsFromText";
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button, ScrollView, View } from "tamagui";
 
 export default function Index() {
-  const { currentQuestionIndex, questions, nextQuestion } = useContext(QuizContext);
-  const markdownElement = useMarkdown((questions?.[currentQuestionIndex]?.reading_text || "")?.replace(/(\r\n|\r|\n)/g, "\n"));
+  const { currentQuestionIndex, questions, nextQuestion } = useQuiz();
+  const [readingText, setReadingText] = useState(questions?.[currentQuestionIndex]?.reading_text);
+
+  useEffect(() => {
+    setReadingText(questions?.[currentQuestionIndex]?.reading_text);
+  }, [currentQuestionIndex, questions]);
+
+  const markdownElement = useMarkdown((readingText || "")?.replace(/(\r\n|\r|\n)/g, "\n"));
 
   return (
     <>

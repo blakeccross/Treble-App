@@ -1,4 +1,5 @@
 import { PianoKey } from "@/types/pianoKeys";
+import { useAssets } from "expo-asset";
 import * as FileSystem from "expo-file-system";
 import { useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -6,6 +7,13 @@ import { AudioBuffer, AudioContext, GainNode, AudioBufferSourceNode } from "reac
 import { useMMKVNumber } from "react-native-mmkv";
 
 export default function usePlayMidi() {
+  const [assets] = useAssets([
+    require("@/assets/audio/piano_fs2.mp3"),
+    require("@/assets/audio/piano_c3.mp3"),
+    require("@/assets/audio/piano_fs3.mp3"),
+    require("@/assets/audio/piano_c4.mp3"),
+    require("@/assets/audio/piano_fs4.mp3"),
+  ]);
   const [buffersLoaded, setBuffersLoaded] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
@@ -44,15 +52,16 @@ export default function usePlayMidi() {
 
   async function loadAssets() {
     setLoading(true);
+
     await loadBuffers({
-      "F#2": FileSystem.bundleDirectory + "piano_fs2.mp3",
-      C3: FileSystem.bundleDirectory + "piano_c3.mp3",
-      "F#3": FileSystem.bundleDirectory + "piano_fs3.mp3",
-      C4: FileSystem.bundleDirectory + "piano_c4.mp3",
-      "F#4": FileSystem.bundleDirectory + "piano_fs4.mp3",
+      "F#2": assets?.[0]?.localUri || "",
+      C3: assets?.[1]?.localUri || "",
+      "F#3": assets?.[2]?.localUri || "",
+      C4: assets?.[3]?.localUri || "",
+      "F#4": assets?.[4]?.localUri || "",
     });
     const buffersLoaded = validateBuffers();
-    console.log("Buffers loaded", buffersLoaded);
+
     if (!buffersLoaded) {
       setError(true);
     }
@@ -60,23 +69,25 @@ export default function usePlayMidi() {
   }
 
   useEffect(() => {
-    loadAssets();
+    if (assets) {
+      loadAssets();
+    }
     return () => {
       audioContextRef.current?.close();
       // activeSoundsRef.current = [];
       // stopSong();
     };
-  }, []);
+  }, [assets]);
 
   useFocusEffect(
     useCallback(() => {
       return () => {
         stopSong();
         cleanupAudioResources();
-        if (audioContextRef.current) {
-          audioContextRef.current.close();
-          audioContextRef.current = undefined;
-        }
+        // if (audioContextRef.current) {
+        //   audioContextRef.current.close();
+        //   audioContextRef.current = undefined;
+        // }
         activeSoundsRef.current = [];
       };
     }, [])
@@ -89,7 +100,7 @@ export default function usePlayMidi() {
     C4: null,
     "F#4": null,
   });
-  const audioContextRef = useRef<AudioContext>();
+  const audioContextRef = useRef<AudioContext | null>(null);
 
   const validateBuffers = () => {
     const allBuffersLoaded = Object.values(bufferListRef.current).every((buffer) => buffer !== null);
@@ -185,7 +196,7 @@ export default function usePlayMidi() {
               bufferListRef.current[key] = await audioContextRef.current.decodeAudioDataSource(filepath);
             } catch (error) {
               setError(true);
-              console.error("Error loading buffer for", key, ":", error);
+              console.error("Error loading buffer for", key, ":", error, filepath);
               bufferListRef.current[key] = null;
             }
           } else {
@@ -279,10 +290,15 @@ export default function usePlayMidi() {
     }
     stopSong();
 
+    if (!audioContextRef.current) {
+      console.warn("No audio context");
+      return;
+    }
+
     song.forEach(({ note, time, duration }) => {
       onKeyPressIn(note as PianoKey, time, duration, volume);
     });
   };
 
-  return { playSong, stopSong, buffersLoaded, handleConvertSong, loading };
+  return { playSong, stopSong, buffersLoaded, handleConvertSong, loading, error };
 }

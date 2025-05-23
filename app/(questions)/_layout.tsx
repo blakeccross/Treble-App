@@ -18,14 +18,15 @@ export default function TabLayout() {
         ) : (
           <></>
         )}
+        <></>
         <Stack screenOptions={{ gestureEnabled: false }}>
-          <Stack.Screen name="reading" options={{ headerShown: false }} getId={({ params }) => String(Date.now())} />
-          <Stack.Screen name="identify-the-chord-sheet" options={{ headerShown: false }} getId={({ params }) => String(Date.now())} />
-          <Stack.Screen name="fill-in-the-blank/index" options={{ headerShown: false }} getId={({ params }) => String(Date.now())} />
-          <Stack.Screen name="multiple-choice" options={{ headerShown: false }} getId={({ params }) => String(Date.now())} />
+          <Stack.Screen name="reading" options={{ headerShown: false }} dangerouslySingular />
+          <Stack.Screen name="identify-the-chord-sheet" options={{ headerShown: false }} dangerouslySingular />
+          <Stack.Screen name="fill-in-the-blank/index" options={{ headerShown: false }} dangerouslySingular />
+          <Stack.Screen name="multiple-choice" options={{ headerShown: false }} dangerouslySingular />
           <Stack.Screen name="quiz-complete" options={{ headerShown: false, animation: "slide_from_bottom" }} />
           <Stack.Screen name="module-complete" options={{ headerShown: false, presentation: "fullScreenModal" }} />
-          <Stack.Screen name="out-of-lives" options={{ headerShown: false, presentation: "fullScreenModal" }} />
+          <Stack.Screen name="out-of-lives" options={{ headerShown: false, presentation: "modal" }} />
         </Stack>
       </QuizProvider>
     </>

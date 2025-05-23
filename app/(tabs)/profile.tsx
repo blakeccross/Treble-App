@@ -82,14 +82,40 @@ export default function TabTwoScreen() {
 
   return (
     <>
-      <ScrollView contentContainerStyle={{ paddingBottom: 200 }}>
+      <ScrollView contentContainerStyle={{ paddingBottom: 200 }} backgroundColor={"$gray4"}>
+        <SafeAreaView edges={["top"]} />
+        <View position="relative" width={"100%"}>
+          <View position="absolute" top={0} right={25}>
+            <Link asChild href={{ pathname: "/(settings)/settings" }}>
+              <Button unstyled color={"$gray10"} fontWeight={600} pressStyle={{ scale: 0.95 }}>
+                <Settings size={"$1.5"} color={"$gray10"} />
+              </Button>
+            </Link>
+          </View>
+        </View>
         {currentUser?.id ? (
           currentUser?.avatar_url ? (
-            <Pressable onPress={pickImage}>
-              <Image source={currentUser.avatar_url} style={{ width: "100%", height: size.$19 }}>
-                <SafeAreaView edges={["right", "left", "top"]} />
-              </Image>
-            </Pressable>
+            <View justifyContent="center" alignItems="center" marginVertical="$4">
+              <Pressable onPress={pickImage}>
+                <View position="relative">
+                  <Image source={currentUser.avatar_url} style={{ width: size.$12, height: size.$12, borderRadius: size.$10 }} />
+                  {currentUser.instrument && (
+                    <View
+                      position="absolute"
+                      bottom={0}
+                      right={0}
+                      padding="$2"
+                      backgroundColor={"white"}
+                      borderRadius="$10"
+                      borderColor={"$gray4"}
+                      borderWidth={3}
+                    >
+                      <Paragraph fontSize={17}>{currentUser.instrument}</Paragraph>
+                    </View>
+                  )}
+                </View>
+              </Pressable>
+            </View>
           ) : (
             <LinearGradient
               colors={["$blue6", "$blue8"]}
@@ -112,11 +138,12 @@ export default function TabTwoScreen() {
         )}
 
         <YStack marginHorizontal="$4">
-          <XStack justifyContent="space-between" alignItems="center">
+          <XStack justifyContent="center" alignItems="center" marginBottom="$6">
             <XStack alignItems="center" gap="$2">
-              <H3 fontWeight={600} textAlign="left" marginVertical="$6">
+              <H3 fontWeight={600} textAlign="left">
                 {currentUser?.full_name ? currentUser?.full_name : "Guest User"}
               </H3>
+
               {currentUser?.is_subscribed && (
                 <LinearGradient
                   colors={["$blue10", "$purple7"]}
@@ -130,12 +157,6 @@ export default function TabTwoScreen() {
                 </LinearGradient>
               )}
             </XStack>
-            <Link asChild href={{ pathname: "/(settings)/settings" }}>
-              <Button variant="outlined" color={"$gray10"} fontWeight={600} pressStyle={{ scale: 0.95 }}>
-                <Settings size={"$1"} color={"$gray10"} />
-                Settings
-              </Button>
-            </Link>
           </XStack>
           {!currentUser?.is_subscribed && (
             <Card

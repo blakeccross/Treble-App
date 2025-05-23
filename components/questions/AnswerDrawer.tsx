@@ -76,6 +76,7 @@ export default function AnswerDrawer({
                 onPress={handleContinue}
                 textAlign="center"
                 backgroundColor={answerIsCorrect ? "$green12Light" : "$red12Light"}
+                borderWidth={0}
                 pressStyle={{ backgroundColor: answerIsCorrect ? "$green10Light" : "$red11Light" }}
                 fontWeight={600}
                 fontSize={"$7"}
@@ -88,37 +89,34 @@ export default function AnswerDrawer({
           <SafeAreaView edges={["bottom"]} />
         </Sheet.Frame>
       </Sheet>
-      {/* </BottomSheet> */}
 
-      <View>
-        <View
-          style={{
-            width: "100%",
-            bottom: 0,
-          }}
-          padding="$4"
-        >
-          {validateAnswer && answerIsCorrect === undefined ? (
-            <Button
-              onPress={handleValidateAnswer}
-              width={"100%"}
-              fontWeight={600}
-              disabled={!enabled}
-              animation="quick"
-              opacity={enabled ? 1 : 0.7}
-              fontSize={"$7"}
-              height={"$5"}
-            >
-              Check
-            </Button>
-          ) : (
-            <Button onPress={nextQuestion} width={"100%"} fontWeight={600} fontSize={"$7"} height={"$5"}>
-              Continue
-            </Button>
-          )}
-        </View>
+      <View
+        style={{
+          width: "100%",
+          marginBottom: 25,
+          bottom: 0,
+        }}
+        padding="$4"
+      >
+        {validateAnswer && answerIsCorrect === undefined ? (
+          <Button
+            onPress={handleValidateAnswer}
+            width={"100%"}
+            fontWeight={600}
+            disabled={!enabled}
+            animation="quick"
+            opacity={enabled ? 1 : 0.7}
+            fontSize={"$7"}
+            height={"$5"}
+          >
+            Check
+          </Button>
+        ) : (
+          <Button onPress={nextQuestion} width={"100%"} fontWeight={600} fontSize={"$7"} height={"$5"}>
+            Continue
+          </Button>
+        )}
       </View>
-      <SafeAreaView edges={["bottom"]} />
     </>
   );
 }

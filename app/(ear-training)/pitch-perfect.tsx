@@ -9,9 +9,11 @@ import { darkColors, red } from "@tamagui/themes";
 import * as Haptics from "expo-haptics";
 import { Link, router, useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ActivityIndicator, FlatList, Pressable, SafeAreaView, View } from "react-native";
+import { ActivityIndicator, FlatList, Pressable, StatusBar, View } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, { useAnimatedStyle, useSharedValue, withDelay, withSpring } from "react-native-reanimated";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
+import Toast from "react-native-toast-message";
 import { Card, Circle, H1, H2, H3, Paragraph, XStack } from "tamagui";
 import { LinearGradient } from "tamagui/linear-gradient";
 
@@ -25,8 +27,9 @@ const correctSFX = require("@/assets/audio/correct_sfx.mp3");
 const incorrectSFX = require("@/assets/audio/incorrect_sfx.mp3");
 
 export default function PitchPerfect() {
+  const { top } = useSafeAreaInsets();
   const { currentUser, updatedLives, lives: userLives } = useUser();
-  const { playSong, stopSong, loading: audioLoading } = usePlayMidi();
+  const { playSong, stopSong, loading: audioLoading, error } = usePlayMidi();
   const { playSFX } = usePlaySFX();
   const [gameHasStarted, setGameHasStarted] = useState(false);
   const [currentScore, setCurrentScore] = useState<number>(0);
@@ -176,8 +179,16 @@ export default function PitchPerfect() {
   }
 
   function handlePressPlay() {
-    if (!currentUser?.is_subscribed && userLives !== undefined && userLives <= 0) {
+    if (!currentUser?.is_subscribed && userLives !== undefined && userLives <= 0 && !gameHasStarted) {
       router.push("/out-of-lives");
+      return;
+    }
+
+    if (error) {
+      Toast.show({
+        type: "error",
+        text1: "Error loading audio",
+      });
       return;
     }
 
@@ -302,8 +313,8 @@ export default function PitchPerfect() {
     .runOnJS(true);
 
   return (
-    <View style={{ flex: 1 }}>
-      <SafeAreaView style={{ flex: 0 }} />
+    <View style={{ flex: 1, paddingTop: top }}>
+      <StatusBar translucent={true} backgroundColor={"transparent"} />
 
       <XStack justifyContent="space-between" alignItems="center" paddingHorizontal="$4">
         <View style={{ width: 50 }}>
@@ -328,7 +339,7 @@ export default function PitchPerfect() {
         </View>
       </XStack>
 
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <View style={{ marginTop: 25 }}>
         <View style={{ position: "relative", justifyContent: "center", alignItems: "center", height: PAGE_WIDTH * 0.85 }}>
           <Animated.View style={[animatedStyle1, { position: "absolute" }]}>
             <Circle
@@ -356,7 +367,6 @@ export default function PitchPerfect() {
           <Animated.View style={[animatedStyle3, { position: "absolute" }]}>
             <Circle size={PAGE_WIDTH * 0.55} backgroundColor={`$${colorSceme}7Dark`} elevation="$0.25" />
           </Animated.View>
-          {/* <TapGestureHandler onActivated={handlePressPlay} enabled={playEnabled}> */}
           <GestureDetector gesture={tapGesture}>
             <Animated.View style={[animatedStyle4, { position: "absolute" }]}>
               <Circle
@@ -382,7 +392,7 @@ export default function PitchPerfect() {
           </GestureDetector>
         </View>
       </View>
-      <Animated.View style={[{ padding: 10 }, animatedStyleFlatList]}>
+      <Animated.View style={[{ padding: 10, position: "absolute", bottom: 25, left: 0, right: 0 }, animatedStyleFlatList]}>
         <FlatList
           data={availableAnswers}
           columnWrapperStyle={{ gap: 10 }}

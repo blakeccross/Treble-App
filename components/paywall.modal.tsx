@@ -55,7 +55,6 @@ export default function Paywall({ openPaywall, setOpenPaywall }: { openPaywall: 
               source={require("@/assets/lottie/gopro.json")}
             />
           </View>
-          {/* <Image source={require("@/assets/images/gold_subscription.jpg")} style={{ width: "100%", aspectRatio: "1/1", backgroundColor: "grey" }} /> */}
           <View paddingHorizontal="$4" flex={1} height={"100%"} justifyContent="space-between">
             <ScrollView>
               <XStack gap="$2" justifyContent="center" alignItems="center">

@@ -1,11 +1,12 @@
 import { Pause, Play, X } from "@tamagui/lucide-icons";
 import { router } from "expo-router";
 import React, { useState } from "react";
-import { Pressable, SafeAreaView } from "react-native";
+import { Pressable } from "react-native";
 import { Button, H5, Label, Slider, SliderProps, View, XStack, YStack } from "tamagui";
 import { clairdelune, hedwigTheme, flyingTheme } from "../../constants/demoSongs";
 import usePlayMidi from "../../hooks/usePlayMidi";
 import { useMMKVNumber } from "react-native-mmkv";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function AudioSettings() {
   const { playSong, stopSong, handleConvertSong } = usePlayMidi();
