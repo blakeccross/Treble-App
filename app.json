@@ -2,12 +2,13 @@
   "expo": {
     "name": "Treble",
     "slug": "notate",
-    "version": "1.0.18",
+    "version": "1.0.19",
     "orientation": "portrait",
     "icon": "./assets/images/treble-icon.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "ios": {
+      "appStoreUrl": "https://apps.apple.com/app/id6732229506d",
       "supportsTablet": true,
       "bundleIdentifier": "com.blakecross.trebleapp",
       "infoPlist": {
@@ -16,6 +17,7 @@
       }
     },
     "android": {
+      "playStoreUrl": "https://play.google.com/store/apps/details?id=your.app.id",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/treble-icon.png",
         "backgroundColor": "#52A9FF"
@@ -74,7 +76,7 @@
         "projectId": "7d583fc1-e363-4166-999e-4cd74d9cd386"
       }
     },
-    "runtimeVersion": "1.0.14",
+    "runtimeVersion": "1.0.19",
     "updates": {
       "url": "https://u.expo.dev/7d583fc1-e363-4166-999e-4cd74d9cd386"
     }

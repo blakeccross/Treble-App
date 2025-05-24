@@ -4,6 +4,7 @@ import { color, red } from "@tamagui/themes";
 import { H1, View } from "tamagui";
 import { StyleSheet } from "react-native";
 import { getTextColor } from "@/utils/nashville-round-up/getTextColor";
+import NashvilleNumber from "./NashvilleNumber";
 
 const QuestionCardOption = ({
   show,
@@ -57,9 +58,7 @@ const QuestionCardOption = ({
       </Animated.View>
       <Animated.View style={[flipCardStyles.flippedCard, flipCardStyles.flipCard, flippedCardAnimatedStyle]}>
         <View flex={1} borderRadius={16} backgroundColor="white" justifyContent="center" alignItems="center">
-          <H1 adjustsFontSizeToFit={true} fontWeight={800} color={getTextColor(value)}>
-            {value}
-          </H1>
+          <NashvilleNumber text={value} />
         </View>
       </Animated.View>
     </View>

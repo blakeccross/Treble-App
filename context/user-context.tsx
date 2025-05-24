@@ -6,6 +6,7 @@ import { createContext, useContext, useEffect } from "react";
 import { MMKV, useMMKVBoolean, useMMKVNumber, useMMKVObject, useMMKVString } from "react-native-mmkv";
 import Purchases from "react-native-purchases";
 import Toast from "react-native-toast-message";
+import * as Notifications from "expo-notifications";
 
 const storage = new MMKV();
 
@@ -40,7 +41,20 @@ export default function ModuleProvider({ children }: { children: React.ReactNode
         } else if (lives >= 5) {
           setLivesRefreshTime("");
         } else if (lives < 5 && !livesRefreshTime) {
-          setLivesRefreshTime(moment().add(1, "hour").format());
+          const time = moment().add(1, "hour").format();
+          setLivesRefreshTime(time);
+          Notifications.scheduleNotificationAsync({
+            content: {
+              title: "Lives Refreshed! 🎵",
+              body: "Your lives have been restored to 5. Time to practice!",
+              sound: true,
+            },
+            trigger: {
+              type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
+              seconds: 10,
+              channelId: "lives_refreshed",
+            },
+          });
         } else if (lives < 5 && livesRefreshTime && moment().isAfter(moment(livesRefreshTime))) {
           setLives(5);
           setLivesRefreshTime("");

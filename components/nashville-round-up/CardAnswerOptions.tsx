@@ -5,6 +5,7 @@ import React, { forwardRef, useEffect, useImperativeHandle } from "react";
 import { Pressable, View } from "react-native";
 import Animated, { useAnimatedStyle, useSharedValue, withDelay, withRepeat, withSequence, withTiming } from "react-native-reanimated";
 import { H1 } from "tamagui";
+import NashvilleNumber from "./NashvilleNumber";
 
 const CARD_WIDTH = window.width * 0.33;
 const CARD_HEIGHT = 140;
@@ -116,7 +117,7 @@ const Card = ({
       >
         <Pressable disabled={selectedAnswer !== ""} onPress={handlePress} style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
           <H1 fontWeight={800} color={getTextColor(text)}>
-            {text}
+            <NashvilleNumber text={text} />
           </H1>
         </Pressable>
       </View>

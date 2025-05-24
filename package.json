@@ -75,7 +75,8 @@
     "react-native-web": "^0.20.0",
     "tamagui": "^1.126.13",
     "vexflow": "4.2.4",
-    "expo-navigation-bar": "~4.2.4"
+    "expo-navigation-bar": "~4.2.4",
+    "expo-store-review": "~8.1.5"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

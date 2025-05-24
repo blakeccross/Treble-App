@@ -82,10 +82,10 @@ export default function TabTwoScreen() {
 
   return (
     <>
-      <ScrollView contentContainerStyle={{ paddingBottom: 200 }} backgroundColor={"$gray4"}>
+      <ScrollView contentContainerStyle={{ paddingBottom: 200 }} backgroundColor={"$gray4"} showsVerticalScrollIndicator={false}>
         <SafeAreaView edges={["top"]} />
-        <View position="relative" width={"100%"}>
-          <View position="absolute" top={0} right={25}>
+        <View position="relative" width={"100%"} zIndex={10}>
+          <View position="absolute" top={25} right={25}>
             <Link asChild href={{ pathname: "/(settings)/settings" }}>
               <Button unstyled color={"$gray10"} fontWeight={600} pressStyle={{ scale: 0.95 }}>
                 <Settings size={"$1.5"} color={"$gray10"} />
@@ -117,24 +117,26 @@ export default function TabTwoScreen() {
               </Pressable>
             </View>
           ) : (
+            <View justifyContent="center" alignItems="center" marginVertical="$4">
+              <Pressable onPress={pickImage}>
+                <LinearGradient
+                  colors={["$blue6", "$blue8"]}
+                  start={[0.3, 1]}
+                  end={[0, 0]}
+                  style={{ width: size.$12, height: size.$12, borderRadius: size.$10 }}
+                />
+              </Pressable>
+            </View>
+          )
+        ) : (
+          <View justifyContent="center" alignItems="center" marginVertical="$4">
             <LinearGradient
               colors={["$blue6", "$blue8"]}
               start={[0.3, 1]}
               end={[0, 0]}
-              width={"100%"}
-              height={"$19"}
-              justifyContent="center"
-              alignItems="center"
-            >
-              <SafeAreaView edges={["right", "left", "top"]} />
-
-              <Button variant="outlined" chromeless width={"$15"} onPress={pickImage}>
-                + Add Profile Photo
-              </Button>
-            </LinearGradient>
-          )
-        ) : (
-          <SafeAreaView edges={["top"]} />
+              style={{ width: size.$12, height: size.$12, borderRadius: size.$10 }}
+            />
+          </View>
         )}
 
         <YStack marginHorizontal="$4">

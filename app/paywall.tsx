@@ -60,7 +60,7 @@ export default function Paywall() {
             </View>
           ) : (
             <View paddingHorizontal="$4" flex={1} height={"100%"} justifyContent="space-between">
-              <View position="absolute" top="$0" right="$4" zIndex={1}>
+              <View position="absolute" top="$4" right="$4" zIndex={1}>
                 <Button
                   circular
                   backgroundColor={"$gray1"}

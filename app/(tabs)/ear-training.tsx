@@ -76,28 +76,28 @@ const games = [
   {
     title: "Pitch Perfect",
     description: `Identify the pitch before the timer ends`,
-    backgroundImage: require("@/assets/images/pitch_perfect.png"),
+    backgroundImage: require("@/assets/images/pitch-perfect.jpg"),
     route: "/pitch-perfect" as const,
     disabled: false,
   },
   {
     title: "Nashville Roundup",
     description: `Test your ear in this\nfast paced matching game`,
-    backgroundImage: require("@/assets/images/nashville_round_up_poster.png"),
+    backgroundImage: require("@/assets/images/nashville-round-up-poster.jpg"),
     route: "/nashville-round-up" as const,
     disabled: false,
   },
   {
     title: "Interval Training",
     description: `Test your ear in a\nfast pace matching game`,
-    backgroundImage: require("@/assets/images/interval_training.png"),
+    backgroundImage: require("@/assets/images/interval-training.jpg"),
     route: "/interval-training" as const,
     disabled: false,
   },
   {
     title: "Chord Detective",
     description: `Identify the chord`,
-    backgroundImage: require("@/assets/images/hassaan-here-bKfkhVRAJTQ-unsplash.jpg"),
+    backgroundImage: require("@/assets/images/chord-detective.jpg"),
     route: "/name-that-chord" as const,
     disabled: true,
   },
@@ -123,7 +123,7 @@ const renderItem = ({ item: game, router }: { item: (typeof games)[0]; router: R
       }}
     >
       <Card.Background>
-        <Image style={{ flex: 1, width: "100%" }} source={game.backgroundImage} placeholder={{ blurhash }} contentFit="cover" transition={1000} />
+        <Image style={{ flex: 1, width: "100%" }} source={game.backgroundImage} contentFit="cover" />
       </Card.Background>
 
       <Card.Footer>

@@ -11,12 +11,13 @@ import { blue, red, yellow, yellowA } from "@tamagui/themes";
 import { Image } from "expo-image";
 import * as Network from "expo-network";
 import { Link, Redirect, router } from "expo-router";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Dimensions, FlatList, StatusBar, useColorScheme } from "react-native";
 import { useMMKVBoolean } from "react-native-mmkv";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Avatar, Button, Card, H3, H5, Paragraph, Progress, ScrollView, View, XStack, YStack } from "tamagui";
 import { LinearGradient } from "tamagui/linear-gradient";
+import * as StoreReview from "expo-store-review";
 
 export default function HomeScreen() {
   const { top } = useSafeAreaInsets();
@@ -31,6 +32,12 @@ export default function HomeScreen() {
 
   const networkState = Network.useNetworkState();
   const colorScheme = useColorScheme();
+
+  useEffect(() => {
+    if (hasSeenWelcomeScreen) {
+      StoreReview.requestReview();
+    }
+  }, [hasSeenWelcomeScreen]);
 
   if (!hasSeenWelcomeScreen && !currentUser) {
     return <Redirect href={"/welcome"} />;
@@ -47,7 +54,7 @@ export default function HomeScreen() {
         paddingTop={top}
       >
         <StatusBar translucent={true} backgroundColor={"transparent"} />
-        <View padding="$5" paddingTop={"$2"}>
+        <View padding="$5" paddingVertical={"$3"}>
           <XStack gap="$2" justifyContent="space-between" alignItems="center">
             <View width={"$10"} alignItems="flex-start">
               {currentUser?.id ? (

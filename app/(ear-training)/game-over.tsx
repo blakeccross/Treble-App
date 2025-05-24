@@ -12,11 +12,11 @@ import { SafeAreaView } from "react-native-safe-area-context";
 const Games: Record<string, { name: string; shareImage: string }> = {
   pitch_perfect: {
     name: "Pitch Perfect",
-    shareImage: require("@/assets/images/pitch_perfect.png"),
+    shareImage: require("@/assets/images/pitch-perfect.jpg"),
   },
   nashville_round_up: {
     name: "Nashville Round Up",
-    shareImage: require("@/assets/images/nashville_round_up_poster.png"),
+    shareImage: require("@/assets/images/nashville-round-up-poster.jpg"),
   },
 };
 
