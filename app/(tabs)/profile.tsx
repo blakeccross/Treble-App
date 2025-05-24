@@ -17,7 +17,6 @@ import { Button, Card, H2, H3, H4, H5, Paragraph, ScrollView, SizableText, View,
 import { LinearGradient } from "tamagui/linear-gradient";
 import { SaveFormat, ImageManipulator } from "expo-image-manipulator";
 import getStreak from "@/hooks/getStreak";
-import Paywall from "@/components/paywall.modal";
 import { isSmallScreen } from "@/utils";
 
 export default function TabTwoScreen() {
@@ -25,7 +24,6 @@ export default function TabTwoScreen() {
   const userActiveDates = currentUser?.active_days ? currentUser?.active_days.map((item) => new Date(item)) : [];
 
   const [selectedDates, onDatesChange] = useState<Date[]>(userActiveDates);
-  const [openPaywall, setOpenPaywall] = useState(false);
 
   const {
     data: { calendars, weekDays, formattedDates, months, years },
@@ -131,7 +129,7 @@ export default function TabTwoScreen() {
         ) : (
           <View justifyContent="center" alignItems="center" marginVertical="$4">
             <LinearGradient
-              colors={["$blue6", "$blue8"]}
+              colors={["$green7", "$blue8"]}
               start={[0.3, 1]}
               end={[0, 0]}
               style={{ width: size.$12, height: size.$12, borderRadius: size.$10 }}
@@ -148,7 +146,7 @@ export default function TabTwoScreen() {
 
               {currentUser?.is_subscribed && (
                 <LinearGradient
-                  colors={["$blue10", "$purple7"]}
+                  colors={["$blue10", "$purple8"]}
                   start={[0.3, 1]}
                   end={[0, 0]}
                   paddingHorizontal="$3"
@@ -184,7 +182,7 @@ export default function TabTwoScreen() {
               </Card.Header>
               <Card.Background overflow="hidden">
                 <LinearGradient
-                  colors={["$blue10", "$purple7"]}
+                  colors={["$blue10", "$purple8"]}
                   start={[0.3, 1]}
                   end={[0, 0]}
                   width={"100%"}

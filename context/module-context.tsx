@@ -13,11 +13,10 @@ type ModuleContextProps = {
 
 export const ModuleContext = createContext<ModuleContextProps>({} as ModuleContextProps);
 
-export default function ModuleProvider({ children }: { children: JSX.Element }) {
+export default function ModuleProvider({ children }: { children: React.ReactNode }) {
   const { currentUser } = useUser();
   const [modules, setModules] = useMMKVObject<{ data?: Module[] | null; loading: boolean; error?: boolean }>("modules");
   const [moduleVersion, setModuleVersion] = useMMKVNumber("module_versions");
-  const [latestModuleVersion, setLatestModuleVersion] = useState("");
   const [isModuleUpdateAvailable, setIsModuleUpdateAvailable] = useState(false);
 
   useEffect(() => {

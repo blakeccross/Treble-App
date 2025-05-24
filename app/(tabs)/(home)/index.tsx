@@ -7,7 +7,7 @@ import { window } from "@/utils";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { ChevronRight, Heart, RefreshCw, StarFull } from "@tamagui/lucide-icons";
-import { blue, red, yellow, yellowA } from "@tamagui/themes";
+import { blue, red, size, yellow, yellowA } from "@tamagui/themes";
 import { Image } from "expo-image";
 import * as Network from "expo-network";
 import { Link, Redirect, router } from "expo-router";
@@ -78,17 +78,17 @@ export default function HomeScreen() {
               {!currentUser?.is_subscribed && (
                 <XStack gap="$1.5" alignItems="center">
                   <Heart size="$1.5" color={"$red10"} fill={red.red10} />
-                  <H5 color={"white"} fontWeight={600}>
+                  <Paragraph color={"white"} fontWeight={600} fontSize={"$8"} margin={"$0"}>
                     {lives}
-                  </H5>
+                  </Paragraph>
                 </XStack>
               )}
 
               <XStack alignItems="center" justifyContent="flex-end" gap="$1.5" onPress={() => setOpenXPHistory(true)}>
                 <AntDesign name="star" size={24} color={yellow.yellow10} />
-                <H5 color={"white"} fontWeight={600}>
+                <Paragraph color={"white"} fontWeight={600} fontSize={"$8"} margin={"$0"}>
                   {currentUser?.total_xp || 0}
-                </H5>
+                </Paragraph>
               </XStack>
             </XStack>
           </XStack>
@@ -104,7 +104,6 @@ export default function HomeScreen() {
           zIndex={1}
           onScroll={({ nativeEvent }) => {
             if (nativeEvent.contentOffset.y < -200 && !modules?.loading && networkState.isConnected) {
-              // Adjust threshold as needed
               refreshModules();
             }
           }}
@@ -168,7 +167,7 @@ export default function HomeScreen() {
                               <XStack gap="$4" flex={1}>
                                 <View position="relative">
                                   <Image
-                                    style={{ width: screenWidth * 0.2, height: screenWidth * 0.2, borderRadius: 10 }}
+                                    style={{ width: screenWidth * 0.2, height: screenWidth * 0.2, borderRadius: 17 }}
                                     source={module.local_poster_uri}
                                     placeholder={{ blurhash }}
                                     contentFit="cover"
@@ -181,11 +180,11 @@ export default function HomeScreen() {
                                   )}
                                 </View>
 
-                                <YStack gap="$4" flex={1}>
+                                <YStack gap="$3" flex={1}>
                                   <XStack justifyContent="space-between">
                                     <XStack gap="$4" flex={1}>
                                       <YStack>
-                                        <Paragraph size={"$2"}>{"Chapter " + module.id}</Paragraph>
+                                        <Paragraph size={"$3"}>{"Module " + module.id}</Paragraph>
                                         <H3 fontWeight={"bold"}>{module.title}</H3>
                                         {module.completed && <Paragraph color={"$blue10"}>Completed</Paragraph>}
                                         {!module.is_available && (

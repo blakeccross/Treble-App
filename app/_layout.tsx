@@ -14,6 +14,8 @@ import "react-native-reanimated";
 import Toast from "react-native-toast-message";
 import { TamaguiProvider } from "tamagui";
 import tamaguiConfig from "../tamagui.config";
+import * as Notifications from "expo-notifications";
+import { registerForPushNotificationsAsync } from "@/utils/registerPushNotifications";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -21,6 +23,15 @@ SplashScreen.preventAutoHideAsync();
 SplashScreen.setOptions({
   duration: 1000,
   fade: true,
+});
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldPlaySound: true,
+    shouldSetBadge: false,
+    shouldShowBanner: true,
+    shouldShowList: true,
+  }),
 });
 
 export default function RootLayout() {
@@ -47,13 +58,24 @@ export default function RootLayout() {
     // Purchases.setLogLevel(Purchases.LOG_LEVEL.DEBUG);
     if (Platform.OS === "ios") {
       try {
-        Purchases.configure({ apiKey: "appl_zZGUxbBzchveUkWXlMPDeuztdeD" });
+        Purchases.configure({ apiKey: process.env.EXPO_PUBLIC_APP_STORE_KEY || "" });
       } catch (e) {
         console.log(e);
       }
     } else if (Platform.OS === "android") {
-      // ANDROID LOGIC
+      try {
+        Purchases.configure({ apiKey: process.env.EXPO_PUBLIC_PLAY_STORE_KEY || "" });
+      } catch (e) {
+        console.log(e);
+      }
     }
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      const token = await registerForPushNotificationsAsync();
+      console.log(token);
+    })();
   }, []);
 
   return (

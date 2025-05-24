@@ -31,7 +31,6 @@ export default function SignUpInstrument() {
   const selectedInstrument = watch("instrument");
 
   async function onSubmit(data: FormInput) {
-    console.log("Form data being submitted:", data);
     setIsLoading(true);
     try {
       const { data: signUpData, error } = await supabase.auth.signUp({
@@ -49,13 +48,12 @@ export default function SignUpInstrument() {
         },
       });
 
-
       if (error) {
         Alert.alert("Something went wrong", error.message);
       }
 
       if (signUpData.user) {
-        router.push("/(auth)/(sign-up)/notifications");
+        router.push("/(auth)/(sign-up)/paywall");
       }
       // //   updateForm({ instrument: data.instrument });
       // await handleUpdateUserInfo({ instrument: data.instrument });

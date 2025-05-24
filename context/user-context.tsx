@@ -51,7 +51,7 @@ export default function ModuleProvider({ children }: { children: React.ReactNode
             },
             trigger: {
               type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
-              seconds: 10,
+              seconds: moment(time).diff(moment(), "seconds"),
               channelId: "lives_refreshed",
             },
           });
@@ -155,7 +155,7 @@ export default function ModuleProvider({ children }: { children: React.ReactNode
       // Get all keys from storage
       const allKeys = storage.getAllKeys();
       // Filter out the keys we want to keep
-      const keysToClear = allKeys.filter((key) => key !== "hasSeenWelcomeScreen" && key !== "modules");
+      const keysToClear = allKeys.filter((key) => key !== "hasSeenWelcomeScreen" && key !== "modules" && key !== "moduleVersion");
       // Clear each key individually
       keysToClear.forEach((key) => storage.delete(key));
     }
