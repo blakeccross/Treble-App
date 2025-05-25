@@ -1,19 +1,19 @@
 import { PianoKey } from "@/types/pianoKeys";
-import { useAssets } from "expo-asset";
-import * as FileSystem from "expo-file-system";
+import { Asset } from "expo-asset";
 import { useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AudioBuffer, AudioContext, GainNode, AudioBufferSourceNode } from "react-native-audio-api";
 import { useMMKVNumber } from "react-native-mmkv";
 
 export default function usePlayMidi() {
-  const [assets] = useAssets([
-    require("@/assets/audio/piano_fs2.mp3"),
-    require("@/assets/audio/piano_c3.mp3"),
-    require("@/assets/audio/piano_fs3.mp3"),
-    require("@/assets/audio/piano_c4.mp3"),
-    require("@/assets/audio/piano_fs4.mp3"),
-  ]);
+  const ASSETS = [
+    Asset.fromModule(require("@/assets/audio/piano_fs2.mp3")),
+    Asset.fromModule(require("@/assets/audio/piano_c3.mp3")),
+    Asset.fromModule(require("@/assets/audio/piano_fs3.mp3")),
+    Asset.fromModule(require("@/assets/audio/piano_c4.mp3")),
+    Asset.fromModule(require("@/assets/audio/piano_fs4.mp3")),
+  ];
+
   const [buffersLoaded, setBuffersLoaded] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
@@ -53,12 +53,15 @@ export default function usePlayMidi() {
   async function loadAssets() {
     setLoading(true);
 
+    const assetUris = await Promise.all(ASSETS.map((asset) => asset.downloadAsync()));
+
+    // const assetUris = await getAssetUris();
     await loadBuffers({
-      "F#2": assets?.[0]?.localUri || "",
-      C3: assets?.[1]?.localUri || "",
-      "F#3": assets?.[2]?.localUri || "",
-      C4: assets?.[3]?.localUri || "",
-      "F#4": assets?.[4]?.localUri || "",
+      "F#2": assetUris[0].localUri || "",
+      C3: assetUris[1].localUri || "",
+      "F#3": assetUris[2].localUri || "",
+      C4: assetUris[3].localUri || "",
+      "F#4": assetUris[4].localUri || "",
     });
     const buffersLoaded = validateBuffers();
 
@@ -69,15 +72,14 @@ export default function usePlayMidi() {
   }
 
   useEffect(() => {
-    if (assets) {
-      loadAssets();
-    }
+    loadAssets();
+
     return () => {
       audioContextRef.current?.close();
       // activeSoundsRef.current = [];
       // stopSong();
     };
-  }, [assets]);
+  }, []);
 
   useFocusEffect(
     useCallback(() => {

@@ -46,7 +46,7 @@ export default function ModuleProvider({ children }: { children: React.ReactNode
           Notifications.scheduleNotificationAsync({
             content: {
               title: "Lives Refreshed! 🎵",
-              body: "Your lives have been restored to 5. Time to practice!",
+              body: "Your lives have been reset. Time to practice!",
               sound: true,
             },
             trigger: {
@@ -78,11 +78,6 @@ export default function ModuleProvider({ children }: { children: React.ReactNode
         router.dismissAll();
       }
       router.push("/(tabs)/(home)");
-    } else {
-      // setCurrentUser(undefined);
-      // if (pathname !== "/welcome" && pathname !== "/") {
-      //   router.replace("/(auth)");
-      // }
     }
   }
 
