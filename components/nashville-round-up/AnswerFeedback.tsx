@@ -1,6 +1,5 @@
 import Animated, { BounceIn, FadeOut, PinwheelIn, SlideInLeft } from "react-native-reanimated";
 import { H1 } from "tamagui";
-import { window } from "@/utils";
 import { X } from "@tamagui/lucide-icons";
 
 export default function AnswerFeedback({ isCorrect }: { isCorrect: boolean | undefined }) {
@@ -21,7 +20,6 @@ export default function AnswerFeedback({ isCorrect }: { isCorrect: boolean | und
             textShadowOffset={{ width: 2, height: 2 }}
             fontWeight={800}
             color={"white"}
-            // themeInverse
           >
             Correct!
           </H1>
@@ -34,6 +32,7 @@ export default function AnswerFeedback({ isCorrect }: { isCorrect: boolean | und
         style={{
           justifyContent: "center",
           alignItems: "center",
+          marginTop: -10,
         }}
         entering={PinwheelIn.duration(500)}
         exiting={FadeOut.duration(1000)}

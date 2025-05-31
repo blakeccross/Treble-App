@@ -12,10 +12,8 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
 } from "react-native-reanimated";
-import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Button, Card, H2, H5, Paragraph, View, XStack, YStack } from "tamagui";
-
-const blurhash = "A5Pj0^nN_Nt7";
 
 const AnimatedView = Animated.createAnimatedComponent(View);
 
@@ -183,7 +181,7 @@ export default function EarTraining() {
   });
 
   return (
-    <View flex={1} backgroundColor={"$background"} paddingTop={top}>
+    <View flex={1} backgroundColor={"$background"} paddingTop={top + 10}>
       <ScreenHeader sv={sv} title="Ear Training" />
       <Animated.ScrollView onScroll={scrollHandler} scrollEventThrottle={16} showsVerticalScrollIndicator={false}>
         <XStack alignItems="center" gap={"$2"} marginBottom="$4" paddingHorizontal={15}>

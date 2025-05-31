@@ -195,7 +195,9 @@ export default function usePlayMidi() {
           // console.log("LOADING BUFFER", key, filepath);
           if (audioContextRef?.current) {
             try {
-              bufferListRef.current[key] = await audioContextRef.current.decodeAudioDataSource(filepath);
+              const response = await fetch(filepath);
+              const arrayBuffer = await response.arrayBuffer();
+              bufferListRef.current[key] = await audioContextRef.current.decodeAudioData(arrayBuffer);
             } catch (error) {
               setError(true);
               console.error("Error loading buffer for", key, ":", error, filepath);

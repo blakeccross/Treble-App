@@ -11,7 +11,7 @@ import { Image } from "expo-image";
 import * as ImagePicker from "expo-image-picker";
 import { Link, router } from "expo-router";
 import { FlatList, Pressable } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 import { Button, Card, H2, H3, H4, H5, Paragraph, ScrollView, SizableText, View, XStack, YStack } from "tamagui";
 import { LinearGradient } from "tamagui/linear-gradient";
@@ -20,6 +20,7 @@ import getStreak from "@/hooks/getStreak";
 import { isSmallScreen } from "@/utils";
 
 export default function TabTwoScreen() {
+  const { top } = useSafeAreaInsets();
   const { currentUser, handleUpdateUserInfo } = useContext(UserContext);
   const userActiveDates = currentUser?.active_days ? currentUser?.active_days.map((item) => new Date(item)) : [];
 
@@ -80,8 +81,7 @@ export default function TabTwoScreen() {
 
   return (
     <>
-      <ScrollView contentContainerStyle={{ paddingBottom: 200 }} backgroundColor={"$gray4"} showsVerticalScrollIndicator={false}>
-        <SafeAreaView edges={["top"]} />
+      <ScrollView contentContainerStyle={{ paddingBottom: 200, paddingTop: top }} backgroundColor={"$gray4"} showsVerticalScrollIndicator={false}>
         <View position="relative" width={"100%"} zIndex={10}>
           <View position="absolute" top={25} right={25}>
             <Link asChild href={{ pathname: "/(settings)/settings" }}>

@@ -695,7 +695,7 @@ export const progressions = [
     ],
   },
   {
-    value: ["3_m7", "6⁷", "2_m7", "57"],
+    value: ["3_m7", "6⁷", "2_m7", "5⁷"],
     midi: [
       { name: "G3", start: 0, end: 1, velocity: 0.3464566929133858 },
       { name: "B3", start: 0, end: 1, velocity: 0.3543307086614173 },
@@ -837,7 +837,7 @@ export const progressions = [
     ],
   },
   {
-    value: ["67", "7_ø7", "6⁷/#1", "2m"],
+    value: ["6⁷", "7_ø7", "6⁷/#1", "2m"],
     midi: [
       { name: "G3", start: 0, end: 1, velocity: 0.5196850393700787 },
       { name: "A#3", start: 0, end: 1, velocity: 0.6377952755905512 },

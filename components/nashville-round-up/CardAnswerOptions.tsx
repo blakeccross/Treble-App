@@ -9,8 +9,8 @@ import NashvilleNumber from "./NashvilleNumber";
 
 const CARD_WIDTH = window.width * 0.33;
 const CARD_HEIGHT = 140;
-const FAN_SPREAD = 15;
-const HORIZONTAL_SPREAD = window.width * 0.25;
+const FAN_SPREAD = 17;
+const HORIZONTAL_SPREAD = window.width * 0.3;
 
 const Card = ({
   index,
@@ -82,7 +82,7 @@ const Card = ({
 
   useEffect(() => {
     if (selectedAnswer !== "" && !isSelected) {
-      animatedValue.value = withTiming(animatedValue.value - window.height * -0.25, { duration: 600 });
+      animatedValue.value = withTiming(animatedValue.value - window.height * -0.3, { duration: 600 });
     }
   }, [selectedAnswer]);
 

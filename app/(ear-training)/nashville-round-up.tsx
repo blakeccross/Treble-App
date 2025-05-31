@@ -15,8 +15,8 @@ import { shuffle } from "@/utils/shuffle";
 import { BarChart2, Heart, X } from "@tamagui/lucide-icons";
 import { red } from "@tamagui/themes";
 import * as Haptics from "expo-haptics";
-import { router } from "expo-router";
-import React, { useEffect, useRef, useState } from "react";
+import { router, useFocusEffect } from "expo-router";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { ActivityIndicator, Pressable, StatusBar } from "react-native";
 import Animated, { BounceIn, BounceOut, useSharedValue } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -70,7 +70,7 @@ export default function App() {
 
     await delay(2000);
 
-    if (lives > 1) {
+    if (lives >= 1) {
       handleFlip();
     }
   }
@@ -155,8 +155,15 @@ export default function App() {
 
   async function handleAnswerPress(answer: string) {
     const isCorrect = answer === correctAnswer.current;
+    const updatedLives = lives - 1;
 
     setAnswerIsCorrect(isCorrect);
+
+    if (updatedLives <= 0) {
+      resetGameState();
+      router.push({ pathname: "/game-over", params: { score: currentScore, gameName: "nashville_round_up" } });
+      return;
+    }
 
     if (isCorrect) {
       playSFX(correctSFX, 0.3);
@@ -186,14 +193,41 @@ export default function App() {
     handleFlip();
   }
 
+  const resetGameState = () => {
+    setShowCard(false);
+    setCurrentScore(0);
+    setLives(3);
+    setGameHasStarted(false);
+    setNashvilleNumbersSolutionSet(undefined);
+    setIsRunning(false);
+    setSelectedAnswer("");
+    setAnswerIsCorrect(undefined);
+    theta.value = 2 * Math.PI;
+    isFlippedArray.forEach((isFlipped) => {
+      isFlipped.value = false;
+    });
+    stopSong();
+  };
+
   function handleIncorrect() {
-    setLives(lives - 1);
-    if (lives <= 1) {
-      router.push({ pathname: "/game-over", params: { score: currentScore, gameName: "nashville_round_up" } });
-    }
+    const updatedLives = lives - 1;
+    setLives(updatedLives);
     playSFX(incorrectSFX);
+    stopSong();
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
   }
+
+  useFocusEffect(
+    useCallback(() => {
+      // Reset Game
+      setLives(3);
+      setCurrentScore(0);
+
+      return () => {
+        console.log("This route is now unfocused.");
+      };
+    }, [])
+  );
 
   return (
     <LinearGradient width="100%" height="100%" colors={["$green10", "$green8"]} start={[0.5, 1]} end={[0, 0]}>
@@ -246,15 +280,17 @@ export default function App() {
             isRunning={isRunning}
             setIsRunning={setIsRunning}
           />
-          <View
-            disabled={audioLoading}
-            onPress={gameHasStarted ? () => nashvilleNumbersSolutionSet && playProgression(nashvilleNumbersSolutionSet) : handleStartGame}
-            style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, justifyContent: "center", alignItems: "center" }}
-          >
-            <Paragraph fontWeight={800} color={"white"}>
-              {audioLoading ? <ActivityIndicator /> : "Play"}
-            </Paragraph>
-          </View>
+          {answerIsCorrect === undefined && (
+            <View
+              disabled={audioLoading}
+              onPress={gameHasStarted ? () => nashvilleNumbersSolutionSet && playProgression(nashvilleNumbersSolutionSet) : handleStartGame}
+              style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, justifyContent: "center", alignItems: "center" }}
+            >
+              <Paragraph fontWeight={800} color={"white"}>
+                {audioLoading ? <ActivityIndicator /> : "Play"}
+              </Paragraph>
+            </View>
+          )}
         </View>
         <View position="absolute" width={"100%"}>
           {selectedAnswer && <AnswerFeedback isCorrect={answerIsCorrect} />}
@@ -268,7 +304,7 @@ export default function App() {
         selectedAnswer={selectedAnswer}
         answerIsCorrect={answerIsCorrect}
       />
-      <SafeAreaView style={{ flex: 0 }} />
+      <SafeAreaView edges={["bottom"]} />
     </LinearGradient>
   );
 }

@@ -58,7 +58,7 @@ const QuestionCardOption = ({
       </Animated.View>
       <Animated.View style={[flipCardStyles.flippedCard, flipCardStyles.flipCard, flippedCardAnimatedStyle]}>
         <View flex={1} borderRadius={16} backgroundColor="white" justifyContent="center" alignItems="center">
-          <NashvilleNumber text={value} inversionChordSize={"$9"} />
+          <NashvilleNumber text={value} small />
         </View>
       </Animated.View>
     </View>
