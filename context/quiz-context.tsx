@@ -76,7 +76,8 @@ export default function QuizProvider({ children }: { children: React.ReactNode[]
       }
 
       const newTotalXP = (currentUser?.total_xp || 0) + XPGained;
-      await handleUpdateUserInfo({ ...updates, total_xp: newTotalXP });
+
+      handleUpdateUserInfo({ ...updates, total_xp: newTotalXP });
 
       const newXPHistory: XPHistory[] = [
         ...(xpHistory || []),

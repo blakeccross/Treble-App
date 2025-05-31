@@ -3,10 +3,11 @@ import { supabase } from "@/utils/supabase";
 import { router } from "expo-router";
 import moment from "moment";
 import { createContext, useContext, useEffect } from "react";
-import { MMKV, useMMKVBoolean, useMMKVNumber, useMMKVObject, useMMKVString } from "react-native-mmkv";
+import { MMKV, useMMKVNumber, useMMKVObject, useMMKVString } from "react-native-mmkv";
 import Purchases from "react-native-purchases";
 import Toast from "react-native-toast-message";
 import * as Notifications from "expo-notifications";
+import * as Network from "expo-network";
 
 const storage = new MMKV();
 
@@ -24,6 +25,7 @@ type UserContextProps = {
 export const UserContext = createContext<UserContextProps>({} as UserContextProps);
 
 export default function ModuleProvider({ children }: { children: React.ReactNode }) {
+  const networkState = Network.useNetworkState();
   const [currentUser, setCurrentUser] = useMMKVObject<Profile>("user");
   const [lives, setLives] = useMMKVNumber("lives");
   const [livesRefreshTime, setLivesRefreshTime] = useMMKVString("livesRefreshTime");
@@ -126,7 +128,7 @@ export default function ModuleProvider({ children }: { children: React.ReactNode
 
     // Only update user if they've created an account
     if (currentUser?.id) {
-      return await supabase.from("profiles").update(info).eq("id", currentUser?.id).select();
+      return supabase.from("profiles").update(info).eq("id", currentUser?.id).select();
     } else {
       return true;
     }

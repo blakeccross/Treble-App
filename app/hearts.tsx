@@ -1,5 +1,5 @@
 import { Heart, HeartCrack, LockOpen } from "@tamagui/lucide-icons";
-import { router, usePathname } from "expo-router";
+import { router } from "expo-router";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { Pressable, StyleSheet } from "react-native";
@@ -10,7 +10,6 @@ import { useUser } from "@/context/user-context";
 
 export default function Hearts() {
   const { lives, livesRefreshTime } = useUser();
-  const pathname = usePathname();
   const [countdown, setCountdown] = useState<string>("");
 
   useEffect(() => {

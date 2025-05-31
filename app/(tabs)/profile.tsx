@@ -24,6 +24,24 @@ export default function TabTwoScreen() {
   const { currentUser, handleUpdateUserInfo } = useContext(UserContext);
   const userActiveDates = currentUser?.active_days ? currentUser?.active_days.map((item) => new Date(item)) : [];
 
+  const userStats = [
+    {
+      name: "Modules Completed",
+      icon: <Award color={"$purple10"} fill={purpleA.purpleA10} marginTop={4} />,
+      value: currentUser?.completed_modules ? currentUser?.completed_modules.length : 0,
+    },
+    {
+      name: "Total XP",
+      icon: <AntDesign name="star" size={24} color={yellow.yellow10} marginTop={4} />,
+      value: currentUser?.total_xp ? currentUser?.total_xp : 0,
+    },
+    {
+      name: "Longest Streak",
+      icon: <Ionicons name="flame-sharp" size={24} color={redA.redA10} marginTop={4} />,
+      value: currentUser?.active_days ? getStreak(currentUser?.active_days) : 0,
+    },
+  ];
+
   const [selectedDates, onDatesChange] = useState<Date[]>(userActiveDates);
 
   const {
@@ -200,40 +218,19 @@ export default function TabTwoScreen() {
               <H5 fontWeight={600} marginBottom={"$2"}>
                 Overview
               </H5>
-              <Card width={"100%"} padding="$2.5">
-                <XStack gap="$2">
-                  <Award color={"$purple10"} fill={purpleA.purpleA10} marginTop={4} />
-                  <YStack>
-                    <Paragraph fontSize={"$7"} lineHeight={"$1"} fontWeight="800">
-                      {currentUser?.completed_modules ? currentUser?.completed_modules.length : 0}
-                    </Paragraph>
-                    <Paragraph fontSize={"$1"}>Modules Completed</Paragraph>
-                  </YStack>
-                </XStack>
-              </Card>
-              <Card width={"100%"} padding="$2.5">
-                <XStack gap="$2">
-                  <AntDesign name="star" size={24} color={yellow.yellow10} marginTop={4} />
-                  <YStack>
-                    <Paragraph fontSize={"$7"} lineHeight={"$1"} fontWeight="800">
-                      {currentUser?.total_xp ? currentUser?.total_xp : 0}
-                    </Paragraph>
-                    <Paragraph fontSize={"$1"}>Total XP</Paragraph>
-                  </YStack>
-                </XStack>
-              </Card>
-
-              <Card width={"100%"} padding="$2.5">
-                <XStack gap="$2">
-                  <Ionicons name="flame-sharp" size={24} color={redA.redA10} marginTop={4} />
-                  <YStack>
-                    <Paragraph fontSize={"$7"} lineHeight={"$1"} fontWeight="800">
-                      {currentUser?.active_days ? getStreak(currentUser?.active_days) : 0}
-                    </Paragraph>
-                    <Paragraph fontSize={"$1"}>Day Streak</Paragraph>
-                  </YStack>
-                </XStack>
-              </Card>
+              {userStats.map((stat) => (
+                <Card width={"100%"} padding="$2.5">
+                  <XStack gap="$2">
+                    {stat.icon}
+                    <YStack>
+                      <Paragraph fontSize={"$7"} lineHeight={"$1"} fontWeight="800">
+                        {stat.value}
+                      </Paragraph>
+                      <Paragraph fontSize={"$1"}>{stat.name}</Paragraph>
+                    </YStack>
+                  </XStack>
+                </Card>
+              ))}
             </YStack>
             <YStack flex={1}>
               <H5 fontWeight={600} marginBottom={"$2"}>
