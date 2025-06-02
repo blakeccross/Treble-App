@@ -35,7 +35,18 @@
     },
     "plugins": [
       "expo-router",
-      "expo-font",
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "./assets/fonts/BravuraText.otf",
+            "./assets/fonts/Melody-Bold.otf",
+            "./assets/fonts/Karmina-Regular.otf",
+            "./assets/fonts/Karmina-Medium.otf",
+            "./assets/fonts/Karmina-Bold.otf"
+          ]
+        }
+      ],
       "expo-audio",
       [
         "expo-splash-screen",

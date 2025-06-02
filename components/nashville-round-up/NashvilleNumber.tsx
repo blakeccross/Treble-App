@@ -45,39 +45,40 @@ export default function NashvilleNumber({ text = "", small = false }: { text: st
     const [beforeSlash, afterSlash] = text.split("/");
     return (
       <View position="relative" width={small ? 65 : 100} height={100} justifyContent="center" alignItems="center" overflow="visible">
-        <Paragraph
+        <View
           position="absolute"
           top={small ? 15 : 0}
           left={0}
-          fontSize={small ? "$5" : "$6"}
-          overflow="visible"
-          textAlign="center"
-          textShadowColor={"white"}
-          width={"55%"}
-          adjustsFontSizeToFit
-          numberOfLines={1}
-          padding={0}
+          // fontSize={small ? "$5" : "$6"}
+          // overflow="visible"
+          // textAlign="center"
+          // textShadowColor={"white"}
+          width={"45%"}
+          alignItems="flex-end"
+          // adjustsFontSizeToFit
+          // numberOfLines={1}
+          // padding={0}
         >
           {formatText(beforeSlash)}
-        </Paragraph>
+        </View>
         <View width={45} height={2} backgroundColor="black" transform={[{ rotate: "-55deg" }]} />
-        <Paragraph
+        <View
           position="absolute"
-          bottom={small ? 20 : 5}
+          bottom={small ? 15 : 5}
           // right={small ? 15 : 12}
           right={0}
-          fontSize={small ? "$5" : "$6"}
-          textShadowColor={"white"}
+          // fontSize={small ? "$5" : "$6"}
+          // textShadowColor={"white"}
           // width={small ? 30 : 30}
           // height={small ? 30 : 30}
-          width={"55%"}
-          adjustsFontSizeToFit
-          numberOfLines={1}
-          textAlign="center"
-          padding={0}
+          width={"48%"}
+          // adjustsFontSizeToFit
+          // numberOfLines={1}
+          // textAlign="center"
+          // padding={0}
         >
           {formatText(afterSlash)}
-        </Paragraph>
+        </View>
       </View>
     );
   }
@@ -86,12 +87,8 @@ export default function NashvilleNumber({ text = "", small = false }: { text: st
     const [mainNumber, superscript] = text.split("_");
     return (
       <View flexDirection="row" justifyContent="flex-end" alignItems="flex-start">
-        <Paragraph fontWeight={800} color={getTextColor(mainNumber)} fontSize={small ? "$5" : "$7"} adjustsFontSizeToFit numberOfLines={1}>
-          {formatText(mainNumber)}
-        </Paragraph>
-        <Paragraph fontWeight={800} color={getTextColor(mainNumber)} fontSize={small ? "$3" : "$5"}>
-          {formatText(superscript)}
-        </Paragraph>
+        <View>{formatText(mainNumber)}</View>
+        <View>{formatText(superscript)}</View>
       </View>
     );
   }
