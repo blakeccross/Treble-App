@@ -6,38 +6,38 @@ export default function NashvilleNumber({ text = "", small = false }: { text: st
     if (text.includes("#")) {
       const [before, after] = text.split("#");
       return (
-        <View flexDirection="row" alignItems="center">
-          <Paragraph fontWeight={800}>{before}</Paragraph>
-          <Paragraph fontWeight={800}>♯</Paragraph>
-          <Paragraph fontWeight={800} fontSize={small ? "$9" : "$10"} adjustsFontSizeToFit numberOfLines={1}>
+        <Text flexDirection="row" alignItems="center" color={getTextColor(text)}>
+          <Text fontWeight={800}>{before}</Text>
+          <Text fontWeight={800}>♯</Text>
+          <Text fontWeight={800} adjustsFontSizeToFit numberOfLines={1}>
             {after}
-          </Paragraph>
-        </View>
+          </Text>
+        </Text>
       );
     }
     if (text.includes("b")) {
       const [before, after] = text.split("b");
       return (
-        <View flexDirection="row" alignItems="center">
-          <Paragraph fontWeight={800}>{before}</Paragraph>
-          <Paragraph fontWeight={800}>♭</Paragraph>
-          <Paragraph fontWeight={800} fontSize={small ? "$9" : "$10"}>
-            {after}
-          </Paragraph>
-        </View>
+        <Text flexDirection="row" alignItems="center" color={getTextColor(text)}>
+          <Text fontWeight={800}>{before}</Text>
+          <Text fontWeight={800}>♭</Text>
+          <Text fontWeight={800}>{after}</Text>
+        </Text>
       );
     }
     return (
-      <Paragraph
+      <Text
         textAlign={align}
-        fontSize={small ? "$9" : "$10"}
+        fontSize={small ? "$5" : "$7"}
+        // fontSize={small ? "$9" : "$10"}
+        color={getTextColor(text)}
         // fontSize={small ? (superscript ? "$6" : "$9") : superscript ? "$8" : "$10"}
         fontWeight={800}
         adjustsFontSizeToFit
         numberOfLines={1}
       >
         {text}
-      </Paragraph>
+      </Text>
     );
   }
 
@@ -45,13 +45,13 @@ export default function NashvilleNumber({ text = "", small = false }: { text: st
     const [beforeSlash, afterSlash] = text.split("/");
     return (
       <View position="relative" width={small ? 65 : 100} height={100} justifyContent="center" alignItems="center" overflow="visible">
-        <View
+        <Text
           position="absolute"
           top={small ? 15 : 0}
           left={0}
-          // fontSize={small ? "$5" : "$6"}
+          fontSize={small ? "$5" : "$6"}
           // overflow="visible"
-          // textAlign="center"
+          textAlign="right"
           // textShadowColor={"white"}
           width={"45%"}
           alignItems="flex-end"
@@ -60,9 +60,9 @@ export default function NashvilleNumber({ text = "", small = false }: { text: st
           // padding={0}
         >
           {formatText(beforeSlash)}
-        </View>
+        </Text>
         <View width={45} height={2} backgroundColor="black" transform={[{ rotate: "-55deg" }]} />
-        <View
+        <Text
           position="absolute"
           bottom={small ? 15 : 5}
           // right={small ? 15 : 12}
@@ -71,14 +71,14 @@ export default function NashvilleNumber({ text = "", small = false }: { text: st
           // textShadowColor={"white"}
           // width={small ? 30 : 30}
           // height={small ? 30 : 30}
-          width={"48%"}
+          width={"45%"}
           // adjustsFontSizeToFit
           // numberOfLines={1}
-          // textAlign="center"
+          textAlign="left"
           // padding={0}
         >
           {formatText(afterSlash)}
-        </View>
+        </Text>
       </View>
     );
   }
@@ -86,16 +86,16 @@ export default function NashvilleNumber({ text = "", small = false }: { text: st
   if (text.includes("_")) {
     const [mainNumber, superscript] = text.split("_");
     return (
-      <View flexDirection="row" justifyContent="flex-end" alignItems="flex-start">
-        <View>{formatText(mainNumber)}</View>
-        <View>{formatText(superscript)}</View>
-      </View>
+      <Text flexDirection="row" justifyContent="flex-end" alignItems="flex-start">
+        <Text>{formatText(mainNumber)}</Text>
+        <Text>{formatText(superscript)}</Text>
+      </Text>
     );
   }
 
   return (
-    <Paragraph fontWeight={800} color={getTextColor(text)} fontSize={small ? "$5" : "$7"}>
+    <Text fontWeight={800} fontSize={small ? "$5" : "$7"}>
       {formatText(text)}
-    </Paragraph>
+    </Text>
   );
 }

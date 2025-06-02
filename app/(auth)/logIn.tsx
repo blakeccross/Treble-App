@@ -54,7 +54,7 @@ export default function Login() {
     }
   }
 
-  const KEYBOARD_VERTICAL_OFFSET = 80 + (StatusBar?.currentHeight ?? 0);
+  const KEYBOARD_VERTICAL_OFFSET = 120 + (StatusBar?.currentHeight ?? 0);
 
   return (
     <KeyboardAvoidingView

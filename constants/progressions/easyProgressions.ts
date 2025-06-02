@@ -396,7 +396,7 @@ export const progressions = [
     ],
   },
   {
-    value: ["1", "2_m7", "3_m7", "4_maj7"],
+    value: ["1", "2m⁷", "3m⁷", "4_maj⁷"],
     midi: [
       { name: "C3", start: 0, end: 1, velocity: 0.36220472440944884 },
       { name: "A3", start: 0, end: 1, velocity: 0.47244094488188976 },
@@ -551,7 +551,7 @@ export const progressions = [
     ],
   },
   {
-    value: ["1", "4_Maj7", "5_sus4", "5"],
+    value: ["1", "4Maj⁷", "5_sus4", "5"],
     midi: [
       { name: "G3", start: 0, end: 1, velocity: 0.3700787401574803 },
       { name: "C4", start: 0, end: 1, velocity: 0.3543307086614173 },
@@ -571,7 +571,7 @@ export const progressions = [
     ],
   },
   {
-    value: ["1", "6_m7", "2_m7", "5⁷"],
+    value: ["1", "6m⁷", "2m⁷", "5⁷"],
     midi: [
       { name: "B3", start: 0, end: 1, velocity: 0.4094488188976378 },
       { name: "D4", start: 0, end: 1, velocity: 0.3937007874015748 },
@@ -631,7 +631,7 @@ export const progressions = [
     ],
   },
   {
-    value: ["1_Maj7", "4_Maj7", "2_m7", "5"],
+    value: ["1Maj⁷", "4Maj⁷", "2m⁷", "5"],
     midi: [
       { name: "A3", start: 0, end: 1, velocity: 0.4251968503937008 },
       { name: "C#4", start: 0, end: 1, velocity: 0.6141732283464567 },
@@ -695,7 +695,7 @@ export const progressions = [
     ],
   },
   {
-    value: ["3_m7", "6⁷", "2_m7", "5⁷"],
+    value: ["3m⁷", "6⁷", "2m⁷", "5⁷"],
     midi: [
       { name: "G3", start: 0, end: 1, velocity: 0.3464566929133858 },
       { name: "B3", start: 0, end: 1, velocity: 0.3543307086614173 },
@@ -718,7 +718,7 @@ export const progressions = [
     ],
   },
   {
-    value: ["4", "1/3", "2_m7", "1"],
+    value: ["4", "1/3", "2m⁷", "1"],
     midi: [
       { name: "C4", start: 0, end: 1, velocity: 0.49606299212598426 },
       { name: "F4", start: 0, end: 1, velocity: 0.5433070866141733 },
