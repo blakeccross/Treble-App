@@ -1,6 +1,6 @@
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
-import { KeyboardAvoidingView, Platform, ScrollView } from "react-native";
+import { KeyboardAvoidingView, Platform, ScrollView, StatusBar } from "react-native";
 import { Button, Input, Label, Theme, View, YStack } from "tamagui";
 import { useSignUpForm } from "../../../context/sign-up-context";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -26,11 +26,13 @@ export default function SignUpEmail() {
     router.push("/(auth)/(sign-up)/password");
   }
 
+  const KEYBOARD_VERTICAL_OFFSET = 120 + (StatusBar?.currentHeight ?? 0);
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={{ flex: 1 }}
-      keyboardVerticalOffset={Platform.OS === "ios" ? 80 : 0}
+      keyboardVerticalOffset={Platform.OS === "ios" ? KEYBOARD_VERTICAL_OFFSET : 0}
     >
       <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled" bounces={false}>
         <YStack flex={1} padding="$3" space="$4">

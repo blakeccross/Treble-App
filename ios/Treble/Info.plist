@@ -59,6 +59,14 @@
     <array>
       <string>$(PRODUCT_BUNDLE_IDENTIFIER).expo.index_route</string>
     </array>
+    <key>UIAppFonts</key>
+    <array>
+      <string>BravuraText.otf</string>
+      <string>Melody-Bold.otf</string>
+      <string>Karmina-Regular.otf</string>
+      <string>Karmina-Medium.otf</string>
+      <string>Karmina-Bold.otf</string>
+    </array>
     <key>UIBackgroundModes</key>
     <array>
       <string>remote-notification</string>

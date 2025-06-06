@@ -7,39 +7,49 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		01118C12B4CF4BD5BDF8D926 /* piano_fs3.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 88240A532442447B852ACA01 /* piano_fs3.mp3 */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
-		3CB4B511A8F0D2282A00A7A1 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D4204AC91C259EABFF54237 /* ExpoModulesProvider.swift */; };
+		27C5D827F9AEF4FA85FD6E53 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 318DFCEF891D0B1FCBF5229F /* PrivacyInfo.xcprivacy */; };
+		352114B25E8E46E893108805 /* Karmina-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 0BD8CA0C5A294C91B2695CDF /* Karmina-Regular.otf */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
-		4C3D88B797BB482591F384EF /* piano_c4.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = A1597F8DA9234B22800869E6 /* piano_c4.mp3 */; };
-		68BF0C623A6F45C8A4B4A3DE /* piano_c3.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 4E15D08E9176472EAFA812D1 /* piano_c3.mp3 */; };
-		88094B09EE5F4983BA93C51D /* piano_fs4.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 9BFA80FE6AC44B368E57CF52 /* piano_fs4.mp3 */; };
-		90139045E8722194A5244C68 /* libPods-Treble.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F157CEE716422AA533866FB /* libPods-Treble.a */; };
-		9037A2CB58312071A124ABBE /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 3792C4F5732AA22DA657D9DF /* PrivacyInfo.xcprivacy */; };
+		43D470E08DD642A38C124AF0 /* piano_c4.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 90D28DA681694D6A94762190 /* piano_c4.mp3 */; };
+		6979E8E139C546849D904517 /* piano_c3.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 03D4CD153C954AC5AC674DD7 /* piano_c3.mp3 */; };
+		6A52D1C8CBB4B5704ECDE59C /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 543895B63D211BBC33FC26AD /* ExpoModulesProvider.swift */; };
+		793A0E669AC4B7D9BD42D175 /* libPods-Treble.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 59C0E1AC557C416D9403AFB8 /* libPods-Treble.a */; };
+		811B2FAC97374E639A35642C /* BravuraText.otf in Resources */ = {isa = PBXBuildFile; fileRef = DB80D15F96C5473F9D1CD22B /* BravuraText.otf */; };
+		90D45C5CA8F442049D7ACE84 /* piano_fs4.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = FE48A63A0DEA47019EDF25F3 /* piano_fs4.mp3 */; };
+		920EC0745A35482B9C1AB521 /* Karmina-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 942ACE69C40B45EB9C3F9A83 /* Karmina-Bold.otf */; };
+		A33FF62C4D184A519DA606FE /* piano_fs2.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 6A04FCE5CDC648DABCDE745C /* piano_fs2.mp3 */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
-		D6979340FDBD4400902FB820 /* piano_fs2.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = E313844237B44B00B761EEF1 /* piano_fs2.mp3 */; };
+		D646D00B334C46C8824463C9 /* Karmina-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = 5DD6268C5CA04873A11FDA7D /* Karmina-Medium.otf */; };
+		E77A3DD9BC834EEF8F0259BC /* Melody-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = CDEAFB1BE1B741DC8C03D0A6 /* Melody-Bold.otf */; };
+		EF571F54EA8D4D2BB7F7B2F5 /* piano_fs3.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 587E94E448844CAC86D81C24 /* piano_fs3.mp3 */; };
 		F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11748412D0307B40044C1D9 /* AppDelegate.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		03D4CD153C954AC5AC674DD7 /* piano_c3.mp3 */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = piano_c3.mp3; path = ../assets/audio/piano_c3.mp3; sourceTree = "<group>"; };
+		0BD8CA0C5A294C91B2695CDF /* Karmina-Regular.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Karmina-Regular.otf"; path = "../assets/fonts/Karmina-Regular.otf"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* Treble.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Treble.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = Treble/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Treble/Info.plist; sourceTree = "<group>"; };
-		1F157CEE716422AA533866FB /* libPods-Treble.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Treble.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		2D4204AC91C259EABFF54237 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-Treble/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
-		3792C4F5732AA22DA657D9DF /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = Treble/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		4E15D08E9176472EAFA812D1 /* piano_c3.mp3 */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = piano_c3.mp3; path = ../assets/audio/piano_c3.mp3; sourceTree = "<group>"; };
-		88240A532442447B852ACA01 /* piano_fs3.mp3 */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = piano_fs3.mp3; path = ../assets/audio/piano_fs3.mp3; sourceTree = "<group>"; };
-		9BFA80FE6AC44B368E57CF52 /* piano_fs4.mp3 */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = piano_fs4.mp3; path = ../assets/audio/piano_fs4.mp3; sourceTree = "<group>"; };
-		A1597F8DA9234B22800869E6 /* piano_c4.mp3 */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = piano_c4.mp3; path = ../assets/audio/piano_c4.mp3; sourceTree = "<group>"; };
+		318DFCEF891D0B1FCBF5229F /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = Treble/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		48ACE8535A83616C71BBCA59 /* Pods-Treble.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Treble.debug.xcconfig"; path = "Target Support Files/Pods-Treble/Pods-Treble.debug.xcconfig"; sourceTree = "<group>"; };
+		543895B63D211BBC33FC26AD /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-Treble/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
+		587E94E448844CAC86D81C24 /* piano_fs3.mp3 */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = piano_fs3.mp3; path = ../assets/audio/piano_fs3.mp3; sourceTree = "<group>"; };
+		59C0E1AC557C416D9403AFB8 /* libPods-Treble.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Treble.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		5DD6268C5CA04873A11FDA7D /* Karmina-Medium.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Karmina-Medium.otf"; path = "../assets/fonts/Karmina-Medium.otf"; sourceTree = "<group>"; };
+		6A04FCE5CDC648DABCDE745C /* piano_fs2.mp3 */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = piano_fs2.mp3; path = ../assets/audio/piano_fs2.mp3; sourceTree = "<group>"; };
+		90D28DA681694D6A94762190 /* piano_c4.mp3 */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = piano_c4.mp3; path = ../assets/audio/piano_c4.mp3; sourceTree = "<group>"; };
+		942ACE69C40B45EB9C3F9A83 /* Karmina-Bold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Karmina-Bold.otf"; path = "../assets/fonts/Karmina-Bold.otf"; sourceTree = "<group>"; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = Treble/SplashScreen.storyboard; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
-		D641003B9313DCA03F806169 /* Pods-Treble.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Treble.debug.xcconfig"; path = "Target Support Files/Pods-Treble/Pods-Treble.debug.xcconfig"; sourceTree = "<group>"; };
-		E313844237B44B00B761EEF1 /* piano_fs2.mp3 */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = piano_fs2.mp3; path = ../assets/audio/piano_fs2.mp3; sourceTree = "<group>"; };
+		CDEAFB1BE1B741DC8C03D0A6 /* Melody-Bold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Melody-Bold.otf"; path = "../assets/fonts/Melody-Bold.otf"; sourceTree = "<group>"; };
+		D11D3D9BC0EDA167BB3E2C59 /* Pods-Treble.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Treble.release.xcconfig"; path = "Target Support Files/Pods-Treble/Pods-Treble.release.xcconfig"; sourceTree = "<group>"; };
+		DB80D15F96C5473F9D1CD22B /* BravuraText.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = BravuraText.otf; path = ../assets/fonts/BravuraText.otf; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		F11748412D0307B40044C1D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = Treble/AppDelegate.swift; sourceTree = "<group>"; };
 		F11748442D0722820044C1D9 /* Treble-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "Treble-Bridging-Header.h"; path = "Treble/Treble-Bridging-Header.h"; sourceTree = "<group>"; };
-		FB1553A6F4D349D19E4827BC /* Pods-Treble.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Treble.release.xcconfig"; path = "Target Support Files/Pods-Treble/Pods-Treble.release.xcconfig"; sourceTree = "<group>"; };
+		FE48A63A0DEA47019EDF25F3 /* piano_fs4.mp3 */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = piano_fs4.mp3; path = ../assets/audio/piano_fs4.mp3; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -47,36 +57,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				90139045E8722194A5244C68 /* libPods-Treble.a in Frameworks */,
+				793A0E669AC4B7D9BD42D175 /* libPods-Treble.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		046C0FEBB63640BE82B9A9AC /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				E313844237B44B00B761EEF1 /* piano_fs2.mp3 */,
-				4E15D08E9176472EAFA812D1 /* piano_c3.mp3 */,
-				88240A532442447B852ACA01 /* piano_fs3.mp3 */,
-				A1597F8DA9234B22800869E6 /* piano_c4.mp3 */,
-				9BFA80FE6AC44B368E57CF52 /* piano_fs4.mp3 */,
-			);
-			name = Resources;
-			path = "";
-			sourceTree = "<group>";
-		};
-		08DFBD8F66BE46FBD255D97F /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				D641003B9313DCA03F806169 /* Pods-Treble.debug.xcconfig */,
-				FB1553A6F4D349D19E4827BC /* Pods-Treble.release.xcconfig */,
-			);
-			name = Pods;
-			path = Pods;
-			sourceTree = "<group>";
-		};
 		13B07FAE1A68108700A75B9A /* Treble */ = {
 			isa = PBXGroup;
 			children = (
@@ -86,7 +73,7 @@
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
-				3792C4F5732AA22DA657D9DF /* PrivacyInfo.xcprivacy */,
+				318DFCEF891D0B1FCBF5229F /* PrivacyInfo.xcprivacy */,
 			);
 			name = Treble;
 			sourceTree = "<group>";
@@ -95,9 +82,19 @@
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				1F157CEE716422AA533866FB /* libPods-Treble.a */,
+				59C0E1AC557C416D9403AFB8 /* libPods-Treble.a */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		2F18DBA9F334F58B79D96694 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				48ACE8535A83616C71BBCA59 /* Pods-Treble.debug.xcconfig */,
+				D11D3D9BC0EDA167BB3E2C59 /* Pods-Treble.release.xcconfig */,
+			);
+			name = Pods;
+			path = Pods;
 			sourceTree = "<group>";
 		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
@@ -114,9 +111,9 @@
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
-				046C0FEBB63640BE82B9A9AC /* Resources */,
-				08DFBD8F66BE46FBD255D97F /* Pods */,
-				DBB16BA81A6962F839FE4502 /* ExpoModulesProviders */,
+				F2622B32A36D47AFB2174EB4 /* Resources */,
+				2F18DBA9F334F58B79D96694 /* Pods */,
+				ADB7F8966EA34A91A75C9F62 /* ExpoModulesProviders */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -131,12 +128,12 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		A0260E56B11E195FAEEAD07D /* Treble */ = {
+		ADB7F8966EA34A91A75C9F62 /* ExpoModulesProviders */ = {
 			isa = PBXGroup;
 			children = (
-				2D4204AC91C259EABFF54237 /* ExpoModulesProvider.swift */,
+				D73795BACA368FF33CBC0523 /* Treble */,
 			);
-			name = Treble;
+			name = ExpoModulesProviders;
 			sourceTree = "<group>";
 		};
 		BB2F792B24A3F905000567C9 /* Supporting */ = {
@@ -148,12 +145,30 @@
 			path = Treble/Supporting;
 			sourceTree = "<group>";
 		};
-		DBB16BA81A6962F839FE4502 /* ExpoModulesProviders */ = {
+		D73795BACA368FF33CBC0523 /* Treble */ = {
 			isa = PBXGroup;
 			children = (
-				A0260E56B11E195FAEEAD07D /* Treble */,
+				543895B63D211BBC33FC26AD /* ExpoModulesProvider.swift */,
 			);
-			name = ExpoModulesProviders;
+			name = Treble;
+			sourceTree = "<group>";
+		};
+		F2622B32A36D47AFB2174EB4 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				6A04FCE5CDC648DABCDE745C /* piano_fs2.mp3 */,
+				03D4CD153C954AC5AC674DD7 /* piano_c3.mp3 */,
+				587E94E448844CAC86D81C24 /* piano_fs3.mp3 */,
+				90D28DA681694D6A94762190 /* piano_c4.mp3 */,
+				FE48A63A0DEA47019EDF25F3 /* piano_fs4.mp3 */,
+				DB80D15F96C5473F9D1CD22B /* BravuraText.otf */,
+				CDEAFB1BE1B741DC8C03D0A6 /* Melody-Bold.otf */,
+				0BD8CA0C5A294C91B2695CDF /* Karmina-Regular.otf */,
+				5DD6268C5CA04873A11FDA7D /* Karmina-Medium.otf */,
+				942ACE69C40B45EB9C3F9A83 /* Karmina-Bold.otf */,
+			);
+			name = Resources;
+			path = "";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -164,13 +179,13 @@
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "Treble" */;
 			buildPhases = (
 				08A4A3CD28434E44B6B9DE2E /* [CP] Check Pods Manifest.lock */,
-				A4555809EB19429E1778942E /* [Expo] Configure project */,
+				BBE5ACD6E9CF5AB7A19E89C4 /* [Expo] Configure project */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */,
-				5090E1BF1C86B9A432C7A22A /* [CP] Embed Pods Frameworks */,
+				10C4FA202587282249613C19 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -220,12 +235,17 @@
 				BB2F792D24A3F905000567C9 /* Expo.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
-				D6979340FDBD4400902FB820 /* piano_fs2.mp3 in Resources */,
-				68BF0C623A6F45C8A4B4A3DE /* piano_c3.mp3 in Resources */,
-				01118C12B4CF4BD5BDF8D926 /* piano_fs3.mp3 in Resources */,
-				4C3D88B797BB482591F384EF /* piano_c4.mp3 in Resources */,
-				88094B09EE5F4983BA93C51D /* piano_fs4.mp3 in Resources */,
-				9037A2CB58312071A124ABBE /* PrivacyInfo.xcprivacy in Resources */,
+				A33FF62C4D184A519DA606FE /* piano_fs2.mp3 in Resources */,
+				6979E8E139C546849D904517 /* piano_c3.mp3 in Resources */,
+				EF571F54EA8D4D2BB7F7B2F5 /* piano_fs3.mp3 in Resources */,
+				43D470E08DD642A38C124AF0 /* piano_c4.mp3 in Resources */,
+				90D45C5CA8F442049D7ACE84 /* piano_fs4.mp3 in Resources */,
+				811B2FAC97374E639A35642C /* BravuraText.otf in Resources */,
+				E77A3DD9BC834EEF8F0259BC /* Melody-Bold.otf in Resources */,
+				352114B25E8E46E893108805 /* Karmina-Regular.otf in Resources */,
+				D646D00B334C46C8824463C9 /* Karmina-Medium.otf in Resources */,
+				920EC0745A35482B9C1AB521 /* Karmina-Bold.otf in Resources */,
+				27C5D827F9AEF4FA85FD6E53 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -269,7 +289,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		5090E1BF1C86B9A432C7A22A /* [CP] Embed Pods Frameworks */ = {
+		10C4FA202587282249613C19 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -347,7 +367,7 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Treble/Pods-Treble-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		A4555809EB19429E1778942E /* [Expo] Configure project */ = {
+		BBE5ACD6E9CF5AB7A19E89C4 /* [Expo] Configure project */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
@@ -374,7 +394,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */,
-				3CB4B511A8F0D2282A00A7A1 /* ExpoModulesProvider.swift in Sources */,
+				6A52D1C8CBB4B5704ECDE59C /* ExpoModulesProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -383,7 +403,7 @@
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D641003B9313DCA03F806169 /* Pods-Treble.debug.xcconfig */;
+			baseConfigurationReference = 48ACE8535A83616C71BBCA59 /* Pods-Treble.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -419,7 +439,7 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = FB1553A6F4D349D19E4827BC /* Pods-Treble.release.xcconfig */;
+			baseConfigurationReference = D11D3D9BC0EDA167BB3E2C59 /* Pods-Treble.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;

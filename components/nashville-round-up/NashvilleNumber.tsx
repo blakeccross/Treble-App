@@ -21,7 +21,9 @@ export default function NashvilleNumber({ text = "", small = false }: { text: st
         <Text flexDirection="row" alignItems="center" color={getTextColor(text)}>
           <Text fontWeight={800}>{before}</Text>
           <Text fontWeight={800}>♭</Text>
-          <Text fontWeight={800}>{after}</Text>
+          <Text fontWeight={800} adjustsFontSizeToFit numberOfLines={1}>
+            {after}
+          </Text>
         </Text>
       );
     }
@@ -50,14 +52,10 @@ export default function NashvilleNumber({ text = "", small = false }: { text: st
           top={small ? 15 : 0}
           left={0}
           fontSize={small ? "$5" : "$6"}
-          // overflow="visible"
-          textAlign="right"
-          // textShadowColor={"white"}
+          textAlign="center"
           width={"45%"}
-          alignItems="flex-end"
-          // adjustsFontSizeToFit
-          // numberOfLines={1}
-          // padding={0}
+          adjustsFontSizeToFit
+          numberOfLines={1}
         >
           {formatText(beforeSlash)}
         </Text>
@@ -65,17 +63,12 @@ export default function NashvilleNumber({ text = "", small = false }: { text: st
         <Text
           position="absolute"
           bottom={small ? 15 : 5}
-          // right={small ? 15 : 12}
           right={0}
-          // fontSize={small ? "$5" : "$6"}
-          // textShadowColor={"white"}
-          // width={small ? 30 : 30}
-          // height={small ? 30 : 30}
+          fontSize={small ? "$5" : "$6"}
           width={"45%"}
-          // adjustsFontSizeToFit
-          // numberOfLines={1}
           textAlign="left"
-          // padding={0}
+          adjustsFontSizeToFit
+          numberOfLines={1}
         >
           {formatText(afterSlash)}
         </Text>
