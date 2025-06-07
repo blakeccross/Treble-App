@@ -95,7 +95,13 @@ export default function AnswerDrawer({
                   <Paragraph fontWeight={"bold"} fontSize={"$6"} color={answerIsCorrect ? "$green12" : "$red5Dark"}>
                     Correct Answer:
                   </Paragraph>
-                  <Paragraph fontSize={"$6"}>{correctAnswer.map((answer) => answer.option_text).join(", ")}</Paragraph>
+                  <Paragraph letterSpacing={0.3} fontSize={"$6"} color={answerIsCorrect ? "$green12" : "$red5Dark"}>
+                    {correctAnswer.map((answer) => answer.option_text).join(", ")}
+                  </Paragraph>
+
+                  <Paragraph letterSpacing={0.3} fontSize={"$6"} color={answerIsCorrect ? "$green12" : "$red5Dark"}>
+                    {explanation}
+                  </Paragraph>
                 </>
               )}
               <View width={"100%"}>
