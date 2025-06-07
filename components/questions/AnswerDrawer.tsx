@@ -1,10 +1,12 @@
 import { usePlaySFX } from "@/hooks/usePlaySFX";
 import * as Haptics from "expo-haptics";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Button, H3, Paragraph, Sheet, View, YStack } from "tamagui";
+import { Button, H3, H4, Paragraph, Sheet, View, XStack, YStack } from "tamagui";
 import { useQuiz } from "../../context/quiz-context";
 import { useUser } from "../../context/user-context";
+import { CircleCheck, CircleX, X } from "@tamagui/lucide-icons";
+import { greenDark, redDark } from "@tamagui/themes";
 
 const correctSFX = require("@/assets/audio/correct_sfx.mp3");
 
@@ -18,14 +20,25 @@ export default function AnswerDrawer({
   enabled: boolean;
 }) {
   const { currentUser } = useUser();
-  const { nextQuestion, lives, setLives, correctAnswers, incorrectAnswers } = useQuiz();
+  const { nextQuestion, lives, setLives, correctAnswers, incorrectAnswers, questions, currentQuestionIndex } = useQuiz();
   const [open, setOpen] = useState(false);
   const [answerIsCorrect, setAnswerIsCorrect] = useState<boolean>();
+  const [correctAnswer, setCorrectAnswer] = useState<{ id: number; option_text: string }[]>([]);
   const { playSFX } = usePlaySFX();
+
+  const question = useRef(questions && questions[currentQuestionIndex]);
+
+  function validate() {
+    const correctAnswers = question.current?.question_options.filter(
+      (item: { id: number; option_text: string }) => item && item.id && question.current?.answer_id?.includes(item.id)
+    );
+    if (correctAnswers) setCorrectAnswer(correctAnswers);
+  }
 
   useEffect(() => {
     if (answerIsCorrect !== undefined) {
       startAnimation();
+      validate();
     }
   }, [answerIsCorrect]);
 
@@ -58,33 +71,48 @@ export default function AnswerDrawer({
   return (
     <>
       <Sheet snapPointsMode="fit" dismissOnOverlayPress={false} zIndex={100_000} animation="quick" open={open} onOpenChange={setOpen}>
-        <Sheet.Overlay animation="lazy" backgroundColor="$shadow6" enterStyle={{ opacity: 0 }} exitStyle={{ opacity: 0 }} />
+        <Sheet.Overlay animation="lazy" backgroundColor="$shadowColor" enterStyle={{ opacity: 0 }} exitStyle={{ opacity: 0 }} />
 
-        <Sheet.Frame borderTopLeftRadius={"$10"} borderTopRightRadius={"$10"} padding="$4" backgroundColor={answerIsCorrect ? "$green7" : "$red9"}>
+        <Sheet.Frame borderTopLeftRadius={"$10"} borderTopRightRadius={"$10"} padding="$4" backgroundColor={answerIsCorrect ? "$green7" : "$red8"}>
           <View gap={"$4"} flex={1} justifyContent="space-between">
-            <YStack flex={1}>
-              <H3 fontWeight={600} textAlign="center" color={answerIsCorrect ? "$green12" : "$red5Dark"}>
-                {answerIsCorrect ? "Correct!" : "Incorrect"}
-              </H3>
-
-              <Paragraph fontSize={"$6"} color={answerIsCorrect ? "$green12" : "$red5Dark"}>
-                {explanation}
-              </Paragraph>
+            <YStack flex={1} gap={"$4"}>
+              <XStack alignItems="center" gap={"$2"}>
+                {answerIsCorrect ? (
+                  <CircleCheck color={"$green5Dark"} fill={greenDark.green10} />
+                ) : (
+                  <CircleX color={"$red5Dark"} fill={redDark.red10} />
+                )}
+                <H3 fontWeight={600} textAlign="left" color={answerIsCorrect ? "$green12" : "$red5Dark"}>
+                  {answerIsCorrect ? "Correct!" : "Incorrect"}
+                </H3>
+              </XStack>
+              {answerIsCorrect ? (
+                <Paragraph fontSize={"$6"} color={answerIsCorrect ? "$green12" : "$red5Dark"}>
+                  {explanation}
+                </Paragraph>
+              ) : (
+                <>
+                  <Paragraph fontWeight={"bold"} fontSize={"$6"} color={answerIsCorrect ? "$green12" : "$red5Dark"}>
+                    Correct Answer:
+                  </Paragraph>
+                  <Paragraph fontSize={"$6"}>{correctAnswer.map((answer) => answer.option_text).join(", ")}</Paragraph>
+                </>
+              )}
+              <View width={"100%"}>
+                <Button
+                  onPress={handleContinue}
+                  textAlign="center"
+                  backgroundColor={answerIsCorrect ? "$green12Light" : "$red12Light"}
+                  borderWidth={0}
+                  pressStyle={{ backgroundColor: answerIsCorrect ? "$green10Light" : "$red11Light" }}
+                  fontWeight={600}
+                  fontSize={"$7"}
+                  height={"$5"}
+                >
+                  Continue
+                </Button>
+              </View>
             </YStack>
-            <View width={"100%"}>
-              <Button
-                onPress={handleContinue}
-                textAlign="center"
-                backgroundColor={answerIsCorrect ? "$green12Light" : "$red12Light"}
-                borderWidth={0}
-                pressStyle={{ backgroundColor: answerIsCorrect ? "$green10Light" : "$red11Light" }}
-                fontWeight={600}
-                fontSize={"$7"}
-                height={"$5"}
-              >
-                Continue
-              </Button>
-            </View>
           </View>
           <SafeAreaView edges={["bottom"]} />
         </Sheet.Frame>
