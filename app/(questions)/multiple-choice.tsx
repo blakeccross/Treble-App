@@ -2,7 +2,7 @@ import AnswerDrawer from "@/components/questions/AnswerDrawer";
 import { QuizContext } from "@/context/quiz-context";
 import { Image } from "expo-image";
 import React, { useContext, useRef, useState } from "react";
-import { FlatList, SafeAreaView, Platform } from "react-native";
+import { FlatList } from "react-native";
 import { Card, Paragraph, View } from "tamagui";
 
 export default function MultipleCHoice() {
