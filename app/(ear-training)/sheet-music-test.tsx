@@ -1,3 +1,4 @@
+import ExampleUsage from "@/components/sheet-music/example-usage";
 import SheetMusic from "@/components/sheet-music/sheet-music";
 import { View } from "react-native";
 
@@ -19,10 +20,57 @@ const sampleMidiData = {
   ],
 };
 
+type NoteType = "whole" | "half" | "quarter";
+type Pitch = "d4" | "e4" | "f4" | "g4" | "a5" | "b5" | "c5" | "d5" | "e5" | "f5" | "g5";
+
+interface NoteProps {
+  type: NoteType;
+  pitch: Pitch;
+}
+
+interface BarProps {
+  type?: "single" | "double";
+  isEnd?: boolean;
+}
+
+interface MusicalStaffProps {
+  notes: Array<NoteProps | BarProps>;
+}
+
+// Sample music sequence demonstrating different note types and bars
+export const sampleMusic: Array<NoteProps | BarProps> = [
+  { type: "half", pitch: "e4" },
+
+  { type: "quarter", pitch: "f4" },
+  { type: "quarter", pitch: "f4" },
+
+  { type: "single" },
+  // { type: "quarter", pitch: "a5" },
+  // { type: "half", pitch: "b5" },
+  // { type: "quarter", pitch: "c5" },
+  // { type: "double" },
+  // { type: "quarter", pitch: "c5" },
+  // { type: "half", pitch: "a5" },
+  // { type: "quarter", pitch: "e5" },
+  // { type: "single" },
+  // { type: "quarter", pitch: "c5" },
+  // { type: "quarter", pitch: "e5" },
+  // { type: "quarter", pitch: "f5" },
+  // { type: "quarter", pitch: "g4" },
+  // { type: "single" },
+  // { type: "half", pitch: "d5" },
+  // { type: "half", pitch: "a5" },
+  // { type: "single" },
+  // { type: "whole", pitch: "d4" },
+  // { type: "single" },
+  // { isEnd: true },
+];
+
 export default function SheetMusicTest() {
-  return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <SheetMusic midiData={sampleMidiData} />
-    </View>
-  );
+  return <ExampleUsage />;
+  // return (
+  //   <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+  //     <SheetMusic notes={sampleMusic} />
+  //   </View>
+  // );
 }
