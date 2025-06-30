@@ -1,9 +1,9 @@
-import React, { useMemo } from "react";
-import { View, useWindowDimensions, StyleSheet } from "react-native";
-import Svg, { Line, Text as SvgText, G } from "react-native-svg";
+import React, { useMemo, useEffect, useRef } from "react";
+import { View, useWindowDimensions, StyleSheet, Animated } from "react-native";
+import Svg, { Line, Text as SvgText, G, TextAnchor } from "react-native-svg";
 
 type NoteType = "whole" | "half" | "quarter";
-type Pitch = "d4" | "e4" | "f4" | "g4" | "a5" | "b5" | "c5" | "d5" | "e5" | "f5" | "g5";
+type Pitch = "a3" | "b3" | "c4" | "d4" | "e4" | "f4" | "g4" | "a5" | "b5" | "c5" | "d5" | "e5" | "f5" | "g5";
 
 interface NoteProps {
   type: NoteType;
@@ -27,6 +27,10 @@ interface MusicalStaffProps {
   containerHeight?: number;
   keySignature?: "C" | "G" | "D" | "A" | "E" | "B" | "F#" | "C#" | "F" | "Bb" | "Eb" | "Ab" | "Db" | "Gb" | "Cb";
   scale?: number;
+  centerLastLine?: boolean;
+  exitAnimation?: boolean;
+  showBarLines?: boolean;
+  animateIn?: "bottom" | "none" | "right";
 }
 
 interface Measure {
@@ -34,12 +38,169 @@ interface Measure {
   width: number;
 }
 
+// Animated Note Component
+const AnimatedNote = ({
+  children,
+  x,
+  y,
+  fontSize,
+  fontFamily,
+  fill,
+  textAnchor,
+  transform,
+  delay = 0,
+  exitAnimation = false,
+  isFlipped = false,
+  animateIn = "none",
+}: {
+  children: React.ReactNode;
+  x: number;
+  y: number;
+  fontSize: number;
+  fontFamily: string;
+  fill: string;
+  textAnchor: TextAnchor;
+  transform?: string;
+  delay?: number;
+  exitAnimation?: boolean;
+  isFlipped?: boolean;
+  animateIn?: "bottom" | "none" | "right";
+}) => {
+  const [isVisible, setIsVisible] = React.useState(false);
+  const [currentY, setCurrentY] = React.useState(() => {
+    if (animateIn === "bottom") {
+      return isFlipped ? y - 20 : y + 20;
+    }
+    return y;
+  });
+  const [currentX, setCurrentX] = React.useState(() => {
+    if (animateIn === "right") {
+      return isFlipped ? x - 200 : x + 200; // Start 50px to the right
+    }
+    return x;
+  });
+  const [opacity, setOpacity] = React.useState(0);
+
+  useEffect(() => {
+    if (exitAnimation) {
+      // Exit animation: move left and fade out
+      const exitTimer = setTimeout(() => {
+        // Animate X position - all notes move left for consistency
+        const xInterval = setInterval(() => {
+          setCurrentX((prev) => {
+            // Move left by a fixed amount each frame
+            const newX = isFlipped ? prev + 5 : prev - 5; // Move 5 pixels left each frame
+            if (newX < -200) {
+              clearInterval(xInterval);
+              return -200;
+            }
+            return newX;
+          });
+        }, 16); // ~60fps
+
+        // Animate opacity to 0
+        const opacityInterval = setInterval(() => {
+          setOpacity((prev) => {
+            if (prev <= 0) {
+              clearInterval(opacityInterval);
+              return 0;
+            }
+            return prev - 0.05;
+          });
+        }, 20);
+
+        return () => {
+          clearInterval(xInterval);
+          clearInterval(opacityInterval);
+        };
+      }, delay);
+
+      return () => clearTimeout(exitTimer);
+    } else {
+      // Entry animation: original behavior
+      const timer = setTimeout(() => {
+        setIsVisible(true);
+
+        // Animate Y position (for bottom animation)
+        if (animateIn === "bottom") {
+          const yInterval = setInterval(() => {
+            setCurrentY((prev) => {
+              const diff = y - prev;
+              if (Math.abs(diff) < 1) {
+                clearInterval(yInterval);
+                return y;
+              }
+              return prev + diff * 0.1;
+            });
+          }, 16); // ~60fps
+        }
+
+        // Animate X position (for right animation)
+        if (animateIn === "right") {
+          const xInterval = setInterval(() => {
+            setCurrentX((prev) => {
+              const diff = x - prev;
+              if (Math.abs(diff) < 1) {
+                clearInterval(xInterval);
+                return x;
+              }
+              return prev + diff * 0.1;
+            });
+          }, 16); // ~60fps
+        }
+
+        // Animate opacity
+        const opacityInterval = setInterval(() => {
+          setOpacity((prev) => {
+            if (prev >= 1) {
+              clearInterval(opacityInterval);
+              return 1;
+            }
+            return prev + 0.05;
+          });
+        }, 20);
+
+        return () => {
+          if (animateIn === "bottom") {
+            // Clear Y interval if it was set
+          }
+          if (animateIn === "right") {
+            // Clear X interval if it was set
+          }
+          clearInterval(opacityInterval);
+        };
+      }, delay);
+
+      return () => clearTimeout(timer);
+    }
+  }, [y, x, delay, exitAnimation, animateIn]);
+
+  return (
+    <SvgText
+      x={currentX}
+      y={currentY}
+      fontSize={fontSize}
+      fontFamily={fontFamily}
+      fill={fill}
+      textAnchor={textAnchor}
+      transform={transform}
+      opacity={opacity}
+    >
+      {children}
+    </SvgText>
+  );
+};
+
 const MusicalStaff = ({
   notes,
   containerWidth: propContainerWidth,
   containerHeight: propContainerHeight,
   keySignature,
   scale = 1,
+  centerLastLine = false,
+  exitAnimation = false,
+  showBarLines = true,
+  animateIn = "right",
 }: MusicalStaffProps) => {
   const { width: windowWidth, height: windowHeight } = useWindowDimensions();
   const containerWidth = propContainerWidth || windowWidth;
@@ -51,15 +212,21 @@ const MusicalStaff = ({
   const NOTE_SPACING = 40 * scale;
   const BAR_WIDTH = 6 * scale;
   const TREBLE_CLEF_WIDTH = 40 * scale;
-  const MARGIN = 30 * scale;
+  const MARGIN = 10;
   const MIN_MEASURE_WIDTH = 75 * scale;
   const STAFF_LINES_COUNT = 5; // 5 lines in a staff
   const MIN_NOTE_TO_BAR_SPACING = 10 * scale; // Minimum space between notes and bar lines
   const CLEF_SPACING = 10 * scale;
 
+  // Vertical padding to accommodate notes above and below the staff
+  const VERTICAL_PADDING = 40 * scale; // Space above and below staff for ledger lines and notes
+
   // Get note position on staff (0 = middle line, positive = up, negative = down)
   const getNotePosition = (pitch: Pitch): number => {
     const positions: Record<Pitch, number> = {
+      a3: 9, // Below staff (ledger line)
+      b3: 8, // Below staff (ledger line)
+      c4: 7, // Below staff (ledger line)
       d4: 6, // Below staff (ledger line)
       e4: 5, // Below staff
       f4: 4, // First space
@@ -256,6 +423,46 @@ const MusicalStaff = ({
     }
   };
 
+  // Render ledger lines for notes below the staff
+  const renderLedgerLines = (
+    pitch: Pitch,
+    noteX: number,
+    staffTop: number,
+    staffBottom: number,
+    lineSpacing: number,
+    scale: number
+  ): React.ReactNode[] => {
+    const ledgerLines: React.ReactNode[] = [];
+
+    // Get the note position (positive values are below the staff)
+    const notePosition = getNotePosition(pitch);
+
+    // Only render ledger lines for notes below the staff (position > 4)
+    if (notePosition > 4) {
+      // Calculate how many ledger lines we need
+      // For a3 (position 9): 2 ledger lines
+      // For b3 (position 8): 1 ledger line
+      // For c4 (position 7): 1 ledger line
+      // For d4 (position 6): 1 ledger line
+      // For e4 (position 5): 1 ledger line
+      const ledgerLineCount = notePosition === 9 ? 2 : 1;
+
+      // Render each ledger line
+      for (let i = 0; i < ledgerLineCount; i++) {
+        const ledgerY = staffBottom + (i + 1) * lineSpacing;
+
+        // Make ledger lines shorter than staff lines
+        const ledgerLineLength = 20 * scale;
+        const ledgerX1 = noteX - ledgerLineLength / 2;
+        const ledgerX2 = noteX + ledgerLineLength / 2;
+
+        ledgerLines.push(<Line key={`ledger-${pitch}-${i}`} x1={ledgerX1} y1={ledgerY} x2={ledgerX2} y2={ledgerY} stroke="#000" strokeWidth={1} />);
+      }
+    }
+
+    return ledgerLines;
+  };
+
   // Convert note type to beats (assuming 4/4 time)
   const getNoteBeats = (type: NoteType): number => {
     switch (type) {
@@ -411,17 +618,32 @@ const MusicalStaff = ({
       }
     });
 
+    // 5) Center the last line if centerLastLine is true
+    if (centerLastLine && staffLines.length > 0) {
+      const lastLine = staffLines[staffLines.length - 1];
+      const extraSpace = availableWidth - lastLine.contentWidth;
+      if (extraSpace > 0) {
+        // Add padding to the first measure to center the content
+        if (lastLine.measures.length > 0) {
+          const firstMeasure = lastLine.measures[0];
+          firstMeasure.width += extraSpace / 2; // Add half the extra space to the first measure
+          lastLine.contentWidth = availableWidth;
+        }
+      }
+    }
+
     return staffLines;
-  }, [notes, containerWidth]);
+  }, [notes, containerWidth, centerLastLine]);
 
   // Calculate total height needed (now based on the new `lines` array)
-  const totalHeight = lines.length * (STAFF_HEIGHT + MARGIN) + MARGIN;
+  const calculatedHeight = lines.length * (STAFF_HEIGHT + MARGIN) + MARGIN + VERTICAL_PADDING * 2;
+  const totalHeight = propContainerHeight ? Math.max(propContainerHeight, calculatedHeight) : calculatedHeight;
 
   return (
-    <View style={[styles.container, { width: containerWidth, height: containerHeight }]}>
-      <Svg width={containerWidth} height={containerHeight} viewBox={`0 0 ${containerWidth} ${containerHeight}`} style={styles.svg}>
+    <View style={[styles.container, { width: containerWidth, height: totalHeight }]}>
+      <Svg width={containerWidth} height={totalHeight} viewBox={`0 0 ${containerWidth} ${totalHeight}`} style={styles.svg}>
         {lines.map((line, lineIndex) => {
-          const yOffset = lineIndex * (STAFF_HEIGHT + MARGIN) + MARGIN;
+          const yOffset = lineIndex * (STAFF_HEIGHT + MARGIN) + MARGIN + VERTICAL_PADDING;
           const xOffset = MARGIN;
           const staffTop = yOffset;
           const staffBottom = yOffset + (STAFF_LINES_COUNT - 1) * STAFF_LINE_SPACING;
@@ -519,8 +741,11 @@ const MusicalStaff = ({
                       const middleLinePosition = getNotePosition("b5"); // B5 is the middle line
                       const shouldFlip = notePosition <= middleLinePosition && el.type !== "whole";
 
+                      // Render ledger lines for notes below the staff
+                      const ledgerLines = renderLedgerLines(el.pitch, noteX, staffTop, staffBottom, STAFF_LINE_SPACING, scale);
+
                       rendered.push(
-                        <SvgText
+                        <AnimatedNote
                           key={`l${lineIndex}-m${mIdx}-n${elIdx}`}
                           x={noteX}
                           y={noteY}
@@ -529,16 +754,25 @@ const MusicalStaff = ({
                           fill="#000"
                           textAnchor="middle"
                           transform={shouldFlip ? `rotate(180, ${noteX}, ${noteY})` : undefined}
+                          delay={mIdx * 100}
+                          exitAnimation={exitAnimation}
+                          isFlipped={shouldFlip}
+                          animateIn={animateIn}
                         >
                           {getNoteGlyph(el)}
-                        </SvgText>
+                        </AnimatedNote>
                       );
+
+                      // Add ledger lines to the rendered elements
+                      ledgerLines.forEach((ledgerLine, idx) => {
+                        rendered.push(<React.Fragment key={`l${lineIndex}-m${mIdx}-n${elIdx}-ledger-${idx}`}>{ledgerLine}</React.Fragment>);
+                      });
 
                       // Render accidental if present
                       if (el.accidental) {
                         const accidentalX = noteX - 20; // Position accidental to the left of the note
                         rendered.push(
-                          <SvgText
+                          <AnimatedNote
                             key={`l${lineIndex}-m${mIdx}-n${elIdx}-acc`}
                             x={accidentalX}
                             y={noteY}
@@ -546,9 +780,13 @@ const MusicalStaff = ({
                             fontFamily="BravuraText"
                             fill="#000"
                             textAnchor="middle"
+                            delay={elIdx * 100}
+                            exitAnimation={exitAnimation}
+                            isFlipped={shouldFlip}
+                            animateIn={animateIn}
                           >
                             {getAccidentalGlyph(el.accidental)}
-                          </SvgText>
+                          </AnimatedNote>
                         );
                       }
 
@@ -561,7 +799,7 @@ const MusicalStaff = ({
                       const restX = localCursor + NOTE_SPACING / 2;
 
                       rendered.push(
-                        <SvgText
+                        <AnimatedNote
                           key={`l${lineIndex}-m${mIdx}-r${elIdx}`}
                           x={restX}
                           y={restY}
@@ -569,9 +807,12 @@ const MusicalStaff = ({
                           fontFamily="BravuraText"
                           fill="#000"
                           textAnchor="middle"
+                          delay={mIdx * 100}
+                          exitAnimation={exitAnimation}
+                          animateIn={animateIn}
                         >
                           {getNoteGlyph(el)}
-                        </SvgText>
+                        </AnimatedNote>
                       );
 
                       localCursor += NOTE_SPACING;
@@ -586,17 +827,19 @@ const MusicalStaff = ({
                         // (Extremely rare) intermediate bar – position with current cursor
                         barX = localCursor + BAR_WIDTH / 2;
                       }
-                      rendered.push(
-                        <Line
-                          key={`l${lineIndex}-m${mIdx}-b${elIdx}`}
-                          x1={barX}
-                          y1={staffTop}
-                          x2={barX}
-                          y2={staffBottom}
-                          stroke="#000"
-                          strokeWidth={el.type === "double" || el.isEnd ? 3 : 2}
-                        />
-                      );
+                      if (showBarLines) {
+                        rendered.push(
+                          <Line
+                            key={`l${lineIndex}-m${mIdx}-b${elIdx}`}
+                            x1={barX}
+                            y1={staffTop}
+                            x2={barX}
+                            y2={staffBottom}
+                            stroke="#000"
+                            strokeWidth={el.type === "double" || el.isEnd ? 3 : 2}
+                          />
+                        );
+                      }
                       if (!isLastBarLine) {
                         localCursor += BAR_WIDTH;
                       }
