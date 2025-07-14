@@ -278,7 +278,6 @@ export default function App() {
             opacity={0.2}
             theta={theta}
             isRunning={isRunning}
-            setIsRunning={setIsRunning}
           />
           {answerIsCorrect === undefined && (
             <View

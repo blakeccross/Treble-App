@@ -72,10 +72,10 @@ function ScreenHeader({ sv, title }: { sv: SharedValue<number>; title: string })
 
 const games = [
   {
-    title: "Sheet Music Test",
-    description: `Test your ear in this\nfast paced matching game`,
-    backgroundImage: "",
-    route: "/sheet-music-test" as const,
+    title: "Staff Master",
+    description: `Match the notes to the staff`,
+    backgroundImage: require("@/assets/images/staff-master.jpg"),
+    route: "/staff-master" as const,
     disabled: false,
   },
   {

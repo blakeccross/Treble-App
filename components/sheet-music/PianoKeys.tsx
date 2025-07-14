@@ -1,6 +1,7 @@
 import React from "react";
 import { Dimensions } from "react-native";
-import { XStack, YStack, Button, Text } from "tamagui";
+import { XStack, YStack, Button, Text, View } from "tamagui";
+import { LinearGradient } from "expo-linear-gradient";
 
 interface PianoKeyProps {
   note: string;
@@ -32,10 +33,17 @@ const PianoKey: React.FC<PianoKeyProps> = ({ note, isBlack = false, onPress, wid
       unstyled
       justifyContent="flex-end"
       paddingBottom={10}
+      shadowColor="#000"
+      shadowOffset={{ width: 0, height: 5 }}
+      shadowOpacity={0.1}
+      shadowRadius={3.84}
+      elevation={1}
     >
-      <Text color={isBlack ? "#ffffff" : "#000000"} fontSize={"$5"} fontWeight="600" textAlign="center">
-        {note}
-      </Text>
+      {!isBlack && (
+        <Text color={isBlack ? "#ffffff" : "#000000"} fontSize={"$5"} fontWeight="600" textAlign="center">
+          {note}
+        </Text>
+      )}
     </Button>
   );
 };
@@ -61,33 +69,23 @@ export const PianoKeys: React.FC<PianoKeysProps> = ({ onKeyPress }) => {
   };
 
   return (
-    <YStack alignItems="center" paddingBottom="$6" backgroundColor="#1a1a1a">
-      {/* Black keys row */}
-      <XStack position="relative" zIndex={1} width={screenWidth}>
-        {blackKeys.map((key, index) => (
-          <XStack key={key.note} position="absolute" left={(key.position * screenWidth) / 7 + 5}>
-            {/* <Text color="black" fontSize={"$6"} fontWeight="600" textAlign="center">
-              {key.note}
-            </Text> */}
-            <PianoKey note={key.note} height={screenHeight / 9} isBlack={true} width={screenWidth / 9} onPress={() => handleKeyPress(key.note)} />
-          </XStack>
-        ))}
-      </XStack>
+    <>
+      <YStack alignItems="center" paddingBottom="$6">
+        <XStack position="relative" zIndex={1} width={screenWidth}>
+          {blackKeys.map((key, index) => (
+            <XStack key={key.note} position="absolute" left={(key.position * screenWidth) / 7 + 5}>
+              <PianoKey note={key.note} height={screenHeight / 9} isBlack={true} width={screenWidth / 9} onPress={() => handleKeyPress(key.note)} />
+            </XStack>
+          ))}
+        </XStack>
 
-      {/* White keys row */}
-      <XStack flexDirection="row">
-        {whiteKeys.map((note, index) => (
-          <PianoKey
-            width={screenWidth / 7}
-            //paddingLeft={index === 0 || index === 6 ? screenWidth / 8 : undefined}
-            height={screenHeight / 5}
-            key={note}
-            note={note}
-            onPress={() => handleKeyPress(note)}
-          />
-        ))}
-      </XStack>
-    </YStack>
+        <XStack flexDirection="row">
+          {whiteKeys.map((note, index) => (
+            <PianoKey width={screenWidth / 7} height={screenHeight / 5} key={note} note={note} onPress={() => handleKeyPress(note)} />
+          ))}
+        </XStack>
+      </YStack>
+    </>
   );
 };
 

@@ -27,7 +27,7 @@ The BravuraText font should be available in your app. If not, you'll need to add
 ```tsx
 import React from "react";
 import { View } from "react-native";
-import MusicalStaff from "./components/sheet-music/sheet-music copy";
+import MusicalStaff from "./components/sheet-music/sheet-music";
 
 const MyComponent = () => {
   const notes = [

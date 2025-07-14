@@ -37,7 +37,7 @@ The component automatically:
 ### Basic Usage with Ledger Lines
 
 ```tsx
-import MusicalStaff from "./components/sheet-music/sheet-music copy";
+import MusicalStaff from "./components/sheet-music/sheet-music";
 
 const notes = [
   { type: "quarter", pitch: "c4" }, // Low note with ledger line
