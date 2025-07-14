@@ -1,7 +1,6 @@
 import { blue, green, purple, red, teal, yellow } from "@tamagui/themes";
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState } from "react";
 import { View, Animated, Dimensions } from "react-native";
-import { XStack } from "tamagui";
 
 interface AnimationSquare {
   id: string;

@@ -244,7 +244,7 @@ const MusicalStaff = ({
   const getNoteTypeAdjustment = (type: NoteType): number => {
     switch (type) {
       case "whole":
-        return 0;
+        return -6 * scale; // Adjust half note position ;
       case "half":
         return -6 * scale; // Adjust half note position
       case "quarter":

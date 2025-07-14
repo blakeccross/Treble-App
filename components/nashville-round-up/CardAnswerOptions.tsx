@@ -1,6 +1,6 @@
 import { window } from "@/utils";
 import { getTextColor } from "@/utils/nashville-round-up/getTextColor";
-import { lightColors, red } from "@tamagui/themes";
+import { lightColors } from "@tamagui/themes";
 import React, { forwardRef, useEffect, useImperativeHandle } from "react";
 import { Pressable, View } from "react-native";
 import Animated, { useAnimatedStyle, useSharedValue, withDelay, withRepeat, withSequence, withTiming } from "react-native-reanimated";

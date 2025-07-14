@@ -1,9 +1,8 @@
-import Animated, { interpolate, SharedValue, useAnimatedStyle, withTiming } from "react-native-reanimated";
-import CardBackDesign from "./CardBackDesign";
-import { color, red } from "@tamagui/themes";
-import { H1, View } from "tamagui";
+import { color } from "@tamagui/themes";
 import { StyleSheet } from "react-native";
-import { getTextColor } from "@/utils/nashville-round-up/getTextColor";
+import Animated, { interpolate, SharedValue, useAnimatedStyle, withTiming } from "react-native-reanimated";
+import { View } from "tamagui";
+import CardBackDesign from "./CardBackDesign";
 import NashvilleNumber from "./NashvilleNumber";
 
 const QuestionCardOption = ({

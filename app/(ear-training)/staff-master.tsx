@@ -41,10 +41,10 @@ const FLAT_TO_SHARP_MAP: Record<string, string> = {
 
 // Difficulty configuration
 const DIFFICULTY_LEVELS = {
-  BEGINNER: { minScore: 0, octaves: [4], accidentals: [""], duration: 7 },
-  INTERMEDIATE: { minScore: 10, octaves: [4, 5], accidentals: [""], duration: 5 },
-  ADVANCED: { minScore: 20, octaves: [4, 5], accidentals: ["", "sharp", "flat"], duration: 3 },
-  EXPERT: { minScore: 30, octaves: [3, 4, 5, 6], accidentals: ["", "sharp", "flat"], duration: 2 },
+  BEGINNER: { minScore: 0, octaves: [4], accidentals: [""], duration: 10, notesPerMeasure: 1 },
+  INTERMEDIATE: { minScore: 10, octaves: [4, 5], accidentals: [""], duration: 10, notesPerMeasure: 4 },
+  ADVANCED: { minScore: 20, octaves: [4, 5], accidentals: ["", "sharp", "flat"], duration: 8, notesPerMeasure: 4 },
+  EXPERT: { minScore: 30, octaves: [3, 4, 5, 6], accidentals: ["", "sharp", "flat"], duration: 8, notesPerMeasure: 4 },
 } as const;
 
 // Types
@@ -57,6 +57,7 @@ interface DifficultyConfig {
   octaves: readonly number[];
   accidentals: readonly string[];
   duration: number;
+  notesPerMeasure: number; // Add notes per measure to difficulty config
 }
 
 // Utility functions
@@ -108,14 +109,33 @@ const IncorrectAnswerFeedback = () => (
 );
 
 // Game Header Component
-const GameHeader = ({ currentScore, lives, gameHasStarted }: { currentScore: number; lives: number; gameHasStarted: boolean }) => (
+const GameHeader = ({
+  currentScore,
+  lives,
+  gameHasStarted,
+  playedNotes,
+  totalNotes,
+}: {
+  currentScore: number;
+  lives: number;
+  gameHasStarted: boolean;
+  playedNotes: number;
+  totalNotes: number;
+}) => (
   <XStack justifyContent="space-between" alignItems="center" paddingHorizontal="$4">
     <View style={{ width: 50 }}>
       <Pressable onPress={() => router.back()}>
         <X size="$3" />
       </Pressable>
     </View>
-    <H1 fontWeight={600}>{currentScore}</H1>
+    <View alignItems="center">
+      <H1 fontWeight={600}>{currentScore}</H1>
+      {/* {gameHasStarted && totalNotes > 0 && (
+        <Paragraph fontSize="$3" color="$gray10">
+          {playedNotes}/{totalNotes} notes
+        </Paragraph>
+      )} */}
+    </View>
     <View style={{ width: 50, alignItems: "flex-end" }}>
       {gameHasStarted ? (
         <XStack gap="$1" alignItems="center">
@@ -133,6 +153,50 @@ const GameHeader = ({ currentScore, lives, gameHasStarted }: { currentScore: num
   </XStack>
 );
 
+// Progress Indicator Component
+const NoteProgressIndicator = ({ currentNotes, playedNoteCounts }: { currentNotes: NoteProps[]; playedNoteCounts: Map<string, number> }) => {
+  if (currentNotes.length === 0) return null;
+
+  return (
+    <View style={styles.progressContainer}>
+      <XStack gap="$2" justifyContent="center" flexWrap="wrap">
+        {currentNotes.map((note, index) => {
+          const noteKey = `${note.pitch}${note.accidental || ""}`;
+          const playedCount = playedNoteCounts.get(noteKey) || 0;
+          const totalCount = currentNotes.filter((n) => {
+            const nKey = `${n.pitch}${n.accidental || ""}`;
+            return nKey === noteKey;
+          }).length;
+          const isFullyPlayed = playedCount >= totalCount;
+          const expectedNote = getExpectedNote(note);
+
+          return (
+            <View
+              key={index}
+              style={[
+                styles.noteIndicator,
+                {
+                  backgroundColor: isFullyPlayed ? greenA.greenA10 : "$gray5",
+                  borderColor: isFullyPlayed ? greenA.greenA10 : "$gray8",
+                },
+              ]}
+            >
+              <Paragraph fontSize="$2" fontWeight={600} color={isFullyPlayed ? "white" : "$gray12"}>
+                {expectedNote.toUpperCase()}
+                {totalCount > 1 && (
+                  <Paragraph fontSize="$1" color={isFullyPlayed ? "white" : "$gray10"}>
+                    ({playedCount}/{totalCount})
+                  </Paragraph>
+                )}
+              </Paragraph>
+            </View>
+          );
+        })}
+      </XStack>
+    </View>
+  );
+};
+
 // Main Game Component
 const StaffMasterGame = () => {
   const GameTimer = GradientCircle;
@@ -149,13 +213,14 @@ const StaffMasterGame = () => {
   const [answerIsCorrect, setAnswerIsCorrect] = useState<boolean>();
   const [feedbackKey, setFeedbackKey] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
-  const [previousNote, setPreviousNote] = useState<string | null>(null);
   const [notesQueue, setNotesQueue] = useState<NotesQueue>({
     previous: [],
     current: [],
   });
+  const [playedNoteCounts, setPlayedNoteCounts] = useState<Map<string, number>>(new Map());
+  const [totalNotesInRound, setTotalNotesInRound] = useState(0);
 
-  const correctAnswer = useRef<NoteProps | null>(null);
+  const correctAnswers = useRef<NoteProps[]>([]);
   const theta = useSharedValue(2 * Math.PI);
 
   // Timer effect
@@ -171,33 +236,34 @@ const StaffMasterGame = () => {
   }, [isRunning, currentScore]);
 
   // Game logic functions
-  const generateRandomNote = (): NoteProps => {
+  const generateRandomNote = (octave: number): NoteProps => {
     const config = getDifficultyConfig(currentScore);
     const selectedNote = NOTES[Math.floor(Math.random() * NOTES.length)];
-    const selectedOctave = config.octaves[Math.floor(Math.random() * config.octaves.length)];
     const selectedAccidental = config.accidentals[Math.floor(Math.random() * config.accidentals.length)];
 
     return {
-      type: "quarter" as const,
-      pitch: (selectedNote + selectedOctave) as Pitch,
+      type: config.notesPerMeasure === 1 ? "whole" : ("quarter" as const),
+      pitch: (selectedNote + octave) as Pitch,
       accidental: selectedAccidental === "" ? undefined : (selectedAccidental as "sharp" | "flat" | "natural"),
     };
   };
 
-  const getRandomNote = (): NoteProps => {
-    let attempts = 0;
-    let noteString: string;
-    let newNote: NoteProps;
+  const generateRandomOctave = (): number => {
+    const config = getDifficultyConfig(currentScore);
+    return config.octaves[Math.floor(Math.random() * config.octaves.length)];
+  };
 
-    do {
-      newNote = generateRandomNote();
-      const baseNote = newNote.pitch[0].toLowerCase();
-      const accidental = newNote.accidental;
-      noteString = baseNote + (accidental || "");
-      attempts++;
-    } while (noteString === previousNote && attempts < MAX_ATTEMPTS);
+  const generateTwoMeasures = (): NoteProps[] => {
+    const config = getDifficultyConfig(currentScore);
+    const totalNotes = config.notesPerMeasure;
+    const notes: NoteProps[] = [];
+    const octave = generateRandomOctave();
 
-    return newNote;
+    for (let i = 0; i < totalNotes; i++) {
+      notes.push(generateRandomNote(octave));
+    }
+
+    return notes;
   };
 
   const startTimer = () => {
@@ -220,21 +286,20 @@ const StaffMasterGame = () => {
     setAnswerIsCorrect(undefined);
     setFeedbackKey(0);
     setNotesQueue({ previous: [], current: [] });
+    setPlayedNoteCounts(new Map());
+    setTotalNotesInRound(0);
     theta.value = 2 * Math.PI;
   };
 
   const handleStart = () => {
-    const newNote = getRandomNote();
-    correctAnswer.current = newNote;
-
-    const baseNote = newNote.pitch[0].toLowerCase();
-    const accidental = newNote.accidental;
-    const noteString = baseNote + (accidental || "");
-    setPreviousNote(noteString);
+    const newNotes = generateTwoMeasures();
+    correctAnswers.current = newNotes;
+    setPlayedNoteCounts(new Map());
+    setTotalNotesInRound(newNotes.length);
 
     setNotesQueue((prev) => ({
       previous: prev.current.length > 0 ? prev.current : [],
-      current: [newNote],
+      current: newNotes,
     }));
 
     setKey((prev) => prev + 1);
@@ -269,35 +334,87 @@ const StaffMasterGame = () => {
   const handleKeyPress = async (note: string) => {
     setAnswerIsCorrect(undefined);
 
-    const correctNote = correctAnswer.current;
-    if (!correctNote) return;
+    const correctNotes = correctAnswers.current;
+    if (!correctNotes || correctNotes.length === 0) return;
 
-    const octave = correctNote.pitch.slice(-1);
+    const octave = correctNotes[0].pitch.slice(-1);
     const noteWithOctave = (note + String(Number(octave) - 1)) as PianoKey;
     playSong([{ note: noteWithOctave, time: 0, duration: NOTE_DURATION }]);
 
-    const expectedNote = getExpectedNote(correctNote);
-    const isCorrect = note.toLowerCase() === expectedNote;
+    // Check if this note matches any of the expected notes
+    let foundMatch = false;
+    let matchedNote: NoteProps | null = null;
 
-    if (isCorrect) {
-      handleCorrectAnswer();
-    } else {
-      incorrectAnswer();
+    for (const correctNote of correctNotes) {
+      const expectedNote = getExpectedNote(correctNote);
+      if (note.toLowerCase() === expectedNote) {
+        // Check if this note hasn't been played enough times yet
+        const noteKey = `${correctNote.pitch}${correctNote.accidental || ""}`;
+        const currentCount = playedNoteCounts.get(noteKey) || 0;
+        const totalCount = correctNotes.filter((n) => {
+          const nKey = `${n.pitch}${n.accidental || ""}`;
+          return nKey === noteKey;
+        }).length;
+
+        if (currentCount < totalCount) {
+          foundMatch = true;
+          matchedNote = correctNote;
+          break;
+        }
+      }
     }
 
-    setIsRunning(false);
-    setFeedbackKey((prev) => prev + 1);
+    if (foundMatch && matchedNote) {
+      // Mark this note as played
+      const noteKey = `${matchedNote.pitch}${matchedNote.accidental || ""}`;
+      setPlayedNoteCounts((prev) => {
+        const newCounts = new Map(prev);
+        const currentCount = newCounts.get(noteKey) || 0;
+        newCounts.set(noteKey, currentCount + 1);
 
-    await delay(1000);
-    handleStart();
-    setAnswerIsCorrect(undefined);
+        // Check if round is complete immediately after updating
+        const totalPlayed = Array.from(newCounts.values()).reduce((sum, count) => sum + count, 0);
+        if (totalPlayed === totalNotesInRound) {
+          // All notes have been played correctly
+          setIsRunning(false); // Stop timer immediately
+          handleCorrectAnswer();
+          setFeedbackKey((prev) => prev + 1);
+
+          // Start next round after delay
+          setTimeout(async () => {
+            await delay(1000);
+            handleStart();
+            setAnswerIsCorrect(undefined);
+          }, 1000);
+        }
+
+        return newCounts;
+      });
+    } else {
+      // Wrong note or already played note
+      incorrectAnswer();
+      setIsRunning(false);
+      setFeedbackKey((prev) => prev + 1);
+
+      setTimeout(async () => {
+        await delay(1000);
+        handleStart();
+        setAnswerIsCorrect(undefined);
+      }, 1000);
+    }
   };
 
   return (
     <View style={{ flex: 1, paddingTop: top, paddingBottom: bottom }}>
       <StatusBar translucent={true} backgroundColor="transparent" />
 
-      <GameHeader currentScore={currentScore} lives={lives} gameHasStarted={gameHasStarted} />
+      <GameHeader
+        currentScore={currentScore}
+        lives={lives}
+        gameHasStarted={gameHasStarted}
+        playedNotes={Array.from(playedNoteCounts.values()).reduce((sum, count) => sum + count, 0)}
+        totalNotes={totalNotesInRound}
+      />
 
       <LinearGradient colors={["#f1f0f5", "#ffffff", "#e8e8e8"]} style={{ flex: 1 }} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }}>
         <View style={styles.content}>
@@ -312,6 +429,8 @@ const StaffMasterGame = () => {
             exitAnimation={false}
             showBarLines={false}
           />
+
+          {/* {gameHasStarted && currentNotes.length > 0 && <NoteProgressIndicator currentNotes={currentNotes} playedNoteCounts={playedNoteCounts} />} */}
 
           {!gameHasStarted && (
             <View style={styles.playButtonContainer}>
@@ -361,6 +480,18 @@ const styles = StyleSheet.create({
   },
   timerContainer: {
     justifyContent: "flex-start",
+    alignItems: "center",
+  },
+  progressContainer: {
+    marginTop: 16,
+    paddingHorizontal: 16,
+  },
+  noteIndicator: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+    borderWidth: 2,
+    minWidth: 32,
     alignItems: "center",
   },
 });
