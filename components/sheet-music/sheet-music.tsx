@@ -241,14 +241,14 @@ const MusicalStaff = ({
   };
 
   // Get note type-specific Y position adjustment
-  const getNoteTypeAdjustment = (type: NoteType): number => {
+  const getNoteTypeAdjustment = (type: NoteType, isFlipped: boolean): number => {
     switch (type) {
       case "whole":
-        return -6 * scale; // Adjust half note position ;
+        return -6 * scale;
       case "half":
         return -6 * scale; // Adjust half note position
       case "quarter":
-        return 0;
+        return isFlipped ? -12 * scale : 0;
       default:
         return 0;
     }
@@ -272,18 +272,13 @@ const MusicalStaff = ({
     }
     // Normal note glyphs - determine stem direction based on position
     if ("pitch" in element) {
-      const notePosition = getNotePosition(element.pitch);
-      const middleLinePosition = getNotePosition("b5"); // B5 is the middle line
-
       switch (type) {
         case "whole":
           return "𝅝"; // whole notes don't have stems
         case "half":
-          // Stem up for notes below middle line, down for notes at or above
-          return notePosition > middleLinePosition ? "𝅗𝅥" : "𝅗𝅥"; // Half notes with stem up vs down
+          return "𝅗𝅥"; // Half notes with stem up vs down
         case "quarter":
-          // Stem up for notes below middle line, down for notes at or above
-          return notePosition > middleLinePosition ? "♩" : "♩"; // Quarter notes with stem up vs down
+          return "♩"; // Quarter notes with stem up vs down
         default:
           return "♩";
       }
@@ -458,7 +453,8 @@ const MusicalStaff = ({
     // Render ledger lines for notes above the staff (position <= -5)
     if (notePosition <= -5) {
       // Calculate how many ledger lines we need
-      const ledgerLineCount = Math.abs(notePosition) - 4; // -5 needs 1 line, -6 needs 2 lines, etc.
+      // -5 needs 1 line, -6 needs 1 line, -7 needs 2 lines, -8 needs 2 lines, etc.
+      const ledgerLineCount = Math.ceil((Math.abs(notePosition) - 4) / 2);
 
       // Render each ledger line
       for (let i = 0; i < ledgerLineCount; i++) {
@@ -711,19 +707,19 @@ const MusicalStaff = ({
 
       measure.elements.forEach((el: any, elIdx: number) => {
         if ("pitch" in el && !("isRest" in el)) {
+          // Determine if note should be flipped (stem down for notes at or above middle line)
+          const notePosition = getNotePosition(el.pitch);
+          //const middleLinePosition = getNotePosition("b5"); // B5 is the middle line
+          const middleLinePosition = 1;
+          const shouldFlip = notePosition <= middleLinePosition && el.type !== "whole";
           // NOTE
           const noteY =
             yOffset +
             ((STAFF_LINES_COUNT - 1) * STAFF_LINE_SPACING) / 2 +
             (getNotePosition(el.pitch) * STAFF_LINE_SPACING) / 2 +
-            getNoteTypeAdjustment(el.type);
+            getNoteTypeAdjustment(el.type, shouldFlip);
 
           const noteX = localCursor + NOTE_SPACING / 2;
-
-          // Determine if note should be flipped (stem down for notes at or above middle line)
-          const notePosition = getNotePosition(el.pitch);
-          const middleLinePosition = getNotePosition("b5"); // B5 is the middle line
-          const shouldFlip = notePosition <= middleLinePosition && el.type !== "whole";
 
           // Render ledger lines for notes below the staff
           const ledgerLines = renderLedgerLines(el.pitch, noteX, staffTop, staffBottom, STAFF_LINE_SPACING, scale);

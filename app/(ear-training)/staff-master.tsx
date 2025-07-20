@@ -42,12 +42,11 @@ const FLAT_TO_SHARP_MAP: Record<string, string> = {
 // Difficulty configuration
 const DIFFICULTY_LEVELS = {
   BEGINNER: { minScore: 0, octaves: [4], accidentals: [""], duration: 10, notesPerMeasure: 1 },
-  INTERMEDIATE: { minScore: 10, octaves: [4, 5], accidentals: [""], duration: 10, notesPerMeasure: 4 },
-  ADVANCED: { minScore: 20, octaves: [4, 5], accidentals: ["", "sharp", "flat"], duration: 8, notesPerMeasure: 4 },
-  EXPERT: { minScore: 30, octaves: [3, 4, 5, 6], accidentals: ["", "sharp", "flat"], duration: 8, notesPerMeasure: 4 },
+  INTERMEDIATE: { minScore: 10, octaves: [4, 5], accidentals: [""], duration: 10, notesPerMeasure: 2 },
+  ADVANCED: { minScore: 15, octaves: [4, 5], accidentals: [""], duration: 8, notesPerMeasure: 4 },
+  EXPERT: { minScore: 25, octaves: [3, 4, 5, 6], accidentals: ["", "sharp", "flat"], duration: 8, notesPerMeasure: 4 },
 } as const;
 
-// Types
 interface NotesQueue {
   previous: NoteProps[];
   current: NoteProps[];
@@ -153,50 +152,6 @@ const GameHeader = ({
   </XStack>
 );
 
-// Progress Indicator Component
-const NoteProgressIndicator = ({ currentNotes, playedNoteCounts }: { currentNotes: NoteProps[]; playedNoteCounts: Map<string, number> }) => {
-  if (currentNotes.length === 0) return null;
-
-  return (
-    <View style={styles.progressContainer}>
-      <XStack gap="$2" justifyContent="center" flexWrap="wrap">
-        {currentNotes.map((note, index) => {
-          const noteKey = `${note.pitch}${note.accidental || ""}`;
-          const playedCount = playedNoteCounts.get(noteKey) || 0;
-          const totalCount = currentNotes.filter((n) => {
-            const nKey = `${n.pitch}${n.accidental || ""}`;
-            return nKey === noteKey;
-          }).length;
-          const isFullyPlayed = playedCount >= totalCount;
-          const expectedNote = getExpectedNote(note);
-
-          return (
-            <View
-              key={index}
-              style={[
-                styles.noteIndicator,
-                {
-                  backgroundColor: isFullyPlayed ? greenA.greenA10 : "$gray5",
-                  borderColor: isFullyPlayed ? greenA.greenA10 : "$gray8",
-                },
-              ]}
-            >
-              <Paragraph fontSize="$2" fontWeight={600} color={isFullyPlayed ? "white" : "$gray12"}>
-                {expectedNote.toUpperCase()}
-                {totalCount > 1 && (
-                  <Paragraph fontSize="$1" color={isFullyPlayed ? "white" : "$gray10"}>
-                    ({playedCount}/{totalCount})
-                  </Paragraph>
-                )}
-              </Paragraph>
-            </View>
-          );
-        })}
-      </XStack>
-    </View>
-  );
-};
-
 // Main Game Component
 const StaffMasterGame = () => {
   const GameTimer = GradientCircle;
@@ -242,7 +197,7 @@ const StaffMasterGame = () => {
     const selectedAccidental = config.accidentals[Math.floor(Math.random() * config.accidentals.length)];
 
     return {
-      type: config.notesPerMeasure === 1 ? "whole" : ("quarter" as const),
+      type: config.notesPerMeasure === 1 ? "whole" : config.notesPerMeasure === 2 ? "half" : "quarter",
       pitch: (selectedNote + octave) as Pitch,
       accidental: selectedAccidental === "" ? undefined : (selectedAccidental as "sharp" | "flat" | "natural"),
     };
