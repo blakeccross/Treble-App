@@ -73,6 +73,8 @@ interface MusicalStaffProps {
   exitAnimation?: boolean;
   showBarLines?: boolean;
   animateIn?: "bottom" | "none" | "right";
+  questionIndex?: number;
+  onUnmountComplete?: () => void;
 }
 
 // Animated Note Component
@@ -90,6 +92,7 @@ const AnimatedNote = ({
   isFlipped = false,
   animateIn = "none",
   onExitComplete,
+  isUnmounting = false,
 }: {
   children: React.ReactNode;
   x: number;
@@ -104,6 +107,7 @@ const AnimatedNote = ({
   isFlipped?: boolean;
   animateIn?: "bottom" | "none" | "right";
   onExitComplete?: () => void;
+  isUnmounting?: boolean;
 }) => {
   // Initialize with final position to prevent flashing
   const animatedX = useSharedValue(x);
@@ -111,17 +115,8 @@ const AnimatedNote = ({
   const animatedOpacity = useSharedValue(exitAnimation ? 1 : animateIn === "none" ? 1 : 0);
 
   useEffect(() => {
-    if (animateIn !== "none" && !exitAnimation) {
-      animatedX.value = animateIn === "right" ? (isFlipped ? x - 200 : x + 200) : x;
-      animatedY.value = animateIn === "bottom" ? (isFlipped ? y - 20 : y + 20) : y;
-      animatedOpacity.value = 0;
-
-      // Animate to final position
-      animatedX.value = withDelay(delay, withTiming(x, { duration: 600, easing: Easing.out(Easing.quad) }));
-      animatedY.value = withDelay(delay, withTiming(y, { duration: 600, easing: Easing.out(Easing.quad) }));
-      animatedOpacity.value = withDelay(delay, withTiming(1, { duration: 400, easing: Easing.out(Easing.quad) }));
-    } else if (exitAnimation) {
-      // For exit animation notes, start at final position and animate out
+    if (isUnmounting) {
+      // For unmount animation, start at current position and animate out
       animatedX.value = x;
       animatedY.value = y;
       animatedOpacity.value = 1;
@@ -136,8 +131,17 @@ const AnimatedNote = ({
           }
         })
       );
+    } else if (animateIn !== "none" && !exitAnimation) {
+      animatedX.value = animateIn === "right" ? (isFlipped ? x - 200 : x + 200) : x;
+      animatedY.value = animateIn === "bottom" ? (isFlipped ? y - 20 : y + 20) : y;
+      animatedOpacity.value = 0;
+
+      // Animate to final position
+      animatedX.value = withDelay(delay, withTiming(x, { duration: 600, easing: Easing.out(Easing.quad) }));
+      animatedY.value = withDelay(delay, withTiming(y, { duration: 600, easing: Easing.out(Easing.quad) }));
+      animatedOpacity.value = withDelay(delay, withTiming(1, { duration: 400, easing: Easing.out(Easing.quad) }));
     }
-  }, [exitAnimation, animateIn]);
+  }, [exitAnimation, animateIn, isUnmounting]);
 
   // Animated props for the SVG text
   const animatedProps = useAnimatedProps(() => {
@@ -172,28 +176,35 @@ const MusicalStaff = ({
   keySignature,
   scale = 1,
   centerLastLine = false,
-
   showBarLines = true,
   animateIn = "right",
+  questionIndex = 0,
+  onUnmountComplete,
 }: MusicalStaffProps) => {
-  const [visibleNotes1, setVisibleNotes1] = useState(true);
-  const [visibleNotes2, setVisibleNotes2] = useState(true);
-
-  // Reset visibility when notes change
-  useEffect(() => {
-    if (notes1 && notes1.length > 0) {
-      setVisibleNotes1(true);
-    }
-  }, [notes1]);
-
-  useEffect(() => {
-    if (notes2 && notes2.length > 0) {
-      setVisibleNotes2(true);
-    }
-  }, [notes2]);
+  const [visibleNotes1, setVisibleNotes1] = useState(false);
+  const [visibleNotes2, setVisibleNotes2] = useState(false);
+  const [isUnmounting, setIsUnmounting] = useState(false);
+  const exitCompleteCount = useRef(0);
+  const totalNotes = useRef(0);
 
   const { width: windowWidth } = useWindowDimensions();
   const containerWidth = propContainerWidth || windowWidth;
+
+  // Handle component unmounting
+  useEffect(() => {
+    return () => {
+      // Component is unmounting, trigger exit animations
+      setIsUnmounting(true);
+    };
+  }, []);
+
+  // Track when all exit animations are complete
+  const handleExitComplete = () => {
+    exitCompleteCount.current += 1;
+    if (exitCompleteCount.current >= totalNotes.current && isUnmounting) {
+      onUnmountComplete?.();
+    }
+  };
 
   // Constants for layout
   const STAFF_HEIGHT = 100 * scale;
@@ -208,7 +219,217 @@ const MusicalStaff = ({
   const CLEF_SPACING = 10 * scale;
 
   // Vertical padding to accommodate notes above and below the staff
-  const VERTICAL_PADDING = 40 * scale; // Space above and below staff for ledger lines and notes
+  const VERTICAL_PADDING = 50 * scale; // Space above and below staff for ledger lines and notes
+
+  // Convert note type to beats (assuming 4/4 time)
+  const getNoteBeats = (type: NoteType): number => {
+    switch (type) {
+      case "whole":
+        return 4;
+      case "half":
+        return 2;
+      case "quarter":
+        return 1;
+      default:
+        return 1;
+    }
+  };
+
+  // Automatically insert bar lines based on 4/4 time signature
+  const addBarLines = (elements: Array<NoteProps | RestProps>): Array<NoteProps | RestProps | BarProps> => {
+    const result: Array<NoteProps | RestProps | BarProps> = [];
+    let currentBeats = 0;
+    const beatsPerMeasure = 4; // 4/4 time
+
+    // If no elements, create an empty measure
+    if (elements.length === 0) {
+      result.push({ type: "single", isEnd: true });
+      return result;
+    }
+
+    elements.forEach((el) => {
+      const elBeats = getNoteBeats(el.type);
+
+      // Check if adding this note would exceed the measure
+      if (currentBeats + elBeats > beatsPerMeasure) {
+        // Add a bar line before this note
+        result.push({ type: "single" });
+        currentBeats = 0;
+      }
+
+      // Add the note
+      result.push(el);
+      currentBeats += elBeats;
+
+      // Check if we've completed a measure
+      if (currentBeats === beatsPerMeasure) {
+        result.push({ type: "single" });
+        currentBeats = 0;
+      }
+    });
+
+    // Add final bar line if needed
+    if (currentBeats > 0) {
+      result.push({ type: "single", isEnd: true });
+    }
+
+    return result;
+  };
+
+  // Helper function to calculate staff lines from notes
+  const calculateStaffLines = (noteArray: Array<NoteProps | RestProps>) => {
+    // 1) Insert bar-lines based on the time-signature
+    const elementsWithBars = addBarLines(noteArray);
+
+    // 2) Convert the flat sequence into Measure objects – a measure **always** ends with a bar-line
+    interface InternalMeasure {
+      elements: Array<NoteProps | RestProps | BarProps>;
+      contentWidth: number; // width taken up by notes + the trailing bar
+      width: number; // final width after enforcing minimums / padding
+    }
+
+    const builtMeasures: InternalMeasure[] = [];
+    let currentElements: Array<NoteProps | RestProps | BarProps> = [];
+
+    const pushCurrentMeasure = () => {
+      if (currentElements.length === 0) return;
+
+      // Raw width (notes + bar)
+      let rawWidth = 0;
+      currentElements.forEach((el) => {
+        if (("pitch" in el && !("isRest" in el)) || "isRest" in el) {
+          rawWidth += NOTE_SPACING;
+        } else {
+          rawWidth += BAR_WIDTH;
+        }
+      });
+
+      // We want at least MIN_NOTE_TO_BAR_SPACING on **both** sides of the notes
+      const minRequiredWidth = rawWidth + MIN_NOTE_TO_BAR_SPACING * 2;
+      const finalWidth = Math.max(minRequiredWidth, MIN_MEASURE_WIDTH);
+
+      builtMeasures.push({
+        elements: currentElements,
+        contentWidth: rawWidth,
+        width: finalWidth,
+      });
+      currentElements = [];
+    };
+
+    elementsWithBars.forEach((el) => {
+      currentElements.push(el);
+      if (!("pitch" in el)) {
+        // We reached a bar – complete the measure
+        pushCurrentMeasure();
+      }
+    });
+    // Safety – in case the last measure ended without a bar (shouldn't happen)
+    pushCurrentMeasure();
+
+    // If no measures were created (empty notes array), create one empty measure
+    if (builtMeasures.length === 0) {
+      builtMeasures.push({
+        elements: [{ type: "single", isEnd: true }],
+        contentWidth: BAR_WIDTH,
+        width: MIN_MEASURE_WIDTH,
+      });
+    }
+
+    // 3) Group measures into staff lines that fit within the available width
+    const availableWidth = containerWidth - MARGIN * 2;
+    const staffLines: Array<{
+      measures: InternalMeasure[];
+      contentWidth: number; // total of measure.width for this line (excluding clef)
+    }> = [];
+
+    let currentLineMeasures: InternalMeasure[] = [];
+    let currentLineWidth = TREBLE_CLEF_WIDTH + CLEF_SPACING; // every line starts with a clef + extra spacing
+
+    // Add key signature width if present
+    if (keySignature && keySignature !== "C") {
+      const accidentals = getKeySignatureAccidentals(keySignature);
+      currentLineWidth += accidentals.length * 25 + 10; // 25px per accidental + 10px padding
+    }
+
+    builtMeasures.forEach((measure) => {
+      if (currentLineMeasures.length > 0 && currentLineWidth + measure.width > availableWidth) {
+        // Commit current line and start a new one
+        staffLines.push({
+          measures: currentLineMeasures,
+          contentWidth: currentLineWidth,
+        });
+        currentLineMeasures = [measure];
+        currentLineWidth = TREBLE_CLEF_WIDTH + CLEF_SPACING + measure.width;
+
+        // Add key signature width for new line
+        if (keySignature && keySignature !== "C") {
+          const accidentals = getKeySignatureAccidentals(keySignature);
+          currentLineWidth += accidentals.length * 25 + 10;
+        }
+      } else {
+        currentLineMeasures.push(measure);
+        currentLineWidth += measure.width;
+      }
+    });
+    // Push the final line
+    if (currentLineMeasures.length > 0) {
+      staffLines.push({
+        measures: currentLineMeasures,
+        contentWidth: currentLineWidth,
+      });
+    }
+
+    // 4) Stretch every line except the last to occupy the full available width
+    staffLines.forEach((line, idx) => {
+      if (idx === staffLines.length - 1) return; // last line stays natural width
+      const extraSpace = availableWidth - line.contentWidth;
+      if (extraSpace > 0 && line.measures.length > 0) {
+        const lastMeasure = line.measures[line.measures.length - 1];
+        lastMeasure.width += extraSpace; // pad the final measure
+        // Update the stored line width so subsequent rendering knows the new length
+        line.contentWidth = availableWidth;
+      }
+    });
+
+    // 5) Center the last line if centerLastLine is true
+    if (centerLastLine && staffLines.length > 0) {
+      const lastLine = staffLines[staffLines.length - 1];
+      const extraSpace = availableWidth - lastLine.contentWidth;
+      if (extraSpace > 0) {
+        // Add padding to the first measure to center the content
+        if (lastLine.measures.length > 0) {
+          const firstMeasure = lastLine.measures[0];
+          firstMeasure.width += extraSpace / 2; // Add half the extra space to the first measure
+          lastLine.contentWidth = availableWidth;
+        }
+      }
+    }
+
+    return staffLines;
+  };
+
+  // Calculate measure widths and split into staff lines (so we can position notes **inside** each measure)
+  const lines = useMemo(() => {
+    return calculateStaffLines(notes1 || []);
+  }, [notes1, containerWidth, centerLastLine, keySignature]);
+
+  // Calculate lines for notes2 (current notes)
+  const lines2 = useMemo(() => {
+    return calculateStaffLines(notes2 || []);
+  }, [notes2, containerWidth, centerLastLine, keySignature]);
+
+  // Determine which notes to animate based on question index
+  const isEvenQuestion = questionIndex % 2 === 0;
+
+  const exitLines = lines2;
+  const enterLines = lines;
+
+  // Reset visibility when notes change
+  useEffect(() => {
+    const isEvenQuestion = questionIndex % 2 === 0;
+    setVisibleNotes2(!isEvenQuestion);
+    setVisibleNotes1(isEvenQuestion);
+  }, [questionIndex]);
 
   // Get note position on staff (0 = middle line, positive = up, negative = down)
   const getNotePosition = (pitch: Pitch): number => {
@@ -474,213 +695,18 @@ const MusicalStaff = ({
     return ledgerLines;
   };
 
-  // Convert note type to beats (assuming 4/4 time)
-  const getNoteBeats = (type: NoteType): number => {
-    switch (type) {
-      case "whole":
-        return 4;
-      case "half":
-        return 2;
-      case "quarter":
-        return 1;
-      default:
-        return 1;
-    }
-  };
-
-  // Automatically insert bar lines based on 4/4 time signature
-  const addBarLines = (elements: Array<NoteProps | RestProps>): Array<NoteProps | RestProps | BarProps> => {
-    const result: Array<NoteProps | RestProps | BarProps> = [];
-    let currentBeats = 0;
-    const beatsPerMeasure = 4; // 4/4 time
-
-    // If no elements, create an empty measure
-    if (elements.length === 0) {
-      result.push({ type: "single", isEnd: true });
-      return result;
-    }
-
-    elements.forEach((el) => {
-      const elBeats = getNoteBeats(el.type);
-
-      // Check if adding this note would exceed the measure
-      if (currentBeats + elBeats > beatsPerMeasure) {
-        // Add a bar line before this note
-        result.push({ type: "single" });
-        currentBeats = 0;
-      }
-
-      // Add the note
-      result.push(el);
-      currentBeats += elBeats;
-
-      // Check if we've completed a measure
-      if (currentBeats === beatsPerMeasure) {
-        result.push({ type: "single" });
-        currentBeats = 0;
-      }
-    });
-
-    // Add final bar line if needed
-    if (currentBeats > 0) {
-      result.push({ type: "single", isEnd: true });
-    }
-
-    return result;
-  };
-
-  // Helper function to calculate staff lines from notes
-  const calculateStaffLines = (noteArray: Array<NoteProps | RestProps>) => {
-    // 1) Insert bar-lines based on the time-signature
-    const elementsWithBars = addBarLines(noteArray);
-
-    // 2) Convert the flat sequence into Measure objects – a measure **always** ends with a bar-line
-    interface InternalMeasure {
-      elements: Array<NoteProps | RestProps | BarProps>;
-      contentWidth: number; // width taken up by notes + the trailing bar
-      width: number; // final width after enforcing minimums / padding
-    }
-
-    const builtMeasures: InternalMeasure[] = [];
-    let currentElements: Array<NoteProps | RestProps | BarProps> = [];
-
-    const pushCurrentMeasure = () => {
-      if (currentElements.length === 0) return;
-
-      // Raw width (notes + bar)
-      let rawWidth = 0;
-      currentElements.forEach((el) => {
-        if (("pitch" in el && !("isRest" in el)) || "isRest" in el) {
-          rawWidth += NOTE_SPACING;
-        } else {
-          rawWidth += BAR_WIDTH;
-        }
-      });
-
-      // We want at least MIN_NOTE_TO_BAR_SPACING on **both** sides of the notes
-      const minRequiredWidth = rawWidth + MIN_NOTE_TO_BAR_SPACING * 2;
-      const finalWidth = Math.max(minRequiredWidth, MIN_MEASURE_WIDTH);
-
-      builtMeasures.push({
-        elements: currentElements,
-        contentWidth: rawWidth,
-        width: finalWidth,
-      });
-      currentElements = [];
-    };
-
-    elementsWithBars.forEach((el) => {
-      currentElements.push(el);
-      if (!("pitch" in el)) {
-        // We reached a bar – complete the measure
-        pushCurrentMeasure();
-      }
-    });
-    // Safety – in case the last measure ended without a bar (shouldn't happen)
-    pushCurrentMeasure();
-
-    // If no measures were created (empty notes array), create one empty measure
-    if (builtMeasures.length === 0) {
-      builtMeasures.push({
-        elements: [{ type: "single", isEnd: true }],
-        contentWidth: BAR_WIDTH,
-        width: MIN_MEASURE_WIDTH,
-      });
-    }
-
-    // 3) Group measures into staff lines that fit within the available width
-    const availableWidth = containerWidth - MARGIN * 2;
-    const staffLines: Array<{
-      measures: InternalMeasure[];
-      contentWidth: number; // total of measure.width for this line (excluding clef)
-    }> = [];
-
-    let currentLineMeasures: InternalMeasure[] = [];
-    let currentLineWidth = TREBLE_CLEF_WIDTH + CLEF_SPACING; // every line starts with a clef + extra spacing
-
-    // Add key signature width if present
-    if (keySignature && keySignature !== "C") {
-      const accidentals = getKeySignatureAccidentals(keySignature);
-      currentLineWidth += accidentals.length * 25 + 10; // 25px per accidental + 10px padding
-    }
-
-    builtMeasures.forEach((measure) => {
-      if (currentLineMeasures.length > 0 && currentLineWidth + measure.width > availableWidth) {
-        // Commit current line and start a new one
-        staffLines.push({
-          measures: currentLineMeasures,
-          contentWidth: currentLineWidth,
-        });
-        currentLineMeasures = [measure];
-        currentLineWidth = TREBLE_CLEF_WIDTH + CLEF_SPACING + measure.width;
-
-        // Add key signature width for new line
-        if (keySignature && keySignature !== "C") {
-          const accidentals = getKeySignatureAccidentals(keySignature);
-          currentLineWidth += accidentals.length * 25 + 10;
-        }
-      } else {
-        currentLineMeasures.push(measure);
-        currentLineWidth += measure.width;
-      }
-    });
-    // Push the final line
-    if (currentLineMeasures.length > 0) {
-      staffLines.push({
-        measures: currentLineMeasures,
-        contentWidth: currentLineWidth,
-      });
-    }
-
-    // 4) Stretch every line except the last to occupy the full available width
-    staffLines.forEach((line, idx) => {
-      if (idx === staffLines.length - 1) return; // last line stays natural width
-      const extraSpace = availableWidth - line.contentWidth;
-      if (extraSpace > 0 && line.measures.length > 0) {
-        const lastMeasure = line.measures[line.measures.length - 1];
-        lastMeasure.width += extraSpace; // pad the final measure
-        // Update the stored line width so subsequent rendering knows the new length
-        line.contentWidth = availableWidth;
-      }
-    });
-
-    // 5) Center the last line if centerLastLine is true
-    if (centerLastLine && staffLines.length > 0) {
-      const lastLine = staffLines[staffLines.length - 1];
-      const extraSpace = availableWidth - lastLine.contentWidth;
-      if (extraSpace > 0) {
-        // Add padding to the first measure to center the content
-        if (lastLine.measures.length > 0) {
-          const firstMeasure = lastLine.measures[0];
-          firstMeasure.width += extraSpace / 2; // Add half the extra space to the first measure
-          lastLine.contentWidth = availableWidth;
-        }
-      }
-    }
-
-    return staffLines;
-  };
-
-  // Calculate measure widths and split into staff lines (so we can position notes **inside** each measure)
-  const lines = useMemo(() => {
-    return calculateStaffLines(notes1 || []);
-  }, [notes1, containerWidth, centerLastLine, keySignature]);
-
-  // Calculate lines for notes2 (current notes)
-  const lines2 = useMemo(() => {
-    return calculateStaffLines(notes2 || []);
-  }, [notes2, containerWidth, centerLastLine, keySignature]);
-
   // Calculate total height needed (now based on the new `lines` array)
   const maxLines = lines.length;
   const calculatedHeight = maxLines * (STAFF_HEIGHT + MARGIN) + MARGIN + VERTICAL_PADDING * 2;
   const totalHeight = propContainerHeight ? Math.max(propContainerHeight, calculatedHeight) : calculatedHeight;
 
   // Helper function to render notes from a staff line
-  const renderNotesFromLine = (line: any, lineIndex: number, isExitAnimation: boolean = false): React.ReactNode[] => {
+  const renderNotesFromLine = (line: any, lineIndex: number): React.ReactNode[] => {
     const handleExitComplete = () => {
-      if (isExitAnimation) {
+      if (isEvenQuestion) {
         setVisibleNotes1(false);
+      } else {
+        setVisibleNotes2(false);
       }
     };
     const yOffset = lineIndex * (STAFF_HEIGHT + MARGIN) + MARGIN + VERTICAL_PADDING;
@@ -726,7 +752,7 @@ const MusicalStaff = ({
 
           rendered.push(
             <AnimatedNote
-              key={`l${lineIndex}-m${mIdx}-n${elIdx}${isExitAnimation ? "-exit" : ""}`}
+              key={`q${questionIndex}-l${lineIndex}-m${mIdx}-n${elIdx}`}
               x={noteX}
               y={noteY}
               fontSize={70 * scale}
@@ -735,10 +761,10 @@ const MusicalStaff = ({
               textAnchor="middle"
               transform={shouldFlip ? `rotate(180, ${noteX}, ${noteY})` : undefined}
               delay={mIdx * 100}
-              exitAnimation={isExitAnimation}
+              exitAnimation={false}
               isFlipped={shouldFlip}
-              animateIn={isExitAnimation ? "none" : animateIn}
-              onExitComplete={isExitAnimation ? handleExitComplete : undefined}
+              animateIn={animateIn}
+              onExitComplete={handleExitComplete}
             >
               {getNoteGlyph(el)}
             </AnimatedNote>
@@ -754,7 +780,7 @@ const MusicalStaff = ({
             const accidentalX = noteX - 20; // Position accidental to the left of the note
             rendered.push(
               <AnimatedNote
-                key={`l${lineIndex}-m${mIdx}-n${elIdx}-acc${isExitAnimation ? "-exit" : ""}`}
+                key={`q${questionIndex}-l${lineIndex}-m${mIdx}-n${elIdx}-acc`}
                 x={accidentalX}
                 y={noteY}
                 fontSize={35 * scale}
@@ -762,10 +788,10 @@ const MusicalStaff = ({
                 fill="#000"
                 textAnchor="middle"
                 delay={elIdx * 100}
-                exitAnimation={isExitAnimation}
+                exitAnimation={false}
                 isFlipped={shouldFlip}
-                animateIn={isExitAnimation ? "none" : animateIn}
-                onExitComplete={isExitAnimation ? handleExitComplete : undefined}
+                animateIn={animateIn}
+                onExitComplete={handleExitComplete}
               >
                 {getAccidentalGlyph(el.accidental)}
               </AnimatedNote>
@@ -782,7 +808,7 @@ const MusicalStaff = ({
 
           rendered.push(
             <AnimatedNote
-              key={`l${lineIndex}-m${mIdx}-r${elIdx}${isExitAnimation ? "-exit" : ""}`}
+              key={`q${questionIndex}-l${lineIndex}-m${mIdx}-r${elIdx}`}
               x={restX}
               y={restY}
               fontSize={70 * scale}
@@ -790,9 +816,9 @@ const MusicalStaff = ({
               fill="#000"
               textAnchor="middle"
               delay={mIdx * 100}
-              exitAnimation={isExitAnimation}
-              animateIn={isExitAnimation ? "none" : animateIn}
-              onExitComplete={isExitAnimation ? handleExitComplete : undefined}
+              exitAnimation={false}
+              animateIn={animateIn}
+              onExitComplete={handleExitComplete}
             >
               {getNoteGlyph(el)}
             </AnimatedNote>
@@ -813,7 +839,7 @@ const MusicalStaff = ({
           if (showBarLines) {
             rendered.push(
               <Line
-                key={`l${lineIndex}-m${mIdx}-b${elIdx}`}
+                key={`q${questionIndex}-l${lineIndex}-m${mIdx}-b${elIdx}`}
                 x1={barX}
                 y1={staffTop}
                 x2={barX}
@@ -837,8 +863,8 @@ const MusicalStaff = ({
   };
 
   return (
-    <View style={[styles.container, { width: containerWidth, height: totalHeight }]}>
-      <Svg width={containerWidth} height={totalHeight} viewBox={`0 0 ${containerWidth} ${totalHeight}`} style={styles.svg}>
+    <View>
+      <Svg width={containerWidth} height={totalHeight} viewBox={`0 0 ${containerWidth} ${totalHeight}`}>
         {/* Render staff lines and static elements */}
         {Array.from({ length: maxLines }, (_, lineIndex) => {
           const yOffset = lineIndex * (STAFF_HEIGHT + MARGIN) + MARGIN + VERTICAL_PADDING;
@@ -907,24 +933,14 @@ const MusicalStaff = ({
           );
         })}
 
-        {/* Render notes1 with exit animation */}
-        {visibleNotes1 && lines.map((line, lineIndex) => renderNotesFromLine(line, lineIndex, true)).flat()}
+        {/* Render exit notes with exit animation */}
+        {visibleNotes1 && exitLines.map((line, lineIndex) => renderNotesFromLine(line, lineIndex)).flat()}
 
-        {/* Render notes2 (current notes) with entrance animation */}
-        {visibleNotes2 && lines2.map((line, lineIndex) => renderNotesFromLine(line, lineIndex)).flat()}
+        {/* Render entrance notes with entrance animation */}
+        {visibleNotes2 && enterLines.map((line, lineIndex) => renderNotesFromLine(line, lineIndex)).flat()}
       </Svg>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  svg: {
-    backgroundColor: "transparent",
-  },
-});
 
 export default MusicalStaff;

@@ -44,7 +44,8 @@ const DIFFICULTY_LEVELS = {
   BEGINNER: { minScore: 0, octaves: [4], accidentals: [""], duration: 10, notesPerMeasure: 1 },
   INTERMEDIATE: { minScore: 10, octaves: [4, 5], accidentals: [""], duration: 10, notesPerMeasure: 2 },
   ADVANCED: { minScore: 15, octaves: [4, 5], accidentals: [""], duration: 8, notesPerMeasure: 4 },
-  EXPERT: { minScore: 25, octaves: [3, 4, 5, 6], accidentals: ["", "sharp", "flat"], duration: 8, notesPerMeasure: 4 },
+  ADVANCED2: { minScore: 20, octaves: [4, 5], accidentals: ["sharp"], duration: 8, notesPerMeasure: 4 },
+  EXPERT: { minScore: 25, octaves: [3, 4, 5, 6], accidentals: ["", "sharp", "flat"], duration: 6, notesPerMeasure: 4 },
 } as const;
 
 interface NotesQueue {
@@ -108,19 +109,7 @@ const IncorrectAnswerFeedback = () => (
 );
 
 // Game Header Component
-const GameHeader = ({
-  currentScore,
-  lives,
-  gameHasStarted,
-  playedNotes,
-  totalNotes,
-}: {
-  currentScore: number;
-  lives: number;
-  gameHasStarted: boolean;
-  playedNotes: number;
-  totalNotes: number;
-}) => (
+const GameHeader = ({ currentScore, lives, gameHasStarted }: { currentScore: number; lives: number; gameHasStarted: boolean }) => (
   <XStack justifyContent="space-between" alignItems="center" paddingHorizontal="$4">
     <View style={{ width: 50 }}>
       <Pressable onPress={() => router.back()}>
@@ -168,6 +157,7 @@ const StaffMasterGame = () => {
   const [answerIsCorrect, setAnswerIsCorrect] = useState<boolean>();
   const [feedbackKey, setFeedbackKey] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
+  const [questionIndex, setQuestionIndex] = useState(0);
   const [notesQueue, setNotesQueue] = useState<NotesQueue>({
     previous: [],
     current: [],
@@ -240,6 +230,7 @@ const StaffMasterGame = () => {
     setIsRunning(false);
     setAnswerIsCorrect(undefined);
     setFeedbackKey(0);
+    setQuestionIndex(0);
     setNotesQueue({ previous: [], current: [] });
     setPlayedNoteCounts(new Map());
     setTotalNotesInRound(0);
@@ -252,11 +243,25 @@ const StaffMasterGame = () => {
     setPlayedNoteCounts(new Map());
     setTotalNotesInRound(newNotes.length);
 
-    setNotesQueue((prev) => ({
-      previous: prev.current.length > 0 ? prev.current : [],
-      current: newNotes,
-    }));
+    const isEvenQuestion = questionIndex % 2 === 0;
 
+    setNotesQueue((prev) => {
+      if (isEvenQuestion) {
+        // Even questions (0, 2, 4...): new notes go in slot 1 (previous)
+        return {
+          previous: newNotes,
+          current: prev.current.length > 0 ? prev.current : [],
+        };
+      } else {
+        // Odd questions (1, 3, 5...): new notes go in slot 2 (current)
+        return {
+          previous: prev.previous.length > 0 ? prev.previous : [],
+          current: newNotes,
+        };
+      }
+    });
+
+    setQuestionIndex((prev) => prev + 1);
     setKey((prev) => prev + 1);
     startTimer();
   };
@@ -363,18 +368,12 @@ const StaffMasterGame = () => {
     <View style={{ flex: 1, paddingTop: top, paddingBottom: bottom }}>
       <StatusBar translucent={true} backgroundColor="transparent" />
 
-      <GameHeader
-        currentScore={currentScore}
-        lives={lives}
-        gameHasStarted={gameHasStarted}
-        playedNotes={Array.from(playedNoteCounts.values()).reduce((sum, count) => sum + count, 0)}
-        totalNotes={totalNotesInRound}
-      />
+      <GameHeader currentScore={currentScore} lives={lives} gameHasStarted={gameHasStarted} />
 
       <LinearGradient colors={["#f1f0f5", "#ffffff", "#e8e8e8"]} style={{ flex: 1 }} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }}>
         <View style={styles.content}>
           <MusicalStaff
-            key={key}
+            key={`${key}-${questionIndex}`}
             scale={1.5}
             animateIn="right"
             notes1={notesQueue.previous}
@@ -383,6 +382,7 @@ const StaffMasterGame = () => {
             centerLastLine={true}
             exitAnimation={false}
             showBarLines={false}
+            questionIndex={questionIndex}
           />
 
           {/* {gameHasStarted && currentNotes.length > 0 && <NoteProgressIndicator currentNotes={currentNotes} playedNoteCounts={playedNoteCounts} />} */}
