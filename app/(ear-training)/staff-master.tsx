@@ -342,7 +342,7 @@ const StaffMasterGame = () => {
 
           // Start next round after delay
           setTimeout(async () => {
-            await delay(1000);
+            await delay(500);
             handleStart();
             setAnswerIsCorrect(undefined);
           }, 1000);
