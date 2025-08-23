@@ -6,7 +6,7 @@ export function usePlaySFX() {
   const audioPlayer = useAudioPlayer();
 
   const playSFX = (audioFile: number, volume: number = 0.5) => {
-    audioPlayer.volume = sfxVolume !== undefined ? sfxVolume : 0.75;
+    audioPlayer.volume = sfxVolume !== undefined ? sfxVolume * volume : 0.75 * volume;
     audioPlayer.replace(audioFile);
     audioPlayer.seekTo(0);
     audioPlayer.play();

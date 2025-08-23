@@ -1,15 +1,14 @@
+import TrebleLogo from "@/assets/trebleLogo";
 import { UserContext } from "@/context/user-context";
 import { Check, Gamepad, Heart, Star } from "@tamagui/lucide-icons";
 import { blue } from "@tamagui/themes";
 import { BlurView } from "expo-blur";
-import { Image } from "expo-image";
 import LottieView from "lottie-react-native";
 import React, { useContext, useEffect, useState } from "react";
 import { Modal, SafeAreaView, ScrollView } from "react-native";
 import Purchases from "react-native-purchases";
-import { Button, H1, H2, H3, H4, ListItem, Paragraph, Separator, SizableText, Theme, View, XStack, YGroup, YStack } from "tamagui";
+import { Button, H2, H4, ListItem, Paragraph, SizableText, Theme, View, XStack, YStack } from "tamagui";
 import { LinearGradient } from "tamagui/linear-gradient";
-import TrebleLogo from "@/assets/trebleLogo";
 
 export default function Paywall({ openPaywall, setOpenPaywall }: { openPaywall: boolean; setOpenPaywall: (open: boolean) => void }) {
   const { currentUser, handleUpdateUserInfo } = useContext(UserContext);

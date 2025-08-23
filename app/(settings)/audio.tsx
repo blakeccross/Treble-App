@@ -59,25 +59,23 @@ export default function AudioSettings() {
         <View>
           <Label>Piano Volume</Label>
           <SimpleSlider
-            defaultValue={[pianoVolume !== undefined ? pianoVolume : 1]}
-            min={0.5}
-            max={2.5}
-            step={0.2}
+            defaultValue={[pianoVolume !== undefined ? Math.round(pianoVolume * 10) : 10]}
+            min={5}
+            max={25}
+            step={2}
             width={"100%"}
-            onSlideEnd={(ev, value) => setPianoVolume(value)}
+            onSlideEnd={(ev, value) => setPianoVolume(value / 10)}
           />
         </View>
         <View>
           <Label>SFX Volume</Label>
           <SimpleSlider
-            defaultValue={[sfxVolume !== undefined ? sfxVolume : 0.75]}
-            //value={[sfxVolume !== undefined ? sfxVolume : 0.75]}
-            min={0.2}
-            max={1}
-            step={0.1}
+            defaultValue={[sfxVolume !== undefined ? Math.round(sfxVolume * 100) : 75]}
+            min={20}
+            max={100}
+            step={10}
             width={"100%"}
-            onSlideEnd={(ev, value) => setSfxVolume(value)}
-            //onValueChange={(value) => setSfxVolume(value[0])}
+            onSlideEnd={(ev, value) => setSfxVolume(value / 100)}
           />
           {/* <SimpleSlider defaultValue={[100]} min={0} max={200} step={1} width={"100%"} /> */}
         </View>

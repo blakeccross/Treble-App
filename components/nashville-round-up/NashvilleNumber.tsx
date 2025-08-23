@@ -1,5 +1,5 @@
 import { getTextColor } from "@/utils/nashville-round-up/getTextColor";
-import { Paragraph, View, Text } from "tamagui";
+import { Text, View } from "tamagui";
 
 export default function NashvilleNumber({ text = "", small = false }: { text: string; small?: boolean }) {
   function formatText(text: string, align?: "center" | "left" | "right") {
