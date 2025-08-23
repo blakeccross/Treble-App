@@ -13,9 +13,10 @@ interface AnimationSquare {
 interface KeyPressAnimationProps {
   onKeyPress?: (note: string) => void;
   children: React.ReactNode;
+  disabled?: boolean;
 }
 
-const KeyPressAnimation: React.FC<KeyPressAnimationProps> = ({ onKeyPress, children }) => {
+const KeyPressAnimation: React.FC<KeyPressAnimationProps> = ({ onKeyPress, children, disabled }) => {
   const [squares, setSquares] = useState<AnimationSquare[]>([]);
   const screenWidth = Dimensions.get("window").width;
   const whiteKeys = ["C", "D", "E", "F", "G", "A", "B"];
@@ -151,7 +152,7 @@ const KeyPressAnimation: React.FC<KeyPressAnimationProps> = ({ onKeyPress, child
       ))}
 
       {/* Render children with modified onKeyPress */}
-      {React.isValidElement(children) ? React.cloneElement(children, { onKeyPress: handleKeyPress } as any) : children}
+      {React.isValidElement(children) ? React.cloneElement(children, { onKeyPress: disabled ? undefined : handleKeyPress } as any) : children}
     </View>
   );
 };

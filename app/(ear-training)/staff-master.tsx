@@ -17,9 +17,7 @@ import { PianoKey } from "@/types/pianoKeys";
 import { usePlaySFX } from "@/hooks/usePlaySFX";
 
 // Constants
-const GAME_DURATION = 5;
 const INITIAL_LIVES = 3;
-const MAX_ATTEMPTS = 50;
 const SFX_VOLUME = 0.1;
 const NOTE_DURATION = 0.5;
 
@@ -101,7 +99,7 @@ const CorrectAnswerFeedback = () => (
 );
 
 const IncorrectAnswerFeedback = () => (
-  <Animated.View entering={SlideInDown.duration(500)} exiting={FadeOut.duration(1000)}>
+  <Animated.View entering={SlideInDown.duration(500)} exiting={FadeOut.duration(1000)} style={{ marginTop: -20 }}>
     <Animated.View entering={BounceIn.duration(1000)} exiting={FadeOut.duration(1000)}>
       <X size="$10" color="$red10" />
     </Animated.View>
@@ -148,6 +146,8 @@ const StaffMasterGame = () => {
   const { width: windowWidth, height: windowHeight } = useWindowDimensions();
   const { playSong } = usePlayMidi();
   const { playSFX } = usePlaySFX();
+  const timeoutsRef = useRef<any[]>([]);
+  const isGameActiveRef = useRef(true);
 
   // Game state
   const [gameHasStarted, setGameHasStarted] = useState(false);
@@ -164,17 +164,44 @@ const StaffMasterGame = () => {
   });
   const [playedNoteCounts, setPlayedNoteCounts] = useState<Map<string, number>>(new Map());
   const [totalNotesInRound, setTotalNotesInRound] = useState(0);
-
+  const [disableKeyPress, setDisableKeyPress] = useState(false);
   const correctAnswers = useRef<NoteProps[]>([]);
   const theta = useSharedValue(2 * Math.PI);
+
+  // Helpers to manage timeouts and game activity
+  const addTimeout = (cb: () => void, ms: number) => {
+    const id = setTimeout(cb, ms) as unknown as any;
+    timeoutsRef.current.push(id);
+    return id;
+  };
+
+  const clearAllTimeouts = () => {
+    timeoutsRef.current.forEach((id) => clearTimeout(id as unknown as number));
+    timeoutsRef.current = [];
+  };
+
+  useEffect(() => {
+    isGameActiveRef.current = true;
+    return () => {
+      isGameActiveRef.current = false;
+      clearAllTimeouts();
+    };
+  }, []);
 
   // Timer effect
   useEffect(() => {
     if (!isRunning) return;
 
     const config = getDifficultyConfig(currentScore);
-    const timeoutId = setTimeout(() => {
-      timerFinished();
+    const timeoutId = addTimeout(() => {
+      if (!isGameActiveRef.current) return;
+      (async () => {
+        setIsRunning(false);
+        incorrectAnswer();
+        await delay(1000);
+        if (!isGameActiveRef.current) return;
+        handleStart();
+      })();
     }, config.duration * 1000);
 
     return () => clearTimeout(timeoutId);
@@ -216,13 +243,6 @@ const StaffMasterGame = () => {
     setIsRunning(true);
   };
 
-  const timerFinished = async () => {
-    setIsRunning(false);
-    incorrectAnswer();
-    await delay(1000);
-    handleStart();
-  };
-
   const resetGameState = () => {
     setCurrentScore(0);
     setLives(INITIAL_LIVES);
@@ -235,6 +255,7 @@ const StaffMasterGame = () => {
     setPlayedNoteCounts(new Map());
     setTotalNotesInRound(0);
     theta.value = 2 * Math.PI;
+    clearAllTimeouts();
   };
 
   const handleStart = () => {
@@ -242,6 +263,7 @@ const StaffMasterGame = () => {
     correctAnswers.current = newNotes;
     setPlayedNoteCounts(new Map());
     setTotalNotesInRound(newNotes.length);
+    setDisableKeyPress(false);
 
     const isEvenQuestion = questionIndex % 2 === 0;
 
@@ -267,6 +289,7 @@ const StaffMasterGame = () => {
   };
 
   const startGame = () => {
+    isGameActiveRef.current = true;
     setGameHasStarted(true);
     handleStart();
   };
@@ -275,8 +298,12 @@ const StaffMasterGame = () => {
     const updatedLives = lives - 1;
 
     if (updatedLives <= 0) {
+      isGameActiveRef.current = false;
+      setDisableKeyPress(true);
+      setIsRunning(false);
+      clearAllTimeouts();
       resetGameState();
-      router.push({ pathname: "/game-over", params: { score: currentScore, gameName: "nashville_round_up" } });
+      router.push({ pathname: "/game-over", params: { score: currentScore, gameName: "staff_master" } });
       return;
     }
 
@@ -337,12 +364,14 @@ const StaffMasterGame = () => {
         if (totalPlayed === totalNotesInRound) {
           // All notes have been played correctly
           setIsRunning(false); // Stop timer immediately
+          setDisableKeyPress(true);
           handleCorrectAnswer();
           setFeedbackKey((prev) => prev + 1);
 
           // Start next round after delay
-          setTimeout(async () => {
+          addTimeout(async () => {
             await delay(500);
+            if (!isGameActiveRef.current) return;
             handleStart();
             setAnswerIsCorrect(undefined);
           }, 1000);
@@ -353,11 +382,13 @@ const StaffMasterGame = () => {
     } else {
       // Wrong note or already played note
       incorrectAnswer();
+      setDisableKeyPress(true);
       setIsRunning(false);
       setFeedbackKey((prev) => prev + 1);
 
-      setTimeout(async () => {
+      addTimeout(async () => {
         await delay(1000);
+        if (!isGameActiveRef.current) return;
         handleStart();
         setAnswerIsCorrect(undefined);
       }, 1000);
@@ -395,7 +426,7 @@ const StaffMasterGame = () => {
             </View>
           )}
 
-          <View style={[styles.timerContainer, { marginTop: -windowHeight * 0.05, position: "relative" }]}>
+          <View style={[styles.timerContainer, { marginTop: -windowHeight * 0.1, position: "relative" }]}>
             <GameTimer
               size={windowWidth * 0.2}
               strokeWidth={25}
@@ -414,8 +445,8 @@ const StaffMasterGame = () => {
         </View>
       </LinearGradient>
 
-      <KeyPressAnimation onKeyPress={handleKeyPress}>
-        <PianoKeys />
+      <KeyPressAnimation onKeyPress={handleKeyPress} disabled={disableKeyPress}>
+        <PianoKeys disabled={disableKeyPress} />
       </KeyPressAnimation>
     </View>
   );

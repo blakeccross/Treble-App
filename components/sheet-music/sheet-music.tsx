@@ -74,7 +74,6 @@ interface MusicalStaffProps {
   showBarLines?: boolean;
   animateIn?: "bottom" | "none" | "right";
   questionIndex?: number;
-  onUnmountComplete?: () => void;
 }
 
 // Animated Note Component
@@ -139,7 +138,7 @@ const AnimatedNote = ({
       // Animate to final position
       animatedX.value = withDelay(delay, withTiming(x, { duration: 600, easing: Easing.out(Easing.quad) }));
       animatedY.value = withDelay(delay, withTiming(y, { duration: 600, easing: Easing.out(Easing.quad) }));
-      animatedOpacity.value = withDelay(delay, withTiming(1, { duration: 400, easing: Easing.out(Easing.quad) }));
+      animatedOpacity.value = withDelay(delay, withTiming(1, { duration: 800, easing: Easing.out(Easing.quad) }));
     }
   }, [exitAnimation, animateIn, isUnmounting]);
 
@@ -179,32 +178,11 @@ const MusicalStaff = ({
   showBarLines = true,
   animateIn = "right",
   questionIndex = 0,
-  onUnmountComplete,
 }: MusicalStaffProps) => {
   const [visibleNotes1, setVisibleNotes1] = useState(false);
   const [visibleNotes2, setVisibleNotes2] = useState(false);
-  const [isUnmounting, setIsUnmounting] = useState(false);
-  const exitCompleteCount = useRef(0);
-  const totalNotes = useRef(0);
-
   const { width: windowWidth } = useWindowDimensions();
   const containerWidth = propContainerWidth || windowWidth;
-
-  // Handle component unmounting
-  useEffect(() => {
-    return () => {
-      // Component is unmounting, trigger exit animations
-      setIsUnmounting(true);
-    };
-  }, []);
-
-  // Track when all exit animations are complete
-  const handleExitComplete = () => {
-    exitCompleteCount.current += 1;
-    if (exitCompleteCount.current >= totalNotes.current && isUnmounting) {
-      onUnmountComplete?.();
-    }
-  };
 
   // Constants for layout
   const STAFF_HEIGHT = 100 * scale;
@@ -219,7 +197,7 @@ const MusicalStaff = ({
   const CLEF_SPACING = 10 * scale;
 
   // Vertical padding to accommodate notes above and below the staff
-  const VERTICAL_PADDING = 50 * scale; // Space above and below staff for ledger lines and notes
+  const VERTICAL_PADDING = 80 * scale; // Space above and below staff for ledger lines and notes
 
   // Convert note type to beats (assuming 4/4 time)
   const getNoteBeats = (type: NoteType): number => {
@@ -473,6 +451,13 @@ const MusicalStaff = ({
       default:
         return 0;
     }
+  };
+
+  // Get accidental Y position adjustment for flipped notes
+  const getAccidentalYAdjustment = (isFlipped: boolean): number => {
+    if (!isFlipped) return 0 * scale;
+    // When note is flipped, move accidental down to align with the rotated note
+    return 15 * scale;
   };
 
   // Get note Unicode character
@@ -778,18 +763,19 @@ const MusicalStaff = ({
           // Render accidental if present
           if (el.accidental) {
             const accidentalX = noteX - 20; // Position accidental to the left of the note
+            const accidentalY = noteY + getAccidentalYAdjustment(shouldFlip);
             rendered.push(
               <AnimatedNote
                 key={`q${questionIndex}-l${lineIndex}-m${mIdx}-n${elIdx}-acc`}
                 x={accidentalX}
-                y={noteY}
+                y={accidentalY}
                 fontSize={35 * scale}
                 fontFamily="BravuraText"
                 fill="#000"
                 textAnchor="middle"
                 delay={elIdx * 100}
                 exitAnimation={false}
-                isFlipped={shouldFlip}
+                isFlipped={false}
                 animateIn={animateIn}
                 onExitComplete={handleExitComplete}
               >
