@@ -1,8 +1,6 @@
-// import { useScore } from "react-native-vexflow"; // import the one and only thing provided
 import useScore from "@/components/vexflow/useScore";
 import React from "react";
-import { Appearance, Dimensions, View, useColorScheme } from "react-native";
-import { useTheme } from "tamagui";
+import { Dimensions, View, useColorScheme } from "react-native";
 import { Vex } from "vexflow";
 
 export default function SheetMusic({
@@ -33,10 +31,10 @@ export default function SheetMusic({
   // picked from Vexflow tutorial: https://github.com/0xfe/vexflow/wiki/The-VexFlow-Tutorial
   const VF = Vex.Flow;
 
-  var notes = data.notes.map((item) => new VF.StaveNote({ ...item, clef: data.clef }));
+  let notes = data.notes.map((item) => new VF.StaveNote({ ...item, clef: data.clef }));
 
   // Create a voice in 4/4 and add the notes from above
-  var voice = new VF.Voice({ num_beats: 4, beat_value: 4 }).setStrict(false);
+  let voice = new VF.Voice({ num_beats: 4, beat_value: 4 }).setStrict(false);
   voice.addTickables(notes);
   VF.Accidental.applyAccidentals([voice], data.key);
   // Format and justify the notes to 400 pixels.

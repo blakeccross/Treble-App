@@ -1,6 +1,6 @@
 import React from "react";
+import { View } from "react-native";
 import Svg, { Polygon } from "react-native-svg";
-import { View, Dimensions } from "react-native";
 
 const DiamondPattern = ({ color, width, height }: { color: string; width: number; height: number }) => {
   const diamondSize = 20; // Size of each diamond

@@ -27,29 +27,29 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		03D4CD153C954AC5AC674DD7 /* piano_c3.mp3 */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = piano_c3.mp3; path = ../assets/audio/piano_c3.mp3; sourceTree = "<group>"; };
-		0BD8CA0C5A294C91B2695CDF /* Karmina-Regular.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Karmina-Regular.otf"; path = "../assets/fonts/Karmina-Regular.otf"; sourceTree = "<group>"; };
+		03D4CD153C954AC5AC674DD7 /* piano_c3.mp3 */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = piano_c3.mp3; path = ../assets/audio/piano_c3.mp3; sourceTree = "<group>"; };
+		0BD8CA0C5A294C91B2695CDF /* Karmina-Regular.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Karmina-Regular.otf"; path = "../assets/fonts/Karmina-Regular.otf"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* Treble.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Treble.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = Treble/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Treble/Info.plist; sourceTree = "<group>"; };
-		318DFCEF891D0B1FCBF5229F /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = Treble/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		318DFCEF891D0B1FCBF5229F /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = Treble/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		48ACE8535A83616C71BBCA59 /* Pods-Treble.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Treble.debug.xcconfig"; path = "Target Support Files/Pods-Treble/Pods-Treble.debug.xcconfig"; sourceTree = "<group>"; };
 		543895B63D211BBC33FC26AD /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-Treble/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
-		587E94E448844CAC86D81C24 /* piano_fs3.mp3 */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = piano_fs3.mp3; path = ../assets/audio/piano_fs3.mp3; sourceTree = "<group>"; };
+		587E94E448844CAC86D81C24 /* piano_fs3.mp3 */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = piano_fs3.mp3; path = ../assets/audio/piano_fs3.mp3; sourceTree = "<group>"; };
 		59C0E1AC557C416D9403AFB8 /* libPods-Treble.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Treble.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		5DD6268C5CA04873A11FDA7D /* Karmina-Medium.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Karmina-Medium.otf"; path = "../assets/fonts/Karmina-Medium.otf"; sourceTree = "<group>"; };
-		6A04FCE5CDC648DABCDE745C /* piano_fs2.mp3 */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = piano_fs2.mp3; path = ../assets/audio/piano_fs2.mp3; sourceTree = "<group>"; };
-		90D28DA681694D6A94762190 /* piano_c4.mp3 */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = piano_c4.mp3; path = ../assets/audio/piano_c4.mp3; sourceTree = "<group>"; };
-		942ACE69C40B45EB9C3F9A83 /* Karmina-Bold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Karmina-Bold.otf"; path = "../assets/fonts/Karmina-Bold.otf"; sourceTree = "<group>"; };
+		5DD6268C5CA04873A11FDA7D /* Karmina-Medium.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Karmina-Medium.otf"; path = "../assets/fonts/Karmina-Medium.otf"; sourceTree = "<group>"; };
+		6A04FCE5CDC648DABCDE745C /* piano_fs2.mp3 */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = piano_fs2.mp3; path = ../assets/audio/piano_fs2.mp3; sourceTree = "<group>"; };
+		90D28DA681694D6A94762190 /* piano_c4.mp3 */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = piano_c4.mp3; path = ../assets/audio/piano_c4.mp3; sourceTree = "<group>"; };
+		942ACE69C40B45EB9C3F9A83 /* Karmina-Bold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Karmina-Bold.otf"; path = "../assets/fonts/Karmina-Bold.otf"; sourceTree = "<group>"; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = Treble/SplashScreen.storyboard; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
-		CDEAFB1BE1B741DC8C03D0A6 /* Melody-Bold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Melody-Bold.otf"; path = "../assets/fonts/Melody-Bold.otf"; sourceTree = "<group>"; };
+		CDEAFB1BE1B741DC8C03D0A6 /* Melody-Bold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Melody-Bold.otf"; path = "../assets/fonts/Melody-Bold.otf"; sourceTree = "<group>"; };
 		D11D3D9BC0EDA167BB3E2C59 /* Pods-Treble.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Treble.release.xcconfig"; path = "Target Support Files/Pods-Treble/Pods-Treble.release.xcconfig"; sourceTree = "<group>"; };
-		DB80D15F96C5473F9D1CD22B /* BravuraText.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = BravuraText.otf; path = ../assets/fonts/BravuraText.otf; sourceTree = "<group>"; };
+		DB80D15F96C5473F9D1CD22B /* BravuraText.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = BravuraText.otf; path = ../assets/fonts/BravuraText.otf; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		F11748412D0307B40044C1D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = Treble/AppDelegate.swift; sourceTree = "<group>"; };
 		F11748442D0722820044C1D9 /* Treble-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "Treble-Bridging-Header.h"; path = "Treble/Treble-Bridging-Header.h"; sourceTree = "<group>"; };
-		FE48A63A0DEA47019EDF25F3 /* piano_fs4.mp3 */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = piano_fs4.mp3; path = ../assets/audio/piano_fs4.mp3; sourceTree = "<group>"; };
+		FE48A63A0DEA47019EDF25F3 /* piano_fs4.mp3 */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = piano_fs4.mp3; path = ../assets/audio/piano_fs4.mp3; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -93,7 +93,6 @@
 				48ACE8535A83616C71BBCA59 /* Pods-Treble.debug.xcconfig */,
 				D11D3D9BC0EDA167BB3E2C59 /* Pods-Treble.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -168,7 +167,6 @@
 				942ACE69C40B45EB9C3F9A83 /* Karmina-Bold.otf */,
 			);
 			name = Resources;
-			path = "";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -409,6 +407,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Treble/Treble.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 6U2Y6W57T7;
 				ENABLE_BITCODE = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
@@ -445,6 +444,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Treble/Treble.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 6U2Y6W57T7;
 				INFOPLIST_FILE = Treble/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -522,10 +522,7 @@
 				LIBRARY_SEARCH_PATHS = "$(SDKROOT)/usr/lib/swift\"$(inherited)\"";
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					" ",
-				);
+				OTHER_LDFLAGS = "$(inherited)  ";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG";
@@ -580,10 +577,7 @@
 				);
 				LIBRARY_SEARCH_PATHS = "$(SDKROOT)/usr/lib/swift\"$(inherited)\"";
 				MTL_ENABLE_DEBUG_INFO = NO;
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					" ",
-				);
+				OTHER_LDFLAGS = "$(inherited)  ";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				USE_HERMES = true;

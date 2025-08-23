@@ -13,7 +13,6 @@ const CircularProgress = ({
   opacity,
   theta,
   isRunning,
-  setIsRunning,
 }: //   startAnimation,
 {
   size: number;
@@ -23,7 +22,6 @@ const CircularProgress = ({
   opacity: number;
   theta: SharedValue<number>;
   isRunning: boolean;
-  setIsRunning: any;
 }) => {
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
@@ -46,7 +44,6 @@ const CircularProgress = ({
   return (
     <View style={{ width: size, height: size, opacity: opacity }}>
       <Svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
-        {/* <Circle stroke="#e6e6e6" fill="none" cx={size / 2} cy={size / 2} r={radius} {...{ strokeWidth }} /> */}
         <AnimatedCircle
           stroke={color}
           fill="none"
