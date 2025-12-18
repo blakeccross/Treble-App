@@ -1,43 +1,21 @@
-import { Tabs } from "expo-router";
-import React from "react";
-
-import TabBar from "@/components/tab-bar";
-import { Colors } from "@/constants/Colors";
-import { useColorScheme } from "@/hooks/useColorScheme";
+import { NativeTabs, Icon, Label } from "expo-router/unstable-native-tabs";
 import { Ear, Home, Smile } from "@tamagui/lucide-icons";
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
-
   return (
-    <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
-        headerShown: false,
-      }}
-      tabBar={(props) => <TabBar {...props} />}
-    >
-      <Tabs.Screen
-        name="(home)"
-        options={{
-          title: "Home",
-          tabBarIcon: ({ color, focused }) => <Home />,
-        }}
-      />
-      <Tabs.Screen
-        name="ear-training"
-        options={{
-          title: "Home",
-          tabBarIcon: ({ color, focused }) => <Ear />,
-        }}
-      />
-      <Tabs.Screen
-        name="profile"
-        options={{
-          title: "Profile",
-          tabBarIcon: ({ color, focused }) => <Smile />,
-        }}
-      />
-    </Tabs>
+    <NativeTabs>
+      <NativeTabs.Trigger name="(home)">
+        <Label>Home</Label>
+        <Icon sf="house.fill" drawable="custom_android_drawable" />
+      </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="ear-training">
+        <Icon sf="ear" drawable="custom_settings_drawable" />
+        <Label>Ear Training</Label>
+      </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="profile">
+        <Icon sf="person.fill" drawable="custom_profile_drawable" />
+        <Label>Profile</Label>
+      </NativeTabs.Trigger>
+    </NativeTabs>
   );
 }

@@ -219,7 +219,7 @@ export default function TabTwoScreen() {
                 Overview
               </H5>
               {userStats.map((stat) => (
-                <Card width={"100%"} padding="$2.5">
+                <Card width={"100%"} padding="$2.5" key={stat.name}>
                   <XStack gap="$2">
                     {stat.icon}
                     <YStack>
