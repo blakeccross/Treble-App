@@ -32,7 +32,7 @@ const testData = {
 
 const Duolingo = () => {
   const { currentQuestionIndex, questions } = useContext(QuizContext);
-  const wordListRef = useRef<any>();
+  const wordListRef = useRef<any>(null);
   const question = useRef<SectionItem>(questions && questions[currentQuestionIndex]);
   const [shuffledOptions, setShuffledOptions] = useState<any[]>([]);
 

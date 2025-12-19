@@ -44,6 +44,7 @@ export default function SignUpInstrument() {
             completed_modules: currentUser?.completed_modules ?? null,
             completed_sections: currentUser?.completed_sections ?? null,
             total_xp: currentUser?.total_xp ?? null,
+            expo_push_token: currentUser?.expo_push_token ?? null,
           },
         },
       });

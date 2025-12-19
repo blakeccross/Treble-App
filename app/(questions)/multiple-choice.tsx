@@ -97,7 +97,12 @@ export default function MultipleCHoice() {
           )}
         </View>
       </View>
-      <AnswerDrawer validateAnswer={validate} explanation={question.current?.answer_explanation || ""} enabled={selectedAnswers.length > 0} />
+      <AnswerDrawer
+        validateAnswer={validate}
+        explanation={question.current?.answer_explanation || ""}
+        enabled={selectedAnswers.length > 0}
+        selectedAnswers={selectedAnswers}
+      />
     </>
   );
 }

@@ -7,17 +7,18 @@ import { window } from "@/utils";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { ChevronRight, Heart, RefreshCw, StarFull } from "@tamagui/lucide-icons";
-import { blue, red, size, yellow, yellowA } from "@tamagui/themes";
+import { blue, red, yellow, yellowA } from "@tamagui/themes";
+import * as Device from "expo-device";
 import { Image } from "expo-image";
 import * as Network from "expo-network";
 import { Link, Redirect, router } from "expo-router";
-import React, { useContext, useEffect, useState } from "react";
+import * as StoreReview from "expo-store-review";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { Dimensions, FlatList, StatusBar, useColorScheme } from "react-native";
 import { useMMKVBoolean } from "react-native-mmkv";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Avatar, Button, Card, H3, H5, Paragraph, Progress, ScrollView, View, XStack, YStack } from "tamagui";
+import { Avatar, Button, Card, H3, Paragraph, Progress, ScrollView, View, XStack, YStack } from "tamagui";
 import { LinearGradient } from "tamagui/linear-gradient";
-import * as StoreReview from "expo-store-review";
 
 export default function HomeScreen() {
   const { top } = useSafeAreaInsets();
@@ -32,9 +33,11 @@ export default function HomeScreen() {
 
   const networkState = Network.useNetworkState();
   const colorScheme = useColorScheme();
+  const hasRequestedReview = useRef(false);
 
   useEffect(() => {
-    if (hasSeenWelcomeScreen) {
+    if (hasSeenWelcomeScreen && !hasRequestedReview.current && Device.isDevice) {
+      hasRequestedReview.current = true;
       StoreReview.requestReview();
     }
   }, [hasSeenWelcomeScreen]);

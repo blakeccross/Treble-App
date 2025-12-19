@@ -1,5 +1,4 @@
-import { NativeTabs, Icon, Label } from "expo-router/unstable-native-tabs";
-import { Ear, Home, Smile } from "@tamagui/lucide-icons";
+import { Icon, Label, NativeTabs } from "expo-router/unstable-native-tabs";
 
 export default function TabLayout() {
   return (

@@ -1,4 +1,3 @@
-import { supabase } from "../utils/supabase";
 import { createContext, useContext, useState } from "react";
 
 type SignUpForm = {
@@ -15,7 +14,7 @@ type SignUpContextProps = {
 
 export const SignUpContext = createContext<SignUpContextProps>({} as SignUpContextProps);
 
-export default function SignUpProvider({ children }: { children: JSX.Element[] }) {
+export default function SignUpProvider({ children }: { children: React.ReactNode }) {
   const [form, setForm] = useState<SignUpForm>({
     fullName: "",
     email: "",

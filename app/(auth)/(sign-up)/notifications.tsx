@@ -38,7 +38,7 @@ export default function SignUpNotifications() {
           <H2 textAlign="center" fontWeight={800}>
             Never miss a beat
           </H2>
-          <Paragraph textAlign="center">We'll send you notifications for your lessons, practice, and more.</Paragraph>
+          <Paragraph textAlign="center">We&apos;ll send you notifications for your lessons, practice, and more.</Paragraph>
           <View gap="$3">
             <Button onPress={requestNotificationPermission} disabled={permissionStatus === "granted"}>
               {permissionStatus === "granted" ? "Notifications enabled" : "Enable notifications"}

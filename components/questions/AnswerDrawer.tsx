@@ -2,10 +2,10 @@ import { usePlaySFX } from "@/hooks/usePlaySFX";
 import * as Haptics from "expo-haptics";
 import React, { useEffect, useRef, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Button, H3, H4, Paragraph, Sheet, View, XStack, YStack } from "tamagui";
+import { Button, H3, Paragraph, Sheet, View, XStack, YStack } from "tamagui";
 import { useQuiz } from "../../context/quiz-context";
 import { useUser } from "../../context/user-context";
-import { CircleCheck, CircleX, X } from "@tamagui/lucide-icons";
+import { CircleCheck, CircleX } from "@tamagui/lucide-icons";
 import { greenDark, redDark } from "@tamagui/themes";
 
 const correctSFX = require("@/assets/audio/correct_sfx.mp3");
@@ -14,10 +14,12 @@ export default function AnswerDrawer({
   validateAnswer,
   explanation,
   enabled,
+  selectedAnswers,
 }: {
   validateAnswer?: () => boolean;
   explanation?: string;
   enabled: boolean;
+  selectedAnswers?: number | number[];
 }) {
   const { currentUser } = useUser();
   const { nextQuestion, lives, setLives, correctAnswers, incorrectAnswers, questions, currentQuestionIndex } = useQuiz();
@@ -92,6 +94,21 @@ export default function AnswerDrawer({
                 </Paragraph>
               ) : (
                 <>
+                  <Paragraph fontSize={"$5"} color={answerIsCorrect ? "$green12" : "$red5Dark"}>
+                    Your Answer:{" "}
+                    {selectedAnswers !== undefined
+                      ? question.current?.question_options
+                          .filter((item: { id: number; option_text: string }) => {
+                            if (Array.isArray(selectedAnswers)) {
+                              return item && item.id && selectedAnswers.includes(item.id);
+                            } else {
+                              return item && item.id && item.id === selectedAnswers;
+                            }
+                          })
+                          .map((answer: { id: number; option_text: string }) => answer.option_text)
+                          .join(", ")
+                      : "No answer selected"}
+                  </Paragraph>
                   <Paragraph fontWeight={"bold"} fontSize={"$6"} color={answerIsCorrect ? "$green12" : "$red5Dark"}>
                     Correct Answer:
                   </Paragraph>

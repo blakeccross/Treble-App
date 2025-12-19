@@ -1,4 +1,5 @@
 import { toastConfig } from "@/components/toastConfig";
+import PushNotificationHandler from "@/components/PushNotificationHandler";
 import ModuleProvider from "@/context/module-context";
 import UserProvider from "@/context/user-context";
 import { useColorScheme } from "@/hooks/useColorScheme";
@@ -15,7 +16,6 @@ import Toast from "react-native-toast-message";
 import { TamaguiProvider } from "tamagui";
 import tamaguiConfig from "../tamagui.config";
 import * as Notifications from "expo-notifications";
-import { registerForPushNotificationsAsync } from "@/utils/registerPushNotifications";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -71,17 +71,11 @@ export default function RootLayout() {
     }
   }, []);
 
-  useEffect(() => {
-    (async () => {
-      const token = await registerForPushNotificationsAsync();
-      console.log(token);
-    })();
-  }, []);
-
   return (
     <TamaguiProvider config={tamaguiConfig} defaultTheme={colorScheme || "light"}>
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
         <UserProvider>
+          <PushNotificationHandler />
           <ModuleProvider>
             <GestureHandlerRootView>
               <Stack initialRouteName="welcome">
