@@ -3,10 +3,10 @@ import { SafeAreaView } from "react-native";
 
 import AnswerDrawer from "@/components/questions/AnswerDrawer";
 import { QuizContext } from "@/context/quiz-context";
-import { SectionItem } from "@/types";
-import { Paragraph, View, YStack } from "tamagui";
+import { QuestionOption, SectionItem } from "@/types";
+import { Paragraph, View, YStack } from "@/ui";
 import Word from "./components/word";
-import WordList from "./components/word-list";
+import WordList, { type WordListRef } from "./components/word-list";
 
 const testData = {
   answer_explanation: null,
@@ -32,9 +32,9 @@ const testData = {
 
 const Duolingo = () => {
   const { currentQuestionIndex, questions } = useContext(QuizContext);
-  const wordListRef = useRef<any>(null);
+  const wordListRef = useRef<WordListRef>(null);
   const question = useRef<SectionItem>(questions && questions[currentQuestionIndex]);
-  const [shuffledOptions, setShuffledOptions] = useState<any[]>([]);
+  const [shuffledOptions, setShuffledOptions] = useState<QuestionOption[]>([]);
 
   useEffect(() => {
     if (question.current?.question_options) {
@@ -42,7 +42,7 @@ const Duolingo = () => {
     }
   }, [question.current?.question_options]);
 
-  function shuffleArray(array: any[]) {
+  function shuffleArray<T>(array: T[]): T[] {
     for (let i = array.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [array[i], array[j]] = [array[j], array[i]];
@@ -61,7 +61,7 @@ const Duolingo = () => {
   return (
     <>
       <SafeAreaView style={{ flex: 0 }} />
-      <View flex={1}>
+      <View flex={1} backgroundColor="$background">
         <YStack padding="$4" gap="$4" flex={1}>
           <Paragraph marginBottom="$2" fontSize={"$7"}>
             {question.current?.question}

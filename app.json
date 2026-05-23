@@ -13,7 +13,9 @@
       "bundleIdentifier": "com.blakecross.trebleapp",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
-        "UIBackgroundModes": ["remote-notification"]
+        "UIBackgroundModes": [
+          "remote-notification"
+        ]
       }
     },
     "android": {
@@ -23,10 +25,9 @@
         "backgroundColor": "#52A9FF"
       },
       "package": "com.blakecross.trebleapp",
-      "permissions": ["NOTIFICATIONS"]
-    },
-    "androidNavigationBar": {
-      "visible": "immersive"
+      "permissions": [
+        "NOTIFICATIONS"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -73,6 +74,15 @@
             "./assets/audio/piano_c4.mp3",
             "./assets/audio/piano_fs4.mp3"
           ]
+        }
+      ],
+      "expo-image",
+      "expo-status-bar",
+      "expo-web-browser",
+      [
+        "expo-navigation-bar",
+        {
+          "hidden": true
         }
       ]
     ],

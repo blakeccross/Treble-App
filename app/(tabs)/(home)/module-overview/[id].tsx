@@ -1,30 +1,48 @@
-import { Lock, Play, RefreshCw } from "@tamagui/lucide-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 import { Button } from "@/components/button";
 import { StickyHeader } from "@/components/StickyHeader";
+import { useModuleHeroTransition } from "@/context/module-hero-transition";
 import { ModuleContext } from "@/context/module-context";
 import { UserContext } from "@/context/user-context";
+import { Section } from "@/types";
+import { sectionItemRoute } from "@/types/navigation";
 import { window } from "@/utils";
-import { H4, Paragraph, ScrollView, View, XStack, YStack } from "tamagui";
+import { H4, Lock, Paragraph, Play, RefreshCw, ScrollView, View, XStack, YStack } from "@/ui";
 
 const PAGE_HEIGHT = window.height;
 
 export default function ModuleStartScreen() {
   const router = useRouter();
   const { currentUser } = useContext(UserContext);
-  const { id } = useLocalSearchParams();
+  const { id: idParam } = useLocalSearchParams<{ id: string | string[] }>();
+  const heroTransitionCtx = useModuleHeroTransition();
+  const idRaw = Array.isArray(idParam) ? idParam[0] : idParam;
+  const idNum = Number(idRaw);
+  const [heroTransition] = useState(() =>
+    Number.isFinite(idNum) && heroTransitionCtx
+      ? heroTransitionCtx.getHeroTransitionIfMatch(idNum)
+      : null,
+  );
   const { modules } = useContext(ModuleContext);
-  const currentModule = modules?.data && modules.data.find((item) => item.id === Number(id));
+  const currentModule =
+    modules?.data && modules.data.find((item) => item.id === idNum);
 
   useEffect(() => {
     if (!currentModule) router.dismissAll();
-  }, []);
+  }, [currentModule, router]);
 
-  function handleSectionPress(section: any, userCanAccessSection: boolean) {
-    if (userCanAccessSection) {
-      router.push({ pathname: `/${section.section_item[0]?.type}` as any, params: { module_id: currentModule?.id, section_id: section.id } });
+  function handleSectionPress(section: Section, userCanAccessSection: boolean) {
+    const path = sectionItemRoute(section.section_item[0]?.type);
+    if (userCanAccessSection && path) {
+      router.push({
+        pathname: path,
+        params: {
+          module_id: String(currentModule?.id),
+          section_id: String(section.id),
+        },
+      });
     } else {
       router.push("/paywall");
     }
@@ -35,29 +53,49 @@ export default function ModuleStartScreen() {
       image={currentModule?.local_poster_uri || ""}
       title={currentModule?.title || ""}
       onBackPress={() => router.dismissTo("/(tabs)/(home)")}
+      onBeginReverseTransition={(payload) =>
+        heroTransitionCtx?.beginReverseHeroTransition(payload)
+      }
+      heroTransition={heroTransition}
+      onHeroTransitionEnd={() => heroTransitionCtx?.endHeroTransition()}
     >
-      <ScrollView backgroundColor={"$background"} minHeight={PAGE_HEIGHT - 118.6}>
+      <ScrollView
+        backgroundColor={"$background"}
+        minHeight={PAGE_HEIGHT - 118.6}
+      >
         <View paddingBottom="$10">
-          {currentModule?.section.map((section) => {
-            const userCanAccessSection = !(section.premium && (currentUser?.is_subscribed === false || !currentUser?.is_subscribed));
+          {currentModule?.section.map((section: Section) => {
+            const userCanAccessSection = !(
+              section.premium &&
+              (currentUser?.is_subscribed === false ||
+                !currentUser?.is_subscribed)
+            );
             return (
               <XStack
                 key={section.id}
-                padding="$4"
+                paddingVertical="$4"
+                paddingHorizontal="$4"
                 alignItems="center"
                 justifyContent="space-between"
-                pressStyle={{ scale: 0.99, backgroundColor: "$backgroundPress" }}
-                onPress={() => handleSectionPress(section, userCanAccessSection)}
+                borderBottomWidth={1}
+                borderBottomColor="$borderColor"
+                pressStyle={{ backgroundColor: "$backgroundPress" }}
+                onPress={() =>
+                  handleSectionPress(section, userCanAccessSection)
+                }
               >
-                <YStack flex={1}>
-                  <H4 fontWeight={600}>{section.title}</H4>
-                  <Paragraph>
-                    {section.section_item.length <= 10 ? Math.round(section.section_item.length * 0.5) + " minutes" : "10 minutes"}
+                <YStack flex={1} gap="$1">
+                  <H4 fontWeight="normal" fontFamily="InterBold">
+                    {section.title}
+                  </H4>
+                  <Paragraph fontSize="$3" color="$gray11">
+                    {section.section_item.length <= 10
+                      ? Math.round(section.section_item.length * 0.5) + " min"
+                      : "10 min"}
                     {currentUser?.completed_sections?.includes(section.id) && (
                       <>
-                        {" "}
-                        •{" "}
-                        <Paragraph color={"$blue10"} fontWeight={600}>
+                        {" · "}
+                        <Paragraph color="$blue10" fontFamily="InterBold">
                           Completed
                         </Paragraph>
                       </>
@@ -65,9 +103,20 @@ export default function ModuleStartScreen() {
                   </Paragraph>
                 </YStack>
                 {userCanAccessSection ? (
-                  <Button variant="outlined" theme={"alt1"} circular icon={section.completed ? RefreshCw : Play} />
+                  <Button
+                    variant="outlined"
+                    theme={"alt1"}
+                    circular
+                    icon={section.completed ? RefreshCw : Play}
+                  />
                 ) : (
-                  <Button disabled variant="outlined" theme={"alt1"} circular icon={Lock} />
+                  <Button
+                    disabled
+                    variant="outlined"
+                    theme={"alt1"}
+                    circular
+                    icon={Lock}
+                  />
                 )}
               </XStack>
             );

@@ -1,10 +1,8 @@
 import { QuizContext } from "@/context/quiz-context";
-import { Check } from "@tamagui/lucide-icons";
 import { useRouter } from "expo-router";
 import React, { useContext } from "react";
 import { SafeAreaView, View } from "react-native";
-import { Button, H2, Paragraph, XStack, YStack } from "tamagui";
-import { LinearGradient } from "tamagui/linear-gradient";
+import { Button, Check, H2, LinearGradient, Paragraph, XStack, YStack } from "@/ui";
 
 export default function Index() {
   const router = useRouter();
@@ -65,7 +63,7 @@ export default function Index() {
           </YGroup>
         </View> */}
         <View>
-          <Button onPress={handle} fontWeight={600} fontSize={"$7"} height={"$5"} width={"100%"} themeInverse>
+          <Button onPress={handle} fontWeight={600} fontSize={"$7"} height={"$5"} width={"100%"} theme="accent">
             Continue
           </Button>
         </View>

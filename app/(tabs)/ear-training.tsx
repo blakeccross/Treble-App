@@ -1,5 +1,4 @@
 import { isSmallScreen } from "@/utils";
-import { AudioWaveform, Lock, Play } from "@tamagui/lucide-icons";
 import { BlurView } from "expo-blur";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
@@ -13,7 +12,7 @@ import Animated, {
   useSharedValue,
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Button, Card, H2, H5, Paragraph, View, XStack, YStack } from "tamagui";
+import { AudioWaveform, Button, Card, H2, H5, Lock, Paragraph, Play, View, XStack, YStack } from "@/ui";
 
 const AnimatedView = Animated.createAnimatedComponent(View);
 
@@ -114,7 +113,7 @@ const renderItem = ({ item: game, router }: { item: (typeof games)[0]; router: R
       key={game.title}
       elevate
       pressStyle={{ scale: 0.95 }}
-      animation="bouncy"
+      transition="bouncy"
       borderRadius={"$8"}
       overflow="hidden"
       height={400}
@@ -147,7 +146,7 @@ const renderItem = ({ item: game, router }: { item: (typeof games)[0]; router: R
                 borderRadius={"$10"}
                 size={"$3"}
                 iconAfter={<Lock />}
-                themeInverse
+                theme="accent"
                 backgroundColor={"white"}
                 color={"black"}
                 fontWeight={600}
@@ -160,7 +159,7 @@ const renderItem = ({ item: game, router }: { item: (typeof games)[0]; router: R
                 borderRadius={"$10"}
                 size={"$3"}
                 iconAfter={<Play />}
-                themeInverse
+                theme="accent"
                 backgroundColor={"white"}
                 color={"black"}
                 fontWeight={600}

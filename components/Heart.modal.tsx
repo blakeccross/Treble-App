@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Button, H2, H3, H4, H5, Paragraph, Separator, View, YStack } from "tamagui";
+import { Button, H2, H3, H4, H5, Heart, HeartCrack, LockOpen, Paragraph, Separator, View, YStack } from "@/ui";
 import BottomSheet from "./BottomSheet";
 import { FlatList, SafeAreaView } from "react-native";
 import moment from "moment";
 import { XPHistory } from "../types";
 import { useUser } from "../context/user-context";
-import { Heart, HeartCrack, LockOpen } from "@tamagui/lucide-icons";
 import BottomCard from "./BottomCard";
 
 export default function HeartModal({ openHeartModal, setOpenHeartModal }: { openHeartModal: boolean; setOpenHeartModal: (open: boolean) => void }) {

@@ -1,6 +1,5 @@
 import Animated, { BounceIn, FadeOut, PinwheelIn, SlideInLeft } from "react-native-reanimated";
-import { H1 } from "tamagui";
-import { X } from "@tamagui/lucide-icons";
+import { H1, X } from "@/ui";
 
 export default function AnswerFeedback({ isCorrect }: { isCorrect: boolean | undefined }) {
   if (isCorrect) {

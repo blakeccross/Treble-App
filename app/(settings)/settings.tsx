@@ -1,11 +1,10 @@
 import { useUser } from "@/context/user-context";
-import { ArrowLeft, ChevronRight, CreditCard, HelpCircle, Lock, Moon, User, Volume2 } from "@tamagui/lucide-icons";
 import { Link, RelativePathString, router } from "expo-router";
 import React from "react";
-import { Alert, FlatList, Pressable, StatusBar } from "react-native";
+import { Alert, FlatList, Pressable, StatusBar, StyleSheet } from "react-native";
 import Purchases from "react-native-purchases";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { H4, H5, XStack, YStack } from "tamagui";
+import { ArrowLeft, ChevronRight, CreditCard, H4, H5, HelpCircle, Lock, Moon, User, Volume2, XStack, YStack } from "@/ui";
 
 export default function ProfileSettings() {
   const { currentUser, handleSignOut } = useUser();
@@ -60,50 +59,70 @@ export default function ProfileSettings() {
   }
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={{ flex: 1 }}>
       <StatusBar translucent={true} backgroundColor={"transparent"} />
-      <YStack gap="$2" padding="$3">
+      <YStack flex={1} backgroundColor="$background" gap="$2" paddingHorizontal="$5" paddingTop="$4" paddingBottom="$3">
         <XStack alignItems="center" justifyContent="space-between">
           <Pressable onPress={() => router.dismissTo("/(tabs)/profile")}>
             <ArrowLeft size="$3" />
           </Pressable>
-          <H5 fontWeight={500}>Settings</H5>
+          <H5 fontWeight="normal">Settings</H5>
 
-          <XStack gap="$1" width={"$3"}></XStack>
+          <XStack gap="$1" width={"$3"} />
         </XStack>
       </YStack>
 
-      <YStack padding="$4">
+      <YStack paddingHorizontal="$5" paddingBottom="$6" flex={1}>
         <FlatList
           data={menuItems}
           style={{ height: "100%" }}
           renderItem={({ item }) => (
             <Link asChild href={item.href as RelativePathString}>
-              <XStack alignItems="center" justifyContent="space-between" paddingVertical="$3" borderBottomWidth={1} borderBottomColor="$gray7">
-                <XStack alignItems="center" gap="$2">
+              <XStack
+                alignItems="center"
+                justifyContent="space-between"
+                paddingVertical="$4"
+                borderBottomWidth={StyleSheet.hairlineWidth * 2}
+                borderBottomColor="$borderColor"
+              >
+                <XStack alignItems="center" gap="$3">
                   {item.icon}
-                  <H4>{item.name}</H4>
+                  <H4 fontWeight="normal">{item.name}</H4>
                 </XStack>
-                <ChevronRight size="$2" />
+                <ChevronRight size="$2" color="$gray11" />
               </XStack>
             </Link>
           )}
           ListFooterComponent={
             <>
               <Pressable onPress={handleRestorePurchase}>
-                <XStack alignItems="center" justifyContent="space-between" paddingVertical="$3" borderBottomWidth={1} borderBottomColor="$gray7">
-                  <XStack alignItems="center" gap="$2">
+                <XStack
+                  alignItems="center"
+                  justifyContent="space-between"
+                  paddingVertical="$4"
+                  borderBottomWidth={StyleSheet.hairlineWidth * 2}
+                  borderBottomColor="$borderColor"
+                >
+                  <XStack alignItems="center" gap="$3">
                     <CreditCard />
-                    <H4>Restore Purchase</H4>
+                    <H4 fontWeight="normal">Restore Purchase</H4>
                   </XStack>
                 </XStack>
               </Pressable>
               {currentUser?.id ? (
                 <Pressable onPress={handleLogout}>
-                  <XStack alignItems="center" justifyContent="space-between" paddingVertical="$3" borderBottomWidth={1} borderBottomColor="$gray7">
-                    <XStack alignItems="center" gap="$2">
+                  <XStack
+                    alignItems="center"
+                    justifyContent="space-between"
+                    paddingVertical="$4"
+                    borderBottomWidth={StyleSheet.hairlineWidth * 2}
+                    borderBottomColor="$borderColor"
+                  >
+                    <XStack alignItems="center" gap="$3">
                       <Lock size="$1.5" color="$red9" />
-                      <H4 color="$red9">Log out</H4>
+                      <H4 fontWeight="normal" color="$red9">
+                        Log out
+                      </H4>
                     </XStack>
                   </XStack>
                 </Pressable>

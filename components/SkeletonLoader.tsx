@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, type StyleProp, type ViewStyle } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useEffect, useState } from "react";
 import Animated, {
@@ -24,6 +24,15 @@ export enum ANIMATION_TYPE {
   pulse = "pulse",
 }
 
+export type SkeletonLoaderProps = {
+  height?: number;
+  width?: number | string;
+  style?: StyleProp<ViewStyle>;
+  backgroundColor?: string;
+  direction?: ANIMATION_DIRECTION;
+  animationType?: ANIMATION_TYPE;
+};
+
 export const SkeletonLoader = ({
   height = 10,
   width = "100%",
@@ -31,7 +40,7 @@ export const SkeletonLoader = ({
   backgroundColor = "#DDEAF5",
   direction = ANIMATION_DIRECTION.leftToRight,
   animationType = ANIMATION_TYPE.shiver,
-}: any) => {
+}: SkeletonLoaderProps) => {
   const isXDirectionAnimation = direction === ANIMATION_DIRECTION.leftToRight || direction === ANIMATION_DIRECTION.rightToLeft;
 
   const isYDirectionAnimation = direction === ANIMATION_DIRECTION.topToBottom || direction === ANIMATION_DIRECTION.bottomToTop;

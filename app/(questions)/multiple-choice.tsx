@@ -3,7 +3,7 @@ import { QuizContext } from "@/context/quiz-context";
 import { Image } from "expo-image";
 import React, { useContext, useRef, useState } from "react";
 import { FlatList } from "react-native";
-import { Card, Paragraph, View } from "tamagui";
+import { Card, Paragraph, View } from "@/ui";
 
 export default function MultipleCHoice() {
   const { currentQuestionIndex, questions } = useContext(QuizContext);
@@ -22,7 +22,7 @@ export default function MultipleCHoice() {
   return (
     <>
       {/* <SafeAreaView /> */}
-      <View padding="$4" paddingBottom={0} flex={1}>
+      <View padding="$4" paddingBottom={0} flex={1} backgroundColor="$background">
         <View flex={1} style={{ width: "100%" }} paddingBottom="$4" justifyContent="flex-start">
           <Paragraph marginBottom="$2" fontSize={"$7"}>
             {question.current?.question}
@@ -50,7 +50,7 @@ export default function MultipleCHoice() {
                   bordered
                   borderRadius="$8"
                   pressStyle={{ scale: 0.95 }}
-                  animation="bouncy"
+                  transition="bouncy"
                   flex={1}
                   onPress={() => {
                     if (question.current?.answer_id) {

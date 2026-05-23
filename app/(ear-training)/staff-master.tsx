@@ -1,13 +1,12 @@
 import { delay } from "@/utils/delay";
-import { BarChart2, Heart, X } from "@tamagui/lucide-icons";
-import { blue, greenA, red } from "@tamagui/themes";
+import { blue, greenA, red } from "@/theme/colors";
 import { LinearGradient } from "expo-linear-gradient";
 import { Link, router } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
 import { Pressable, StatusBar, StyleSheet, useWindowDimensions } from "react-native";
 import Animated, { BounceIn, FadeOut, SlideInDown, useSharedValue } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Button, H1, Paragraph, View, XStack } from "tamagui";
+import { BarChart2, Button, H1, Heart, Paragraph, View, X, XStack } from "@/ui";
 import GradientCircle from "../../components/gradient-circle";
 import KeyPressAnimation from "../../components/sheet-music/KeyPressAnimation";
 import PianoKeys from "../../components/sheet-music/PianoKeys";
@@ -108,7 +107,7 @@ const IncorrectAnswerFeedback = () => (
 
 // Game Header Component
 const GameHeader = ({ currentScore, lives, gameHasStarted }: { currentScore: number; lives: number; gameHasStarted: boolean }) => (
-  <XStack justifyContent="space-between" alignItems="center" paddingHorizontal="$4">
+  <XStack justifyContent="space-between" alignItems="center" paddingHorizontal="$4" color="$color">
     <View style={{ width: 50 }}>
       <Pressable onPress={() => router.back()}>
         <X size="$3" />
@@ -146,7 +145,7 @@ const StaffMasterGame = () => {
   const { width: windowWidth, height: windowHeight } = useWindowDimensions();
   const { playSong } = usePlayMidi();
   const { playSFX } = usePlaySFX();
-  const timeoutsRef = useRef<any[]>([]);
+  const timeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
   const isGameActiveRef = useRef(true);
 
   // Game state
@@ -170,13 +169,13 @@ const StaffMasterGame = () => {
 
   // Helpers to manage timeouts and game activity
   const addTimeout = (cb: () => void, ms: number) => {
-    const id = setTimeout(cb, ms) as unknown as any;
+    const id = setTimeout(cb, ms);
     timeoutsRef.current.push(id);
     return id;
   };
 
   const clearAllTimeouts = () => {
-    timeoutsRef.current.forEach((id) => clearTimeout(id as unknown as number));
+    timeoutsRef.current.forEach((id) => clearTimeout(id));
     timeoutsRef.current = [];
   };
 
@@ -418,29 +417,35 @@ const StaffMasterGame = () => {
 
           {/* {gameHasStarted && currentNotes.length > 0 && <NoteProgressIndicator currentNotes={currentNotes} playedNoteCounts={playedNoteCounts} />} */}
 
-          {!gameHasStarted && (
-            <View style={styles.playButtonContainer}>
-              <Button unstyled color={blue.blue10} fontSize="$7" fontWeight={800} onPress={startGame} size="$4">
-                Play
-              </Button>
+          <View
+            style={[
+              styles.timerContainer,
+              { marginTop: gameHasStarted ? -windowHeight * 0.1 : 24 },
+            ]}
+          >
+            <View style={styles.timerInner}>
+              <GameTimer
+                size={windowWidth * 0.2}
+                strokeWidth={25}
+                time={getDifficultyConfig(currentScore).duration}
+                color={greenA.greenA10}
+                opacity={1}
+                theta={theta}
+                isRunning={isRunning}
+              />
+              {!gameHasStarted && (
+                <View style={styles.playOverlay}>
+                  <Button unstyled color={blue.blue10} fontSize="$7" fontWeight={800} onPress={startGame}>
+                    Play
+                  </Button>
+                </View>
+              )}
+              {gameHasStarted && answerIsCorrect !== undefined && (
+                <View style={styles.feedbackOverlay}>
+                  <AnswerFeedback key={feedbackKey} isCorrect={answerIsCorrect} />
+                </View>
+              )}
             </View>
-          )}
-
-          <View style={[styles.timerContainer, { marginTop: -windowHeight * 0.1, position: "relative" }]}>
-            <GameTimer
-              size={windowWidth * 0.2}
-              strokeWidth={25}
-              time={getDifficultyConfig(currentScore).duration}
-              color={greenA.greenA10}
-              opacity={1}
-              theta={theta}
-              isRunning={isRunning}
-            />
-            {answerIsCorrect !== undefined && (
-              <View style={{ position: "absolute" }}>
-                <AnswerFeedback key={feedbackKey} isCorrect={answerIsCorrect} />
-              </View>
-            )}
           </View>
         </View>
       </LinearGradient>
@@ -458,14 +463,28 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "flex-start",
   },
-  playButtonContainer: {
-    alignItems: "center",
-    justifyContent: "center",
-    flex: 1,
-    zIndex: 1000,
-  },
   timerContainer: {
     justifyContent: "flex-start",
+    alignItems: "center",
+  },
+  timerInner: {
+    position: "relative",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  playOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 2,
+  },
+  feedbackOverlay: {
+    position: "absolute",
+    justifyContent: "center",
     alignItems: "center",
   },
   progressContainer: {

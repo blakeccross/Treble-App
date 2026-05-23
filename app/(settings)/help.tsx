@@ -1,8 +1,7 @@
-import { Pause, Play, X } from "@tamagui/lucide-icons";
 import { router } from "expo-router";
 import React, { useState } from "react";
 import { Pressable, Linking } from "react-native";
-import { Button, H5, Label, Slider, SliderProps, View, XStack, YStack, Input, Form, TextArea, Paragraph } from "tamagui";
+import { Button, Form, H5, Input, Label, Paragraph, Pause, Play, Slider, SliderProps, TextArea, View, X, XStack, YStack } from "@/ui";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function HelpSettings() {
@@ -34,7 +33,7 @@ export default function HelpSettings() {
       </YStack>
       <View padding="$4" gap="$4">
         <Form onSubmit={handleSendEmail}>
-          <YStack space="$4">
+          <YStack gap="$4">
             {/* <YStack>
               <Label htmlFor="subject">Subject</Label>
               <Input id="subject" placeholder="Enter subject" value={subject} onChangeText={setSubject} />

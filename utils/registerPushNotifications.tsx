@@ -47,8 +47,10 @@ export async function registerForPushNotificationsAsync() {
     });
 
     try {
-      const result = await Promise.race([tokenPromise, timeoutPromise]);
-      token = (result as any).data;
+      const result = (await Promise.race([tokenPromise, timeoutPromise])) as Awaited<
+        typeof tokenPromise
+      >;
+      token = result.data;
     } catch (timeoutError) {
       console.error("registerForPushNotificationsAsync: getExpoPushTokenAsync timed out or failed", timeoutError);
       throw timeoutError;

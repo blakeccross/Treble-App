@@ -12,7 +12,7 @@ import Animated, {
   withDecay,
 } from "react-native-reanimated";
 import { window } from "../utils";
-import { GetThemeValueForKey, Paragraph, View } from "tamagui";
+import { ThemeToken, View } from "@/ui";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function BottomSheet({
@@ -25,12 +25,12 @@ export default function BottomSheet({
   children,
 }: {
   isOpen: boolean;
-  setIsOpen: any;
+  setIsOpen: (open: boolean) => void;
   height?: string | number;
-  backgroundColor?: GetThemeValueForKey<"backgroundColor">;
+  backgroundColor?: ThemeToken;
   duration?: number;
   dismissOnOverlayPress?: boolean;
-  children: any;
+  children: React.ReactNode;
 }) {
   const { height: windowHeight } = useWindowDimensions();
 

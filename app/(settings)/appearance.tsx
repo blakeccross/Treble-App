@@ -1,10 +1,9 @@
 import { UserContext } from "@/context/user-context";
-import { Check, Moon, Sun, SunMoon, X } from "@tamagui/lucide-icons";
 import { router } from "expo-router";
 import React, { useContext, useState } from "react";
 import { Appearance, Pressable, useColorScheme } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { H4, H5, ScrollView, XStack, YStack } from "tamagui";
+import { Check, H4, H5, Moon, ScrollView, Sun, SunMoon, X, XStack, YStack } from "@/ui";
 
 type FormInput = {
   fullName: string;
@@ -22,8 +21,8 @@ export default function AppearanceSettings() {
   };
 
   return (
-    <SafeAreaView>
-      <YStack padding="$3">
+    <SafeAreaView style={{ flex: 1 }}>
+      <YStack flex={1} backgroundColor="$background" padding="$3">
         <XStack alignItems="center" justifyContent="space-between">
           <Pressable onPress={() => router.back()}>
             <X size="$3" />

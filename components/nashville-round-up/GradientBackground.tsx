@@ -1,4 +1,4 @@
-import { LinearGradient } from "tamagui/linear-gradient";
+import { LinearGradient } from "@/ui";
 import { Canvas, Rect, FractalNoise, Skia, Shader, Fill, vec } from "@shopify/react-native-skia";
 
 export default function GradientBackground({ children }: { children: React.ReactNode }) {

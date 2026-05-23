@@ -2,7 +2,7 @@ import { PianoKey } from "@/types/pianoKeys";
 import { Asset } from "expo-asset";
 import { useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { AudioBuffer, AudioContext, GainNode, AudioBufferSourceNode } from "react-native-audio-api";
+import { AudioBuffer, AudioContext, AudioBufferSourceNode, GainNode } from "react-native-audio-api";
 import { useMMKVNumber } from "react-native-mmkv";
 
 export default function usePlayMidi() {
@@ -188,29 +188,30 @@ export default function usePlayMidi() {
   }
 
   async function loadBuffers(sourceList: Record<string, string>) {
-    audioContextRef.current = new AudioContext();
+    const audioContext = new AudioContext();
+    audioContextRef.current = audioContext;
+    await audioContext.resume();
+
     try {
       await Promise.all(
         Object.entries(sourceList).map(async ([key, filepath]) => {
-          // console.log("LOADING BUFFER", key, filepath);
-          if (audioContextRef?.current) {
-            try {
-              const response = await fetch(filepath);
-              const arrayBuffer = await response.arrayBuffer();
-              bufferListRef.current[key] = await audioContextRef.current.decodeAudioData(arrayBuffer);
-            } catch (error) {
-              setError(true);
-              console.error("Error loading buffer for", key, ":", error, filepath);
-              bufferListRef.current[key] = null;
-            }
-          } else {
+          if (!audioContextRef.current) {
             setError(true);
             bufferListRef.current[key] = null;
             console.log("FAILED TO LOAD BUFFER - No audio context");
+            return;
+          }
+
+          try {
+            // Decode via AudioContext so buffers are resampled to context.sampleRate.
+            bufferListRef.current[key] = await audioContextRef.current.decodeAudioData(filepath);
+          } catch (error) {
+            setError(true);
+            console.error("Error loading buffer for", key, ":", error, filepath);
+            bufferListRef.current[key] = null;
           }
         })
       );
-      // validateBuffers();
     } catch (error) {
       console.error("Error loading buffers:", error);
       setBuffersLoaded(false);
@@ -227,7 +228,7 @@ export default function usePlayMidi() {
   ) => {
     return song.map((note) => ({
       duration: note.end - note.start,
-      note: note.name as any,
+      note: note.name as PianoKey,
       time: note.start,
     }));
   };
@@ -247,8 +248,8 @@ export default function usePlayMidi() {
     activeSoundsRef.current = activeSoundsRef.current.filter((sound) => sound.endTime > currentTime);
   };
 
-  const onKeyPressIn = (which: PianoKey, time: number, duration: number = 1, volume: number = 1) => {
-    audioContextRef.current?.resume();
+  const onKeyPressIn = async (which: PianoKey, time: number, duration: number = 1, volume: number = 1) => {
+    await audioContextRef.current?.resume();
     if (!buffersLoaded) {
       console.warn("Buffers not fully loaded yet");
       return;

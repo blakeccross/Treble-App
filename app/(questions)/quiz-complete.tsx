@@ -1,11 +1,9 @@
 import { QuizContext } from "@/context/quiz-context";
-import { Check } from "@tamagui/lucide-icons";
 import { BlurView } from "expo-blur";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useContext } from "react";
 import { SafeAreaView } from "react-native";
-import { Button, H1, Paragraph, Separator, Theme, View, XStack, YStack } from "tamagui";
-import { LinearGradient } from "tamagui/linear-gradient";
+import { Button, Check, H1, LinearGradient, Paragraph, Separator, Theme, View, XStack, YStack } from "@/ui";
 import Animated, { FadeInDown, FadeInUp } from "react-native-reanimated";
 
 export default function Index() {
@@ -58,7 +56,7 @@ export default function Index() {
                     {correctAnswers.current}
                   </Paragraph>
                 </XStack>
-                <Separator themeInverse opacity={0.5} />
+                <Separator theme="accent" opacity={0.5} />
                 <XStack justifyContent="space-between">
                   <Paragraph fontSize={"$6"} fontWeight={800}>
                     Incorrect
@@ -86,7 +84,7 @@ export default function Index() {
                         10 XP
                       </Paragraph>
                     </XStack>
-                    <Separator themeInverse opacity={0.5} />
+                    <Separator theme="accent" opacity={0.5} />
                   </>
                 )}
                 <XStack justifyContent="space-between">

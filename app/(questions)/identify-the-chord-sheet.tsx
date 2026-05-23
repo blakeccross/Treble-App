@@ -1,7 +1,7 @@
 import React, { useRef, useState, useContext } from "react";
 import { FlatList, SafeAreaView, useWindowDimensions } from "react-native";
 import SheetMusic from "@/components/sheet-music";
-import { Card, H3, Paragraph, View } from "tamagui";
+import { Card, H3, Paragraph, View } from "@/ui";
 import AnswerDrawer from "@/components/questions/AnswerDrawer";
 import { QuizContext } from "@/context/quiz-context";
 
@@ -19,7 +19,7 @@ export default function Page() {
   }
 
   return (
-    <>
+    <View flex={1} backgroundColor="$background">
       <SafeAreaView />
       {question.current?.question && (
         <View paddingHorizontal="$4" style={{ width: "100%", justifyContent: "center" }} paddingBottom="$4">
@@ -67,6 +67,6 @@ export default function Page() {
         )}
       </View>
       <AnswerDrawer validateAnswer={validate} explanation={question.current?.answer_explanation || ""} enabled selectedAnswers={selectedAnswer} />
-    </>
+    </View>
   );
 }

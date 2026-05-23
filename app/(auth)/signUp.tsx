@@ -1,10 +1,11 @@
+import { AuthFlowHeader } from "@/components/auth/AuthFlowHeader";
 import { useUser } from "@/context/user-context";
 import { supabase } from "@/utils/supabase";
 import { router } from "expo-router";
 import React, { useRef } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { KeyboardAvoidingView, Platform, ScrollView, TextInput } from "react-native";
-import { Button, Input, Label, Theme, View, YStack } from "tamagui";
+import { Button, H4, Input, Label, Theme, View, YStack } from "@/ui";
 
 type FormInput = {
   email: string;
@@ -13,7 +14,7 @@ type FormInput = {
 };
 
 export default function SignUp() {
-  const { currentUser, handleUpdateUserInfo } = useUser();
+  useUser();
   const passwordRef = useRef<TextInput | null>(null);
   const confirmPasswordRef = useRef<TextInput | null>(null);
 
@@ -50,111 +51,124 @@ export default function SignUp() {
     }
 
     if (auth.user) {
-      // await getUser();
       router.dismissAll();
       router.push("/(tabs)/(home)");
     }
   }
 
   return (
-    <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{ flex: 1 }}>
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="never">
-        <YStack flex={1}>
-          <Controller
-            control={control}
-            rules={{
-              required: true,
-              pattern: {
-                value: /\S+@\S+\.\S+/,
-                message: "Entered value does not match email format",
-              },
-            }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <View>
-                <Theme name={errors.email ? "red" : null}>
-                  <Label>Email</Label>
-                  <Input
-                    placeholder="Email"
-                    autoCapitalize="none"
-                    autoCorrect={false}
-                    keyboardType="email-address"
-                    size={"$6"}
-                    onBlur={onBlur}
-                    onChangeText={onChange}
-                    value={value}
-                    returnKeyType="next"
-                    onSubmitEditing={() => passwordRef?.current?.focus()}
-                  />
-                </Theme>
-              </View>
-            )}
-            name="email"
-          />
-          {errors.email && <Label color={"red"}>{errors.email.message}</Label>}
+    <YStack flex={1} backgroundColor="$background">
+      <AuthFlowHeader title="Create account" />
+      <View flex={1} paddingHorizontal="$5" paddingTop="$4">
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          style={{ flex: 1 }}
+        >
+          <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="never">
+            <YStack flex={1} gap="$4">
+              <H4 fontWeight="normal">Start with email and a password</H4>
+              <Controller
+                control={control}
+                rules={{
+                  required: true,
+                  pattern: {
+                    value: /\S+@\S+\.\S+/,
+                    message: "Entered value does not match email format",
+                  },
+                }}
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <View>
+                    <Theme name={errors.email ? "red" : null}>
+                      <Label>Email</Label>
+                      <Input
+                        placeholder="Email"
+                        autoCapitalize="none"
+                        autoCorrect={false}
+                        keyboardType="email-address"
+                        size={"$6"}
+                        onBlur={onBlur}
+                        onChangeText={onChange}
+                        value={value}
+                        returnKeyType="next"
+                        onSubmitEditing={() => passwordRef?.current?.focus()}
+                      />
+                    </Theme>
+                  </View>
+                )}
+                name="email"
+              />
+              {errors.email && <Label color={"red"}>{errors.email.message}</Label>}
 
-          <Controller
-            control={control}
-            rules={{
-              required: true,
-              minLength: 6,
-            }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <View>
-                <Theme name={errors.password ? "red" : null}>
-                  <Label>Password</Label>
+              <Controller
+                control={control}
+                rules={{
+                  required: true,
+                  minLength: 6,
+                }}
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <View>
+                    <Theme name={errors.password ? "red" : null}>
+                      <Label>Password</Label>
+                      <Input
+                        ref={passwordRef}
+                        placeholder="Password"
+                        size={"$6"}
+                        secureTextEntry
+                        onBlur={onBlur}
+                        onChangeText={onChange}
+                        value={value}
+                        returnKeyType="next"
+                        onSubmitEditing={() => confirmPasswordRef?.current?.focus()}
+                      />
+                    </Theme>
+                  </View>
+                )}
+                name="password"
+              />
+              {errors.password && <Label color={"red"}>{errors.password.message}</Label>}
+              <Controller
+                control={control}
+                rules={{
+                  required: true,
+                  minLength: 6,
+                  validate: (value) => value === getValues("password") || "Passwords do not match",
+                }}
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <View>
+                    <Theme name={errors.confirmPassword ? "red" : null}>
+                      <Label>Confirm password</Label>
+                      <Input
+                        ref={confirmPasswordRef}
+                        placeholder="Confirm password"
+                        size={"$6"}
+                        secureTextEntry
+                        onBlur={onBlur}
+                        onChangeText={onChange}
+                        value={value}
+                        returnKeyType="send"
+                        onSubmitEditing={() => handleSubmit(onSubmit)}
+                      />
+                    </Theme>
+                  </View>
+                )}
+                name="confirmPassword"
+              />
+              {errors.confirmPassword && <Label color={"red"}>Passwords do not match</Label>}
 
-                  <Input
-                    ref={passwordRef}
-                    placeholder="Password"
-                    size={"$6"}
-                    secureTextEntry
-                    onBlur={onBlur}
-                    onChangeText={onChange}
-                    value={value}
-                    returnKeyType="next"
-                    onSubmitEditing={() => confirmPasswordRef?.current?.focus()} // Focus on confirm password input
-                  />
-                </Theme>
-              </View>
-            )}
-            name="password"
-          />
-          {errors.password && <Label color={"red"}>{errors.password.message}</Label>}
-          <Controller
-            control={control}
-            rules={{
-              required: true,
-              minLength: 6,
-              validate: (value) => value === getValues("password") || "Passwords do not match",
-            }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <View marginBottom="$4">
-                <Theme name={errors.password ? "red" : null}>
-                  <Label>Confirm Password</Label>
-
-                  <Input
-                    ref={confirmPasswordRef}
-                    placeholder="Confirm Password"
-                    size={"$6"}
-                    secureTextEntry
-                    onBlur={onBlur}
-                    onChangeText={onChange}
-                    value={value}
-                    returnKeyType="send"
-                    onSubmitEditing={() => handleSubmit(onSubmit)}
-                  />
-                </Theme>
-              </View>
-            )}
-            name="confirmPassword"
-          />
-          {errors.confirmPassword && <Label color={"red"}>Passwords do not match</Label>}
-
-          <Button fontWeight={600} fontSize={"$7"} height={"$5"} onPress={handleSubmit(onSubmit)} marginTop="auto" marginBottom="$4">
-            Continue
-          </Button>
-        </YStack>
-      </ScrollView>
-    </KeyboardAvoidingView>
+              <Button
+                height="$5"
+                borderRadius="$6"
+                onPress={handleSubmit(onSubmit)}
+                marginTop="auto"
+                marginBottom="$4"
+                elevate
+              >
+                Continue
+              </Button>
+            </YStack>
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </View>
+    </YStack>
   );
 }

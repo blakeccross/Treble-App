@@ -1,14 +1,14 @@
 import { QuizContext } from "@/context/quiz-context";
 import { useUser } from "@/context/user-context";
-import { Check, Heart, HeartCrack, Star, Gamepad } from "@tamagui/lucide-icons";
 import { BlurView } from "expo-blur";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import { dismissToHref } from "@/types/navigation";
 import moment from "moment";
 import React, { useContext } from "react";
 import { SafeAreaView } from "react-native";
+import Animated, { FadeInUp } from "react-native-reanimated";
 import Purchases from "react-native-purchases";
-import { Button, H2, H3, H4, ListItem, Paragraph, Separator, Theme, View, XStack, YGroup, YStack } from "tamagui";
-import { LinearGradient } from "tamagui/linear-gradient";
+import { Button, Check, Gamepad, H2, H3, H4, Heart, HeartCrack, LinearGradient, ListItem, Paragraph, Separator, Star, Theme, View, XStack, YStack } from "@/ui";
 
 export default function Index() {
   const router = useRouter();
@@ -17,10 +17,9 @@ export default function Index() {
 
   function handleExitSection() {
     if (redirectPathname && redirectParams) {
-      router.dismissTo({
-        pathname: redirectPathname as any,
-        params: JSON.parse(redirectParams as string),
-      });
+      router.dismissTo(
+        dismissToHref(redirectPathname, JSON.parse(redirectParams) as Record<string, string>)
+      );
     } else {
       router.dismiss();
     }
@@ -57,7 +56,7 @@ export default function Index() {
 
             <BlurView intensity={100} style={{ borderRadius: 20, overflow: "hidden" }}>
               <ListItem
-                backgroundColor={"transparent"}
+                backgroundColor={"transpaxrent"}
                 icon={Heart}
                 title="Unlimited Hearts"
                 subTitle={<Paragraph opacity={0.6}>Never have to stop and wait to continue learning</Paragraph>}
@@ -94,25 +93,13 @@ export default function Index() {
               <Paragraph color={"$background"}>Success!</Paragraph>
               <Check color={"$background"} size={"$1"} />
             </XStack>
-            <H2
-              key={0}
-              color={"$background"}
-              textAlign="center"
-              fontWeight={800}
-              enterStyle={{
-                scale: 3,
-                y: -10,
-                opacity: 0,
-              }}
-              opacity={1}
-              scale={1}
-              y={0}
-              // animation="lazy"
-            >
-              Welcome to the Treble Pro!
-            </H2>
+            <Animated.View entering={FadeInUp.springify()}>
+              <H2 color={"$background"} textAlign="center" fontWeight={800}>
+                Welcome to the Treble Pro!
+              </H2>
+            </Animated.View>
           </YStack>
-          <Button onPress={() => router.dismiss()} fontWeight={600} fontSize={"$7"} height={"$5"} width={"100%"} themeInverse>
+          <Button onPress={() => router.dismiss()} fontWeight={600} fontSize={"$7"} height={"$5"} width={"100%"} theme="accent">
             Continue
           </Button>
 

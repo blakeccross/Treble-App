@@ -62,6 +62,19 @@ interface BarProps {
   isEnd?: boolean;
 }
 
+type StaffElement = NoteProps | RestProps | BarProps;
+
+type InternalMeasure = {
+  elements: StaffElement[];
+  contentWidth: number;
+  width: number;
+};
+
+type StaffLine = {
+  measures: InternalMeasure[];
+  contentWidth: number;
+};
+
 interface MusicalStaffProps {
   notes1?: Array<NoteProps | RestProps>;
   notes2?: Array<NoteProps | RestProps>;
@@ -260,12 +273,6 @@ const MusicalStaff = ({
     const elementsWithBars = addBarLines(noteArray);
 
     // 2) Convert the flat sequence into Measure objects – a measure **always** ends with a bar-line
-    interface InternalMeasure {
-      elements: Array<NoteProps | RestProps | BarProps>;
-      contentWidth: number; // width taken up by notes + the trailing bar
-      width: number; // final width after enforcing minimums / padding
-    }
-
     const builtMeasures: InternalMeasure[] = [];
     let currentElements: Array<NoteProps | RestProps | BarProps> = [];
 
@@ -315,10 +322,7 @@ const MusicalStaff = ({
 
     // 3) Group measures into staff lines that fit within the available width
     const availableWidth = containerWidth - MARGIN * 2;
-    const staffLines: Array<{
-      measures: InternalMeasure[];
-      contentWidth: number; // total of measure.width for this line (excluding clef)
-    }> = [];
+    const staffLines: StaffLine[] = [];
 
     let currentLineMeasures: InternalMeasure[] = [];
     let currentLineWidth = TREBLE_CLEF_WIDTH + CLEF_SPACING; // every line starts with a clef + extra spacing
@@ -686,7 +690,7 @@ const MusicalStaff = ({
   const totalHeight = propContainerHeight ? Math.max(propContainerHeight, calculatedHeight) : calculatedHeight;
 
   // Helper function to render notes from a staff line
-  const renderNotesFromLine = (line: any, lineIndex: number): React.ReactNode[] => {
+  const renderNotesFromLine = (line: StaffLine, lineIndex: number): React.ReactNode[] => {
     const handleExitComplete = () => {
       if (isEvenQuestion) {
         setVisibleNotes1(false);
@@ -709,14 +713,14 @@ const MusicalStaff = ({
       currentMeasureStartX += accidentals.length * 15; // 15px per accidental
     }
 
-    line.measures.forEach((measure: any, mIdx: number) => {
+    line.measures.forEach((measure, mIdx) => {
       const measureInnerStart = currentMeasureStartX;
       const contentStartX = measureInnerStart + (measure.width - measure.contentWidth) / 2;
 
       // Walk through elements inside this measure
       let localCursor = contentStartX;
 
-      measure.elements.forEach((el: any, elIdx: number) => {
+      measure.elements.forEach((el, elIdx) => {
         if ("pitch" in el && !("isRest" in el)) {
           // Determine if note should be flipped (stem down for notes at or above middle line)
           const notePosition = getNotePosition(el.pitch);

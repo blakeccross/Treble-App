@@ -5,16 +5,15 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { useDatePicker } from "@rehookify/datepicker";
-import { Award, ChevronLeft, ChevronRight, Settings, Sparkle } from "@tamagui/lucide-icons";
-import { blueA, purpleA, redA, size, yellow } from "@tamagui/themes";
+import { blueA, purpleA, redA, yellow } from "@/theme/colors";
+import { size, space } from "@/theme";
 import { Image } from "expo-image";
 import * as ImagePicker from "expo-image-picker";
 import { Link, router } from "expo-router";
 import { FlatList, Pressable } from "react-native";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
-import { Button, Card, H2, H3, H4, H5, Paragraph, ScrollView, SizableText, View, XStack, YStack } from "tamagui";
-import { LinearGradient } from "tamagui/linear-gradient";
+import { Award, Button, Card, ChevronLeft, ChevronRight, H2, H3, H4, H5, LinearGradient, Paragraph, ScrollView, Settings, SizableText, Sparkle, View, XStack, YStack } from "@/ui";
 import { SaveFormat, ImageManipulator } from "expo-image-manipulator";
 import getStreak from "@/hooks/getStreak";
 import { isSmallScreen } from "@/utils";
@@ -99,12 +98,12 @@ export default function TabTwoScreen() {
 
   return (
     <>
-      <ScrollView contentContainerStyle={{ paddingBottom: 200, paddingTop: top }} backgroundColor={"$gray4"} showsVerticalScrollIndicator={false}>
+      <ScrollView contentContainerStyle={{ paddingBottom: 200, paddingTop: top }} backgroundColor="$background" showsVerticalScrollIndicator={false}>
         <View position="relative" width={"100%"} zIndex={10}>
           <View position="absolute" top={25} right={25}>
             <Link asChild href={{ pathname: "/(settings)/settings" }}>
-              <Button unstyled color={"$gray10"} fontWeight={600} pressStyle={{ scale: 0.95 }}>
-                <Settings size={"$1.5"} color={"$gray10"} />
+              <Button unstyled color={"$gray11"} fontWeight={500} pressStyle={{ scale: 0.96 }}>
+                <Settings size={"$1.5"} color={"$gray11"} />
               </Button>
             </Link>
           </View>
@@ -158,20 +157,20 @@ export default function TabTwoScreen() {
         <YStack marginHorizontal="$4">
           <XStack justifyContent="center" alignItems="center" marginBottom="$6">
             <XStack alignItems="center" gap="$2">
-              <H3 fontWeight={600} textAlign="left">
+              <H3 fontWeight="normal" textAlign="left">
                 {currentUser?.full_name ? currentUser?.full_name : "Guest User"}
               </H3>
 
               {currentUser?.is_subscribed && (
                 <LinearGradient
-                  colors={["$blue10", "$purple8"]}
+                  colors={["#2563EB", "#007AFF"]}
                   start={[0.3, 1]}
                   end={[0, 0]}
                   paddingHorizontal="$3"
                   paddingVertical="$1"
                   borderRadius="$10"
                 >
-                  <Paragraph color={"$background"}>Pro</Paragraph>
+                  <Paragraph color="$backgroundStrong">Pro</Paragraph>
                 </LinearGradient>
               )}
             </XStack>
@@ -180,29 +179,31 @@ export default function TabTwoScreen() {
             <Card
               width={"100%"}
               backgroundColor={"$blue10"}
-              borderRadius="$8"
+              borderRadius="$9"
               overflow="hidden"
               marginBottom="$6"
               onPress={() => router.push("/paywall")}
-              pressStyle={{ scale: 0.95 }}
-              animation="bouncy"
+              pressStyle={{ scale: 0.98 }}
+              elevate
             >
               <Card.Header>
-                <XStack alignItems="center" gap="$2">
+                <XStack alignItems="center" gap="$3">
                   <Sparkle color={"white"} />
-                  <YStack>
-                    <H4 fontWeight={800} color={"white"}>
+                  <YStack flex={1}>
+                    <H4 fontWeight="normal" color={"white"}>
                       Go Pro
                     </H4>
-                    <Paragraph color={"white"}>Unlock all modules and features</Paragraph>
+                    <Paragraph color="rgba(255,255,255,0.88)">
+                      Unlock every module and premium features
+                    </Paragraph>
                   </YStack>
                 </XStack>
               </Card.Header>
               <Card.Background overflow="hidden">
                 <LinearGradient
-                  colors={["$blue10", "$purple8"]}
-                  start={[0.3, 1]}
-                  end={[0, 0]}
+                  colors={["#005FCC", "#007AFF"]}
+                  start={[0, 1]}
+                  end={[1, 0]}
                   width={"100%"}
                   height={"$19"}
                   justifyContent="center"
@@ -223,7 +224,7 @@ export default function TabTwoScreen() {
                   <XStack gap="$2">
                     {stat.icon}
                     <YStack>
-                      <Paragraph fontSize={"$7"} lineHeight={"$1"} fontWeight="800">
+                      <Paragraph fontSize={"$7"} fontWeight="normal" fontFamily="InterBold">
                         {stat.value}
                       </Paragraph>
                       <Paragraph fontSize={"$1"}>{stat.name}</Paragraph>
@@ -251,8 +252,8 @@ export default function TabTwoScreen() {
                       <View
                         onPress={(evt) => {
                           const result = subtractOffset({ months: 1 });
-                          if (result && result.onClick) {
-                            result.onClick(evt as any);
+                          if (result?.onClick) {
+                            result.onClick(evt as unknown as Parameters<NonNullable<typeof result.onClick>>[0]);
                           }
                         }}
                       >
@@ -261,8 +262,8 @@ export default function TabTwoScreen() {
                       <View
                         onPress={(evt) => {
                           const result = addOffset({ months: 1 });
-                          if (result && result.onClick) {
-                            result.onClick(evt as any);
+                          if (result?.onClick) {
+                            result.onClick(evt as unknown as Parameters<NonNullable<typeof result.onClick>>[0]);
                           }
                         }}
                       >
@@ -271,31 +272,32 @@ export default function TabTwoScreen() {
                     </XStack>
                   </XStack>
 
-                  <FlatList
-                    data={weekDays}
-                    numColumns={7}
-                    contentContainerStyle={{ width: "100%" }}
-                    scrollEnabled={false}
-                    renderItem={({ item }) => (
-                      <Paragraph paddingVertical="$2" flex={1} textAlign="center">
-                        {item}
-                      </Paragraph>
-                    )}
-                  />
+                  <XStack width="100%" paddingHorizontal="$2.5">
+                    {weekDays.map((item, index) => (
+                      <View key={`${item}-${index}`} flex={1} alignItems="center">
+                        <Paragraph paddingVertical="$2" textAlign="center" fontSize="$2" color="$gray11">
+                          {item}
+                        </Paragraph>
+                      </View>
+                    ))}
+                  </XStack>
                   <FlatList
                     data={days}
                     numColumns={7}
-                    contentContainerStyle={{ width: "100%", height: "auto" }}
+                    contentContainerStyle={{ width: "100%", height: "auto", paddingHorizontal: space["$2.5"] }}
                     scrollEnabled={false}
+                    keyExtractor={(item, index) => `${item.day}-${index}`}
                     renderItem={({ item }) => (
-                      <YStack paddingVertical="$3" flex={1}>
-                        <Paragraph textAlign="center" opacity={item.inCurrentMonth ? 1 : 0}>
-                          {item.day}
-                        </Paragraph>
-                        {item.selected && (
-                          <MaterialCommunityIcons name="music-note" size={24} color={blueA.blueA10} style={{ position: "absolute" }} />
-                        )}
-                      </YStack>
+                      <View flex={1} alignItems="center">
+                        <YStack paddingVertical="$3" alignItems="center" width="100%" position="relative">
+                          <Paragraph textAlign="center" opacity={item.inCurrentMonth ? 1 : 0}>
+                            {item.day}
+                          </Paragraph>
+                          {item.selected && (
+                            <MaterialCommunityIcons name="music-note" size={24} color={blueA.blueA10} style={{ position: "absolute" }} />
+                          )}
+                        </YStack>
+                      </View>
                     )}
                   />
                 </Card>

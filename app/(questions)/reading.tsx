@@ -2,7 +2,7 @@ import { useQuiz } from "@/context/quiz-context";
 import useMarkdown from "@/hooks/parseSymbolsFromText";
 import React, { useContext, useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Button, ScrollView, View } from "tamagui";
+import { Button, ScrollView, View } from "@/ui";
 
 export default function Index() {
   const { currentQuestionIndex, questions, nextQuestion } = useQuiz();

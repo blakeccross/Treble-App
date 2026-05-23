@@ -1,22 +1,27 @@
-import { ArrowLeft, ChevronLeft } from "@tamagui/lucide-icons";
+import { HeroModuleTransitionOverlay } from "@/components/module/HeroModuleTransitionOverlay";
+import type {
+  HeroSourceRect,
+  ModuleHeroPayload,
+  ModuleHeroReversePayload,
+} from "@/context/module-hero-transition";
 import { Image } from "expo-image";
-import React from "react";
-import { Dimensions, LayoutChangeEvent, StyleSheet, TouchableWithoutFeedback } from "react-native";
+import React, { useCallback, useRef, useState } from "react";
+import { Dimensions, Modal, StyleSheet, View as RNView } from "react-native";
 import Animated, {
+  Easing,
   Extrapolation,
   interpolate,
   SharedValue,
   useAnimatedScrollHandler,
   useAnimatedStyle,
   useSharedValue,
+  withTiming,
 } from "react-native-reanimated";
-import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { router } from "expo-router";
-import { Button, H5, SizableText, View, YStack } from "tamagui";
+import { ArrowLeft, Button, ChevronLeft, H1, H5, View, YStack } from "@/ui";
 const blurhash =
   "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
-
-const formatter = Intl.NumberFormat("en-IN");
 
 const AnimatedLinearGradient = Animated.createAnimatedComponent(View);
 const AnimatedView = Animated.createAnimatedComponent(View);
@@ -25,28 +30,46 @@ const AnimatedImage = Animated.createAnimatedComponent(Image);
 const posterSize = Dimensions.get("screen").height / 2;
 const headerTop = 44 - 16;
 
-function ScreenHeader({ sv, title, onBackPress }: { sv: SharedValue<number>; title: string; onBackPress?: () => void }) {
+function ScreenHeader({
+  sv,
+  title,
+  onBackPress,
+}: {
+  sv: SharedValue<number>;
+  title: string;
+  onBackPress?: () => void;
+}) {
   const inset = useSafeAreaInsets();
   const opacityAnim = useAnimatedStyle(() => {
     const visibilityThreshold = posterSize - (headerTop + inset.top);
-    const opacity = interpolate(sv.value, [(visibilityThreshold / 4) * 3, visibilityThreshold + 1], [0, 1]);
+    const opacity = interpolate(
+      sv.value,
+      [(visibilityThreshold / 4) * 3, visibilityThreshold + 1],
+      [0, 1],
+    );
     return {
       opacity,
       transform: [
         {
           scale: interpolate(
             sv.value,
-            [((posterSize - (headerTop + inset.top)) / 4) * 3, posterSize - (headerTop + inset.top) + 1],
+            [
+              ((posterSize - (headerTop + inset.top)) / 4) * 3,
+              posterSize - (headerTop + inset.top) + 1,
+            ],
             [0.98, 1],
-            Extrapolation.CLAMP
+            Extrapolation.CLAMP,
           ),
         },
         {
           translateY: interpolate(
             sv.value,
-            [((posterSize - (headerTop + inset.top)) / 4) * 3, posterSize - (headerTop + inset.top) + 1],
+            [
+              ((posterSize - (headerTop + inset.top)) / 4) * 3,
+              posterSize - (headerTop + inset.top) + 1,
+            ],
             [-10, 0],
-            Extrapolation.CLAMP
+            Extrapolation.CLAMP,
           ),
         },
       ],
@@ -70,38 +93,52 @@ function ScreenHeader({ sv, title, onBackPress }: { sv: SharedValue<number>; tit
         },
       ]}
       alignItems={"center"}
-      borderBottomWidth={1}
-      borderBottomColor={"$gray5"}
+      borderBottomWidth={StyleSheet.hairlineWidth * 2}
+      borderBottomColor={"$borderColor"}
     >
-      <View width={"$3"} height={"$3"} alignItems="center" justifyContent="center" onPress={() => (onBackPress ? onBackPress() : router.back())}>
+      <View
+        width={"$3"}
+        height={"$3"}
+        alignItems="center"
+        justifyContent="center"
+        onPress={() => (onBackPress ? onBackPress() : router.back())}
+      >
         <ChevronLeft size={"$2"} />
       </View>
 
-      <H5 fontWeight={600}>{title}</H5>
+      <H5 fontWeight="normal">{title}</H5>
       <View width={"$2"} />
     </AnimatedView>
   );
 }
 
-function PosterImage({ sv, image, title }: { sv: SharedValue<number>; image: string; title: string }) {
+function PosterImage({
+  sv,
+  image,
+  title,
+  revealSV,
+  posterLayerRef,
+  titleTargetRef,
+  onPosterLayerLayout,
+}: {
+  sv: SharedValue<number>;
+  image: string;
+  title: string;
+  revealSV: SharedValue<number>;
+  posterLayerRef: React.RefObject<RNView | null>;
+  titleTargetRef: React.RefObject<RNView | null>;
+  onPosterLayerLayout?: () => void;
+}) {
   const inset = useSafeAreaInsets();
-  const layoutY = useSharedValue(0);
   const opacityAnim = useAnimatedStyle(() => {
+    const scrollOp = interpolate(
+      sv.value,
+      [0, posterSize - (headerTop + inset.top) / 0.9],
+      [1, 0],
+      Extrapolation.CLAMP,
+    );
     return {
-      opacity: interpolate(sv.value, [0, posterSize - (headerTop + inset.top) / 0.9], [1, 0], Extrapolation.CLAMP),
-    };
-  });
-  const textAnim = useAnimatedStyle(() => {
-    return {
-      opacity: interpolate(sv.value, [-posterSize / 8, 0, posterSize - (headerTop + inset.top) / 0.8], [0, 1, 0], Extrapolation.CLAMP),
-      transform: [
-        {
-          scale: interpolate(sv.value, [-posterSize / 8, 0, (posterSize - (headerTop + inset.top)) / 2], [1.1, 1, 0.95], "clamp"),
-        },
-        {
-          translateY: interpolate(sv.value, [layoutY.value - 1, layoutY.value, layoutY.value + 1], [0, 0, -1]),
-        },
-      ],
+      opacity: scrollOp * revealSV.value,
     };
   });
   const scaleAnim = useAnimatedStyle(() => {
@@ -118,35 +155,47 @@ function PosterImage({ sv, image, title }: { sv: SharedValue<number>; image: str
   });
   return (
     <Animated.View style={[styles.imageContainer, opacityAnim]}>
-      <AnimatedImage style={[styles.imageStyle, scaleAnim]} source={image} placeholder={{ blurhash }} contentFit="cover" transition={1000} />
-      <Animated.View
-        onLayout={(event: LayoutChangeEvent) => {
-          "worklet";
-          layoutY.value = event.nativeEvent.layout.y;
-        }}
-        style={[
-          {
+      <RNView
+        ref={posterLayerRef}
+        collapsable={false}
+        style={StyleSheet.absoluteFill}
+        onLayout={onPosterLayerLayout}
+      >
+        <AnimatedImage
+          style={[styles.imageStyle, scaleAnim]}
+          source={image}
+          placeholder={{ blurhash }}
+          contentFit="cover"
+          transition={1000}
+        />
+        <RNView
+          style={{
             position: "absolute",
             bottom: 0,
-            top: 0,
             left: 0,
             right: 0,
             justifyContent: "flex-end",
             alignItems: "center",
             paddingHorizontal: 20,
+            paddingBottom: 24,
             zIndex: 10,
-          },
-          textAnim,
-        ]}
-      >
-        <SizableText numberOfLines={2} color="white" size="$10" fontWeight="bold" textAlign="center">
-          {title}
-        </SizableText>
-      </Animated.View>
-      <AnimatedLinearGradient
-        style={[{ position: "absolute", inset: 0 }, scaleAnim]}
-        //colors={[`rgba(0,0,0,${0})`, `rgba(0,0,0,${0.1})`, `rgba(0,0,0,${0.3})`, `rgba(0,0,0,${0.5})`, `rgba(0,0,0,${0.8})`, `rgba(0,0,0,${1})`]}
-      />
+          }}
+        >
+          <RNView
+            ref={titleTargetRef}
+            collapsable={false}
+            style={{ alignSelf: "stretch", alignItems: "flex-start" }}
+          >
+            <H1 fontWeight="normal" textAlign="left" style={{ color: "white" }}>
+              {title}
+            </H1>
+          </RNView>
+        </RNView>
+        <AnimatedLinearGradient
+          style={[{ position: "absolute", inset: 0 }, scaleAnim]}
+          //colors={[`rgba(0,0,0,${0})`, `rgba(0,0,0,${0.1})`, `rgba(0,0,0,${0.3})`, `rgba(0,0,0,${0.5})`, `rgba(0,0,0,${0.8})`, `rgba(0,0,0,${1})`]}
+        />
+      </RNView>
     </Animated.View>
   );
 }
@@ -156,14 +205,66 @@ export function StickyHeader({
   title,
   children,
   onBackPress,
+  heroTransition,
+  onHeroTransitionEnd,
+  onBeginReverseTransition,
 }: {
   image: string;
   title: string;
-  children: JSX.Element;
+  children: React.ReactElement;
   onBackPress?: () => void;
+  heroTransition?: ModuleHeroPayload | null;
+  onHeroTransitionEnd?: () => void;
+  onBeginReverseTransition?: (payload: ModuleHeroReversePayload) => void;
 }) {
   const inset = useSafeAreaInsets();
   const sv = useSharedValue<number>(0);
+  const posterLayerRef = useRef<RNView>(null);
+  const titleTargetRef = useRef<RNView>(null);
+  const didMeasureHeroTarget = useRef(false);
+  const [heroTargets, setHeroTargets] = useState<{
+    poster: HeroSourceRect;
+    title: HeroSourceRect;
+  } | null>(null);
+  const posterRevealSV = useSharedValue(heroTransition ? 0 : 1);
+  const [flyVisible, setFlyVisible] = useState(!!heroTransition);
+
+  const onFlyDone = useCallback(() => {
+    posterRevealSV.value = withTiming(1, {
+      duration: 160,
+      easing: Easing.out(Easing.cubic),
+    });
+    setFlyVisible(false);
+    onHeroTransitionEnd?.();
+  }, [onHeroTransitionEnd, posterRevealSV]);
+
+  const onPosterLayerLayout = useCallback(() => {
+    if (!heroTransition || didMeasureHeroTarget.current) return;
+    didMeasureHeroTarget.current = true;
+    requestAnimationFrame(() => {
+      posterLayerRef.current?.measureInWindow((px, py, pw, ph) => {
+        const posterRect = { x: px, y: py, width: pw, height: ph };
+        const fallbackTitle: HeroSourceRect = {
+          x: px + 20,
+          y: py + ph - 120,
+          width: pw - 40,
+          height: 96,
+        };
+        if (titleTargetRef.current) {
+          titleTargetRef.current.measureInWindow((tx, ty, tw, th) => {
+            const titleRect =
+              tw > 2 && th > 2
+                ? { x: tx, y: ty, width: tw, height: th }
+                : fallbackTitle;
+            setHeroTargets({ poster: posterRect, title: titleRect });
+          });
+        } else {
+          setHeroTargets({ poster: posterRect, title: fallbackTitle });
+        }
+      });
+    });
+  }, [heroTransition]);
+
   const scrollHandler = useAnimatedScrollHandler({
     onScroll: (event) => {
       "worklet";
@@ -179,23 +280,107 @@ export function StickyHeader({
     };
   });
 
+  const handleBack = useCallback(() => {
+    const goBack = () => {
+      if (onBackPress) {
+        onBackPress();
+      } else {
+        router.back();
+      }
+    };
+
+    if (!heroTransition || !onBeginReverseTransition) {
+      goBack();
+      return;
+    }
+
+    const startReverse = (
+      overviewPosterRect: HeroSourceRect,
+      overviewTitleRect: HeroSourceRect,
+    ) => {
+      onBeginReverseTransition({
+        forward: heroTransition,
+        overviewPosterRect,
+        overviewTitleRect,
+      });
+      goBack();
+    };
+
+    if (heroTargets) {
+      startReverse(heroTargets.poster, heroTargets.title);
+      return;
+    }
+
+    posterLayerRef.current?.measureInWindow((px, py, pw, ph) => {
+      const posterRect = { x: px, y: py, width: pw, height: ph };
+      const fallbackTitle: HeroSourceRect = {
+        x: px + 20,
+        y: py + ph - 120,
+        width: pw - 40,
+        height: 96,
+      };
+      if (titleTargetRef.current) {
+        titleTargetRef.current.measureInWindow((tx, ty, tw, th) => {
+          startReverse(
+            posterRect,
+            tw > 2 && th > 2
+              ? { x: tx, y: ty, width: tw, height: th }
+              : fallbackTitle,
+          );
+        });
+      } else {
+        startReverse(posterRect, fallbackTitle);
+      }
+    });
+  }, [heroTransition, heroTargets, onBeginReverseTransition, onBackPress]);
+
   return (
     <YStack flex={1} backgroundColor="$background">
-      <ScreenHeader sv={sv} title={title} onBackPress={onBackPress} />
-      <PosterImage sv={sv} image={image} title={title} />
-      <Animated.ScrollView onScroll={scrollHandler} scrollEventThrottle={16} style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
+      <ScreenHeader sv={sv} title={title} onBackPress={handleBack} />
+      <PosterImage
+        sv={sv}
+        image={image}
+        title={title}
+        revealSV={posterRevealSV}
+        posterLayerRef={posterLayerRef}
+        titleTargetRef={titleTargetRef}
+        onPosterLayerLayout={heroTransition ? onPosterLayerLayout : undefined}
+      />
+      {flyVisible && heroTransition && heroTargets ? (
+        <Modal visible transparent animationType="none" statusBarTranslucent>
+          <RNView style={styles.heroModalRoot} pointerEvents="none">
+            <HeroModuleTransitionOverlay
+              uri={heroTransition.uri}
+              imageSourceRect={heroTransition.sourceRect}
+              imageTargetRect={heroTargets.poster}
+              onComplete={onFlyDone}
+            />
+          </RNView>
+        </Modal>
+      ) : null}
+      <Animated.ScrollView
+        onScroll={scrollHandler}
+        scrollEventThrottle={16}
+        style={{ flex: 1 }}
+        showsVerticalScrollIndicator={false}
+      >
         <View position="absolute" top={inset.top} left="$4" zIndex={100}>
-          <Button circular theme={"alt1"} onPress={() => (onBackPress ? onBackPress() : router.back())}>
+          <Button circular theme={"alt1"} onPress={handleBack}>
             <ArrowLeft size="$3" />
           </Button>
         </View>
-        <Animated.View style={[animatedScrollStyle, { paddingBottom: 40 }]}>{children}</Animated.View>
+        <Animated.View style={[animatedScrollStyle, { paddingBottom: 40 }]}>
+          {children}
+        </Animated.View>
       </Animated.ScrollView>
     </YStack>
   );
 }
 
 const styles = StyleSheet.create({
+  heroModalRoot: {
+    flex: 1,
+  },
   imageContainer: {
     height: Dimensions.get("screen").height / 2,
     width: Dimensions.get("screen").width,

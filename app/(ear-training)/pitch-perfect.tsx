@@ -4,8 +4,8 @@ import usePlayMidi from "@/hooks/usePlayMidi";
 import { usePlaySFX } from "@/hooks/usePlaySFX";
 import { PianoKey } from "@/types/pianoKeys";
 import { window } from "@/utils";
-import { BarChart2, Heart, X } from "@tamagui/lucide-icons";
-import { darkColors, red } from "@tamagui/themes";
+import { red } from "@/theme/colors";
+import { darkColors } from "@/theme";
 import * as Haptics from "expo-haptics";
 import { Link, router, useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -14,11 +14,16 @@ import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, { useAnimatedStyle, useSharedValue, withDelay, withSpring } from "react-native-reanimated";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
-import { Card, Circle, H1, H2, H3, Paragraph, XStack } from "tamagui";
-import { LinearGradient } from "tamagui/linear-gradient";
+import { BarChart2, Card, Circle, H1, H2, H3, Heart, LinearGradient, Paragraph, X, XStack } from "@/ui";
 
 const PAGE_WIDTH = window.width;
 const colorOptions = ["blue", "orange", "green", "red", "yellow", "purple", "pink"];
+
+/** Tamagui `animations.bouncy` from tamagui.config.ts */
+const TAMAGUI_BOUNCY = { mass: 0.9, damping: 10, stiffness: 100 } as const;
+/** Original answer-panel slide (soft, minimal overshoot) */
+const PANEL_SPRING_IN = { mass: 1, damping: 12, stiffness: 50 } as const;
+const PANEL_SPRING_OUT = { mass: 1, damping: 12, stiffness: 15 } as const;
 const notes = ["C3", "D3", "E3", "F3", "G3", "A3", "B3"];
 const notesHard = ["C3", "C#3", "D3", "D#3", "E3", "F3", "F#3", "G3", "G#3", "A3", "A#3", "B3"];
 const notesHarder = ["C3", "C#3", "Db3", "D3", "D#3", "Eb3", "E3", "F3", "F#3", "Gb3", "G3", "G#3", "Ab3", "A3", "A#3", "Bb3", "B3"];
@@ -222,57 +227,38 @@ export default function PitchPerfect() {
   // Function to trigger the bounce effect
   async function bounce() {
     springIn();
-    const bounceAnimation = withSpring(
-      1.2,
-      {
-        duration: 0,
-        dampingRatio: 0.5,
-        stiffness: 200,
-      },
-      () => {
-        scale4.value = withSpring(1);
-      }
-    );
 
-    scale4.value = bounceAnimation;
+    scale4.value = 1.2;
+    scale4.value = withSpring(1, TAMAGUI_BOUNCY);
 
     scale1.value = withDelay(
       0,
-      withSpring(1.2, { duration: 300, dampingRatio: 0.5, stiffness: 400 }, () => {
-        scale1.value = withSpring(1);
+      withSpring(1.2, { mass: TAMAGUI_BOUNCY.mass, duration: 300, dampingRatio: 0.5 }, () => {
+        scale1.value = withSpring(1, TAMAGUI_BOUNCY);
       })
     );
 
     scale2.value = withDelay(
       0,
-      withSpring(1.2, { duration: 200, dampingRatio: 0.5, stiffness: 200, overshootClamping: false }, () => {
-        scale2.value = withSpring(1);
+      withSpring(1.2, { mass: TAMAGUI_BOUNCY.mass, duration: 200, dampingRatio: 0.5, overshootClamping: false }, () => {
+        scale2.value = withSpring(1, TAMAGUI_BOUNCY);
       })
     );
 
     scale3.value = withDelay(
       0,
-      withSpring(1.2, { duration: 100, dampingRatio: 0.5, stiffness: 300, overshootClamping: false }, () => {
-        scale3.value = withSpring(1);
+      withSpring(1.2, { mass: TAMAGUI_BOUNCY.mass, duration: 100, dampingRatio: 0.5, overshootClamping: false }, () => {
+        scale3.value = withSpring(1, TAMAGUI_BOUNCY);
       })
     );
   }
 
   function springIn() {
-    translationY.value = withSpring(0, {
-      damping: 12,
-      stiffness: 50,
-    });
+    translationY.value = withSpring(0, PANEL_SPRING_IN);
   }
 
   function springOut() {
-    translationY.value = withDelay(
-      500,
-      withSpring(window.height, {
-        damping: 12,
-        stiffness: 15,
-      })
-    );
+    translationY.value = withDelay(500, withSpring(window.height, PANEL_SPRING_OUT));
   }
 
   useEffect(() => {
@@ -316,7 +302,7 @@ export default function PitchPerfect() {
     <View style={{ flex: 1, paddingTop: top }}>
       <StatusBar translucent={true} backgroundColor={"transparent"} />
 
-      <XStack justifyContent="space-between" alignItems="center" paddingHorizontal="$4">
+      <XStack justifyContent="space-between" alignItems="center" paddingHorizontal="$4" color="$color">
         <View style={{ width: 50 }}>
           <Pressable onPress={() => router.back()}>
             <X size="$3" />
@@ -357,7 +343,6 @@ export default function PitchPerfect() {
               opacity={0.2}
               theta={theta}
               isRunning={isRunning}
-              setIsRunning={setIsRunning}
             />
           </Animated.View>
 
@@ -406,7 +391,6 @@ export default function PitchPerfect() {
               disabled={!isRunning}
               borderRadius="$8"
               pressStyle={{ scale: 0.95 }}
-              // animation="bouncy"
               flex={1}
               onPress={() => validateAnswer(item.value)}
               borderWidth={"$1"}

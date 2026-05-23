@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { KeyboardAvoidingView, Platform, ScrollView, ActivityIndicator, Alert } from "react-native";
-import { Button, Label, View, YStack, XStack, H1 } from "tamagui";
+import { KeyboardAvoidingView, Platform, ScrollView, ActivityIndicator, Alert, StyleSheet } from "react-native";
+import { Button, H4, Label, View, YStack, XStack, SizableText } from "@/ui";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
 
@@ -70,7 +70,7 @@ export default function SignUpInstrument() {
       keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0}
     >
       <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled" bounces={false}>
-        <YStack flex={1} padding="$3" gap="$4">
+        <YStack flex={1} paddingHorizontal="$5" paddingTop="$4" gap="$5">
           <Controller
             control={control}
             rules={{
@@ -78,7 +78,9 @@ export default function SignUpInstrument() {
             }}
             render={({ field: { onChange, value } }) => (
               <View>
-                <Label fontWeight={800}>What instrument do you play?</Label>
+                <H4 fontWeight="normal" marginBottom="$2">
+                  What instrument do you play?
+                </H4>
                 <YStack gap="$3" marginTop="$2">
                   {chunk(instruments, 4).map((row, rowIndex) => (
                     <XStack key={rowIndex} gap="$3" flexWrap="wrap" justifyContent={row.length < 4 ? "flex-start" : "space-between"}>
@@ -86,16 +88,18 @@ export default function SignUpInstrument() {
                         <Animated.View key={instrument} entering={FadeInDown.delay(rowIndex * 100 + index * 100)} style={{ flex: 1, aspectRatio: 1 }}>
                           <Button
                             key={instrument}
-                            backgroundColor={value === instrument ? "$blue8" : "$gray5"}
+                            backgroundColor={value === instrument ? "$blue10" : "$gray3"}
+                            borderWidth={StyleSheet.hairlineWidth * 2}
+                            borderColor={value === instrument ? "transparent" : "$borderColor"}
+                            borderRadius="$5"
                             onPress={() => onChange(instrument)}
                             aspectRatio={1}
-                            // width={row.length < 4 ? "22.5%" : ""}
-                            // flex={row.length === 4 ? 1 : undefined}
                             flex={1}
                             paddingVertical={"$2"}
                             disabled={!instrument}
+                            pressStyle={{ scale: 0.97 }}
                           >
-                            <H1>{instrument}</H1>
+                            <SizableText fontSize="$10">{instrument}</SizableText>
                           </Button>
                         </Animated.View>
                       ))}
@@ -114,12 +118,12 @@ export default function SignUpInstrument() {
 
           <View marginTop="auto">
             <Button
-              fontWeight={600}
-              fontSize={"$7"}
-              height={"$5"}
+              height="$5"
+              borderRadius="$6"
               onPress={handleSubmit(onSubmit)}
               disabled={isLoading || !selectedInstrument}
-              opacity={isLoading ? 0.7 : 1}
+              opacity={isLoading ? 0.65 : 1}
+              elevate
             >
               {isLoading ? <ActivityIndicator color="white" /> : "Create profile"}
             </Button>

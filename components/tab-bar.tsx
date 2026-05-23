@@ -1,68 +1,95 @@
 import React from "react";
-import { View, Pressable, StyleSheet, useColorScheme, Platform } from "react-native";
-import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
-import { BlurView } from "expo-blur";
-import { blueDark } from "@tamagui/themes";
+import {
+  View,
+  Pressable,
+  StyleSheet,
+  useColorScheme,
+  Platform,
+} from "react-native";
+import { BottomTabBarProps } from "expo-router/js-tabs";
+import type { NavigationRoute, ParamListBase } from "expo-router/react-navigation";
+import { Colors } from "@/constants/Colors";
 import * as Haptics from "expo-haptics";
 
+/** Robinhood-style full-width tab bar (web). */
 const TabBar = ({ state, descriptors, navigation }: BottomTabBarProps) => {
   const colorScheme = useColorScheme() ?? "light";
+  const palette = Colors[colorScheme === "dark" ? "dark" : "light"];
+  const isDark = colorScheme === "dark";
+
   return (
-    <BlurView style={styles.mainContainer} tint="regular">
-      {state.routes.map((route: any, index: number) => {
-        const { options } = descriptors[route.key];
-        const icon = options.tabBarIcon;
+    <View
+      style={[
+        styles.bar,
+        {
+          backgroundColor: isDark ? "#000000" : "#FFFFFF",
+          borderTopColor: isDark
+            ? "rgba(255,255,255,0.08)"
+            : "rgba(0,0,0,0.06)",
+        },
+      ]}
+    >
+      {state.routes.map(
+        (route: NavigationRoute<ParamListBase, string>, index: number) => {
+          const { options } = descriptors[route.key];
+          const icon = options.tabBarIcon;
+          const isFocused = state.index === index;
+          const iconColor = isFocused
+            ? palette.tabIconSelected
+            : palette.tabIconDefault;
 
-        const isFocused = state.index === index;
+          const onPress = () => {
+            const event = navigation.emit({
+              type: "tabPress",
+              target: route.key,
+              canPreventDefault: true,
+            });
 
-        const onPress = () => {
-          const event = navigation.emit({
-            type: "tabPress",
-            target: route.key,
-            canPreventDefault: true,
-          });
+            if (!isFocused && !event.defaultPrevented) {
+              navigation.navigate(route.name, route.params);
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            }
+          };
 
-          if (!isFocused && !event.defaultPrevented) {
-            navigation.navigate(route.name, route.params);
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft);
-          }
-        };
-
-        return (
-          <View key={index} style={styles.mainItemContainer}>
+          return (
             <Pressable
+              key={route.key}
               onPress={onPress}
-              style={{ backgroundColor: isFocused ? (colorScheme === "light" ? "white" : blueDark.blue1) : "transparent", borderRadius: 50 }}
+              style={({ pressed }) => [
+                styles.tab,
+                pressed && { opacity: 0.7 },
+              ]}
             >
-              <View style={{ justifyContent: "center", alignItems: "center", flex: 1, padding: 15 }}>
-                {icon && icon({ focused: true, color: "black", size: 30 })}
+              <View style={styles.iconWrap}>
+                {icon?.({ focused: isFocused, color: iconColor, size: 24 })}
               </View>
             </Pressable>
-          </View>
-        );
-      })}
-    </BlurView>
+          );
+        },
+      )}
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  mainContainer: {
+  bar: {
     flexDirection: "row",
     position: "absolute",
-    bottom: 25,
-    alignSelf: "center",
-    borderRadius: 50,
-    overflow: "hidden",
-    backgroundColor: Platform.OS === "android" ? "#fcfcfc" : undefined,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    paddingBottom: Platform.OS === "ios" ? 24 : 12,
+    paddingTop: 10,
+    borderTopWidth: StyleSheet.hairlineWidth,
   },
-  mainItemContainer: {
-    flex: 0,
-    justifyContent: "center",
+  tab: {
+    flex: 1,
     alignItems: "center",
-    marginVertical: 10,
-    marginHorizontal: 7,
-    borderRadius: 1,
-    borderColor: "#333B42",
+    justifyContent: "center",
+  },
+  iconWrap: {
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
 

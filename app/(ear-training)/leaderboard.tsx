@@ -1,11 +1,10 @@
-import { X } from "@tamagui/lucide-icons";
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { FlatList, Pressable } from "react-native";
 
 import { Leaderboard } from "@/types";
 import { supabase } from "@/utils/supabase";
-import { Avatar, H3, H4, H5, Paragraph, Separator, Spinner, View, XStack } from "tamagui";
+import { Avatar, H3, H4, H5, Paragraph, Separator, Spinner, View, X, XStack } from "@/ui";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import * as Network from "expo-network";
 

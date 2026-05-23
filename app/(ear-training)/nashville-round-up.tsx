@@ -1,6 +1,6 @@
 import GradientCircle from "@/components/gradient-circle";
 import AnswerFeedback from "@/components/nashville-round-up/AnswerFeedback";
-import CardAnswerOptions from "@/components/nashville-round-up/CardAnswerOptions";
+import CardAnswerOptions, { type CardAnswerOptionsRef } from "@/components/nashville-round-up/CardAnswerOptions";
 import QuestionCardOption from "@/components/nashville-round-up/QuestionCardOption";
 import { CHORDS } from "@/constants/chords";
 import { progressions } from "@/constants/progressions/easyProgressions";
@@ -12,16 +12,18 @@ import { PianoKey } from "@/types/pianoKeys";
 import { window } from "@/utils";
 import { delay } from "@/utils/delay";
 import { shuffle } from "@/utils/shuffle";
-import { BarChart2, Heart, X } from "@tamagui/lucide-icons";
-import { red } from "@tamagui/themes";
+import { red } from "@/theme/colors";
 import * as Haptics from "expo-haptics";
 import { router, useFocusEffect } from "expo-router";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { ActivityIndicator, Pressable, StatusBar } from "react-native";
-import Animated, { BounceIn, BounceOut, useSharedValue } from "react-native-reanimated";
+import Animated, {
+  BounceIn,
+  BounceOut,
+  useSharedValue,
+} from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { H1, Paragraph, View, XStack } from "tamagui";
-import { LinearGradient } from "tamagui/linear-gradient";
+import { BarChart2, H1, Heart, LinearGradient, Paragraph, View, X, XStack } from "@/ui";
 
 const correctSFX = require("@/assets/audio/correct_sfx.mp3");
 const incorrectSFX = require("@/assets/audio/incorrect_sfx.mp3");
@@ -31,14 +33,21 @@ export default function App() {
   const { currentUser, updatedLives, lives: userLives } = useUser();
   const { playSong, stopSong, loading: audioLoading } = usePlayMidi();
   const { playSFX } = usePlaySFX();
-  const isFlippedArray = [useSharedValue(false), useSharedValue(false), useSharedValue(false), useSharedValue(false), useSharedValue(false)];
+  const isFlippedArray = [
+    useSharedValue(false),
+    useSharedValue(false),
+    useSharedValue(false),
+    useSharedValue(false),
+    useSharedValue(false),
+  ];
   const correctAnswer = useRef("");
-  const cardAnswerOptionsRef = useRef<any>(null);
+  const cardAnswerOptionsRef = useRef<CardAnswerOptionsRef>(null);
   const [showCard, setShowCard] = useState(false);
   const [currentScore, setCurrentScore] = useState(0);
   const [lives, setLives] = useState(3);
   const [gameHasStarted, setGameHasStarted] = useState(false);
-  const [nashvilleNumbersSolutionSet, setNashvilleNumbersSolutionSet] = useState<ChordProgression>();
+  const [nashvilleNumbersSolutionSet, setNashvilleNumbersSolutionSet] =
+    useState<ChordProgression>();
   const [isRunning, setIsRunning] = useState(false);
   const [selectedAnswer, setSelectedAnswer] = useState<string>("");
   const [answerIsCorrect, setAnswerIsCorrect] = useState<boolean>();
@@ -104,7 +113,8 @@ export default function App() {
   };
 
   function getRandomProgression() {
-    const randomProgression = progressions[Math.floor(Math.random() * progressions.length)];
+    const randomProgression =
+      progressions[Math.floor(Math.random() * progressions.length)];
     return randomProgression;
   }
 
@@ -114,7 +124,12 @@ export default function App() {
   }
 
   function handleStartGame() {
-    if (!currentUser?.is_subscribed && userLives !== undefined && userLives <= 0 && !gameHasStarted) {
+    if (
+      !currentUser?.is_subscribed &&
+      userLives !== undefined &&
+      userLives <= 0 &&
+      !gameHasStarted
+    ) {
       stopSong();
       router.push("/out-of-lives");
       return;
@@ -139,10 +154,19 @@ export default function App() {
     setSelectedAnswer("");
     cardAnswerOptionsRef.current?.handlePress();
 
-    const indexToRemainUnflipped = Math.floor(Math.random() * randomProgression.value.length);
+    const indexToRemainUnflipped = Math.floor(
+      Math.random() * randomProgression.value.length,
+    );
 
-    correctAnswer.current = (randomProgression && randomProgression.value[indexToRemainUnflipped]) || "";
-    setAvailableAnswers(getRandomAnswerOptions(randomProgression && randomProgression.value[indexToRemainUnflipped], randomNashvilleNumbers));
+    correctAnswer.current =
+      (randomProgression && randomProgression.value[indexToRemainUnflipped]) ||
+      "";
+    setAvailableAnswers(
+      getRandomAnswerOptions(
+        randomProgression && randomProgression.value[indexToRemainUnflipped],
+        randomNashvilleNumbers,
+      ),
+    );
 
     isFlippedArray.forEach((isFlipped, index) => {
       isFlipped.value = index !== indexToRemainUnflipped;
@@ -161,7 +185,10 @@ export default function App() {
 
     if (updatedLives <= 0) {
       resetGameState();
-      router.push({ pathname: "/game-over", params: { score: currentScore, gameName: "nashville_round_up" } });
+      router.push({
+        pathname: "/game-over",
+        params: { score: currentScore, gameName: "nashville_round_up" },
+      });
       return;
     }
 
@@ -226,14 +253,25 @@ export default function App() {
       return () => {
         console.log("This route is now unfocused.");
       };
-    }, [])
+    }, []),
   );
 
   return (
-    <LinearGradient width="100%" height="100%" colors={["$green10", "$green8"]} start={[0.5, 1]} end={[0, 0]}>
+    <LinearGradient
+      width="100%"
+      height="100%"
+      colors={["$green10", "$green8"]}
+      start={[0.5, 1]}
+      end={[0, 0]}
+    >
       <StatusBar translucent={true} backgroundColor={"transparent"} />
       <SafeAreaView edges={["top"]} style={{ flex: 0 }} />
-      <XStack justifyContent="space-between" alignItems="center" paddingHorizontal="$4">
+      <XStack
+        justifyContent="space-between"
+        alignItems="center"
+        paddingHorizontal="$4"
+        color="white"
+      >
         <View width={"$3"}>
           <Pressable onPress={() => router.back()}>
             <X size="$3" color={"white"} />
@@ -251,7 +289,11 @@ export default function App() {
               </Paragraph>
             </XStack>
           ) : (
-            <Pressable onPress={() => router.push(`/leaderboard?gameName=nashville_round_up`)}>
+            <Pressable
+              onPress={() =>
+                router.push(`/leaderboard?gameName=nashville_round_up`)
+              }
+            >
               <BarChart2 size="$2" color={"white"} />
             </Pressable>
           )}
@@ -261,8 +303,16 @@ export default function App() {
         <View style={{ flexDirection: "row", gap: 10 }}>
           {showCard &&
             nashvilleNumbersSolutionSet?.value.map((isFlipped, index) => (
-              <Animated.View key={index} entering={BounceIn.duration(1000).delay(index * 300)} exiting={BounceOut.duration(500)}>
-                <QuestionCardOption show={showCard} isFlipped={isFlippedArray[index]} value={nashvilleNumbersSolutionSet?.value[index] || ""} />
+              <Animated.View
+                key={index}
+                entering={BounceIn.duration(1000).delay(index * 300)}
+                exiting={BounceOut.duration(500)}
+              >
+                <QuestionCardOption
+                  show={showCard}
+                  isFlipped={isFlippedArray[index]}
+                  value={nashvilleNumbersSolutionSet?.value[index] || ""}
+                />
               </Animated.View>
             ))}
         </View>
@@ -281,9 +331,22 @@ export default function App() {
           />
           {answerIsCorrect === undefined && (
             <View
-              disabled={audioLoading}
-              onPress={gameHasStarted ? () => nashvilleNumbersSolutionSet && playProgression(nashvilleNumbersSolutionSet) : handleStartGame}
-              style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, justifyContent: "center", alignItems: "center" }}
+              onPress={
+                gameHasStarted
+                  ? () =>
+                      nashvilleNumbersSolutionSet &&
+                      playProgression(nashvilleNumbersSolutionSet)
+                  : handleStartGame
+              }
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
             >
               <Paragraph fontWeight={800} color={"white"}>
                 {audioLoading ? <ActivityIndicator /> : "Play"}

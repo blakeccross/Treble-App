@@ -23,10 +23,10 @@ export default function SheetMusic({
     contextSize: { x: width_ + 2, y: 100 }, // this determine the canvas size
     staveOffset: { x: 0, y: 0 }, // this determine the starting point of the staff relative to top-right corner of canvas
     staveWidth: width_, // ofc, stave width
-    clef: data.clef as any, // clef
-    timeSig: data.timeSig, // time signiture
+    clef: data.clef || undefined,
+    timeSig: data.timeSig,
     colorScheme: colorScheme,
-  }) as any;
+  });
   // you got your context, you got your stave, you can do your stuff now
   // picked from Vexflow tutorial: https://github.com/0xfe/vexflow/wiki/The-VexFlow-Tutorial
   const VF = Vex.Flow;

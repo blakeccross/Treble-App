@@ -6,14 +6,22 @@ export const toastConfig = {
       Overwrite 'success' type,
       by modifying the existing `BaseToast` component
     */
-  success: (props: ToastConfigParams<any>) => (
+  success: (props: ToastConfigParams<object>) => (
     <BaseToast
       {...props}
-      style={{ borderLeftWidth: 0, borderRadius: 50, flex: 0, width: "auto" }}
-      contentContainerStyle={{ paddingHorizontal: 15, flex: 0 }}
+      style={{
+        borderLeftWidth: 0,
+        borderRadius: 20,
+        flex: 0,
+        width: "auto",
+        shadowOpacity: 0.12,
+        shadowRadius: 16,
+        shadowOffset: { width: 0, height: 8 },
+      }}
+      contentContainerStyle={{ paddingHorizontal: 20, paddingVertical: 4, flex: 0 }}
       text1Style={{
-        fontSize: 15,
-        fontWeight: "400",
+        fontSize: 16,
+        fontWeight: "500",
         textAlign: "center",
       }}
     />

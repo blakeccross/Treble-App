@@ -2,7 +2,7 @@ import { createContext, useEffect, useState } from "react";
 import { supabase } from "@/utils/supabase";
 import { Module, SectionItem } from "@/types";
 import { useUser } from "./user-context";
-import * as FileSystem from "expo-file-system";
+import * as FileSystem from "expo-file-system/legacy";
 import { useMMKVNumber, useMMKVObject, useMMKVString } from "react-native-mmkv";
 
 type ModuleContextProps = {
@@ -136,7 +136,8 @@ export default function ModuleProvider({ children }: { children: React.ReactNode
             {}
           );
 
-          const { uri }: any = await downloadResumable.downloadAsync();
+          const result = await downloadResumable.downloadAsync();
+          const uri = result?.uri ?? localUri;
 
           return { ...module, local_poster_uri: uri };
         } catch (error) {

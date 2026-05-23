@@ -2,12 +2,13 @@ import { StyleSheet, Text, View, useWindowDimensions } from "react-native";
 import React from "react";
 import Animated, { Extrapolation, SharedValue, interpolate, useAnimatedStyle } from "react-native-reanimated";
 import LottieView from "lottie-react-native";
-import { H1, H2, H3, H4, Paragraph } from "tamagui";
+import { H1 } from "@/ui";
+import type { OnboardingData } from "@/constants/welcome";
 
 type Props = {
   index: number;
   x: SharedValue<number>;
-  item: any;
+  item: OnboardingData;
 };
 
 const RenderItem = ({ index, x, item }: Props) => {
@@ -65,8 +66,13 @@ const RenderItem = ({ index, x, item }: Props) => {
           loop
         />
       </Animated.View>
-      <View>
-        <H1 textAlign="center" lineHeight={50} style={{ color: item.textColor }}>
+      <View style={{ paddingHorizontal: 28, maxWidth: 520, alignSelf: "center" }}>
+        <H1
+          textAlign="center"
+          lineHeight="$12"
+          fontSize="$12"
+          style={{ color: item.textColor }}
+        >
           {item.text}
         </H1>
       </View>

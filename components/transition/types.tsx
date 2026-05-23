@@ -10,7 +10,10 @@ export declare type TransitionSpec =
       config: Omit<Animated.TimingAnimationConfig, "toValue">;
     };
 
-export type ScreenInterpolatorProps = any; // TODO
+export type ScreenInterpolatorProps = {
+  position: Animated.AnimatedInterpolation<number>;
+  scene: { index: number };
+};
 
 export type ScreenInterpolator = (props: ScreenInterpolatorProps) => Partial<ViewStyle>;
 

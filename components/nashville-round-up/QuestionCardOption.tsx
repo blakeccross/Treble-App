@@ -1,7 +1,12 @@
-import { color } from "@tamagui/themes";
+import { redDark } from "@/theme/colors";
 import { StyleSheet } from "react-native";
-import Animated, { interpolate, SharedValue, useAnimatedStyle, withTiming } from "react-native-reanimated";
-import { View } from "tamagui";
+import Animated, {
+  interpolate,
+  SharedValue,
+  useAnimatedStyle,
+  withTiming,
+} from "react-native-reanimated";
+import { View } from "@/ui";
 import CardBackDesign from "./CardBackDesign";
 import NashvilleNumber from "./NashvilleNumber";
 
@@ -34,7 +39,10 @@ const QuestionCardOption = ({
     const scaleValue = withTiming(1, { duration }); // Updated line for scaling
 
     return {
-      transform: [{ scale: scaleValue }, isDirectionX ? { rotateX: rotateValue } : { rotateY: rotateValue }],
+      transform: [
+        { scale: scaleValue },
+        isDirectionX ? { rotateX: rotateValue } : { rotateY: rotateValue },
+      ],
     };
   });
 
@@ -44,19 +52,47 @@ const QuestionCardOption = ({
     const scaleValue = withTiming(1, { duration }); // Updated line for scaling
 
     return {
-      transform: [{ scale: scaleValue }, isDirectionX ? { rotateX: rotateValue } : { rotateY: rotateValue }],
+      transform: [
+        { scale: scaleValue },
+        isDirectionX ? { rotateX: rotateValue } : { rotateY: rotateValue },
+      ],
     };
   });
 
   return (
     <View>
-      <Animated.View style={[flipCardStyles.regularCard, flipCardStyles.flipCard, regularCardAnimatedStyle]}>
-        <View flex={1} borderRadius={16} backgroundColor="$red9" borderWidth={5} borderColor="white" overflow="hidden">
-          <CardBackDesign color={color.red10Dark as string} width={170} height={200} />
+      <Animated.View
+        style={[
+          flipCardStyles.regularCard,
+          flipCardStyles.flipCard,
+          regularCardAnimatedStyle,
+        ]}
+      >
+        <View
+          flex={1}
+          borderRadius={16}
+          backgroundColor="$red9"
+          borderWidth={5}
+          borderColor="white"
+          overflow="hidden"
+        >
+          <CardBackDesign color={redDark.red10} width={170} height={200} />
         </View>
       </Animated.View>
-      <Animated.View style={[flipCardStyles.flippedCard, flipCardStyles.flipCard, flippedCardAnimatedStyle]}>
-        <View flex={1} borderRadius={16} backgroundColor="white" justifyContent="center" alignItems="center">
+      <Animated.View
+        style={[
+          flipCardStyles.flippedCard,
+          flipCardStyles.flipCard,
+          flippedCardAnimatedStyle,
+        ]}
+      >
+        <View
+          flex={1}
+          borderRadius={16}
+          backgroundColor="white"
+          justifyContent="center"
+          alignItems="center"
+        >
           <NashvilleNumber text={value} small />
         </View>
       </Animated.View>

@@ -1,13 +1,11 @@
 import { UserContext } from "@/context/user-context";
-import { Check, Heart, HeartCrack, Star, Gamepad } from "@tamagui/lucide-icons";
 import { BlurView } from "expo-blur";
 import { router } from "expo-router";
 import moment from "moment";
 import React, { useContext } from "react";
 import { SafeAreaView } from "react-native";
 import Purchases from "react-native-purchases";
-import { Button, H2, H4, ListItem, Paragraph, View, XStack, YStack } from "tamagui";
-import { LinearGradient } from "tamagui/linear-gradient";
+import { Button, Check, Gamepad, H2, H4, Heart, HeartCrack, LinearGradient, ListItem, Paragraph, Star, View, XStack, YStack } from "@/ui";
 
 export default function OutOfLives() {
   const { currentUser, handleUpdateUserInfo, livesRefreshTime } = useContext(UserContext);
@@ -100,7 +98,7 @@ export default function OutOfLives() {
               Welcome to the Treble Pro!
             </H2>
           </YStack>
-          <Button onPress={() => router.dismiss()} fontWeight={600} fontSize={"$7"} height={"$5"} width={"100%"} themeInverse>
+          <Button onPress={() => router.dismiss()} fontWeight={600} fontSize={"$7"} height={"$5"} width={"100%"} theme="accent">
             Continue
           </Button>
 

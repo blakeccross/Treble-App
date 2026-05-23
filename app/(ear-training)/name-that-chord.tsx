@@ -2,8 +2,7 @@ import SquareProgress from "@/components/aquare-progress";
 import usePlayMidi from "@/hooks/usePlayMidi";
 import { PianoKey } from "@/types/pianoKeys";
 import { window } from "@/utils";
-import { Heart, X } from "@tamagui/lucide-icons";
-import { red } from "@tamagui/themes";
+import { red } from "@/theme/colors";
 // import { AVPlaybackSource, Audio } from "expo-av";
 import * as Haptics from "expo-haptics";
 import { useFocusEffect, useNavigation, useRouter } from "expo-router";
@@ -11,8 +10,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { FlatList, Pressable, SafeAreaView, View } from "react-native";
 import { TapGestureHandler } from "react-native-gesture-handler";
 import Animated, { useAnimatedStyle, useSharedValue, withDelay, withSpring } from "react-native-reanimated";
-import { Button, Card, H1, H2, H3, Paragraph, Square, XStack } from "tamagui";
-import { LinearGradient } from "tamagui/linear-gradient";
+import { Button, Card, H1, H2, H3, Heart, LinearGradient, Paragraph, Square, X, XStack } from "@/ui";
 import { useAudioPlayer } from "expo-audio";
 import { usePlaySFX } from "@/hooks/usePlaySFX";
 
@@ -307,7 +305,7 @@ export default function Page() {
     <View style={{ flex: 1 }}>
       <SafeAreaView style={{ flex: 0 }} />
 
-      <XStack justifyContent="space-between" alignItems="center" paddingHorizontal="$4">
+      <XStack justifyContent="space-between" alignItems="center" paddingHorizontal="$4" color="$color">
         <Pressable onPress={() => router.navigate("/(ear-training)")}>
           <X size="$3" />
         </Pressable>

@@ -1,10 +1,11 @@
 import { useUser } from "@/context/user-context";
+import { toPianoKey } from "@/types/midi";
 import usePlayMidi from "@/hooks/usePlayMidi";
 import { usePlaySFX } from "@/hooks/usePlaySFX";
 import { window } from "@/utils";
 import { Canvas, Circle, SweepGradient, vec } from "@shopify/react-native-skia";
-import { BarChart2, Heart, X } from "@tamagui/lucide-icons";
-import { blueDark, darkColors, red } from "@tamagui/themes";
+import { blueDark, red } from "@/theme/colors";
+import { darkColors } from "@/theme";
 import * as Haptics from "expo-haptics";
 import { useFocusEffect, useRouter } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -20,10 +21,16 @@ import Animated, {
   withSpring,
   withTiming,
 } from "react-native-reanimated";
-import { Card, H1, H2, Paragraph, XStack, YStack } from "tamagui";
+import { BarChart2, Card, H1, H2, Heart, Paragraph, X, XStack, YStack } from "@/ui";
 
 const PAGE_HEIGHT = window.height;
 const colorOptions = ["blue", "orange", "green", "red", "yellow", "purple", "pink"];
+
+/** Tamagui `animations.bouncy` from tamagui.config.ts */
+const TAMAGUI_BOUNCY = { mass: 0.9, damping: 10, stiffness: 100 } as const;
+/** Original answer-panel slide (soft, minimal overshoot) */
+const PANEL_SPRING_IN = { mass: 1, damping: 12, stiffness: 50 } as const;
+const PANEL_SPRING_OUT = { mass: 1, damping: 12, stiffness: 15 } as const;
 
 // Define all notes from C2 to C4
 const notes = [
@@ -295,8 +302,8 @@ export default function Page() {
   function playInterval() {
     if (currentInterval.current.firstNote && currentInterval.current.secondNote) {
       playSong([
-        { note: currentInterval.current.firstNote as any, time: 0, duration: 1 },
-        { note: currentInterval.current.secondNote as any, time: 1, duration: 1 },
+        { note: toPianoKey(currentInterval.current.firstNote), time: 0, duration: 1 },
+        { note: toPianoKey(currentInterval.current.secondNote), time: 1, duration: 1 },
       ]);
     }
   }
@@ -313,15 +320,15 @@ export default function Page() {
 
     scale1.value = withDelay(
       0,
-      withSpring(1.2, { duration: 300, dampingRatio: 0.5, stiffness: 400 }, () => {
-        scale1.value = withSpring(1);
+      withSpring(1.2, { mass: TAMAGUI_BOUNCY.mass, duration: 300, dampingRatio: 0.5 }, () => {
+        scale1.value = withSpring(1, TAMAGUI_BOUNCY);
       })
     );
 
     scale2.value = withDelay(
-      1000, // Add 300ms delay for the second circle
-      withSpring(1.2, { duration: 300, dampingRatio: 0.5, stiffness: 400 }, () => {
-        scale2.value = withSpring(1);
+      1000,
+      withSpring(1.2, { mass: TAMAGUI_BOUNCY.mass, duration: 300, dampingRatio: 0.5 }, () => {
+        scale2.value = withSpring(1, TAMAGUI_BOUNCY);
       })
     );
   }
@@ -336,20 +343,11 @@ export default function Page() {
   // }, []);
 
   function springIn() {
-    translationY.value = withSpring(0, {
-      damping: 12,
-      stiffness: 50,
-    });
+    translationY.value = withSpring(0, PANEL_SPRING_IN);
   }
 
   function springOut() {
-    translationY.value = withDelay(
-      500,
-      withSpring(window.height, {
-        damping: 12,
-        stiffness: 15,
-      })
-    );
+    translationY.value = withDelay(500, withSpring(window.height, PANEL_SPRING_OUT));
   }
 
   useEffect(() => {
@@ -392,7 +390,7 @@ export default function Page() {
     <View style={{ flex: 1 }}>
       <SafeAreaView style={{ flex: 0 }} />
 
-      <XStack justifyContent="space-between" alignItems="center" paddingHorizontal="$4">
+      <XStack justifyContent="space-between" alignItems="center" paddingHorizontal="$4" color="$color">
         <Pressable onPress={() => router.back()}>
           <X size="$3" />
         </Pressable>

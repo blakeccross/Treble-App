@@ -1,4 +1,4 @@
-import { red } from "@tamagui/themes";
+import { red } from "@/theme/colors";
 
 export const getTextColor = (value: string) => {
   if (!value) return "black";

@@ -1,6 +1,5 @@
 import { UserContext } from "@/context/user-context";
 import { supabase } from "@/utils/supabase";
-import { Music, X } from "@tamagui/lucide-icons";
 import { ImageManipulator, SaveFormat } from "expo-image-manipulator";
 import * as ImagePicker from "expo-image-picker";
 import { router } from "expo-router";
@@ -9,7 +8,7 @@ import { Controller, useForm } from "react-hook-form";
 import { Alert, Pressable } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
-import { Avatar, Button, H5, Input, Label, ScrollView, Theme, View, XStack, YStack } from "tamagui";
+import { Avatar, Button, H5, Input, Label, Music, ScrollView, Theme, View, X, XStack, YStack } from "@/ui";
 
 type FormInput = {
   fullName: string;

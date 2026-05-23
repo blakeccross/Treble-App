@@ -2,11 +2,9 @@ import React, { useContext, useEffect } from "react";
 import { Pressable, Share as RNShare, StatusBar } from "react-native";
 import { UserContext } from "@/context/user-context";
 import { supabase } from "@/utils/supabase";
-import { RefreshCw, Share, Trophy, X } from "@tamagui/lucide-icons";
 import { Link, useLocalSearchParams, useRouter } from "expo-router";
 import { useMMKVNumber } from "react-native-mmkv";
-import { Button, H1, H3, Theme, XStack, YStack } from "tamagui";
-import { LinearGradient } from "tamagui/linear-gradient";
+import { Button, H1, H3, LinearGradient, RefreshCw, Share, Theme, Trophy, X, XStack, YStack } from "@/ui";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const Games: Record<string, { name: string; shareImage: string }> = {
@@ -78,27 +76,27 @@ export default function Index() {
         <YStack alignItems="center" justifyContent="center" flex={1} padding="$4">
           <YStack flex={1} gap="$6">
             <YStack alignItems="center" justifyContent="center" flex={1}>
-              <H1 fontSize={"$15"} fontWeight={600} themeInverse lineHeight={"$15"}>
+              <H1 fontSize={"$15"} fontWeight={600} theme="accent" lineHeight={"$15"}>
                 {score}
               </H1>
-              <H3 themeInverse>Score</H3>
+              <H3 theme="accent">Score</H3>
             </YStack>
             <YStack alignItems="center" justifyContent="center" marginBottom="$10">
-              <H1 fontWeight={600} themeInverse>
+              <H1 fontWeight={600} theme="accent">
                 {highScore}
               </H1>
-              <H3 themeInverse>Best Score</H3>
+              <H3 theme="accent">Best Score</H3>
             </YStack>
           </YStack>
           <YStack gap="$4" width={"100%"}>
             <XStack gap="$4">
-              {/* <Button fontWeight={600} size={"$6"} themeInverse elevate icon={<Share />} onPress={shareScore}></Button> */}
+              {/* <Button fontWeight={600} size={"$6"} theme="accent" elevate icon={<Share />} onPress={shareScore}></Button> */}
               <Button
                 onPress={() => router.push({ pathname: "/(ear-training)/leaderboard", params: { gameName } })}
                 fontWeight={600}
                 size={"$6"}
                 variant="outlined"
-                // themeInverse
+                // theme="accent"
                 flex={1}
                 elevate
                 icon={<Trophy />}
@@ -106,7 +104,7 @@ export default function Index() {
                 Leaderboard
               </Button>
             </XStack>
-            <Theme name={"alt1_Button" as any}>
+            <Theme name="alt1_Button">
               <Button onPress={() => router.back()} fontWeight={600} size={"$6"} width={"100%"} elevate icon={<RefreshCw />}>
                 Play Again
               </Button>

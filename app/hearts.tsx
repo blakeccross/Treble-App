@@ -1,11 +1,10 @@
-import { Heart, HeartCrack, LockOpen } from "@tamagui/lucide-icons";
 import { router } from "expo-router";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { Pressable, StyleSheet } from "react-native";
 import Animated, { FadeIn } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Button, Card, H2, H3, Paragraph, View, YStack } from "tamagui";
+import { Button, Card, H2, H3, Heart, HeartCrack, LockOpen, Paragraph, View, YStack } from "@/ui";
 import { useUser } from "@/context/user-context";
 
 export default function Hearts() {

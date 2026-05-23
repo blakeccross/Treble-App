@@ -1,8 +1,7 @@
-import { Pause, Play, X } from "@tamagui/lucide-icons";
 import { router } from "expo-router";
 import React, { useState } from "react";
 import { Pressable } from "react-native";
-import { Button, H5, Label, Slider, SliderProps, View, XStack, YStack } from "tamagui";
+import { Button, H5, Label, Pause, Play, Slider, SliderProps, View, X, XStack, YStack } from "@/ui";
 import { clairdelune, hedwigTheme, flyingTheme } from "../../constants/demoSongs";
 import usePlayMidi from "../../hooks/usePlayMidi";
 import { useMMKVNumber } from "react-native-mmkv";
@@ -26,16 +25,8 @@ export default function AudioSettings() {
     setIsPlaying(false);
   }
 
-  function SimpleSlider({ children, ...props }: SliderProps) {
-    return (
-      <Slider defaultValue={[50]} max={100} {...props}>
-        <Slider.Track backgroundColor="$gray5">
-          <Slider.TrackActive backgroundColor="$blue10" />
-        </Slider.Track>
-        <Slider.Thumb size="$2" index={0} circular />
-        {children}
-      </Slider>
-    );
+  function SimpleSlider(props: SliderProps) {
+    return <Slider max={100} {...props} />;
   }
 
   return (

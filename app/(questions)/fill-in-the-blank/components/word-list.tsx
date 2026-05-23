@@ -21,11 +21,15 @@ const styles = StyleSheet.create({
   },
 });
 
+export type WordListRef = {
+  validate: () => boolean;
+};
+
 interface WordListProps {
   children: ReactElement<{ id: number }>[];
 }
 
-const WordList = forwardRef(({ children }: WordListProps, ref) => {
+const WordList = forwardRef<WordListRef, WordListProps>(({ children }, ref) => {
   const [ready, setReady] = useState(false);
   const offsets = children.map(() => ({
     order: useSharedValue(0),

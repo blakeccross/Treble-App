@@ -2,11 +2,10 @@ import { usePlaySFX } from "@/hooks/usePlaySFX";
 import * as Haptics from "expo-haptics";
 import React, { useEffect, useRef, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Button, H3, Paragraph, Sheet, View, XStack, YStack } from "tamagui";
+import { Button, CircleCheck, CircleX, H3, Paragraph, Sheet, View, XStack, YStack } from "@/ui";
 import { useQuiz } from "../../context/quiz-context";
 import { useUser } from "../../context/user-context";
-import { CircleCheck, CircleX } from "@tamagui/lucide-icons";
-import { greenDark, redDark } from "@tamagui/themes";
+import { greenDark, redDark } from "@/theme/colors";
 
 const correctSFX = require("@/assets/audio/correct_sfx.mp3");
 
@@ -72,8 +71,8 @@ export default function AnswerDrawer({
 
   return (
     <>
-      <Sheet snapPointsMode="fit" dismissOnOverlayPress={false} zIndex={100_000} animation="quick" open={open} onOpenChange={setOpen}>
-        <Sheet.Overlay animation="lazy" backgroundColor="$shadowColor" enterStyle={{ opacity: 0 }} exitStyle={{ opacity: 0 }} />
+      <Sheet snapPointsMode="fit" dismissOnOverlayPress={false} zIndex={100_000} transition="quick" open={open} onOpenChange={setOpen}>
+        <Sheet.Overlay transition="lazy" backgroundColor="$shadowColor" enterStyle={{ opacity: 0 }} exitStyle={{ opacity: 0 }} />
 
         <Sheet.Frame borderTopLeftRadius={"$10"} borderTopRightRadius={"$10"} padding="$4" backgroundColor={answerIsCorrect ? "$green7" : "$red8"}>
           <View gap={"$4"} flex={1} justifyContent="space-between">
@@ -155,7 +154,7 @@ export default function AnswerDrawer({
             width={"100%"}
             fontWeight={600}
             disabled={!enabled}
-            animation="quick"
+            transition="quick"
             opacity={enabled ? 1 : 0.7}
             fontSize={"$7"}
             height={"$5"}

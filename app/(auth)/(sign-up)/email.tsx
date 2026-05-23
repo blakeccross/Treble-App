@@ -1,7 +1,7 @@
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import { KeyboardAvoidingView, Platform, ScrollView, StatusBar } from "react-native";
-import { Button, Input, Label, Theme, View, YStack } from "tamagui";
+import { Button, H4, Input, Label, Theme, View, YStack } from "@/ui";
 import { useSignUpForm } from "../../../context/sign-up-context";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
@@ -35,7 +35,7 @@ export default function SignUpEmail() {
       keyboardVerticalOffset={Platform.OS === "ios" ? KEYBOARD_VERTICAL_OFFSET : 0}
     >
       <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled" bounces={false}>
-        <YStack flex={1} padding="$3" space="$4">
+        <YStack flex={1} paddingHorizontal="$5" paddingTop="$4" gap="$5">
           <Controller
             control={control}
             rules={{
@@ -47,8 +47,10 @@ export default function SignUpEmail() {
             }}
             render={({ field: { onChange, onBlur, value } }) => (
               <View>
+                <H4 fontWeight="normal" marginBottom="$3">
+                  What is your email?
+                </H4>
                 <Theme name={errors.email ? "red" : null}>
-                  <Label fontWeight={800}>What is your email?</Label>
                   <Input
                     placeholder="Email"
                     autoCapitalize="none"
@@ -74,7 +76,7 @@ export default function SignUpEmail() {
                 {errors.email.message}
               </Label>
             )}
-            <Button fontWeight={600} fontSize={"$7"} height={"$5"} onPress={handleSubmit(onSubmit)}>
+            <Button height="$5" borderRadius="$6" onPress={handleSubmit(onSubmit)} elevate>
               Next
             </Button>
           </View>

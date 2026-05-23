@@ -1,6 +1,7 @@
-import { blue, green, purple, red, teal, yellow } from "@tamagui/themes";
+import { blue, green, purple, red, teal, yellow } from "@/theme/colors";
 import React, { useState } from "react";
 import { View, Animated, Dimensions } from "react-native";
+import type { PianoKeysProps } from "./PianoKeys";
 
 interface AnimationSquare {
   id: string;
@@ -152,7 +153,9 @@ const KeyPressAnimation: React.FC<KeyPressAnimationProps> = ({ onKeyPress, child
       ))}
 
       {/* Render children with modified onKeyPress */}
-      {React.isValidElement(children) ? React.cloneElement(children, { onKeyPress: disabled ? undefined : handleKeyPress } as any) : children}
+      {React.isValidElement<PianoKeysProps>(children)
+        ? React.cloneElement(children, { onKeyPress: disabled ? undefined : handleKeyPress })
+        : children}
     </View>
   );
 };

@@ -3,7 +3,7 @@ import { router } from "expo-router";
 import React, { useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { ActivityIndicator, KeyboardAvoidingView, Platform, StatusBar, TextInput } from "react-native";
-import { Button, Input, Label, ScrollView, Theme, View, YStack } from "tamagui";
+import { Button, H4, Input, Label, ScrollView, Theme, View, YStack } from "@/ui";
 import Toast from "react-native-toast-message";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -65,6 +65,10 @@ export default function Login() {
       <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="never" bounces={false}>
         <YStack flex={1} justifyContent="space-between">
           <View>
+            <H4 fontWeight="normal" marginBottom="$5">
+              Sign in to continue
+            </H4>
+            <YStack gap="$4">
             <Controller
               control={control}
               rules={{
@@ -103,7 +107,7 @@ export default function Login() {
                 minLength: 6,
               }}
               render={({ field: { onChange, onBlur, value } }) => (
-                <View marginBottom="$4">
+                <View>
                   <Theme name={errors.password ? "red" : null}>
                     <Label>Password</Label>
 
@@ -123,9 +127,10 @@ export default function Login() {
               )}
               name="password"
             />
+            </YStack>
           </View>
           <View marginBottom="$4">
-            <Button fontWeight={600} fontSize={"$7"} height={"$5"} onPress={handleSubmit(onSubmit)} disabled={loading}>
+            <Button height="$5" borderRadius="$6" onPress={handleSubmit(onSubmit)} disabled={loading} elevate>
               {loading ? <ActivityIndicator color="white" /> : "Log in"}
             </Button>
             <SafeAreaView edges={["bottom"]} />

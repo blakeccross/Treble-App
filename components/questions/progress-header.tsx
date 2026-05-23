@@ -1,11 +1,10 @@
 import React from "react";
 import { QuizContext } from "../../context/quiz-context";
-import { Heart, X } from "@tamagui/lucide-icons";
-import { red } from "@tamagui/themes";
+import { red } from "@/theme/colors";
 import { usePathname, useRouter } from "expo-router";
 import { useContext, useState } from "react";
 import { Pressable, StatusBar } from "react-native";
-import { Button, H3, H5, Paragraph, Progress, View, XStack, YStack } from "tamagui";
+import { Button, H3, H5, Heart, Paragraph, Progress, View, X, XStack, YStack } from "@/ui";
 import BottomSheet from "../BottomSheet";
 import { useUser } from "../../context/user-context";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -23,7 +22,7 @@ export default function ProgressHeader() {
       <View>
         <SafeAreaView edges={["top"]} />
         <StatusBar translucent={true} backgroundColor={"transparent"} />
-        <YStack gap="$2" padding="$3">
+        <YStack gap="$2" padding="$3" backgroundColor="$background">
           <XStack alignItems="center" justifyContent="space-between">
             <Pressable onPress={() => setOpen(true)}>
               <X size="$3" />
@@ -41,7 +40,7 @@ export default function ProgressHeader() {
           </XStack>
           <XStack>
             <Progress value={quizPercentage} flex={1} backgroundColor={"$gray1"}>
-              {quizPercentage > 0 && <Progress.Indicator animation="quick" backgroundColor={"$blue10"} />}
+              {quizPercentage > 0 && <Progress.Indicator transition="quick" backgroundColor={"$blue10"} />}
             </Progress>
           </XStack>
         </YStack>

@@ -1,4 +1,3 @@
-import { blue, green, orange, purple, yellow } from "@tamagui/themes";
 import { AnimationObject } from "lottie-react-native";
 
 export interface OnboardingData {
@@ -9,27 +8,28 @@ export interface OnboardingData {
   backgroundColor: string;
 }
 
+/** Calm, airy onboarding backdrops — content-forward, low saturation */
 const data: OnboardingData[] = [
   {
     id: 1,
     animation: require("../assets/lottie/gradient-shapes.json"),
-    text: "Master music theory through bite-sized lessons and fun quizzes",
-    textColor: "white",
-    backgroundColor: blue.blue10,
+    text: "Master music theory through bite-sized lessons and clear progression",
+    textColor: "#111111",
+    backgroundColor: "#E8EEF5",
   },
   {
     id: 2,
     animation: require("../assets/lottie/circles.json"),
-    text: "Train your ears, crush quizzes, and level up your music smarts",
-    textColor: "#1e2169",
-    backgroundColor: yellow.yellow10,
+    text: "Learn, practice, and level up with a calm, focused experience",
+    textColor: "#111111",
+    backgroundColor: "#F5F5F7",
   },
   {
     id: 3,
     animation: require("../assets/lottie/floatingMusicNotes.json"),
-    text: "Track your progress, unlock new levels, and make learning music fun",
-    textColor: purple.purple1,
-    backgroundColor: orange.orange10,
+    text: "Track your progress and unlock new skills at your own pace",
+    textColor: "#111111",
+    backgroundColor: "#EDEAF7",
   },
 ];
 

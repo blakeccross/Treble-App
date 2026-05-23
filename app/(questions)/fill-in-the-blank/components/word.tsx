@@ -2,7 +2,7 @@ import React from "react";
 import { Text, StyleSheet } from "react-native";
 
 import { WORD_HEIGHT } from "./layout";
-import { Paragraph, View } from "tamagui";
+import { Paragraph, View } from "@/ui";
 
 const styles = StyleSheet.create({
   root: {

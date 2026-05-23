@@ -1,26 +1,23 @@
 import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { Alert, KeyboardAvoidingView, Platform, ScrollView, ActivityIndicator, StatusBar } from "react-native";
-import { Button, Input, Label, Theme, View, YStack } from "tamagui";
+import { KeyboardAvoidingView, Platform, ScrollView, ActivityIndicator, StatusBar } from "react-native";
+import { Button, H4, Input, Label, Theme, View, YStack } from "@/ui";
 import { useSignUpForm } from "../../../context/sign-up-context";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
-import { supabase } from "../../../utils/supabase";
 
 type FormInput = {
   password: string;
 };
 
 export default function SignUpPassword() {
-  const { form, updateForm } = useSignUpForm();
+  const { updateForm } = useSignUpForm();
   const [isLoading, setIsLoading] = useState(false);
 
   const {
     control,
     handleSubmit,
-    setError,
     formState: { errors },
-    getValues,
   } = useForm<FormInput>();
 
   async function onSubmit(data: FormInput) {
@@ -38,7 +35,7 @@ export default function SignUpPassword() {
       keyboardVerticalOffset={Platform.OS === "ios" ? KEYBOARD_VERTICAL_OFFSET : 0}
     >
       <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled" bounces={false}>
-        <YStack flex={1} padding="$3" space="$4">
+        <YStack flex={1} paddingHorizontal="$5" paddingTop="$4" gap="$5">
           <Controller
             control={control}
             rules={{
@@ -47,8 +44,10 @@ export default function SignUpPassword() {
             }}
             render={({ field: { onChange, onBlur, value } }) => (
               <View>
+                <H4 fontWeight="normal" marginBottom="$3">
+                  Create a password
+                </H4>
                 <Theme name={errors.password ? "red" : null}>
-                  <Label fontWeight={800}>Create a password</Label>
                   <Input
                     placeholder="Password"
                     autoCapitalize="none"
@@ -72,12 +71,12 @@ export default function SignUpPassword() {
           <View marginTop="auto">
             {errors.password && <Label color={"red"}>{errors.password.message}</Label>}
             <Button
-              fontWeight={600}
-              fontSize={"$7"}
-              height={"$5"}
+              height="$5"
+              borderRadius="$6"
               onPress={handleSubmit(onSubmit)}
               disabled={isLoading}
-              opacity={isLoading ? 0.7 : 1}
+              opacity={isLoading ? 0.65 : 1}
+              elevate
             >
               {isLoading ? <ActivityIndicator color="white" /> : "Continue"}
             </Button>

@@ -1,8 +1,7 @@
 import React from "react";
 
 import { MARGIN_LEFT, MARGIN_TOP, Offset, WORD_HEIGHT } from "./layout";
-import { lightColors } from "@tamagui/themes";
-import { View } from "tamagui";
+import { View } from "@/ui";
 
 interface PlaceholderProps {
   offset: Offset;

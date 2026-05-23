@@ -4,7 +4,12 @@ import * as Notifications from "expo-notifications";
 import { router } from "expo-router";
 import moment from "moment";
 import { createContext, useContext, useEffect } from "react";
-import { MMKV, useMMKVNumber, useMMKVObject, useMMKVString } from "react-native-mmkv";
+import {
+  MMKV,
+  useMMKVNumber,
+  useMMKVObject,
+  useMMKVString,
+} from "react-native-mmkv";
 import Purchases from "react-native-purchases";
 import Toast from "react-native-toast-message";
 
@@ -12,7 +17,7 @@ const storage = new MMKV();
 
 type UserContextProps = {
   currentUser: Profile | undefined;
-  handleUpdateUserInfo: (info: Partial<Profile>) => Promise<any>;
+  handleUpdateUserInfo: (info: Partial<Profile>) => Promise<void>;
   getUser: () => Promise<void>;
   handleSignOut: () => void;
   lives?: number;
@@ -21,12 +26,19 @@ type UserContextProps = {
   livesRefreshTime?: string;
 };
 
-export const UserContext = createContext<UserContextProps>({} as UserContextProps);
+export const UserContext = createContext<UserContextProps>(
+  {} as UserContextProps,
+);
 
-export default function ModuleProvider({ children }: { children: React.ReactNode }) {
+export default function ModuleProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const [currentUser, setCurrentUser] = useMMKVObject<Profile>("user");
   const [lives, setLives] = useMMKVNumber("lives");
-  const [livesRefreshTime, setLivesRefreshTime] = useMMKVString("livesRefreshTime");
+  const [livesRefreshTime, setLivesRefreshTime] =
+    useMMKVString("livesRefreshTime");
 
   useEffect(() => {
     getUser();
@@ -55,7 +67,11 @@ export default function ModuleProvider({ children }: { children: React.ReactNode
               channelId: "lives_refreshed",
             },
           });
-        } else if (lives < 5 && livesRefreshTime && moment().isAfter(moment(livesRefreshTime))) {
+        } else if (
+          lives < 5 &&
+          livesRefreshTime &&
+          moment().isAfter(moment(livesRefreshTime))
+        ) {
           setLives(5);
           setLivesRefreshTime("");
         }
@@ -101,10 +117,18 @@ export default function ModuleProvider({ children }: { children: React.ReactNode
 
   async function handleGetUserData(id: string) {
     const isSubscribed = await handleCheckUserSubscription(id);
-    let { data: profile, error } = await supabase.from("profiles").select("*").eq("id", id).single();
+    let { data: profile, error } = await supabase
+      .from("profiles")
+      .select("*")
+      .eq("id", id)
+      .single();
 
     if (profile) {
-      setCurrentUser({ ...(currentUser || {}), ...profile, is_subscribed: isSubscribed });
+      setCurrentUser({
+        ...(currentUser || {}),
+        ...profile,
+        is_subscribed: isSubscribed,
+      });
     }
   }
 
@@ -126,9 +150,7 @@ export default function ModuleProvider({ children }: { children: React.ReactNode
 
     // Only update user if they've created an account
     if (currentUser?.id) {
-      return supabase.from("profiles").update(info).eq("id", currentUser?.id).select();
-    } else {
-      return true;
+      await supabase.from("profiles").update(info).eq("id", currentUser?.id).select();
     }
   }
 
@@ -150,7 +172,12 @@ export default function ModuleProvider({ children }: { children: React.ReactNode
       // Get all keys from storage
       const allKeys = storage.getAllKeys();
       // Filter out the keys we want to keep
-      const keysToClear = allKeys.filter((key) => key !== "hasSeenWelcomeScreen" && key !== "modules" && key !== "moduleVersion");
+      const keysToClear = allKeys.filter(
+        (key) =>
+          key !== "hasSeenWelcomeScreen" &&
+          key !== "modules" &&
+          key !== "moduleVersion",
+      );
       // Clear each key individually
       keysToClear.forEach((key) => storage.delete(key));
     }
@@ -162,7 +189,18 @@ export default function ModuleProvider({ children }: { children: React.ReactNode
   }
 
   return (
-    <UserContext.Provider value={{ currentUser, handleUpdateUserInfo, getUser, handleSignOut, lives, setLives, updatedLives, livesRefreshTime }}>
+    <UserContext.Provider
+      value={{
+        currentUser,
+        handleUpdateUserInfo,
+        getUser,
+        handleSignOut,
+        lives,
+        setLives,
+        updatedLives,
+        livesRefreshTime,
+      }}
+    >
       {children}
     </UserContext.Provider>
   );

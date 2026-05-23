@@ -1,5 +1,5 @@
 import React, { ReactElement } from "react";
-import { StyleSheet } from "react-native";
+import { StyleSheet, type ViewStyle } from "react-native";
 import Animated, { useAnimatedStyle, withSpring, useSharedValue, useDerivedValue } from "react-native-reanimated";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { between, useVector } from "react-native-redash";
@@ -101,7 +101,7 @@ const SortableWord = ({ offsets, index, children, containerWidth }: SortableWord
       width: offset.width.value,
       height: WORD_HEIGHT,
       transform: [{ translateX: translateX.value }, { translateY: translateY.value }],
-    } as any;
+    } satisfies ViewStyle;
   });
   return (
     <>
