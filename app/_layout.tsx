@@ -25,7 +25,7 @@ const AppNavigationThemeLight = {
   colors: {
     ...NavigationDefaultTheme.colors,
     primary: "#007AFF",
-    background: "#FFFFFF",
+    background: "#F5F5F7",
     card: "#FFFFFF",
     text: "#000000",
     border: "rgba(0, 0, 0, 0.06)",

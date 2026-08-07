@@ -8,7 +8,7 @@ const accentDark = "#0A84FF";
 export const Colors = {
   light: {
     text: "#000000",
-    background: "#FFFFFF",
+    background: "#F5F5F7",
     tint: accentLight,
     icon: "#6B7280",
     tabIconDefault: "#9CA3AF",
