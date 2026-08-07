@@ -1,6 +1,6 @@
 import LoadingIndicator from "@/components/loading";
 import { ModuleCard } from "@/components/ModuleCard";
-import { HomeHeroReverseHandler } from "@/components/home/HomeHeroReverseHandler";
+import { ActivityStreakCard } from "@/components/home/ActivityStreakCard";
 import { pickResumeModule, ResumeHero } from "@/components/home/ResumeHero";
 import { SectionLabel } from "@/components/home/SectionLabel";
 import Paywall from "@/components/paywall.modal";
@@ -51,9 +51,7 @@ export default function HomeScreen() {
   const { top } = useSafeAreaInsets();
   const { modules, refreshModules, isModuleUpdateAvailable } =
     useContext(ModuleContext);
-  const [hasSeenWelcomeScreen, setHasSeenWelcomeScreen] = useMMKVBoolean(
-    "hasSeenWelcomeScreen",
-  );
+  const [hasSeenWelcomeScreen] = useMMKVBoolean("hasSeenWelcomeScreen");
   const { currentUser, lives } = useUser();
   const [openPaywall, setOpenPaywall] = useState(false);
   const [openXPHistory, setOpenXPHistory] = useState(false);
@@ -63,24 +61,17 @@ export default function HomeScreen() {
   const isDark = themeName === "dark";
   const hasRequestedReview = useRef(false);
 
-  const firstName = currentUser?.full_name?.trim().split(/\s+/)[0];
-  const greeting = useMemo(() => {
-    const h = new Date().getHours();
-    if (h < 12) return "Good morning";
-    if (h < 18) return "Good afternoon";
-    return "Good evening";
-  }, []);
+  const modulesData = modules?.data;
 
-  const resumeModule = useMemo(
-    () => (modules?.data?.length ? pickResumeModule(modules.data) : null),
-    [modules?.data],
-  );
+  const resumeModule = modulesData?.length
+    ? pickResumeModule(modulesData)
+    : null;
 
-  const modulesListData = useMemo(() => {
-    if (!modules?.data?.length) return [];
-    if (!resumeModule || modules.data.length <= 1) return modules.data;
-    return modules.data.filter((m) => m.id !== resumeModule.id);
-  }, [modules?.data, resumeModule]);
+  const modulesListData = !modulesData?.length
+    ? []
+    : !resumeModule || modulesData.length <= 1
+      ? modulesData
+      : modulesData.filter((m) => m.id !== resumeModule.id);
 
   useEffect(() => {
     if (
@@ -99,7 +90,6 @@ export default function HomeScreen() {
 
   return (
     <>
-      <HomeHeroReverseHandler />
       <View flex={1} backgroundColor="$background">
         <LinearGradient
           colors={
@@ -272,6 +262,9 @@ export default function HomeScreen() {
                           Update available
                         </Button>
                       )}
+                      <ActivityStreakCard
+                        activeDays={currentUser?.active_days}
+                      />
                       {resumeModule && (
                         <>
                           <SectionLabel marginTop="$1">Resume</SectionLabel>

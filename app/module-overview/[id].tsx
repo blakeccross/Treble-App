@@ -1,9 +1,8 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect } from "react";
 
 import { Button } from "@/components/button";
 import { StickyHeader } from "@/components/StickyHeader";
-import { useModuleHeroTransition } from "@/context/module-hero-transition";
 import { ModuleContext } from "@/context/module-context";
 import { UserContext } from "@/context/user-context";
 import { Section } from "@/types";
@@ -17,20 +16,14 @@ export default function ModuleStartScreen() {
   const router = useRouter();
   const { currentUser } = useContext(UserContext);
   const { id: idParam } = useLocalSearchParams<{ id: string | string[] }>();
-  const heroTransitionCtx = useModuleHeroTransition();
   const idRaw = Array.isArray(idParam) ? idParam[0] : idParam;
   const idNum = Number(idRaw);
-  const [heroTransition] = useState(() =>
-    Number.isFinite(idNum) && heroTransitionCtx
-      ? heroTransitionCtx.getHeroTransitionIfMatch(idNum)
-      : null,
-  );
   const { modules } = useContext(ModuleContext);
   const currentModule =
     modules?.data && modules.data.find((item) => item.id === idNum);
 
   useEffect(() => {
-    if (!currentModule) router.dismissAll();
+    if (!currentModule) router.back();
   }, [currentModule, router]);
 
   function handleSectionPress(section: Section, userCanAccessSection: boolean) {
@@ -50,14 +43,9 @@ export default function ModuleStartScreen() {
 
   return (
     <StickyHeader
-      image={currentModule?.local_poster_uri || ""}
+      poster={currentModule?.poster}
       title={currentModule?.title || ""}
-      onBackPress={() => router.dismissTo("/(tabs)/(home)")}
-      onBeginReverseTransition={(payload) =>
-        heroTransitionCtx?.beginReverseHeroTransition(payload)
-      }
-      heroTransition={heroTransition}
-      onHeroTransitionEnd={() => heroTransitionCtx?.endHeroTransition()}
+      onBackPress={() => router.back()}
     >
       <ScrollView
         backgroundColor={"$background"}

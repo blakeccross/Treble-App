@@ -80,24 +80,25 @@ export const fontSize = {
   true: 16,
 } as const;
 
+/** Kept ~1.4–1.5× fontSize so Inter ascenders/descenders aren't clipped in overflow:hidden parents */
 export const lineHeight = {
-  $1: 16,
-  $2: 18,
-  $3: 20,
-  $4: 22,
-  $5: 24,
-  $6: 24,
-  $7: 26,
-  $8: 28,
-  $9: 34,
-  $10: 40,
-  $11: 48,
-  $12: 56,
-  $13: 64,
-  $14: 72,
-  $15: 80,
-  $16: 88,
-  true: 24,
+  $1: 18,
+  $2: 20,
+  $3: 22,
+  $4: 24,
+  $5: 26,
+  $6: 28,
+  $7: 28,
+  $8: 32,
+  $9: 40,
+  $10: 48,
+  $11: 56,
+  $12: 64,
+  $13: 72,
+  $14: 80,
+  $15: 88,
+  $16: 96,
+  true: 26,
 } as const;
 
 export const zIndex = {

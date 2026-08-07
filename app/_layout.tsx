@@ -2,7 +2,6 @@ import { toastConfig } from "@/components/toastConfig";
 import PushNotificationHandler from "@/components/PushNotificationHandler";
 import ModuleProvider from "@/context/module-context";
 import UserProvider from "@/context/user-context";
-import { ModuleHeroTransitionProvider } from "@/context/module-hero-transition";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import {
   DarkTheme as NavigationDarkTheme,
@@ -110,9 +109,8 @@ export default function RootLayout() {
         value={colorScheme === "dark" ? AppNavigationThemeDark : AppNavigationThemeLight}
       >
         <UserProvider>
-          <ModuleHeroTransitionProvider>
-            <PushNotificationHandler />
-            <ModuleProvider>
+          <PushNotificationHandler />
+          <ModuleProvider>
               <GestureHandlerRootView>
                 <Stack initialRouteName="welcome">
                 <Stack.Screen
@@ -120,6 +118,10 @@ export default function RootLayout() {
                   options={{ headerShown: false, animation: "fade" }}
                 />
                 <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                <Stack.Screen
+                  name="module-overview/[id]"
+                  options={{ headerShown: false, animation: "slide_from_bottom" }}
+                />
                 <Stack.Screen
                   name="(auth)"
                   options={{ headerShown: false, presentation: "modal" }}
@@ -157,7 +159,6 @@ export default function RootLayout() {
               <Toast config={toastConfig} topOffset={60} />
             </GestureHandlerRootView>
           </ModuleProvider>
-          </ModuleHeroTransitionProvider>
         </UserProvider>
       </ThemeProvider>
     </AppThemeProvider>

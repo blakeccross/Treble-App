@@ -65,11 +65,38 @@ export const H5 = heading("$6", "$6", -0.1);
 
 type SizedTextProps = TextProps & { size?: TextProps["fontSize"] };
 
-export function Paragraph({ size, fontSize, ...props }: SizedTextProps) {
+/** One step above fontSize so Inter glyphs fit inside overflow:hidden parents (e.g. Card). */
+function paragraphLineHeight(
+  fontSize: NonNullable<TextProps["fontSize"]>,
+): TextProps["lineHeight"] {
+  if (typeof fontSize === "number") return Math.ceil(fontSize * 1.45);
+  const bump: Record<string, string> = {
+    $1: "$5",
+    $2: "$5",
+    $3: "$5",
+    $4: "$6",
+    $5: "$6",
+    $6: "$7",
+    $7: "$8",
+    $8: "$9",
+    $9: "$10",
+    $10: "$11",
+    $11: "$12",
+    $12: "$13",
+    $13: "$14",
+    $14: "$15",
+    $15: "$16",
+    $16: "$16",
+  };
+  return bump[fontSize] ?? fontSize;
+}
+
+export function Paragraph({ size, fontSize, lineHeight, ...props }: SizedTextProps) {
+  const resolvedFontSize = fontSize ?? size ?? "$5";
   return (
     <Text
-      fontSize={fontSize ?? size ?? "$5"}
-      lineHeight="$5"
+      fontSize={resolvedFontSize}
+      lineHeight={lineHeight ?? paragraphLineHeight(resolvedFontSize)}
       fontFamily="Inter"
       fontWeight="normal"
       {...props}

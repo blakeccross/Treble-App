@@ -1,15 +1,13 @@
-import { useModuleHeroTransition } from "@/context/module-hero-transition";
+import {
+  getModulePosterImageUrl,
+  prefetchModulePosterImage,
+} from "@/constants/modulePosters";
 import type { Module } from "@/types";
 import { Image } from "expo-image";
 import { router } from "expo-router";
-import React, { useCallback, useEffect, useRef } from "react";
-import {
-  Pressable,
-  StyleSheet,
-  View as RNView,
-} from "react-native";
+import React, { useCallback, useEffect } from "react";
+import { Pressable, StyleSheet, View as RNView } from "react-native";
 import { ChevronRight, Paragraph, View, YStack } from "@/ui";
-import { fontSize, lineHeight } from "@/theme/tokens";
 
 const blurhash =
   "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
@@ -37,15 +35,9 @@ export function ModuleCard({
   onPress,
   showDivider = true,
 }: ModuleCardProps) {
-  const posterRef = useRef<RNView>(null);
-  const titleRef = useRef<RNView>(null);
-  const hero = useModuleHeroTransition();
-  const hideHeroContent = hero?.hiddenHomeModuleId === module.id;
-
   useEffect(() => {
-    hero?.registerHeroMeasureTargets(module.id, { posterRef, titleRef });
-    return () => hero?.unregisterHeroMeasureTargets(module.id);
-  }, [hero, module.id]);
+    void prefetchModulePosterImage(module.poster);
+  }, [module.poster]);
 
   const handlePress = useCallback(() => {
     if (disabled || !module.is_available) return;
@@ -53,43 +45,12 @@ export function ModuleCard({
       onPress();
       return;
     }
-    posterRef.current?.measureInWindow((x, y, width, height) => {
-      const posterRect = { x, y, width, height };
-      const fallbackTitle = {
-        x: x + THUMB + 12,
-        y: y + 4,
-        width: 200,
-        height: 22,
-      };
-      const go = (tr: typeof fallbackTitle) => {
-        hero?.beginHeroTransition({
-          moduleId: module.id,
-          uri: module.local_poster_uri,
-          sourceRect: posterRect,
-          title: module.title,
-          titleSourceRect: tr,
-          titleSourceFontSize: fontSize.$5,
-          titleSourceLineHeight: lineHeight.$5,
-          titleStartsLight: false,
-        });
-        router.push(`/module-overview/${module.id}`);
-      };
-      if (titleRef.current) {
-        titleRef.current.measureInWindow((tx, ty, tw, th) => {
-          go(
-            tw > 2 && th > 2
-              ? { x: tx, y: ty, width: tw, height: th }
-              : fallbackTitle,
-          );
-        });
-      } else {
-        go(fallbackTitle);
-      }
-    });
-  }, [disabled, hero, module, onPress]);
+    router.push(`/module-overview/${module.id}`);
+  }, [disabled, module.id, module.is_available, onPress]);
 
   const showProgress =
     module.is_available && module.progress > 0 && !module.completed;
+  const posterImage = getModulePosterImageUrl(module.poster);
 
   return (
     <Pressable
@@ -102,35 +63,28 @@ export function ModuleCard({
         pressed && module.is_available && styles.rowPressed,
       ]}
     >
-      <RNView
-        ref={posterRef}
-        collapsable={false}
-        style={[styles.thumb, hideHeroContent && styles.heroHidden]}
-      >
-        <Image
-          source={module.local_poster_uri}
-          style={StyleSheet.absoluteFill}
-          placeholder={{ blurhash }}
-          contentFit="cover"
-          transition={200}
-        />
+      <RNView collapsable={false} style={styles.thumb}>
+        {posterImage ? (
+          <Image
+            source={posterImage}
+            style={StyleSheet.absoluteFill}
+            placeholder={{ blurhash }}
+            contentFit="cover"
+            transition={200}
+            cachePolicy="memory-disk"
+          />
+        ) : null}
       </RNView>
 
       <YStack flex={1} gap="$1" paddingLeft="$3" justifyContent="center">
-        <RNView
-          ref={titleRef}
-          collapsable={false}
-          style={hideHeroContent ? styles.heroHidden : undefined}
+        <Paragraph
+          fontFamily="InterBold"
+          fontSize="$5"
+          color="$color"
+          numberOfLines={1}
         >
-          <Paragraph
-            fontFamily="InterBold"
-            fontSize="$5"
-            color="$color"
-            numberOfLines={1}
-          >
-            {module.title}
-          </Paragraph>
-        </RNView>
+          {module.title}
+        </Paragraph>
         <Paragraph fontSize="$3" color="$gray11" numberOfLines={1}>
           {getSubtitle(module)}
         </Paragraph>
@@ -154,9 +108,6 @@ export function ModuleCard({
 }
 
 const styles = StyleSheet.create({
-  heroHidden: {
-    opacity: 0,
-  },
   row: {
     flexDirection: "row",
     alignItems: "center",

@@ -1,10 +1,12 @@
+import {
+  getModulePosterImageUrl,
+  prefetchModulePosterImage,
+} from "@/constants/modulePosters";
 import { GlassPanel } from "@/components/GlassPanel";
-import { useModuleHeroTransition } from "@/context/module-hero-transition";
-import { fontSize, lineHeight } from "@/theme/tokens";
 import type { Module } from "@/types";
 import { Image } from "expo-image";
 import { router } from "expo-router";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect } from "react";
 import {
   Pressable,
   StyleSheet,
@@ -50,54 +52,15 @@ function resumeSubtitle(module: Module) {
 export function ResumeHero({ module }: ResumeHeroProps) {
   const { width: screenWidth } = useWindowDimensions();
   const cardSize = Math.min(screenWidth - 32, 420);
-  const imageFrameRef = useRef<RNView>(null);
-  const titleRef = useRef<RNView>(null);
-  const hero = useModuleHeroTransition();
-  const hideHeroContent = hero?.hiddenHomeModuleId === module.id;
+  const posterImage = getModulePosterImageUrl(module.poster);
 
   useEffect(() => {
-    hero?.registerHeroMeasureTargets(module.id, {
-      posterRef: imageFrameRef,
-      titleRef,
-    });
-    return () => hero?.unregisterHeroMeasureTargets(module.id);
-  }, [hero, module.id]);
+    void prefetchModulePosterImage(module.poster);
+  }, [module.poster]);
 
   const handlePress = () => {
     if (!module.is_available) return;
-    imageFrameRef.current?.measureInWindow((x, y, w, h) => {
-      const posterRect = { x, y, width: w, height: h };
-      const fallbackTitle = {
-        x: x + 16,
-        y: y + h - 100,
-        width: w - 32,
-        height: 56,
-      };
-      const go = (tr: typeof fallbackTitle) => {
-        hero?.beginHeroTransition({
-          moduleId: module.id,
-          uri: module.local_poster_uri,
-          sourceRect: posterRect,
-          title: module.title,
-          titleSourceRect: tr,
-          titleSourceFontSize: fontSize.$8,
-          titleSourceLineHeight: lineHeight.$8,
-          titleStartsLight: true,
-        });
-        router.push(`/module-overview/${module.id}`);
-      };
-      if (titleRef.current) {
-        titleRef.current.measureInWindow((tx, ty, tw, th) => {
-          go(
-            tw > 2 && th > 2
-              ? { x: tx, y: ty, width: tw, height: th }
-              : fallbackTitle,
-          );
-        });
-      } else {
-        go(fallbackTitle);
-      }
-    });
+    router.push(`/module-overview/${module.id}`);
   };
 
   return (
@@ -119,20 +82,14 @@ export function ResumeHero({ module }: ResumeHeroProps) {
         backgroundColor="$gray3"
         style={styles.cardShadow}
       >
-        <RNView
-          ref={imageFrameRef}
-          collapsable={false}
-          style={[
-            StyleSheet.absoluteFill,
-            hideHeroContent && styles.heroHidden,
-          ]}
-        >
+        <RNView collapsable={false} style={StyleSheet.absoluteFill}>
           <Image
-            source={module.local_poster_uri}
+            source={posterImage ?? undefined}
             style={StyleSheet.absoluteFill}
             placeholder={{ blurhash }}
             contentFit="cover"
             transition={280}
+            cachePolicy="memory-disk"
           />
           <LinearGradient
             colors={["transparent", "rgba(0,0,0,0.15)", "rgba(0,0,0,0.75)"]}
@@ -163,22 +120,16 @@ export function ResumeHero({ module }: ResumeHeroProps) {
             >
               Continue
             </Paragraph>
-            <RNView
-              ref={titleRef}
-              collapsable={false}
-              style={hideHeroContent ? styles.heroHidden : undefined}
+            <Paragraph
+              fontFamily="InterBold"
+              fontSize="$8"
+              lineHeight="$8"
+              letterSpacing={-0.4}
+              numberOfLines={2}
+              style={styles.titleOnArt}
             >
-              <Paragraph
-                fontFamily="InterBold"
-                fontSize="$8"
-                lineHeight="$8"
-                letterSpacing={-0.4}
-                numberOfLines={2}
-                style={styles.titleOnArt}
-              >
-                {module.title}
-              </Paragraph>
-            </RNView>
+              {module.title}
+            </Paragraph>
             <Paragraph
               fontSize="$4"
               color="rgba(255,255,255,0.92)"
@@ -195,9 +146,6 @@ export function ResumeHero({ module }: ResumeHeroProps) {
 }
 
 const styles = StyleSheet.create({
-  heroHidden: {
-    opacity: 0,
-  },
   titleOnArt: {
     color: "#FFFFFF",
   },
@@ -217,9 +165,6 @@ const styles = StyleSheet.create({
   cardPressed: {
     opacity: 0.92,
     transform: [{ scale: 0.985 }],
-  },
-  glassFooter: {
-    width: "100%",
   },
   actionButton: {
     width: 44,

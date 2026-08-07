@@ -109,7 +109,7 @@ export default function QuizProvider({ children }: { children: React.ReactNode[]
         params:
           sortedQuestions && sortedQuestions[currentQuestionIndex].type !== "reading"
             ? {
-                redirectPathname: "/(tabs)/(home)/module-overview/[id]",
+                redirectPathname: "/module-overview/[id]",
                 redirectParams: JSON.stringify({
                   id: currentModule?.id,
                 }),

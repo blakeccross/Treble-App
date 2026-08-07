@@ -1,17 +1,22 @@
-import { HeroModuleTransitionOverlay } from "@/components/module/HeroModuleTransitionOverlay";
-import type {
-  HeroSourceRect,
-  ModuleHeroPayload,
-  ModuleHeroReversePayload,
-} from "@/context/module-hero-transition";
+import { GlassBackButton } from "@/components/GlassBackButton";
+import { getModulePosterImageUrl, getModulePosterVideoUrl } from "@/constants/modulePosters";
+import { VideoView, useVideoPlayer } from "expo-video";
 import { Image } from "expo-image";
-import React, { useCallback, useRef, useState } from "react";
-import { Dimensions, Modal, StyleSheet, View as RNView } from "react-native";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import {
+  Dimensions,
+  StyleSheet,
+  View as RNView,
+  type NativeSyntheticEvent,
+  type TextLayoutEventData,
+} from "react-native";
 import Animated, {
   Easing,
   Extrapolation,
   interpolate,
+  runOnJS,
   SharedValue,
+  useAnimatedReaction,
   useAnimatedScrollHandler,
   useAnimatedStyle,
   useSharedValue,
@@ -19,9 +24,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { router } from "expo-router";
-import { ArrowLeft, Button, ChevronLeft, H1, H5, View, YStack } from "@/ui";
-const blurhash =
-  "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
+import { H1, H5, View, YStack } from "@/ui";
 
 const AnimatedLinearGradient = Animated.createAnimatedComponent(View);
 const AnimatedView = Animated.createAnimatedComponent(View);
@@ -29,6 +32,136 @@ const AnimatedImage = Animated.createAnimatedComponent(Image);
 
 const posterSize = Dimensions.get("screen").height / 2;
 const headerTop = 44 - 16;
+
+const titleStyle = { color: "white" as const };
+
+function AnimatedTitleLine({
+  text,
+  index,
+  lineCount,
+  progress,
+}: {
+  text: string;
+  index: number;
+  lineCount: number;
+  progress: SharedValue<number>;
+}) {
+  const lineStyle = useAnimatedStyle(() => {
+    const stagger = 1 / Math.max(lineCount, 1);
+    const start = index * stagger * 0.75;
+    const end = Math.min(start + stagger * 1.1, 1);
+    const t = interpolate(
+      progress.value,
+      [start, end],
+      [0, 1],
+      Extrapolation.CLAMP,
+    );
+    return {
+      opacity: t,
+      transform: [
+        {
+          translateY: interpolate(t, [0, 1], [22, 0], Extrapolation.CLAMP),
+        },
+      ],
+    };
+  });
+
+  return (
+    <Animated.View style={[styles.titleLine, lineStyle]}>
+      <H1 fontWeight="normal" textAlign="left" style={titleStyle}>
+        {text}
+      </H1>
+    </Animated.View>
+  );
+}
+
+function PosterHeroTitle({
+  title,
+  revealSV,
+}: {
+  title: string;
+  revealSV: SharedValue<number>;
+}) {
+  const [lines, setLines] = useState<string[]>([]);
+  const progress = useSharedValue(0);
+  const hasAnimated = useRef(false);
+
+  const animateLines = useCallback(() => {
+    if (lines.length === 0) return;
+    hasAnimated.current = true;
+    progress.value = 0;
+    progress.value = withTiming(1, {
+      duration: 380 + lines.length * 110,
+      easing: Easing.out(Easing.cubic),
+    });
+  }, [lines.length, progress]);
+
+  const onTextLayout = useCallback(
+    (e: NativeSyntheticEvent<TextLayoutEventData>) => {
+      const next = e.nativeEvent.lines.map((line) => line.text);
+      if (next.length === 0) return;
+      setLines((prev) => {
+        if (
+          prev.length === next.length &&
+          prev.every((line, i) => line === next[i])
+        ) {
+          return prev;
+        }
+        hasAnimated.current = false;
+        return next;
+      });
+    },
+    [],
+  );
+
+  useAnimatedReaction(
+    () => revealSV.value,
+    (value, previous) => {
+      if (value >= 1 && previous !== null && previous < 1) {
+        runOnJS(animateLines)();
+      }
+    },
+    [animateLines],
+  );
+
+  useEffect(() => {
+    if (lines.length === 0 || hasAnimated.current) return;
+    if (revealSV.value >= 1) {
+      animateLines();
+    }
+  }, [lines, animateLines, revealSV]);
+
+  const measured = lines.length > 0;
+
+  return (
+    <>
+      <H1
+        fontWeight="normal"
+        textAlign="left"
+        style={[
+          titleStyle,
+          measured ? styles.titleMeasureHidden : styles.titleMeasurePending,
+        ]}
+        onTextLayout={onTextLayout}
+      >
+        {title}
+      </H1>
+      {measured ? (
+        <RNView style={styles.titleLines} pointerEvents="none">
+          {lines.map((line, index) => (
+            <AnimatedTitleLine
+              key={`${index}-${line}`}
+              text={line}
+              index={index}
+              lineCount={lines.length}
+              progress={progress}
+            />
+          ))}
+        </RNView>
+      ) : null}
+    </>
+  );
+}
 
 function ScreenHeader({
   sv,
@@ -96,15 +229,11 @@ function ScreenHeader({
       borderBottomWidth={StyleSheet.hairlineWidth * 2}
       borderBottomColor={"$borderColor"}
     >
-      <View
-        width={"$3"}
-        height={"$3"}
-        alignItems="center"
-        justifyContent="center"
+      <GlassBackButton
+        compact
+        onMedia={false}
         onPress={() => (onBackPress ? onBackPress() : router.back())}
-      >
-        <ChevronLeft size={"$2"} />
-      </View>
+      />
 
       <H5 fontWeight="normal">{title}</H5>
       <View width={"$2"} />
@@ -112,24 +241,80 @@ function ScreenHeader({
   );
 }
 
+function PosterVideoBackground({
+  videoSource,
+  imageSource,
+  style,
+}: {
+  videoSource: string;
+  imageSource: string | null;
+  style: object;
+}) {
+  const [videoReady, setVideoReady] = useState(false);
+  const player = useVideoPlayer(videoSource, (videoPlayer) => {
+    videoPlayer.loop = false;
+    videoPlayer.muted = true;
+    videoPlayer.play();
+  });
+
+  useEffect(() => {
+    setVideoReady(false);
+  }, [videoSource]);
+
+  return (
+    <Animated.View style={[styles.imageStyle, style]}>
+      {imageSource && !videoReady ? (
+        <Image
+          source={imageSource}
+          style={StyleSheet.absoluteFill}
+          contentFit="cover"
+          cachePolicy="memory-disk"
+          priority="high"
+        />
+      ) : null}
+      <VideoView
+        style={StyleSheet.absoluteFill}
+        player={player}
+        nativeControls={false}
+        contentFit="cover"
+        allowsVideoFrameAnalysis={false}
+        onFirstFrameRender={() => setVideoReady(true)}
+      />
+    </Animated.View>
+  );
+}
+
+function PosterImageBackground({
+  source,
+  style,
+}: {
+  source: string;
+  style: object;
+}) {
+  return (
+    <AnimatedImage
+      style={[styles.imageStyle, style]}
+      source={source}
+      contentFit="cover"
+    />
+  );
+}
+
 function PosterImage({
   sv,
-  image,
+  poster,
   title,
   revealSV,
-  posterLayerRef,
-  titleTargetRef,
-  onPosterLayerLayout,
 }: {
   sv: SharedValue<number>;
-  image: string;
+  poster: string | null | undefined;
   title: string;
   revealSV: SharedValue<number>;
-  posterLayerRef: React.RefObject<RNView | null>;
-  titleTargetRef: React.RefObject<RNView | null>;
-  onPosterLayerLayout?: () => void;
 }) {
   const inset = useSafeAreaInsets();
+  const videoSource = getModulePosterVideoUrl(poster);
+  const imageSource = getModulePosterImageUrl(poster);
+
   const opacityAnim = useAnimatedStyle(() => {
     const scrollOp = interpolate(
       sv.value,
@@ -155,19 +340,16 @@ function PosterImage({
   });
   return (
     <Animated.View style={[styles.imageContainer, opacityAnim]}>
-      <RNView
-        ref={posterLayerRef}
-        collapsable={false}
-        style={StyleSheet.absoluteFill}
-        onLayout={onPosterLayerLayout}
-      >
-        <AnimatedImage
-          style={[styles.imageStyle, scaleAnim]}
-          source={image}
-          placeholder={{ blurhash }}
-          contentFit="cover"
-          transition={1000}
-        />
+      <RNView collapsable={false} style={StyleSheet.absoluteFill}>
+        {videoSource ? (
+          <PosterVideoBackground
+            videoSource={videoSource}
+            imageSource={imageSource}
+            style={scaleAnim}
+          />
+        ) : imageSource ? (
+          <PosterImageBackground source={imageSource} style={scaleAnim} />
+        ) : null}
         <RNView
           style={{
             position: "absolute",
@@ -182,13 +364,10 @@ function PosterImage({
           }}
         >
           <RNView
-            ref={titleTargetRef}
             collapsable={false}
             style={{ alignSelf: "stretch", alignItems: "flex-start" }}
           >
-            <H1 fontWeight="normal" textAlign="left" style={{ color: "white" }}>
-              {title}
-            </H1>
+            <PosterHeroTitle key={title} title={title} revealSV={revealSV} />
           </RNView>
         </RNView>
         <AnimatedLinearGradient
@@ -201,69 +380,19 @@ function PosterImage({
 }
 
 export function StickyHeader({
-  image,
+  poster,
   title,
   children,
   onBackPress,
-  heroTransition,
-  onHeroTransitionEnd,
-  onBeginReverseTransition,
 }: {
-  image: string;
+  poster: string | null | undefined;
   title: string;
   children: React.ReactElement;
   onBackPress?: () => void;
-  heroTransition?: ModuleHeroPayload | null;
-  onHeroTransitionEnd?: () => void;
-  onBeginReverseTransition?: (payload: ModuleHeroReversePayload) => void;
 }) {
   const inset = useSafeAreaInsets();
   const sv = useSharedValue<number>(0);
-  const posterLayerRef = useRef<RNView>(null);
-  const titleTargetRef = useRef<RNView>(null);
-  const didMeasureHeroTarget = useRef(false);
-  const [heroTargets, setHeroTargets] = useState<{
-    poster: HeroSourceRect;
-    title: HeroSourceRect;
-  } | null>(null);
-  const posterRevealSV = useSharedValue(heroTransition ? 0 : 1);
-  const [flyVisible, setFlyVisible] = useState(!!heroTransition);
-
-  const onFlyDone = useCallback(() => {
-    posterRevealSV.value = withTiming(1, {
-      duration: 160,
-      easing: Easing.out(Easing.cubic),
-    });
-    setFlyVisible(false);
-    onHeroTransitionEnd?.();
-  }, [onHeroTransitionEnd, posterRevealSV]);
-
-  const onPosterLayerLayout = useCallback(() => {
-    if (!heroTransition || didMeasureHeroTarget.current) return;
-    didMeasureHeroTarget.current = true;
-    requestAnimationFrame(() => {
-      posterLayerRef.current?.measureInWindow((px, py, pw, ph) => {
-        const posterRect = { x: px, y: py, width: pw, height: ph };
-        const fallbackTitle: HeroSourceRect = {
-          x: px + 20,
-          y: py + ph - 120,
-          width: pw - 40,
-          height: 96,
-        };
-        if (titleTargetRef.current) {
-          titleTargetRef.current.measureInWindow((tx, ty, tw, th) => {
-            const titleRect =
-              tw > 2 && th > 2
-                ? { x: tx, y: ty, width: tw, height: th }
-                : fallbackTitle;
-            setHeroTargets({ poster: posterRect, title: titleRect });
-          });
-        } else {
-          setHeroTargets({ poster: posterRect, title: fallbackTitle });
-        }
-      });
-    });
-  }, [heroTransition]);
+  const posterRevealSV = useSharedValue(1);
 
   const scrollHandler = useAnimatedScrollHandler({
     onScroll: (event) => {
@@ -281,83 +410,22 @@ export function StickyHeader({
   });
 
   const handleBack = useCallback(() => {
-    const goBack = () => {
-      if (onBackPress) {
-        onBackPress();
-      } else {
-        router.back();
-      }
-    };
-
-    if (!heroTransition || !onBeginReverseTransition) {
-      goBack();
-      return;
+    if (onBackPress) {
+      onBackPress();
+    } else {
+      router.back();
     }
-
-    const startReverse = (
-      overviewPosterRect: HeroSourceRect,
-      overviewTitleRect: HeroSourceRect,
-    ) => {
-      onBeginReverseTransition({
-        forward: heroTransition,
-        overviewPosterRect,
-        overviewTitleRect,
-      });
-      goBack();
-    };
-
-    if (heroTargets) {
-      startReverse(heroTargets.poster, heroTargets.title);
-      return;
-    }
-
-    posterLayerRef.current?.measureInWindow((px, py, pw, ph) => {
-      const posterRect = { x: px, y: py, width: pw, height: ph };
-      const fallbackTitle: HeroSourceRect = {
-        x: px + 20,
-        y: py + ph - 120,
-        width: pw - 40,
-        height: 96,
-      };
-      if (titleTargetRef.current) {
-        titleTargetRef.current.measureInWindow((tx, ty, tw, th) => {
-          startReverse(
-            posterRect,
-            tw > 2 && th > 2
-              ? { x: tx, y: ty, width: tw, height: th }
-              : fallbackTitle,
-          );
-        });
-      } else {
-        startReverse(posterRect, fallbackTitle);
-      }
-    });
-  }, [heroTransition, heroTargets, onBeginReverseTransition, onBackPress]);
+  }, [onBackPress]);
 
   return (
     <YStack flex={1} backgroundColor="$background">
       <ScreenHeader sv={sv} title={title} onBackPress={handleBack} />
       <PosterImage
         sv={sv}
-        image={image}
+        poster={poster}
         title={title}
         revealSV={posterRevealSV}
-        posterLayerRef={posterLayerRef}
-        titleTargetRef={titleTargetRef}
-        onPosterLayerLayout={heroTransition ? onPosterLayerLayout : undefined}
       />
-      {flyVisible && heroTransition && heroTargets ? (
-        <Modal visible transparent animationType="none" statusBarTranslucent>
-          <RNView style={styles.heroModalRoot} pointerEvents="none">
-            <HeroModuleTransitionOverlay
-              uri={heroTransition.uri}
-              imageSourceRect={heroTransition.sourceRect}
-              imageTargetRect={heroTargets.poster}
-              onComplete={onFlyDone}
-            />
-          </RNView>
-        </Modal>
-      ) : null}
       <Animated.ScrollView
         onScroll={scrollHandler}
         scrollEventThrottle={16}
@@ -365,9 +433,7 @@ export function StickyHeader({
         showsVerticalScrollIndicator={false}
       >
         <View position="absolute" top={inset.top} left="$4" zIndex={100}>
-          <Button circular theme={"alt1"} onPress={handleBack}>
-            <ArrowLeft size="$3" />
-          </Button>
+          <GlassBackButton onPress={handleBack} />
         </View>
         <Animated.View style={[animatedScrollStyle, { paddingBottom: 40 }]}>
           {children}
@@ -378,9 +444,6 @@ export function StickyHeader({
 }
 
 const styles = StyleSheet.create({
-  heroModalRoot: {
-    flex: 1,
-  },
   imageContainer: {
     height: Dimensions.get("screen").height / 2,
     width: Dimensions.get("screen").width,
@@ -390,5 +453,22 @@ const styles = StyleSheet.create({
     height: "100%",
     width: "100%",
     resizeMode: "cover",
+  },
+  titleMeasurePending: {
+    opacity: 0,
+  },
+  titleMeasureHidden: {
+    position: "absolute",
+    opacity: 0,
+    left: 0,
+    right: 0,
+    pointerEvents: "none",
+  },
+  titleLines: {
+    alignSelf: "stretch",
+    overflow: "hidden",
+  },
+  titleLine: {
+    overflow: "hidden",
   },
 });

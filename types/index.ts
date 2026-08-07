@@ -21,7 +21,6 @@ export type Module = Database["public"]["Tables"]["module"]["Row"] & {
   completed: boolean;
   progress: number;
   section: Section[];
-  local_poster_uri: string;
 };
 export type Leaderboard = Database["public"]["Tables"]["leaderboard"]["Row"] & { profile: { full_name: string; avatar_url: string } };
 export type XPHistory = { title: string; description: string; xp_earned: number; date: string };

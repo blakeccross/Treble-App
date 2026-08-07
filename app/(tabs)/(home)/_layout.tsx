@@ -1,14 +1,10 @@
 import { Stack } from "expo-router";
 import React from "react";
 
-export default function TabLayout() {
+export default function HomeLayout() {
   return (
-    <Stack>
-      <Stack.Screen name="index" options={{ headerShown: false }} />
-      <Stack.Screen
-        name="module-overview/[id]"
-        options={{ headerShown: false, animation: "fade" }}
-      />
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="index" />
     </Stack>
   );
 }
